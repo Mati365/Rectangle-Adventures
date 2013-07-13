@@ -1,0 +1,114 @@
+/*
+ * Screens.hpp
+ *
+ *  Created on: 23-06-2013
+ *      Author: mateusz
+ */
+
+#ifndef SCREENS_HPP_
+#define SCREENS_HPP_
+#include "../../Engine/Graphics/Engine.hpp"
+#include "../Gameplay.hpp"
+
+using namespace Engine;
+using namespace Gameplay;
+using namespace GUI;
+
+/**
+ * Ekrany w grze, np: ekran menu, ekran gry, ekran edytora map
+ */
+using namespace oglWrapper;
+
+namespace GameScreen {
+	/**
+	 * Ekran gry!
+	 * Wzorzec Singleton!
+	 */
+	class Screen: public Renderer {
+		public:
+			virtual void catchEvent(const Event&)=0;
+			virtual void drawObject(Window*)=0;
+
+			virtual ~Screen() {
+			}
+	};
+
+	/////////////////////
+	/**
+	 * Aktywne ekrany
+	 */
+	class Game;
+	class Menu;
+
+	extern Game* game; // okno gameplay
+	extern Menu* menu; // menu gry
+	extern Game* active_screen;
+
+	/**
+	 * Wczytywanie ekranów musi być
+	 * PO wczytaniu systemu plików!
+	 */
+	extern void loadScreens();
+	extern void unloadScreens();
+
+	/////////////////////
+
+	class Game: public Screen {
+		protected:
+			MapRenderer* lvl;
+			Character* hero;
+
+		public:
+			Game(const char*);
+
+			virtual void catchEvent(const Event&);
+			virtual void drawObject(Window*);
+
+			Character* getHero() const {
+				return hero;
+			}
+
+			MapRenderer* getMapRenderer() const {
+				return lvl;
+			}
+
+			~Game() {
+				if (lvl) {
+					delete lvl;
+				}
+				logEvent(Logger::LOG_INFO,
+						"Usuwanie obiektów sceny zakończone sukcesem!");
+			}
+	};
+	/**
+	 * Menu gry!
+	 */
+	class Menu: public Game, public Callback {
+		private:
+			// Podstawowe info o grze
+			glText ver;
+			// Elementy menu
+			deque<Control*> entries;
+
+		public:
+			Menu();
+
+			virtual void catchEvent(const Event&);
+			virtual void drawObject(Window*);
+
+			MapRenderer* getMapRenderer() {
+				return lvl;
+			}
+			/**
+			 * Callback od przycisków!
+			 */
+			void getCallback(Control* const &);
+
+			~Menu();
+
+		private:
+			void createMenuEntries();
+	};
+}
+
+#endif /* SCREENS_HPP_ */
