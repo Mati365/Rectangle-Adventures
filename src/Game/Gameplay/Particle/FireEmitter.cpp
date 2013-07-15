@@ -11,6 +11,9 @@ FireEmitter::FireEmitter(const Rect<float>& _pos, usint _delay) :
 		ParticleEmitter(_pos, _delay) {
 }
 
+/**
+ * Rysowanie pojedynczej cząsteczki..
+ */
 void FireEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 
@@ -32,6 +35,9 @@ void FireEmitter::drawParticle(usint _index, Window* _window) {
 	}
 }
 
+/**
+ * Tworzenie cząsteczki..
+ */
 void FireEmitter::createNewParticle(Window* _window) {
 	for (usint i = 1; i < getIntRandom(6, 30); ++i) {
 		Particle part(pos, getIntRandom(10, 20), getIntRandom(10, 80),
@@ -49,12 +55,12 @@ void FireEmitter::createNewParticle(Window* _window) {
 			part.col.b = 128;
 		}
 
-		float v_y = -2 * (1 - proc);
+		float v_y = -0.5 * (1 - proc);
 		if (v_y == 0) {
-			v_y = -1;
+			v_y = -0.5;
 		}
 
-		part.velocity.y = -2 * (1 - proc);
+		part.velocity.y = v_y;
 		part.max_life_duration = pos.h / (v_y < 0 ?
 				-v_y : v_y) * (1 - proc) + 1;
 

@@ -11,34 +11,6 @@
 
 #include "../../Tools/Logger.hpp"
 
-//---------------------------------------
-
-ResourceManager<usint> main_resource_manager;
-
-PlatformShape* readShape(const string& _path, const char* _resource_label) {
-	FILE* _file = main_filesystem.getExternalFile(_path.c_str());
-	if (!_file) {
-		logEvent(Logger::LOG_ERROR,
-				("Podany plik " + _path + " nie istnieje!").c_str());
-		return NULL;
-	}
-	PlatformShape* shape = readShape(_file, _resource_label);
-	//
-	main_filesystem.closeExternalFile();
-	return shape;
-}
-
-PlatformShape* readShape(FILE* _file, const char* _resource_label) {
-	if (!_file) {
-		logEvent(Logger::LOG_ERROR, "Podany obiekt nie istnieje!");
-		return NULL;
-	}
-	PlatformShape* shape = new PlatformShape(_file, _resource_label);
-	main_resource_manager.addResource(shape);
-	return shape;
-}
-//---------------------------------------
-
 Platform::Platform(float _x, float _y, float _w, float _h, const Color& _col,
 		usint _state) :
 		Body(_x, _y, _w, _h),
@@ -106,7 +78,7 @@ void Platform::drawBorder() {
 	glColor4ub(col.r, col.g, col.b, col.a);
 	glLineWidth(3);
 	if (border[0] && border[1] && border[2] && border[3]) {
-		glBegin(GL_LINE_LOOP);
+		glBegin (GL_LINE_LOOP);
 		glVertex2f(x, y);
 		glVertex2f(x + w, y);
 		glVertex2f(x + w, y + h);
@@ -114,7 +86,7 @@ void Platform::drawBorder() {
 		glVertex2f(x, y);
 		glEnd();
 	} else {
-		glBegin(GL_LINES);
+		glBegin (GL_LINES);
 		if (border[pEngine::UP]) {
 			glVertex2f(x, y);
 			glVertex2f(x + w, y);
@@ -157,7 +129,7 @@ void Platform::drawObject(Window*) {
 		 *  Proste!
 		 */
 		case SIMPLE:
-			glBegin(GL_LINES);
+			glBegin (GL_LINES);
 			if (w > h) {
 				for (usint i = 0; i < w / 10; ++i) {
 					glVertex2f(x + i * 10, y + h);

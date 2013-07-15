@@ -85,9 +85,9 @@ void MessageRenderer::addMessage(const Message& msg) {
 }
 
 void MessageRenderer::drawBorder(Window* _window) {
-	glPushAttrib(GL_ENABLE_BIT);
+	glPushAttrib (GL_ENABLE_BIT);
 	glLineStipple(1, 0xAAAA);
-	glEnable(GL_LINE_STIPPLE);
+	glEnable (GL_LINE_STIPPLE);
 	oglWrapper::drawRect(SPACES, _window->getBounds()->y - height + SPACES,
 			_window->getBounds()->x - SPACES * 2, height - SPACES * 2,
 			border_color, closed ?
@@ -174,7 +174,7 @@ void MessageRenderer::drawIntroMessage(Window* _window) {
 	if (!title.isAnim() && !text.isAnim()) {
 		if (background->getState() == IntroBackground::PAUSE) {
 			glText t(oglWrapper::YELLOW, "Aby kontynuowac wcisnij [SPACJE]!",
-					GLUT_BITMAP_HELVETICA_18, 18);
+			GLUT_BITMAP_HELVETICA_18, 18);
 			t.printText(_window->getBounds()->y / 2 - t.getScreenLength() / 2,
 					90);
 		} else {

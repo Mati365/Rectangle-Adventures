@@ -8,6 +8,7 @@
 #ifndef SCREENS_HPP_
 #define SCREENS_HPP_
 #include "../../Engine/Graphics/Engine.hpp"
+
 #include "../Gameplay.hpp"
 
 using namespace Engine;
@@ -48,8 +49,8 @@ namespace GameScreen {
 	 * Wczytywanie ekranów musi być
 	 * PO wczytaniu systemu plików!
 	 */
-	extern void loadScreens();
-	extern void unloadScreens();
+	void loadScreens();
+	void unloadScreens();
 
 	/////////////////////
 
@@ -108,6 +109,17 @@ namespace GameScreen {
 
 		private:
 			void createMenuEntries();
+	};
+	/**
+	 * Splash o autorze ;>
+	 */
+	struct SplashInfo {
+			char* text;
+			usint timer;
+			SplashInfo* next;
+	};
+	class Splash: public Game {
+
 	};
 }
 

@@ -49,11 +49,11 @@ void MapRenderer::catchEvent(const Event& _event) {
 				msg.catchEvent(_event);
 			} else {
 				if (_event.key == 'w') {
-					hero->jump(16.f);
+					hero->jump(10.f);
 				} else if (_event.key == 'a') {
-					hero->move(-5.f, 0.f);
+					hero->move(-2.f, 0.f);
 				} else if (_event.key == 'd') {
-					hero->move(5.f, 0.f);
+					hero->move(2.f, 0.f);
 				}
 			}
 			break;
@@ -86,7 +86,7 @@ void MapRenderer::setHero(Character* _hero) {
 }
 
 void MapRenderer::drawObject(Window* _window) {
-	glEnable(GL_SCISSOR_TEST);
+	glEnable (GL_SCISSOR_TEST);
 	if (hud_enabled) {
 		glScissor(0, msg.getHeight(), _window->getBounds()->x,
 				_window->getBounds()->y - msg.getHeight());

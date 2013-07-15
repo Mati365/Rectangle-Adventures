@@ -65,15 +65,21 @@ class ParticleEmitter: public Renderer {
 	public:
 		ParticleEmitter(const Rect<float>&, usint);
 
+		virtual void drawObject(Window*);
+
+		/**
+		 * Pozycja w obiekcie, na którym jest
+		 * focus
+		 */
 		void setPosInBody(const Vector<float>& _pos) {
 			pos_in_body = _pos;
 		}
-		void setEmitCount(usint);
-		virtual void drawObject(Window*);
-
 		void setFocus(Rect<float>* _focus) {
 			focus = _focus;
 		}
+
+		void setEmitCount(usint);
+
 		Rect<float>* getFocus() const {
 			return focus;
 		}

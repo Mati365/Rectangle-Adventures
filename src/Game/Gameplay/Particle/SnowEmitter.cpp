@@ -11,6 +11,9 @@ SnowEmitter::SnowEmitter(const Rect<float>& _pos) :
 		ParticleEmitter(_pos, 40) {
 }
 
+/**
+ * Rysowanie pojedynczej cząsteczki..
+ */
 void SnowEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 
@@ -30,12 +33,15 @@ void SnowEmitter::drawParticle(usint _index, Window* _window) {
 	}
 }
 
+/**
+ * Tworzenie cząsteczki..
+ */
 void SnowEmitter::createNewParticle(Window* _window) {
 	for (usint i = 0; i < getIntRandom(2, 30); ++i) {
 		Particle part(pos, getIntRandom(10, 20), getIntRandom(50, 200),
 				oglWrapper::GRAY);
 
-		part.velocity.y = getIntRandom(150, 350) / 100;
+		part.velocity.y = getIntRandom(150, 350) / 150;
 		part.pos.x = pos.x + getIntRandom(-100, (int) pos.w + 100);
 
 		particles.push_back(part);

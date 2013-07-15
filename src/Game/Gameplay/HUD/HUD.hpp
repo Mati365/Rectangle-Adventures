@@ -14,7 +14,6 @@
 using namespace GUI;
 
 #define SPACES 5 // Odstępy między ramką a krawędzią okna
-
 /**
  * Tło intra np. mapa, która musi być
  * zastopowana!

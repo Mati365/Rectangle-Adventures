@@ -31,6 +31,10 @@ MapINFO* loadMap(const char* path) {
 	return map;
 }
 
+bool readMob(FILE*) {
+	return true;
+}
+
 ///////////////////////////////////////
 
 MapINFO::MapINFO(const char* _label) :
@@ -131,7 +135,7 @@ bool MapINFO::load(FILE* map) {
 	if (physics) {
 		delete physics;
 	}
-	physics = new pEngine(bounds, 1.f);
+	physics = new pEngine(bounds, 0.4f);
 	for (auto iter = objects.begin(); iter != objects.end(); ++iter) {
 		physics->insert(*iter);
 	}

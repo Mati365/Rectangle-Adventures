@@ -11,6 +11,9 @@
 
 using namespace Engine;
 
+/**
+ * Zdarzenie okna!
+ */
 class Event {
 	public:
 		enum {

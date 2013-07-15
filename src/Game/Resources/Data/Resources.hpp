@@ -21,27 +21,42 @@ using namespace Physics;
 using namespace Filesystem;
 
 /////////////////////////// Główny system plików gry
+
 #define FILESYSTEM_PACKAGE "filesystem.vfs"
 #define FILESYSTEM_AUTHOR  "mateusz"
 
 extern Package main_filesystem;
+extern ResourceManager<usint> main_resource_manager;
+
 /**
  * Sprawdzenie autora pliku!!
  */
-extern bool isFilesystemFake();
+bool isFilesystemFake();
 
 ///////////////////////////
 
 class MapINFO;
-
+class PlatformShape;
+/**
+ * Wczytywanie mapy!
+ */
 bool loadMap(const char*, MapINFO*);
 MapINFO* loadMap(const char*);
 
-///////////////////////////
+/**
+ * Wczytywanie kształtu!
+ */
+PlatformShape* readShape(const string&, const char*);
+PlatformShape* readShape(FILE*, const char*);
 
+/**
+ * Wczytywanie Mob'a
+ */
+bool readMob(FILE*);
+
+///////////////////////////
 class Platform;
 class Character;
-class PlatformShape;
 class MapINFO: public Resource<usint> {
 	public:
 		pEngine* physics;

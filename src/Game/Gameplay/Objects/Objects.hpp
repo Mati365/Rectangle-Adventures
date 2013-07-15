@@ -24,16 +24,6 @@ using namespace Physics;
 #define MAX_LIVES 6
 #define MAX_SCORE 500
 
-//------------------------
-
-class PlatformShape;
-PlatformShape* readShape(const string&, const char*);
-PlatformShape* readShape(FILE*, const char*);
-
-extern ResourceManager<usint> main_resource_manager;
-
-//------------------------ Platforma kwadratowa - szybki render
-
 class Platform: public Body, public Cloneable {
 	public:
 		enum Type {

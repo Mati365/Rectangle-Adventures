@@ -63,14 +63,16 @@ bool ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 	if (_type == GUN) {
 		_object = new Gun(physics, _x, _y, 32, textures[_type],
 				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-						"bullet")), 80);
+						"bullet")), 140);
+		_object->setState(Body::STATIC);
 		/**
 		 *
 		 */
 	} else if (_type == GREEN_GUN) {
 		_object = new Gun(physics, _x, _y, 32, textures[_type],
 				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-						"bullet_green")), 40);
+						"bullet_green")), 60);
+		_object->setState(Body::STATIC);
 		/**
 		 *
 		 */

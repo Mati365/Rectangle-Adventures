@@ -9,7 +9,7 @@
 //////////////////// Bullet
 
 void Bullet::drawObject(Window*) {
-	velocity.y = -5.f;
+	velocity.y = -2.5f;
 	flight_height += -velocity.y;
 	if (flight_height >= max_flight_height) {
 		destroyed = true;

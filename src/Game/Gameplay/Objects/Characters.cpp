@@ -33,7 +33,7 @@ Character::Character(const string& _nick, float _x, float _y,
 		//
 		source_color(col),
 		actual_anim_time(0),
-		anim_time(5),
+		anim_time(9),
 		actual_cycles(0),
 		anim_cycles(8),
 		//
@@ -104,7 +104,7 @@ void Character::move(float x_speed, float y_speed) {
 	if ((x_speed > 0 && velocity.x < 0) || (x_speed < 0 && velocity.x > 0)) {
 		velocity.x = 0;
 	}
-	if (velocity.x >= 6.f || velocity.x <= -6.f) {
+	if (velocity.x >= 4.f || velocity.x <= -4.f) {
 		return;
 	}
 	velocity.x += x_speed;

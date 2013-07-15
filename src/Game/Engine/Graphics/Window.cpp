@@ -4,8 +4,6 @@
  *  Created on: 23-02-2013
  *      Author: mati
  */
-#include <GL/glu.h>
-
 #include "../../Tools/Logger.hpp"
 #include "../../Gameplay/Screens/Screens.hpp"
 
@@ -14,7 +12,7 @@ using namespace Gameplay;
 using namespace GameScreen;
 using namespace GUI;
 
-#define FPS 17
+#define FPS 9
 
 bool Engine::window_opened = true;
 
@@ -128,16 +126,16 @@ bool Window::setupOpenGL() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	glEnable(GL_SCISSOR_TEST);
-	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);
+	glEnable (GL_SCISSOR_TEST);
+	glEnable (GL_TEXTURE_2D);
+	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glViewport(0, 0, bounds.x, bounds.y);
-	glMatrixMode(GL_PROJECTION);
+	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, bounds.x, bounds.y, 0, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
+	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity();
 
 	if (!GL_ARB_vertex_shader || !GL_ARB_fragment_shader) {

@@ -25,7 +25,7 @@ void SnailAI::getCollision(pEngine* physics, usint dir, Body* body) {
 		return;
 	}
 	if (((dir == pEngine::LEFT && character->velocity.x > 0)
-					|| (dir == pEngine::RIGHT && character->velocity.x < 0))) {
+			|| (dir == pEngine::RIGHT && character->velocity.x < 0))) {
 		speed = -speed;
 	}
 }

@@ -8,6 +8,32 @@
 
 #include "../../Tools/Logger.hpp"
 
+//---------------------------------------
+
+PlatformShape* readShape(const string& _path, const char* _resource_label) {
+	FILE* _file = main_filesystem.getExternalFile(_path.c_str());
+	if (!_file) {
+		logEvent(Logger::LOG_ERROR,
+				("Podany plik " + _path + " nie istnieje!").c_str());
+		return NULL;
+	}
+	PlatformShape* shape = readShape(_file, _resource_label);
+	//
+	main_filesystem.closeExternalFile();
+	return shape;
+}
+
+PlatformShape* readShape(FILE* _file, const char* _resource_label) {
+	if (!_file) {
+		logEvent(Logger::LOG_ERROR, "Podany obiekt nie istnieje!");
+		return NULL;
+	}
+	PlatformShape* shape = new PlatformShape(_file, _resource_label);
+	main_resource_manager.addResource(shape);
+	return shape;
+}
+//---------------------------------------
+
 PlatformShape::PlatformShape(FILE* _file, const char* _label) :
 		Resource<usint>(_label),
 		id(0),
@@ -38,7 +64,7 @@ bool PlatformShape::load(FILE* _file) {
 	// Odczyt wraz z kompilacją listy!
 	glNewList(id, GL_COMPILE);
 	glLineWidth(2);
-	glBegin(GL_LINE_STRIP);
+	glBegin (GL_LINE_STRIP);
 	while (line != size) {
 		char type = ' ';
 		fscanf(_file, "%c", &type);

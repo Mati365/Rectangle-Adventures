@@ -7,7 +7,7 @@
 #include "Fonts.hpp"
 
 glText::glText(const Color& _col, const string& _str, void* _font =
-		GLUT_BITMAP_TIMES_ROMAN_10, usint _height = 10) :
+GLUT_BITMAP_TIMES_ROMAN_10, usint _height = 10) :
 		col(_col),
 		str(_str),
 		font(_font),

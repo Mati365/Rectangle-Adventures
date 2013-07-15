@@ -90,74 +90,77 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 							&& !IS_SET(_bodies[j]->state, Body::STATIC)
 							&& !IS_SET(_bodies[i]->state, Body::STATIC))
 					|| (IS_SET(_bodies[i]->state, Body::STATIC)
-							&& IS_SET(_bodies[j]->state, Body::STATIC))){
-					continue;
-				}
-				/**
-				 * Kolizje GĂłra/DĂłĹ‚
-				 */
-				usint horizont_side = checkHorizontalCollision(_bodies[i],
-						_bodies[j]);
-				if (horizont_side != NONE) {
-					if (!IS_SET(_bodies[i]->state, Body::HIDDEN)
-							&& !IS_SET(_bodies[j]->state, Body::HIDDEN)) {
-						if (horizont_side == DOWN) {
-							/**
-							 * DĂ“Ĺ�
-							 */
-							_bodies[i]->y = _bodies[j]->y - _bodies[i]->h + gravity_speed;
-							//_bodies[i]->x = _bodies[j]->velocity.x;
-							/**
-							 *
-							 */
-							if (abs(_bodies[i]->velocity.y) * 0.5f
-									< gravity_speed) {
-								_bodies[i]->velocity.y = _bodies[j]->velocity.y;
-							} else {
-								_bodies[i]->velocity.y = -_bodies[i]->velocity.y
-								* 0.5f + _bodies[j]->velocity.y
-								- (_bodies[j]->velocity.y < 0 ?
-										gravity_speed : -gravity_speed);
-							}
+							&& IS_SET(_bodies[j]->state, Body::STATIC))) {
+				continue;
+			}
+			/**
+			 * Kolizje GĂłra/DĂłĹ‚
+			 */
+			usint horizont_side = checkHorizontalCollision(_bodies[i],
+					_bodies[j]);
+			if (horizont_side != NONE) {
+				if (!IS_SET(_bodies[i]->state, Body::HIDDEN)
+						&& !IS_SET(_bodies[j]->state, Body::HIDDEN)) {
+					if (horizont_side == DOWN) {
+						/**
+						 * DĂ“Ĺ�
+						 */
+						_bodies[i]->y = _bodies[j]->y - _bodies[i]->h
+								+ gravity_speed;
+						//_bodies[i]->x = _bodies[j]->velocity.x;
+						/**
+						 *
+						 */
+						if (abs(_bodies[i]->velocity.y) * 0.5f
+								< gravity_speed) {
+							_bodies[i]->velocity.y = _bodies[j]->velocity.y;
 						} else {
-							/**
-							 * GĂ“RA
-							 */
-							_bodies[i]->y = _bodies[j]->y + _bodies[j]->h
-							- _bodies[i]->velocity.y + gravity_speed;
-							_bodies[i]->velocity.y = 0;
+							_bodies[i]->velocity.y = -_bodies[i]->velocity.y
+									* 0.5f + _bodies[j]->velocity.y
+									- (_bodies[j]->velocity.y < 0 ?
+											gravity_speed : -gravity_speed);
 						}
+					} else {
+						/**
+						 * GĂ“RA
+						 */
+						_bodies[i]->y = _bodies[j]->y + _bodies[j]->h
+								- _bodies[i]->velocity.y + gravity_speed;
+						_bodies[i]->velocity.y = 0;
 					}
-					_bodies[i]->catchCollision(this, horizont_side, _bodies[j]);
 				}
-				/**
-				 * Kolizje Lewo
-				 */
-				usint vertical_side = checkVerticalCollision(_bodies[i],
-						_bodies[j]);
-				if (vertical_side != NONE) {
-					if (!IS_SET(_bodies[i]->state, Body::HIDDEN)
-							&& !IS_SET(_bodies[j]->state, Body::HIDDEN)) {
-						_bodies[i]->velocity.x = -_bodies[i]->velocity.x / 2;
-					}
-					_bodies[i]->catchCollision(this, vertical_side, _bodies[j]);
+				_bodies[i]->catchCollision(this, horizont_side, _bodies[j]);
+			}
+			/**
+			 * Kolizje Lewo
+			 */
+			usint vertical_side = checkVerticalCollision(_bodies[i],
+					_bodies[j]);
+			if (vertical_side != NONE) {
+				if (!IS_SET(_bodies[i]->state, Body::HIDDEN)
+						&& !IS_SET(_bodies[j]->state, Body::HIDDEN)) {
+					_bodies[i]->velocity.x = -_bodies[i]->velocity.x / 2;
 				}
+				_bodies[i]->catchCollision(this, vertical_side, _bodies[j]);
 			}
 		}
 	}
+}
 
-			/**
-			 * Sprawdzenie kolizji w poziomie!
-			 */
+/**
+ * Sprawdzenie kolizji w poziomie!
+ */
 usint pEngine::checkVerticalCollision(Body* _body, Body* _body2) {
 	if (_body2->x + _body2->w <= _body->x
-			&& moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body, _body2)) {
+			&& moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body,
+					_body2)) {
 		return LEFT;
 		/**
 		 *
 		 */
 	} else if (_body2->x >= _body->x + _body->w
-			&& moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body, _body2)) {
+			&& moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body,
+					_body2)) {
 		/**
 		 *
 		 */
