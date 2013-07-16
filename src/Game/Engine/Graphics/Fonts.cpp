@@ -12,6 +12,7 @@ GLUT_BITMAP_TIMES_ROMAN_10, usint _height = 10) :
 		str(_str),
 		font(_font),
 		height(_height),
+		text_lines(1),
 		anim(false),
 		hidden(false),
 		actual_anim_time(0),
@@ -30,13 +31,13 @@ void glText::setRenderLength(usint _length) {
 
 void glText::setString(const string& _str, int _render_length) {
 	str = _str;
+	actual_text_pos = 0;
 	updateScreenLength();
 	if (_render_length != -1) {
 		anim = true;
 	} else {
 		anim = false;
 	}
-	actual_text_pos = 0;
 }
 
 usint glText::getScreenLength() {
@@ -60,7 +61,7 @@ void glText::printText(float _x, float _y) {
 		}
 	}
 
-	glColor3ub(col.r, col.g, col.b);
+	glColor4ub(col.r, col.g, col.b, col.a);
 	glRasterPos2f(_x, _y);
 	for (usint i = 0; i < (!anim ?
 			str.length() : actual_text_pos); ++i) {

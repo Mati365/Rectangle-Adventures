@@ -9,7 +9,7 @@
 using namespace Gameplay;
 
 ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, bool _draw_quad,
-		MapINFO* _map) :
+	MapINFO* _map) :
 		map(_map),
 		cam(_target),
 		ratio(_ratio),
@@ -39,7 +39,8 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	glPushMatrix();
 	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
 	if (draw_quad) {
-		physics->getQuadTree()->drawObject(NULL);
+		physics->getQuadTree()->drawObject(
+		NULL);
 	}
 	for (usint i = 0; i < list->size(); ++i) {
 		if (IS_SET((*list)[i]->state, Body::HIDDEN)

@@ -96,14 +96,22 @@ namespace oglWrapper {
 	/**
 	 * Shadery!
 	 */
-	extern GLuint createShader(GLuint, const char*);
+	extern GLuint createShader(GLuint, FILE*, size_t);
 
 	class Shader {
 		private:
 			GLuint program_object, vertex_shader, fragment_shader;
 
 		public:
-			Shader(const char*, const char*);
+			Shader() :
+					program_object(0),
+					vertex_shader(0),
+					fragment_shader(0) {
+			}
+
+			Shader(FILE*, size_t, FILE*, size_t);
+
+			void loadShader(FILE*, size_t, FILE*, size_t);
 
 			GLuint getShaderProgram() const {
 				return program_object;
@@ -132,7 +140,6 @@ namespace oglWrapper {
 
 		protected:
 			void linkShader();
-			void loadShader(const char*, const char*);
 	};
 }
 

@@ -30,7 +30,7 @@ class Bullet: public Character {
 
 	public:
 		Bullet(float _x, float _y, PlatformShape* _shape,
-				usint _max_flight_height) :
+			usint _max_flight_height) :
 				Character("", _x, _y, _shape, Character::BULLET),
 				//
 				max_flight_height(_max_flight_height),
@@ -58,7 +58,7 @@ class Gun: public IrregularPlatform {
 
 	public:
 		Gun(pEngine*, float, float, float, PlatformShape*, PlatformShape*,
-				usint);
+			usint);
 
 		virtual void drawObject(Window*);
 

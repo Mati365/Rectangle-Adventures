@@ -15,13 +15,12 @@ using namespace oglWrapper;
 
 //--------------------------
 
-GLuint oglWrapper::createShader(GLuint type, const char* path) {
-	FILE* file = fopen(path, "r");
+GLuint oglWrapper::createShader(GLuint type, FILE* file, size_t length) {
 	if (!file) {
 		logEvent(Logger::LOG_ERROR, "Nie znaleziono pliku shadera!");
 		return 0;
 	}
-	const GLchar* source = IO::getFileContent(file);
+	const GLchar* source = IO::getFileContent(file, length);
 	GLint len = IO::getFileLength(file);
 	GLuint shader_id = glCreateShader(type);
 
@@ -46,19 +45,21 @@ GLuint oglWrapper::createShader(GLuint type, const char* path) {
 
 //--------------------------
 
-Shader::Shader(const char* _vertex_path, const char* _fragment_path) {
-	loadShader(_vertex_path, _fragment_path);
-	linkShader();
+Shader::Shader(FILE* _vertex, size_t _vertex_length, FILE* _fragment,
+	size_t _fragment_length) {
+	loadShader(_vertex, _vertex_length, _fragment, _fragment_length);
 }
 
-/**
- * Wczytywanie shaderu!
- */
-
-void Shader::loadShader(const char* _vertex_path, const char* _fragment_path) {
+void Shader::loadShader(FILE* _vertex, size_t _vertex_length, FILE* _fragment,
+	size_t _fragment_length) {
 	program_object = glCreateProgram();
-	vertex_shader = createShader(GL_VERTEX_SHADER, _vertex_path);
-	fragment_shader = createShader(GL_FRAGMENT_SHADER, _fragment_path);
+	vertex_shader = createShader(
+	GL_VERTEX_SHADER,
+									_vertex, _vertex_length);
+	fragment_shader = createShader(
+	GL_FRAGMENT_SHADER,
+									_fragment, _fragment_length);
+	linkShader();
 }
 
 /**
@@ -85,7 +86,9 @@ void Shader::setUniform1f(const char* name, float value) {
 }
 
 void Shader::setUniform4fv(const char* name, float* values, size_t count) {
-	glUniform4fv(glGetUniformLocation(program_object, name), count, values);
+	glUniform4fv(
+	glGetUniformLocation(program_object, name),
+					count, values);
 }
 
 /**
@@ -106,4 +109,6 @@ void Shader::linkShader() {
 }
 
 Shader::~Shader() {
+	glUseProgram(0);
+	glDeleteProgram(program_object);
 }

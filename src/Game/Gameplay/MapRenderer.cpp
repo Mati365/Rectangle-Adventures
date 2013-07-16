@@ -17,22 +17,16 @@ MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 		msg(50, Color(0, 128, 255), Color(255, 255, 255), this),
 		hero(dynamic_cast<Character*>(_hero)),
 		hud_enabled(true) {
-	/*
-	 msg.addMessage(
-	 MessageRenderer::Message("Poziom 1",
-	 "Wracawszy z roboty twoj pojazd kosmiczny odmowil posluszenstwa i$spadl na Ziemie. Twoim zadaniem jest przetrwanie.",
-	 NULL));
-	 */
 }
 
 /**
  * Dodawanie tła gry!
  */
 ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
-		Body* _body) {
+	Body* _body) {
 	if (map->physics) {
-		ParalaxRenderer* renderer = new ParalaxRenderer(_body, _ratio, false,
-				_paralax);
+		ParalaxRenderer* renderer = new ParalaxRenderer(
+				_body, _ratio, false, _paralax);
 		paralax_background.push_front(renderer);
 		return renderer;
 	}
@@ -88,7 +82,8 @@ void MapRenderer::setHero(Character* _hero) {
 void MapRenderer::drawObject(Window* _window) {
 	glEnable (GL_SCISSOR_TEST);
 	if (hud_enabled) {
-		glScissor(0, msg.getHeight(), _window->getBounds()->x,
+		glScissor(
+				0, msg.getHeight(), _window->getBounds()->x,
 				_window->getBounds()->y - msg.getHeight());
 
 	}

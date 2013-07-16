@@ -12,6 +12,7 @@
 #include <deque>
 
 #include "IO.hpp"
+
 #include "../../Tools/Logger.hpp"
 
 #define BUILD 10
@@ -29,6 +30,7 @@ typedef unsigned short int usint;
  * [ header ] [     dane     ] [ pointery ]
  */
 namespace Filesystem {
+
 	/**
 	 * Interfejs serializacji obiektów!
 	 * TO NIE PLIK ARCHIWUM!!
@@ -131,6 +133,7 @@ namespace Filesystem {
 
 		protected:
 			FILE* file;
+			char* file_path;
 			size_t length;
 			/**
 			 *
@@ -152,7 +155,7 @@ namespace Filesystem {
 			 * pliku NA RAZ w 2 oddzielnych funkcjach
 			 * trzeba resetować wskaźnik pliku!
 			 */
-			FILE* getExternalFile(const char*);
+			FILE* getExternalFile(const char*, size_t*);
 			void closeExternalFile();
 
 			bool edit(usint, const char*, FilePackage*);
@@ -166,6 +169,10 @@ namespace Filesystem {
 
 			PointerStack* getPointerStack() {
 				return &pointer_stack;
+			}
+
+			char* const getFilePath() const {
+				return file_path;
 			}
 
 			FILE* getFile() {
@@ -184,6 +191,8 @@ namespace Filesystem {
 
 			~Package() {
 				close();
+				//
+				delete file_path;
 			}
 
 		private:

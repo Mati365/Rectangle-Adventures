@@ -118,8 +118,10 @@ class IO {
 		/**
 		 *
 		 */
-		static char* getFileContent(FILE* file) {
-			size_t len = getFileLength(file);
+		static char* getFileContent(FILE* file, size_t len) {
+			if (len == 0) {
+				len = getFileLength(file);
+			}
 			//
 			char* content = new char[len];
 			fread(content, sizeof(char), len, file);

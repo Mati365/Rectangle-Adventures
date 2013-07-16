@@ -54,31 +54,44 @@ void ObjectFactory::putTexture(usint id, PlatformShape* shape) {
  * Generowanie obiektu!
  */
 bool ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
-		float _h, PlatformShape* _shape) {
+	float _h, PlatformShape* _shape) {
 	if (physics == NULL) {
 		return false;
 	}
 	//
 	Platform* _object = NULL;
 	if (_type == GUN) {
-		_object = new Gun(physics, _x, _y, 32, textures[_type],
+		_object = new Gun(
+				physics,
+				_x,
+				_y,
+				32,
+				textures[_type],
 				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-						"bullet")), 140);
+						"bullet")),
+				140);
 		_object->setState(Body::STATIC);
 		/**
 		 *
 		 */
 	} else if (_type == GREEN_GUN) {
-		_object = new Gun(physics, _x, _y, 32, textures[_type],
+		_object = new Gun(
+				physics,
+				_x,
+				_y,
+				32,
+				textures[_type],
 				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-						"bullet_green")), 60);
+						"bullet_green")),
+				60);
 		_object->setState(Body::STATIC);
 		/**
 		 *
 		 */
 	} else {
 		_object = new Character("", _x, _y, _shape == NULL ?
-				textures[_type] : _shape, Character::NONE);
+				textures[_type] : _shape,
+								Character::NONE);
 		Character* character = dynamic_cast<Character*>(_object);
 		switch (_type) {
 			case HEALTH: {

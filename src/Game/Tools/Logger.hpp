@@ -26,7 +26,7 @@ class Logger {
 
 	public:
 		static void logOperation(usint type, const string& log,
-				const string& file, usint row) {
+			const string& file, usint row) {
 			string buffer = "";
 			switch (type) {
 				case LOG_ERROR:

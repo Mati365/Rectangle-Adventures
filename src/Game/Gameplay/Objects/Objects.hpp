@@ -165,13 +165,14 @@ struct CharacterStatus: public Resource<usint> {
 		CharacterStatus(const char* _label) :
 				Resource<usint>(_label),
 				health(0),
-				shield_health(MAX_LIVES),
+				shield_health(
+				MAX_LIVES),
 				score(0),
 				shield(true) {
 		}
 
 		CharacterStatus(const char* _label, usint _health, bool _shield,
-				usint _shield_health, usint _score, float _x = 0, float _y = 0) :
+			usint _shield_health, usint _score, float _x = 0, float _y = 0) :
 				Resource<usint>(_label),
 				health(_health),
 				shield_health(_shield_health),

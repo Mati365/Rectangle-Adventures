@@ -94,16 +94,16 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 				continue;
 			}
 			/**
-			 * Kolizje GĂłra/DĂłĹ‚
+			 * Kolizje Góra/ Dół
 			 */
-			usint horizont_side = checkHorizontalCollision(_bodies[i],
-					_bodies[j]);
+			usint horizont_side = checkHorizontalCollision(
+					_bodies[i], _bodies[j]);
 			if (horizont_side != NONE) {
 				if (!IS_SET(_bodies[i]->state, Body::HIDDEN)
 						&& !IS_SET(_bodies[j]->state, Body::HIDDEN)) {
 					if (horizont_side == DOWN) {
 						/**
-						 * DĂ“Ĺ�
+						 * Dół
 						 */
 						_bodies[i]->y = _bodies[j]->y - _bodies[i]->h
 								+ gravity_speed;
@@ -122,7 +122,7 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 						}
 					} else {
 						/**
-						 * GĂ“RA
+						 * Góra
 						 */
 						_bodies[i]->y = _bodies[j]->y + _bodies[j]->h
 								- _bodies[i]->velocity.y + gravity_speed;
@@ -134,8 +134,8 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 			/**
 			 * Kolizje Lewo
 			 */
-			usint vertical_side = checkVerticalCollision(_bodies[i],
-					_bodies[j]);
+			usint vertical_side = checkVerticalCollision(
+					_bodies[i], _bodies[j]);
 			if (vertical_side != NONE) {
 				if (!IS_SET(_bodies[i]->state, Body::HIDDEN)
 						&& !IS_SET(_bodies[j]->state, Body::HIDDEN)) {
@@ -152,15 +152,15 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
  */
 usint pEngine::checkVerticalCollision(Body* _body, Body* _body2) {
 	if (_body2->x + _body2->w <= _body->x
-			&& moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body,
-					_body2)) {
+			&& moveAndCheck(
+					_body->velocity.x, -gravity_speed * 2, _body, _body2)) {
 		return LEFT;
 		/**
 		 *
 		 */
 	} else if (_body2->x >= _body->x + _body->w
-			&& moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body,
-					_body2)) {
+			&& moveAndCheck(
+					_body->velocity.x, -gravity_speed * 2, _body, _body2)) {
 		/**
 		 *
 		 */
@@ -190,7 +190,7 @@ usint pEngine::checkHorizontalCollision(Body* _body, Body* _body2) {
 }
 
 bool pEngine::moveAndCheck(float _x, float _y, Body* _body,
-		const Body* _body2) {
+	const Body* _body2) {
 	bool collision;
 
 	_body->x += _x;

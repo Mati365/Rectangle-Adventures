@@ -23,17 +23,22 @@ QuadTree::QuadTree(const Rect<float>& _rect, usint _level, usint _max_level) :
 	if (_level + 1 > _max_level) {
 		return;
 	}
-	NW = new QuadTree(Rect<float>(_rect.x, _rect.y, _rect.w / 2, _rect.h / 2),
-			level + 1, _max_level);
+	NW = new QuadTree(
+			Rect<float>(_rect.x, _rect.y, _rect.w / 2, _rect.h / 2), level + 1,
+			_max_level);
 	NE = new QuadTree(
-			Rect<float>(_rect.x + _rect.w / 2, _rect.y, _rect.w / 2,
-					_rect.h / 2), level + 1, _max_level);
+			Rect<float>(
+					_rect.x + _rect.w / 2, _rect.y, _rect.w / 2, _rect.h / 2),
+			level + 1, _max_level);
 	SW = new QuadTree(
-			Rect<float>(_rect.x, _rect.y + _rect.h / 2, _rect.w / 2,
-					_rect.h / 2), level + 1, _max_level);
+			Rect<float>(
+					_rect.x, _rect.y + _rect.h / 2, _rect.w / 2, _rect.h / 2),
+			level + 1, _max_level);
 	SE = new QuadTree(
-			Rect<float>(_rect.x + _rect.w / 2, _rect.y + _rect.h / 2,
-					_rect.w / 2, _rect.h / 2), level + 1, _max_level);
+			Rect<float>(
+					_rect.x + _rect.w / 2, _rect.y + _rect.h / 2, _rect.w / 2,
+					_rect.h / 2),
+			level + 1, _max_level);
 }
 
 /**
@@ -43,14 +48,19 @@ void QuadTree::drawObject(Window*) {
 	if (!NW && bodies.empty()) {
 		return;
 	}
-	oglWrapper::drawRect(rect.x, rect.y, rect.w, rect.h,
+	oglWrapper::drawRect(
+			rect.x, rect.y, rect.w, rect.h,
 			Color(level * 10, level * 10, level * 10, 255),
 			(MAX_LAYER - level) * 2);
 	if (NW) {
-		NW->drawObject(NULL);
-		NE->drawObject(NULL);
-		SW->drawObject(NULL);
-		SE->drawObject(NULL);
+		NW->drawObject(
+		NULL);
+		NE->drawObject(
+		NULL);
+		SW->drawObject(
+		NULL);
+		SE->drawObject(
+		NULL);
 	}
 }
 
@@ -115,7 +125,7 @@ void QuadTree::getLowestElements(deque<deque<Body*> >& _bodies) {
 }
 
 bool QuadTree::containsObject(const Rect<float>* quad,
-		const Rect<float>* body) {
+	const Rect<float>* body) {
 	if (body->x - OBJECT_MARGIN <= quad->x + quad->w
 			&& body->x + body->w + OBJECT_MARGIN >= quad->x
 			&& body->y - OBJECT_MARGIN <= quad->y + quad->h

@@ -12,9 +12,9 @@ using namespace GameScreen;
 
 Menu::Menu() :
 		Game("menu.txt"),
-		ver(oglWrapper::WHITE,
-				"Wersja: 0.5 alpha | Autor: Mateusz Baginski | email:cziken58@gmail.com",
-				GLUT_BITMAP_HELVETICA_12, 12) {
+		ver(oglWrapper::WHITE, "Wersja: 0.5 alpha | Autor: Mateusz Baginski | email:cziken58@gmail.com",
+		GLUT_BITMAP_HELVETICA_12,
+			12) {
 	lvl->enableHUD(false);
 	//
 	createMenuEntries();
@@ -26,22 +26,15 @@ Menu::Menu() :
 void Menu::createMenuEntries() {
 	// Dodawanie pojedynczych przycisków do listy obiektów!
 	entries.push_back(
-			new Button(Rect<float>(180, 50, 100, 40), "Menu akcji:", false));
-	entries.push_back(new Button(Rect<float>(180, 100, 100, 40), "Kontynuuj"));
-	entries.push_back(new Button(Rect<float>(180, 150, 100, 40), "Nowa gra"));
-	entries.push_back(new Button(Rect<float>(180, 200, 100, 40), "Koniec gry"));
-
-	// Napis pod mapą
-	Button* powered_by = new Button(Rect<float>(200, 510, 100, 40),
-			"Napisana w");
-	powered_by->setState(Body::STATIC);
-	powered_by->enableBorder(false);
-	entries.push_back(powered_by);
+			new Button(Rect<float>(110, 200, 100, 40), "Menu akcji:", false));
+	entries.push_back(new Button(Rect<float>(110, 250, 100, 40), "Kontynuuj"));
+	entries.push_back(new Button(Rect<float>(110, 300, 100, 40), "Nowa gra"));
+	entries.push_back(new Button(Rect<float>(110, 350, 100, 40), "Koniec gry"));
 
 	// Dodawanie listy obiektów do świata!
 	for (auto iter = entries.begin(); iter != entries.end(); ++iter) {
-		(*iter)->putCallback(Event::MOUSE_RELEASED,
-				dynamic_cast<Callback*>(this));
+		(*iter)->putCallback(
+				Event::MOUSE_RELEASED, dynamic_cast<Callback*>(this));
 		lvl->getPhysics()->insert(*iter);
 	}
 }
@@ -98,8 +91,9 @@ void Menu::drawObject(Window* window) {
 	if (lvl) {
 		lvl->drawObject(window);
 	}
-	ver.printText(WINDOW_WIDTH - ver.getScreenLength() - 10,
-	WINDOW_HEIGHT - ver.getFontHeight() - 2);
+	ver.printText(
+	WINDOW_WIDTH - ver.getScreenLength() - 10,
+					WINDOW_HEIGHT - ver.getFontHeight() - 2);
 }
 
 /**

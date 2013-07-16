@@ -14,7 +14,7 @@
 ///////////////////////////////////////
 
 bool loadMap(const char* path, MapINFO* map) {
-	FILE* __map = main_filesystem.getExternalFile(path);
+	FILE* __map = main_filesystem.getExternalFile(path, NULL);
 	if (!map->load(__map)) {
 		return false;
 	}
@@ -31,7 +31,15 @@ MapINFO* loadMap(const char* path) {
 	return map;
 }
 
-bool readMob(FILE*) {
+bool readMob(FILE* file) {
+	usint type;
+	Vector<float> pos;
+	char shape[255];
+
+	fscanf(file, "%hu %f %f %s\n", &type, &pos.x, &pos.y, shape);
+	//
+	ObjectFactory::getIstance(
+	NULL).createObject((ObjectFactory::Types) type, pos.x, pos.y, 0, 0, NULL);
 	return true;
 }
 
@@ -100,12 +108,7 @@ bool MapINFO::load(FILE* map) {
 	// Wczytywanie parametrów graficznych platform..
 	fscanf(map, "%hu\n", &size);
 	for (int i = 0; i < size; ++i) {
-		fscanf(map,
-				"%hu %hu %hu %hu %hu %hu %f %f %f %f %hu %f %f %f %f %hu %hu %hu %hu %hu %hu %s\n",
-				&border[0], &border[1], &border[2], &border[3], &type,
-				&repeat_movement, &max_distance.x, &max_distance.y, &velocity.x,
-				&velocity.y, &state, &rect.x, &rect.y, &rect.w, &rect.h, &col.r,
-				&col.g, &col.b, &col.a, &layer, &with_shape, shape);
+		fscanf(map, "%hu %hu %hu %hu %hu %hu %f %f %f %f %hu %f %f %f %f %hu %hu %hu %hu %hu %hu %s\n", &border[0], &border[1], &border[2], &border[3], &type, &repeat_movement, &max_distance.x, &max_distance.y, &velocity.x, &velocity.y, &state, &rect.x, &rect.y, &rect.w, &rect.h, &col.r, &col.g, &col.b, &col.a, &layer, &with_shape, shape);
 		//
 		Platform* platform = NULL;
 		/**
@@ -113,7 +116,10 @@ bool MapINFO::load(FILE* map) {
 		 */
 		if (with_shape) {
 			platform =
-					new IrregularPlatform(rect.x, rect.y, state,
+					new IrregularPlatform(
+							rect.x,
+							rect.y,
+							state,
 							dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 									shape)));
 			dynamic_cast<IrregularPlatform*>(platform)->fitToWidth(rect.w);
@@ -124,7 +130,9 @@ bool MapINFO::load(FILE* map) {
 		platform->layer = layer;
 
 		platform->setType(type);
-		platform->setMovingDir(velocity, max_distance, repeat_movement);
+		if (velocity.x != 0 || velocity.y != 0) {
+			platform->setMovingDir(velocity, max_distance, repeat_movement);
+		}
 		//
 		objects.push_back(platform);
 	}
@@ -145,10 +153,7 @@ bool MapINFO::load(FILE* map) {
 
 	fscanf(map, "%hu\n", &size);
 	for (int i = 0; i < size; ++i) {
-		fscanf(map, "%hu %f %f %s\n", &type, &pos.x, &pos.y, shape);
-		//
-		ObjectFactory::getIstance(NULL).createObject(
-				(ObjectFactory::Types) type, pos.x, pos.y, 0, 0, NULL);
+		readMob(map);
 	}
 	return true;
 }
@@ -161,7 +166,8 @@ void MapINFO::unload() {
 		delete objects[i];
 	}
 
-	ObjectFactory::getIstance(NULL).unloadObjects();
+	ObjectFactory::getIstance(
+	NULL).unloadObjects();
 	// Usuwanie kształtów! Woolne!
 	for (usint i = 0; i < resources.size(); ++i) {
 		main_resource_manager.deleteResource(i);

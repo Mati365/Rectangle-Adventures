@@ -40,10 +40,13 @@ namespace GameScreen {
 	 */
 	class Game;
 	class Menu;
+	class Splash;
 
 	extern Game* game; // okno gameplay
 	extern Menu* menu; // menu gry
-	extern Game* active_screen;
+	extern Splash* splash; // splash
+
+	extern Screen* active_screen;
 
 	/**
 	 * Wczytywanie ekranów musi być
@@ -77,7 +80,8 @@ namespace GameScreen {
 				if (lvl) {
 					delete lvl;
 				}
-				logEvent(Logger::LOG_INFO,
+				logEvent(
+						Logger::LOG_INFO,
 						"Usuwanie obiektów sceny zakończone sukcesem!");
 			}
 	};
@@ -111,15 +115,45 @@ namespace GameScreen {
 			void createMenuEntries();
 	};
 	/**
-	 * Splash o autorze ;>
+	 * Splash - początkowy czarny ekran
+	 * z tekstem o autorze.
+	 * Wykorzystany shader zanikania!
 	 */
-	struct SplashInfo {
+	class SplashInfo {
+		public:
 			char* text;
 			usint timer;
-			SplashInfo* next;
-	};
-	class Splash: public Game {
+			usint visible_time;
 
+			SplashInfo(const char* _text, usint _visible_time) :
+					text(Convert::getDynamicValue(_text)),
+					timer(0),
+					visible_time(_visible_time) {
+			}
+
+			~SplashInfo() {
+				if (text) {
+					delete[] text;
+				}
+			}
+	};
+
+	class Splash: public Screen {
+		protected:
+			deque<SplashInfo*> texts;
+			glText title;
+
+		public:
+			Splash();
+
+			void pushTitle(const char* _title, usint _visible_time) {
+				texts.push_front(new SplashInfo(_title, _visible_time));
+			}
+
+			virtual void catchEvent(const Event&);
+			virtual void drawObject(Window*);
+
+			~Splash();
 	};
 }
 

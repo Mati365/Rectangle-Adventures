@@ -4,14 +4,14 @@
  *  Created on: 23-02-2013
  *      Author: mati
  */
-#include <GL/glew.h>
-#include <GL/glut.h>
-
 #include "Game/Tools/Logger.hpp"
 
 //#define _ARCHIVER_
 
 #ifndef _ARCHIVER_
+#include <GL/glew.h>
+#include <GL/glut.h>
+
 #include "Game/Engine/Graphics/Engine.hpp"
 #include "Game/Resources/Data/Resources.hpp"
 //
@@ -33,12 +33,16 @@ int main(int argc, char **argv) {
 	glutInit(&argc, argv);
 	glewInit();
 	//
-	srand(time(NULL));
+	srand(time(
+	NULL));
 	if (isFilesystemFake()) {
 		logEvent(Logger::LOG_ERROR, "Plik archiwum gry nie jest autentyczny!");
 		return 1;
 	}
-	Engine::Window win(Vector<usint>(WINDOW_WIDTH, WINDOW_HEIGHT), "Gra");
+	Engine::Window win(Vector<usint>(
+	WINDOW_WIDTH,
+										WINDOW_HEIGHT),
+						"Gra");
 	win.init();
 #else
 	/**

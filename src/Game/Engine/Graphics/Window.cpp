@@ -19,7 +19,7 @@ bool Engine::window_opened = true;
 //
 
 void translateKeyEvent(Uint8* keystate, Uint8 key, char translated,
-		Event& event, Screen* renderer) {
+	Event& event, Screen* renderer) {
 	if (keystate[key]) {
 		event.key = translated;
 	}
@@ -37,7 +37,8 @@ Window::Window(const Vector<usint>& _bounds, const string& _title) :
 	if (!screen) {
 		return;
 	}
-	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_Init(
+	SDL_INIT_EVERYTHING);
 	SDL_WM_SetCaption(_title.c_str(), _title.c_str());
 }
 
@@ -45,11 +46,18 @@ void Window::init() {
 	loadScreens();
 	//
 	if (!menu) {
-		logEvent(Logger::LOG_INFO,
-				"Nastąpił problem podczas wczytywania menu.");
+		logEvent(
+				Logger::LOG_INFO, "Nastąpił problem podczas wczytywania menu.");
 		return;
 	}
-	active_screen = dynamic_cast<Game*>(menu);
+	active_screen = splash;
+	splash->pushTitle("cziken58 prezentuje..", 320);
+	splash->pushTitle("Przygody Prostokata", 490);
+	/**
+	 *
+	 */
+	Game* interactive_screen = NULL;
+
 	//
 	if (setupOpenGL()) {
 		logEvent(Logger::LOG_INFO, "Okno skonfigurowane sukcesem!");
@@ -61,15 +69,20 @@ void Window::init() {
 	Event key(Event::KEY_PRESSED);
 
 	while (window_opened) {
+		if (active_screen != interactive_screen) {
+			interactive_screen = dynamic_cast<Game*>(active_screen);
+		}
 		int frame_start = SDL_GetTicks();
 		/**
 		 *
 		 */
 		SDL_GetMouseState(&mouse.pos.x, &mouse.pos.y);
-		Camera* cam = active_screen->getMapRenderer()->getCamera();
-		//
-		mouse.pos.x += cam->pos.x;
-		mouse.pos.y += cam->pos.y;
+		if (interactive_screen) {
+			Camera* cam = interactive_screen->getMapRenderer()->getCamera();
+			//
+			mouse.pos.x += cam->pos.x;
+			mouse.pos.y += cam->pos.y;
+		}
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 				case SDL_MOUSEBUTTONUP:
@@ -100,12 +113,14 @@ void Window::init() {
 		if (frame_time <= FPS) {
 			frame_start = SDL_GetTicks();
 			//
-			SDL_Delay(FPS - frame_time);
+			SDL_Delay(
+			FPS - frame_time);
 		}
 		/**
 		 *
 		 */
-		Uint8 *keystate = SDL_GetKeyState(NULL);
+		Uint8 *keystate = SDL_GetKeyState(
+		NULL);
 		if (keystate[SDLK_ESCAPE]) {
 			window_opened = false;
 		}
@@ -127,7 +142,6 @@ bool Window::setupOpenGL() {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	glEnable (GL_SCISSOR_TEST);
-	glEnable (GL_TEXTURE_2D);
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

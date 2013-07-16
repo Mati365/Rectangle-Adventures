@@ -9,13 +9,14 @@
 using namespace GameScreen;
 
 // Aktywny ekran w grze
-Game* GameScreen::active_screen;
+Screen* GameScreen::active_screen;
 
 /**
  * Inicjacja dopiero po załadowaniu filesystem'u!
  */
 Game* GameScreen::game = NULL;
 Menu* GameScreen::menu = NULL;
+Splash* GameScreen::splash = NULL;
 
 /**
  * Wczytywanie
@@ -23,6 +24,7 @@ Menu* GameScreen::menu = NULL;
 void GameScreen::loadScreens() {
 	game = new Game("mapa.txt");
 	menu = new Menu();
+	splash = new Splash();
 }
 
 /**
@@ -34,5 +36,8 @@ void GameScreen::unloadScreens() {
 	}
 	if (menu) {
 		delete menu;
+	}
+	if (splash) {
+		delete splash;
 	}
 }

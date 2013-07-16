@@ -22,15 +22,29 @@ struct Func {
  * Deklaracje!!
  */
 enum {
-	SET_INTRO_TEXT,
-	LOAD_MAP,
-	CREATE_OBJECT
+	SET_INTRO_TEXT, LOAD_MAP, CREATE_OBJECT
 };
 
-Func funcs[] = {
-		{ SET_INTRO_TEXT, "SET_INTRO_TEXT", 2 },
-		{ LOAD_MAP, "LOAD_MAP", 2 },
-		{ CREATE_OBJECT, "CREATE_OBJECT", 3 },
-};
+Func funcs[] = { { SET_INTRO_TEXT, "SET_INTRO_TEXT", 1 }, {
+		LOAD_MAP, "LOAD_MAP", 1 }, { CREATE_OBJECT, "CREATE_OBJECT", 5 } };
 
+/**
+ * Interpreter!
+ * Wzorzec singleton!
+ */
+class Interpreter {
+	private:
+		Interpreter() {
+		}
+
+	public:
+		static Interpreter& getIstance() {
+			static Interpreter inter;
+			//
+			return inter;
+		}
+		/**
+		 * Interpretacja!
+		 */
+};
 #endif /* SCRIPT_HPP_ */

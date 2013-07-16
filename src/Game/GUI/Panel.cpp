@@ -13,7 +13,8 @@ using namespace GUI;
  */
 void Panel::drawObject(Window*) {
 	for (usint i = 0; i < objects.size(); ++i) {
-		objects[i]->drawObject(NULL);
+		objects[i]->drawObject(
+		NULL);
 	}
 }
 

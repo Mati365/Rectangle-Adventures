@@ -12,7 +12,7 @@ using namespace File;
  *  Przenoszenie zawartości z pliku do innego pliku!
  */
 bool File::moveBytes(FILE* source, FILE* destination, size_t buffer_size,
-		size_t source_length, size_t source_start_position) {
+	size_t source_length, size_t source_start_position) {
 	if (!source || !destination || buffer_size == 0 || source_length == 0) {
 		return false;
 	}

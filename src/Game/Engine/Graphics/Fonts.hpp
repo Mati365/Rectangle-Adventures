@@ -27,6 +27,7 @@ class glText {
 
 		usint height;
 		usint width;
+		usint text_lines;
 
 		bool anim;
 		bool hidden;
@@ -52,9 +53,14 @@ class glText {
 			return height;
 		}
 
+		usint getLinesOfText() const {
+			return text_lines;
+		}
+
 		bool isAnim() const {
 			return anim;
 		}
+
 		usint getRenderLength() const {
 			return actual_text_pos;
 		}
@@ -71,9 +77,14 @@ class glText {
 		 */
 		usint getScreenLength();
 		void updateScreenLength() {
+			text_lines = 1;
 			width = 0;
 			for (usint i = 0; i < str.length(); ++i) {
-				width += glutBitmapWidth(font, str[i]);
+				if (str[i] == NEWLINE_CHARACTER) {
+					text_lines++;
+				} else {
+					width += glutBitmapWidth(font, str[i]);
+				}
 			}
 		}
 

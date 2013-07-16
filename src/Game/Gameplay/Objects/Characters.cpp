@@ -24,7 +24,7 @@ bool CharacterStatus::load(FILE* _file) {
 //------------------------
 
 Character::Character(const string& _nick, float _x, float _y,
-		PlatformShape* _shape, usint _flag) :
+	PlatformShape* _shape, usint _flag) :
 		IrregularPlatform(_x, _y, true, _shape),
 		nick(Color(255, 255, 255), _nick, GLUT_BITMAP_HELVETICA_12, 12),
 		jumping(true),
@@ -141,7 +141,8 @@ void Character::drawObject(Window*) {
 		ai->drive();
 	}
 	drawHitAnimation();
-	IrregularPlatform::drawObject(NULL);
+	IrregularPlatform::drawObject(
+	NULL);
 	/**
 	 * Nieoptymalne rozwiązanie..
 	 * Za dużo push!
