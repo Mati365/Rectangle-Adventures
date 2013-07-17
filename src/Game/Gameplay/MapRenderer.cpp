@@ -25,8 +25,8 @@ MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
 	Body* _body) {
 	if (map->physics) {
-		ParalaxRenderer* renderer = new ParalaxRenderer(
-				_body, _ratio, false, _paralax);
+		ParalaxRenderer* renderer = new ParalaxRenderer(_body, _ratio, false,
+				_paralax);
 		paralax_background.push_front(renderer);
 		return renderer;
 	}
@@ -82,8 +82,7 @@ void MapRenderer::setHero(Character* _hero) {
 void MapRenderer::drawObject(Window* _window) {
 	glEnable (GL_SCISSOR_TEST);
 	if (hud_enabled) {
-		glScissor(
-				0, msg.getHeight(), _window->getBounds()->x,
+		glScissor(0, msg.getHeight(), _window->getBounds()->x,
 				_window->getBounds()->y - msg.getHeight());
 
 	}

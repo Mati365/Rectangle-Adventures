@@ -13,8 +13,7 @@
 PlatformShape* readShape(const string& _path, const char* _resource_label) {
 	FILE* _file = main_filesystem.getExternalFile(_path.c_str(), NULL);
 	if (!_file) {
-		logEvent(
-				Logger::LOG_ERROR,
+		logEvent(Logger::LOG_ERROR,
 				("Podany plik " + _path + " nie istnieje!").c_str());
 		return NULL;
 	}
@@ -39,8 +38,7 @@ PlatformShape::PlatformShape(FILE* _file, const char* _label) :
 		Resource<usint>(_label),
 		id(0),
 		bounds(0, 0) {
-	static int ID = 0;
-	id = glGenLists(++ID);
+	id = glGenLists(1);
 	if (!id) {
 		logEvent(Logger::LOG_ERROR, "Nie mogę zarejestrować tekstury!");
 		return;
@@ -79,7 +77,8 @@ bool PlatformShape::load(FILE* _file) {
 			case 'C': {
 				Color col;
 				//---
-				fscanf(_file, "%hu %hu %hu %hu\n", &col.r, &col.g, &col.b, &col.a);
+				fscanf(_file, "%hu %hu %hu %hu\n", &col.r, &col.g, &col.b,
+						&col.a);
 				glColor4ub(col.r, col.g, col.b, col.a);
 			}
 				break;

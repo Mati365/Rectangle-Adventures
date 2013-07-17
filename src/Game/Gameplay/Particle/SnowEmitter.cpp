@@ -24,9 +24,8 @@ void SnowEmitter::drawParticle(usint _index, Window* _window) {
 				- 255 * particle.life_duration / particle.max_life_duration;
 	}
 
-	oglWrapper::drawRect(
-			particle.pos.x, particle.pos.y, particle.size, particle.size,
-			particle.col, 1);
+	oglWrapper::drawRect(particle.pos.x, particle.pos.y, particle.size,
+			particle.size, particle.col, 1);
 
 	if (particle.life_duration > particle.max_life_duration
 			|| particle.col.a < 30) {
@@ -39,8 +38,7 @@ void SnowEmitter::drawParticle(usint _index, Window* _window) {
  */
 void SnowEmitter::createNewParticle(Window* _window) {
 	for (usint i = 0; i < getIntRandom(2, 30); ++i) {
-		Particle part(
-				pos, getIntRandom(10, 20), getIntRandom(50, 200),
+		Particle part(pos, getIntRandom(10, 20), getIntRandom(50, 200),
 				oglWrapper::GRAY);
 
 		part.velocity.y = getIntRandom(150, 350) / 150;

@@ -60,10 +60,9 @@ namespace Filesystem {
 			size_t data_length;
 
 			Header(const char* _author) :
+					author(Convert::getDynamicValue(_author)),
 					version(BUILD),
 					data_length(0) {
-				author = new char[strlen(_author)];
-				strcpy(author, _author);
 			}
 
 			virtual size_t getLength() {
@@ -104,7 +103,7 @@ namespace Filesystem {
 				return IO::stringLength(label) + sizeof(int);
 			}
 	};
-	/**
+	/**		Platform* platform = NULL;
 	 * Stos wskaźników w archiwum!
 	 */
 	class PointerStack: public FilePackage {
@@ -192,7 +191,7 @@ namespace Filesystem {
 			~Package() {
 				close();
 				//
-				delete file_path;
+				delete[] file_path;
 			}
 
 		private:

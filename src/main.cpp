@@ -41,21 +41,22 @@ int main(int argc, char **argv) {
 	}
 	Engine::Window win(Vector<usint>(
 	WINDOW_WIDTH,
-										WINDOW_HEIGHT),
-						"Gra");
+	WINDOW_HEIGHT), "Gra");
 	win.init();
 #else
 	/**
 	 * Example: ./archiver NAZWA_ARCHIWUM AUTOR plik1.txt plik2.txt
 	 */
-	if (argc == 1) {
+	if (argc == 1)
+	{
 		logEvent(Logger::LOG_ERROR, "Brak plików do spakowania!");
 		return 1;
 	}
 	logEvent(Logger::LOG_INFO, "Pakowanie plików..");
 	//
 	Package pack(argv[1], argv[2]);
-	for (long i = 3; i < argc; ++i) {
+	for (long i = 3; i < argc; ++i)
+	{
 		ExternalFile* file = new ExternalFile(argv[i]);
 		// Eksport!
 		pack.edit(Package::ARCH_WRITE, argv[i], file);

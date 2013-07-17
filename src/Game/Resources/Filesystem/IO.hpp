@@ -98,7 +98,7 @@ class IO {
 			}
 			int len;
 			fread(&len, sizeof(int), 1, file);
-			char* str = new char[len];
+			char* str = new char[len + 1];
 			memset(str, ' ', len);
 			fread(str, sizeof(char), len, file);
 			//
@@ -123,7 +123,7 @@ class IO {
 				len = getFileLength(file);
 			}
 			//
-			char* content = new char[len];
+			char* content = new char[len + 1];
 			fread(content, sizeof(char), len, file);
 			return content;
 		}

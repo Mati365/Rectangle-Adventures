@@ -54,11 +54,9 @@ void Shader::loadShader(FILE* _vertex, size_t _vertex_length, FILE* _fragment,
 	size_t _fragment_length) {
 	program_object = glCreateProgram();
 	vertex_shader = createShader(
-	GL_VERTEX_SHADER,
-									_vertex, _vertex_length);
+	GL_VERTEX_SHADER, _vertex, _vertex_length);
 	fragment_shader = createShader(
-	GL_FRAGMENT_SHADER,
-									_fragment, _fragment_length);
+	GL_FRAGMENT_SHADER, _fragment, _fragment_length);
 	linkShader();
 }
 
@@ -87,8 +85,7 @@ void Shader::setUniform1f(const char* name, float value) {
 
 void Shader::setUniform4fv(const char* name, float* values, size_t count) {
 	glUniform4fv(
-	glGetUniformLocation(program_object, name),
-					count, values);
+	glGetUniformLocation(program_object, name), count, values);
 }
 
 /**

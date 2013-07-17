@@ -96,8 +96,8 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 			/**
 			 * Kolizje Góra/ Dół
 			 */
-			usint horizont_side = checkHorizontalCollision(
-					_bodies[i], _bodies[j]);
+			usint horizont_side = checkHorizontalCollision(_bodies[i],
+					_bodies[j]);
 			if (horizont_side != NONE) {
 				if (!IS_SET(_bodies[i]->state, Body::HIDDEN)
 						&& !IS_SET(_bodies[j]->state, Body::HIDDEN)) {
@@ -134,8 +134,8 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 			/**
 			 * Kolizje Lewo
 			 */
-			usint vertical_side = checkVerticalCollision(
-					_bodies[i], _bodies[j]);
+			usint vertical_side = checkVerticalCollision(_bodies[i],
+					_bodies[j]);
 			if (vertical_side != NONE) {
 				if (!IS_SET(_bodies[i]->state, Body::HIDDEN)
 						&& !IS_SET(_bodies[j]->state, Body::HIDDEN)) {
@@ -152,15 +152,15 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
  */
 usint pEngine::checkVerticalCollision(Body* _body, Body* _body2) {
 	if (_body2->x + _body2->w <= _body->x
-			&& moveAndCheck(
-					_body->velocity.x, -gravity_speed * 2, _body, _body2)) {
+			&& moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body,
+					_body2)) {
 		return LEFT;
 		/**
 		 *
 		 */
 	} else if (_body2->x >= _body->x + _body->w
-			&& moveAndCheck(
-					_body->velocity.x, -gravity_speed * 2, _body, _body2)) {
+			&& moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body,
+					_body2)) {
 		/**
 		 *
 		 */

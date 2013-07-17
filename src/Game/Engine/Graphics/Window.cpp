@@ -4,6 +4,8 @@
  *  Created on: 23-02-2013
  *      Author: mati
  */
+#include <sys/time.h>
+
 #include "../../Tools/Logger.hpp"
 #include "../../Gameplay/Screens/Screens.hpp"
 
@@ -46,8 +48,8 @@ void Window::init() {
 	loadScreens();
 	//
 	if (!menu) {
-		logEvent(
-				Logger::LOG_INFO, "Nastąpił problem podczas wczytywania menu.");
+		logEvent(Logger::LOG_INFO,
+				"Nastąpił problem podczas wczytywania menu.");
 		return;
 	}
 	active_screen = splash;
@@ -69,10 +71,11 @@ void Window::init() {
 	Event key(Event::KEY_PRESSED);
 
 	while (window_opened) {
+		int frame_start = SDL_GetTicks();
+
 		if (active_screen != interactive_screen) {
 			interactive_screen = dynamic_cast<Game*>(active_screen);
 		}
-		int frame_start = SDL_GetTicks();
 		/**
 		 *
 		 */
@@ -102,23 +105,6 @@ void Window::init() {
 					break;
 			}
 		}
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glLoadIdentity();
-		active_screen->drawObject(this);
-		SDL_GL_SwapBuffers();
-		/**
-		 *
-		 */
-		int frame_time = SDL_GetTicks() - frame_start;
-		if (frame_time <= FPS) {
-			frame_start = SDL_GetTicks();
-			//
-			SDL_Delay(
-			FPS - frame_time);
-		}
-		/**
-		 *
-		 */
 		Uint8 *keystate = SDL_GetKeyState(
 		NULL);
 		if (keystate[SDLK_ESCAPE]) {
@@ -128,6 +114,18 @@ void Window::init() {
 		translateKeyEvent(keystate, SDLK_a, 'a', key, game);
 		translateKeyEvent(keystate, SDLK_d, 'd', key, game);
 		translateKeyEvent(keystate, SDLK_SPACE, '*', key, game);
+
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glLoadIdentity();
+		active_screen->drawObject(this);
+		SDL_GL_SwapBuffers();
+
+		int frame_time = SDL_GetTicks() - frame_start;
+		if (frame_time <= FPS) {
+			frame_start = SDL_GetTicks();
+			//
+			SDL_Delay(FPS - frame_time);
+		}
 	}
 	//
 	unloadScreens();
@@ -141,6 +139,7 @@ bool Window::setupOpenGL() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+	glDisable(GL_DEPTH_TEST);
 	glEnable (GL_SCISSOR_TEST);
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

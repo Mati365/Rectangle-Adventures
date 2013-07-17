@@ -76,7 +76,8 @@ namespace Physics {
 					elasticity(0),
 					weight(0),
 					flag(PLATFORM),
-					layer(STATIC_LAYER) {
+					layer(
+					STATIC_LAYER) {
 				x = 0;
 				y = 0;
 				w = 0;
@@ -140,6 +141,12 @@ namespace Physics {
 
 		public:
 			QuadTree(const Rect<float>&, usint, usint);
+
+			/**
+			 * Aktualizacja drzewa!
+			 * Nie kasowanie obeiktów!
+			 */
+			void update();
 
 			void insert(deque<Body*>*);
 			void insert(Body*);

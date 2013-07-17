@@ -92,7 +92,7 @@ bool MapINFO::load(FILE* map) {
 	usint type;
 	usint with_shape;
 	char shape[255];
-	usint border[4];
+	int border[4];
 
 	// Wczytywanie pozycji początkowej gracza
 	fscanf(map, "%f %f %f\n", &hero_bounds.x, &hero_bounds.y, &hero_bounds.w);
@@ -108,7 +108,12 @@ bool MapINFO::load(FILE* map) {
 	// Wczytywanie parametrów graficznych platform..
 	fscanf(map, "%hu\n", &size);
 	for (int i = 0; i < size; ++i) {
-		fscanf(map, "%hu %hu %hu %hu %hu %hu %f %f %f %f %hu %f %f %f %f %hu %hu %hu %hu %hu %hu %s\n", &border[0], &border[1], &border[2], &border[3], &type, &repeat_movement, &max_distance.x, &max_distance.y, &velocity.x, &velocity.y, &state, &rect.x, &rect.y, &rect.w, &rect.h, &col.r, &col.g, &col.b, &col.a, &layer, &with_shape, shape);
+		fscanf(map,
+				"%d %d %d %d %hu %hu %f %f %f %f %hu %f %f %f %f %hu %hu %hu %hu %hu %hu %s\n",
+				&border[0], &border[1], &border[2], &border[3], &type,
+				&repeat_movement, &max_distance.x, &max_distance.y, &velocity.x,
+				&velocity.y, &state, &rect.x, &rect.y, &rect.w, &rect.h, &col.r,
+				&col.g, &col.b, &col.a, &layer, &with_shape, shape);
 		//
 		Platform* platform = NULL;
 		/**
@@ -116,10 +121,7 @@ bool MapINFO::load(FILE* map) {
 		 */
 		if (with_shape) {
 			platform =
-					new IrregularPlatform(
-							rect.x,
-							rect.y,
-							state,
+					new IrregularPlatform(rect.x, rect.y, state,
 							dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 									shape)));
 			dynamic_cast<IrregularPlatform*>(platform)->fitToWidth(rect.w);

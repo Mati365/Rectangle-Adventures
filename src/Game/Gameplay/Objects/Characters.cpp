@@ -28,7 +28,8 @@ Character::Character(const string& _nick, float _x, float _y,
 		IrregularPlatform(_x, _y, true, _shape),
 		nick(Color(255, 255, 255), _nick, GLUT_BITMAP_HELVETICA_12, 12),
 		jumping(true),
-		status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
+		status(
+		NULL, MAX_LIVES, false, 0, 0, _x, _y),
 		ai(NULL),
 		//
 		source_color(col),

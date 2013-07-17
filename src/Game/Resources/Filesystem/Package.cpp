@@ -24,8 +24,7 @@ Package::Package(const char* path, const char* author) :
 		 * Tworzenie pustego pliku z szablonu!
 		 */
 		if (createSkel())
-			logEvent(
-					Logger::LOG_WARNING,
+			logEvent(Logger::LOG_WARNING,
 					"Podany plik nie istnieje, utworzono pusty plik!");
 	}
 	length = IO::getFileLength(file);
@@ -72,8 +71,8 @@ bool Package::edit(usint operation, const char* label, FilePackage* object) {
  */
 bool Package::readObject(const char* label, FilePackage* object) {
 	if (!object) {
-		logEvent(
-				Logger::LOG_ERROR, "NULL w object to zuo, napraw to prosze :<");
+		logEvent(Logger::LOG_ERROR,
+				"NULL w object to zuo, napraw to prosze :<");
 		return false;
 	}
 	PackagePointer* pointer = pointer_stack.getPointer(label);

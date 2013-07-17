@@ -28,7 +28,7 @@ void ParalaxRenderer::drawObject(Window* _window) {
 		return;
 	}
 	pEngine* physics = map->physics;
-	if (state != PAUSE) {
+	if (state != PAUSE && draw_quad) {
 		physics->updateWorld();
 	}
 	cam.updateCam(_window);
@@ -43,13 +43,14 @@ void ParalaxRenderer::drawObject(Window* _window) {
 		NULL);
 	}
 	for (usint i = 0; i < list->size(); ++i) {
-		if (IS_SET((*list)[i]->state, Body::HIDDEN)
-				|| (IS_SET((*list)[i]->state, Body::STATIC)
-						&& (*list)[i]->x - cam.pos.x > bounds->x
-						&& (*list)[i]->y - cam.pos.y > bounds->y)) {
+		Body* body = (*list)[i];
+		if (IS_SET(body->state, Body::HIDDEN) || body->x - cam.pos.x > bounds->x
+				|| body->y - cam.pos.y > bounds->y
+				|| body->y - cam.pos.y + body->h < 0
+				|| body->x - cam.pos.x + body->w < 0) {
 			continue;
 		}
-		(*list)[i]->drawObject(_window);
+		body->drawObject(_window);
 	}
 	for (usint i = 0; i < static_objects.size(); ++i) {
 		static_objects[i]->drawObject(_window);

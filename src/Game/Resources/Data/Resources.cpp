@@ -8,7 +8,7 @@
 
 Package main_filesystem(
 FILESYSTEM_PACKAGE,
-						FILESYSTEM_AUTHOR);
+FILESYSTEM_AUTHOR);
 ResourceManager<usint> main_resource_manager;
 
 /**

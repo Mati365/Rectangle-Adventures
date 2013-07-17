@@ -80,8 +80,7 @@ namespace GameScreen {
 				if (lvl) {
 					delete lvl;
 				}
-				logEvent(
-						Logger::LOG_INFO,
+				logEvent(Logger::LOG_INFO,
 						"Usuwanie obiektów sceny zakończone sukcesem!");
 			}
 	};
