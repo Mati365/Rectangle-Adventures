@@ -17,9 +17,13 @@ Game::Game(const char* map_path) {
 
 	lvl = new MapRenderer(NULL, map);
 	//
-	hero = new Character("Ufolud", map->hero_bounds.x, map->hero_bounds.y,
+	hero = new Character(
+			"Ufolud",
+			map->hero_bounds.x,
+			map->hero_bounds.y,
 			dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-					"player")), Body::HERO);
+					"player")),
+			Body::HERO);
 	hero->fitToWidth(map->hero_bounds.w);
 
 	lvl->addToParalax(paralax_1, 0.45f, hero);
@@ -27,6 +31,15 @@ Game::Game(const char* map_path) {
 
 	lvl->getPhysics()->insert(hero);
 	lvl->setHero(hero);
+	//
+	/**
+	 * TEST
+	 */
+	char d[] =
+			"SHOW_SPLASH Tymczasem%gdzies%w%odleglej%galaktyce.. SHOW_MESSAGE Sterowanie Poruszanie%sie:%%%w%-%skok%%%%a%-%lewo%%%%d%-%prawo CREATE_OBJECT 5 550.0 130.0 CREATE_OBJECT 5 650.0 130.0 ";
+	Script* script = Interpreter::getIstance().compile(d);
+	Trigger* trigger = new Trigger(script, 200, 350, 300, 300);
+	lvl->getPhysics()->insert(trigger);
 }
 
 void Game::catchEvent(const Event& event) {

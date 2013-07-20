@@ -27,8 +27,9 @@ namespace GameScreen {
 	 */
 	class Screen: public Renderer {
 		public:
-			virtual void catchEvent(const Event&)=0;
 			virtual void drawObject(Window*)=0;
+			virtual void catchEvent(const Event&) {
+			}
 
 			virtual ~Screen() {
 			}
@@ -81,7 +82,7 @@ namespace GameScreen {
 					delete lvl;
 				}
 				logEvent(Logger::LOG_INFO,
-						"Usuwanie obiektów sceny zakończone sukcesem!");
+							"Usuwanie obiektów sceny zakończone sukcesem!");
 			}
 	};
 	/**
@@ -116,7 +117,6 @@ namespace GameScreen {
 	/**
 	 * Splash - początkowy czarny ekran
 	 * z tekstem o autorze.
-	 * Wykorzystany shader zanikania!
 	 */
 	class SplashInfo {
 		public:
@@ -141,16 +141,34 @@ namespace GameScreen {
 		protected:
 			deque<SplashInfo*> texts;
 			glText title;
+			// Powrót po splashu!
+			Screen* return_to;
 
 		public:
 			Splash();
 
+			virtual void drawObject(Window*);
+
+			/**
+			 * Czyszczenie!
+			 */
+			void unload() {
+				for (usint i = 0; i < texts.size(); ++i) {
+					delete texts[i];
+				}
+				texts.clear();
+			}
+
+			/**
+			 * Przerzucanie po splashu!
+			 */
+			void endTo(Screen* _return_to) {
+				return_to = _return_to;
+			}
+
 			void pushTitle(const char* _title, usint _visible_time) {
 				texts.push_front(new SplashInfo(_title, _visible_time));
 			}
-
-			virtual void catchEvent(const Event&);
-			virtual void drawObject(Window*);
 
 			~Splash();
 	};

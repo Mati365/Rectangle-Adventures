@@ -9,29 +9,26 @@
 using namespace GameScreen;
 
 Splash::Splash() :
-		title(oglWrapper::WHITE, "",
-		GLUT_BITMAP_HELVETICA_18, 18) {
-}
-
-void Splash::catchEvent(const Event&) {
-
+		title(oglWrapper::WHITE, "", GLUT_BITMAP_HELVETICA_18, 18),
+		return_to(NULL) {
 }
 
 void Splash::drawObject(Window*) {
-	if (strlen(title.getString()->c_str()) == 0 && !texts.empty()) {
-		title.setString(texts.back()->text, -1);
-	}
-	if (texts.empty()) {
-		return;
-	}
 	SplashInfo* _text = texts.back();
+
+	if (strlen(title.getString()->c_str()) == 0 && !texts.empty()) {
+		title.setString(_text->text, -1);
+	}
 	_text->timer++;
 	if (_text->timer > _text->visible_time) {
-		if (texts.size() == 1) {
-			active_screen = menu;
-		} else {
-			delete _text;
-			texts.pop_back();
+		delete _text;
+		texts.pop_back();
+		if (texts.empty()) {
+			title.setString("", 0);
+			if (return_to) {
+				active_screen = return_to;
+			}
+			return;
 		}
 		//
 		title.setString(texts.back()->text, -1);
@@ -39,11 +36,9 @@ void Splash::drawObject(Window*) {
 	title.getColor()->a = (usint) (255.f
 			* (1.f - (float) _text->timer / (float) _text->visible_time));
 	title.printText(WINDOW_WIDTH / 2 - title.getScreenLength() / 2,
-	WINDOW_HEIGHT / 2 - title.getLinesOfText() * title.getFontHeight());
+	                WINDOW_HEIGHT / 2 - title.getLinesOfText() * title.getFontHeight());
 }
 
 Splash::~Splash() {
-	for (usint i = 0; i < texts.size(); ++i) {
-		delete texts[i];
-	}
+	unload();
 }

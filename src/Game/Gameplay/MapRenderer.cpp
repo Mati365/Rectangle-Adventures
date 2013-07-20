@@ -23,10 +23,10 @@ MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
  * Dodawanie tła gry!
  */
 ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
-	Body* _body) {
+											Body* _body) {
 	if (map->physics) {
 		ParalaxRenderer* renderer = new ParalaxRenderer(_body, _ratio, false,
-				_paralax);
+														_paralax);
 		paralax_background.push_front(renderer);
 		return renderer;
 	}

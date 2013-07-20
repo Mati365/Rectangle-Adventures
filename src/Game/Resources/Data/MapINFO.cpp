@@ -39,7 +39,7 @@ bool readMob(FILE* file) {
 	fscanf(file, "%hu %f %f %s\n", &type, &pos.x, &pos.y, shape);
 	//
 	ObjectFactory::getIstance(NULL).createObject((ObjectFactory::Types) type,
-			pos.x, pos.y, 0, 0, NULL);
+													pos.x, pos.y, 0, 0, NULL);
 	return true;
 }
 
@@ -121,7 +121,10 @@ bool MapINFO::load(FILE* map) {
 		 */
 		if (with_shape) {
 			platform =
-					new IrregularPlatform(rect.x, rect.y, state,
+					new IrregularPlatform(
+							rect.x,
+							rect.y,
+							state,
 							dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 									shape)));
 			dynamic_cast<IrregularPlatform*>(platform)->fitToWidth(rect.w);

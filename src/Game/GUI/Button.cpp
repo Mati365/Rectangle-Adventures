@@ -32,7 +32,7 @@ void Button::drawObject(Window*) {
 			break;
 	}
 	text.printText(x + w / 2 - text.getScreenLength() / 2,
-			y + h / 2 + text.getFontHeight() / 2 - 4);
+					y + h / 2 + text.getFontHeight() / 2 - 4);
 	//
 	old_state = control_state;
 }

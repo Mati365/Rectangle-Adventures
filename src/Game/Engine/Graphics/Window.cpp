@@ -8,7 +8,6 @@
 
 #include "../../Gameplay/Screens/Screens.hpp"
 
-#include "../../Gameplay/Script/Script.hpp"
 #include "../../Tools/Logger.hpp"
 
 using namespace Engine;
@@ -23,7 +22,7 @@ bool Engine::window_opened = true;
 //
 
 void translateKeyEvent(Uint8* keystate, Uint8 key, char translated,
-	Event& event, Screen* renderer) {
+						Event& event, Screen* renderer) {
 	if (keystate[key]) {
 		event.key = translated;
 	}
@@ -53,21 +52,13 @@ void Window::init() {
 	//
 	if (!menu) {
 		logEvent(Logger::LOG_INFO,
-				"Nastąpił problem podczas wczytywania menu.");
+					"Nastąpił problem podczas wczytywania menu.");
 		return;
 	}
-	active_screen = splash;
+	active_screen = game;
 	splash->pushTitle("cziken58 prezentuje..", 320);
 	splash->pushTitle("Przygody Prostokata", 490);
-	/**
-	 * TEST
-	 */
-	char d[] =
-			"SHOW_SPLASH Tymczasem%gdzies%w%odleglej%galaktyce.. SHOW_MESSAGE Sterowanie Poruszanie%sie:%%%w%-%skok%%%%a%-%lewo%%%%d%-%prawo CREATE_OBJECT 5 550.0 130.0 CREATE_OBJECT 5 650.0 130.0 ";
-	Script* script = Interpreter::getIstance().compile(d);
-	if (!Interpreter::getIstance().interpret(script)) {
-		logEvent(Logger::LOG_WARNING, "Nie mogłem zinterpretować skryptu!");
-	}
+	splash->endTo(menu);
 	/**
 	 *
 	 */
@@ -112,9 +103,6 @@ void Window::init() {
 
 				case SDL_QUIT:
 					window_opened = false;
-					break;
-
-				default:
 					break;
 			}
 		}

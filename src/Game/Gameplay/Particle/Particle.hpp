@@ -32,7 +32,7 @@ class Particle {
 		Color source_col;
 
 		Particle(const Vector<float>& _pos, float _size,
-			usint _max_life_duration, const Color& _col) :
+					usint _max_life_duration, const Color& _col) :
 				pos(_pos),
 				life_duration(0),
 				max_life_duration(_max_life_duration),

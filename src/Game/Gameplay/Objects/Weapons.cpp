@@ -25,7 +25,8 @@ void Bullet::catchCollision(pEngine*, usint, Body*) {
 /////////////////// Gun
 
 Gun::Gun(pEngine* _physics, float _x, float _y, float _w,
-	PlatformShape* _gun_shape, PlatformShape* _bullet_shape, usint _shot_delay) :
+			PlatformShape* _gun_shape, PlatformShape* _bullet_shape,
+			usint _shot_delay) :
 		IrregularPlatform(_x, _y, State::NONE, _gun_shape),
 		//
 		bullet_shape(_bullet_shape),
@@ -44,7 +45,7 @@ void Gun::shot() {
 	}
 	physics->insert(
 			new Bullet(x + w / 2 - BULLET_WIDTH / 2, y - h * 2, bullet_shape,
-					300));
+						300));
 }
 
 void Gun::drawObject(Window*) {

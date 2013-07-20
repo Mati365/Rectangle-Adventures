@@ -49,7 +49,7 @@ namespace Physics {
 			 * Flaga obiektu, czym on jest?
 			 */
 			enum Type {
-				HERO, ENEMY, PLATFORM, SCORE, BULLET
+				HERO, ENEMY, PLATFORM, SCORE, BULLET, TRIGGER
 			};
 
 			/**
@@ -84,8 +84,8 @@ namespace Physics {
 			}
 
 			Body(float _x, float _y, float _w, float _h,
-				float _elasticity = 1.f, float _weight = 1.f, usint _state =
-						NONE) :
+					float _elasticity = 1.f, float _weight = 1.f, usint _state =
+							NONE) :
 					state(_state),
 					elasticity(_elasticity),
 					weight(_weight),

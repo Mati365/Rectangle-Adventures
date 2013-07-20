@@ -36,11 +36,12 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	float x = particle.pos.x, y = particle.pos.y, w = particle.size;
 
 	glColor4ub(particle.col.r, particle.col.g, particle.col.b, particle.col.a);
+	glBegin(GL_LINE_LOOP);
 	glVertex2f(x, y);
 	glVertex2f(x + w, y);
 	glVertex2f(x + w, y + w);
 	glVertex2f(x, y + w);
-	//glVertex2f(x, y);
+	glEnd();
 
 	if (particle.life_duration > particle.max_life_duration
 			|| particle.col.a < 30) {
@@ -57,7 +58,7 @@ void SnowEmitter::createNewParticle(Window* _window) {
 	for (usint i = 0; i < getIntRandom(2, (int) (30 * (40.f / (float) delay)));
 			++i) {
 		Particle part(pos, getIntRandom(10, 20), getIntRandom(50, 200),
-				oglWrapper::GRAY);
+						oglWrapper::GRAY);
 
 		part.velocity.y = getIntRandom(150, 350) / 150;
 		part.pos.x = pos.x + getIntRandom(-100, (int) pos.w + 100);

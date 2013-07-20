@@ -12,7 +12,7 @@
 #include "../../Tools/Logger.hpp"
 
 Platform::Platform(float _x, float _y, float _w, float _h, const Color& _col,
-	usint _state) :
+					usint _state) :
 		Body(_x, _y, _w, _h),
 		col(_col),
 		repeat_movement(true),
@@ -54,7 +54,8 @@ void Platform::updatePlatform() {
 }
 
 void Platform::setMovingDir(const Vector<float>& _velocity,
-	const Vector<float>& _distance, bool _repeat_movement) {
+							const Vector<float>& _distance,
+							bool _repeat_movement) {
 	velocity = _velocity;
 	max_distance = _distance;
 	repeat_movement = _repeat_movement;
@@ -172,7 +173,7 @@ void Platform::drawObject(Window*) {
 //---------------------------------------
 
 IrregularPlatform::IrregularPlatform(float _x, float _y, usint _state,
-	PlatformShape* _shape) :
+										PlatformShape* _shape) :
 		Platform(_x, _y, 0, 0, oglWrapper::WHITE, _state),
 		scale(1) {
 	if (!_shape) {

@@ -18,6 +18,8 @@
 #include "../../Resources/Data/ResourceManager.hpp"
 #include "../../Resources/Data/Resources.hpp"
 
+#include "../Script/Script.hpp"
+
 using namespace Engine;
 using namespace Physics;
 
@@ -172,7 +174,8 @@ struct CharacterStatus: public Resource<usint> {
 		}
 
 		CharacterStatus(const char* _label, usint _health, bool _shield,
-			usint _shield_health, usint _score, float _x = 0, float _y = 0) :
+						usint _shield_health, usint _score, float _x = 0,
+						float _y = 0) :
 				Resource<usint>(_label),
 				health(_health),
 				shield_health(_shield_health),
@@ -336,25 +339,34 @@ class SnailAI: public AI {
 };
 
 /**
- *  Aktywator - gdy coś wejdzie na niego,
- *  ten uaktywnia się to i callback
- *  do nadzoru! Nie jest renderowany!
+ *
  */
-class Activator: public Body {
-	protected:
-		Body* observer;
+class Trigger: public Body {
+	private:
+		Script* script;
 
 	public:
-		Activator(Body* _observer, float _x, float _y, float _w, float _h) :
+		Trigger(Script* _script, float _x, float _y, float _w, float _h) :
 				Body(_x, _y, _w, _h, 1.f, 1.f, Body::HIDDEN),
-				observer(_observer) {
+				script(_script) {
+			type = Body::TRIGGER;
 		}
 
-		virtual void drawObject(Window*) {
+		/**
+		 * Generowanie zdarzenia!
+		 */
+		void generate() {
+			if (destroyed) {
+				return;
+			}
+			Interpreter::getIstance().interpret(script);
+			destroyed = true;
 		}
 
-		virtual void catchCollision(pEngine* _engine, usint _dir, Body* _body) {
-			observer->catchCollision(_engine, _dir, _body);
+		~Trigger() {
+			if (script) {
+				delete script;
+			}
 		}
 };
 

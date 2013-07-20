@@ -61,7 +61,7 @@ class MessageRenderer: public Renderer, public EventListener {
 				PlatformShape* cutscene;
 
 				Message(const string& _title, const string& _text,
-					const char* _cutscene_path = NULL) :
+						const char* _cutscene_path = NULL) :
 						title(_title),
 						text(_text),
 						cutscene(

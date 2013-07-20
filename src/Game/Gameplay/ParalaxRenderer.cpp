@@ -9,7 +9,7 @@
 using namespace Gameplay;
 
 ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, bool _draw_quad,
-	MapINFO* _map) :
+									MapINFO* _map) :
 		map(_map),
 		cam(_target),
 		ratio(_ratio),

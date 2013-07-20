@@ -27,7 +27,8 @@ bool JetEmitter::drawParticle(usint _index, Window* _window) {
 	particle.pos.x = pos.x + (pos.w - particle.size) / 2.f;
 
 	oglWrapper::drawRect(particle.pos.x, particle.pos.y, particle.size,
-			pos.h * 0.1f * (particle.size / pos.w), particle.col, 2);
+							pos.h * 0.1f * (particle.size / pos.w),
+							particle.col, 2);
 
 	if (particle.life_duration > particle.max_life_duration || destroyed) {
 		particles.erase(particles.begin() + _index);

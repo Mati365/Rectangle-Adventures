@@ -51,7 +51,7 @@ Script* Interpreter::compile(char* str) {
 			}
 		} else if (arg_ac - 1 >= array.back().argc) {
 			logEvent(Logger::LOG_ERROR,
-					"Nieprawidłowa ilość argumentów funkcji!");
+						"Nieprawidłowa ilość argumentów funkcji!");
 			return NULL;
 		}
 		arg_ac++;
@@ -90,8 +90,9 @@ bool Interpreter::interpret(Script* script) {
 			case SHOW_SPLASH:
 				active_screen = splash;
 				//
-				splash->pushTitle(func.args[0],
-						strlen(func.args[0]) * 10);
+				splash->unload();
+				splash->pushTitle(func.args[0], strlen(func.args[0]) * 10);
+				splash->endTo(game);
 				break;
 				/**
 				 *

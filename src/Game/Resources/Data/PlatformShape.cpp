@@ -14,7 +14,7 @@ PlatformShape* readShape(const string& _path, const char* _resource_label) {
 	FILE* _file = main_filesystem.getExternalFile(_path.c_str(), NULL);
 	if (!_file) {
 		logEvent(Logger::LOG_ERROR,
-				("Podany plik " + _path + " nie istnieje!").c_str());
+					("Podany plik " + _path + " nie istnieje!").c_str());
 		return NULL;
 	}
 	PlatformShape* shape = readShape(_file, _resource_label);

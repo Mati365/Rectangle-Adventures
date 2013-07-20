@@ -45,11 +45,9 @@ void ParticleEmitter::drawObject(Window* _window) {
 	updateSystem();
 	//
 	glLineWidth(1);
-	glBegin (GL_QUADS);
 	for (usint i = 0; i < particles.size();) {
 		if (drawParticle(i, _window)) {
 			++i;
 		}
 	}
-	glEnd();
 }

@@ -13,8 +13,9 @@ using namespace GameScreen;
 Menu::Menu() :
 		Game("menu.txt"),
 		ver(oglWrapper::WHITE,
-				"Wersja: 0.5 alpha | Autor: Mateusz Baginski | email:cziken58@gmail.com",
-				GLUT_BITMAP_HELVETICA_12, 12) {
+			"Wersja: 0.5 alpha | Autor: Mateusz Baginski | email:cziken58@gmail.com",
+			GLUT_BITMAP_HELVETICA_12,
+			12) {
 	lvl->enableHUD(false);
 	//
 	createMenuEntries();
@@ -34,7 +35,7 @@ void Menu::createMenuEntries() {
 	// Dodawanie listy obiektów do świata!
 	for (auto iter = entries.begin(); iter != entries.end(); ++iter) {
 		(*iter)->putCallback(Event::MOUSE_RELEASED,
-				dynamic_cast<Callback*>(this));
+								dynamic_cast<Callback*>(this));
 		lvl->getPhysics()->insert(*iter);
 	}
 }
@@ -93,7 +94,7 @@ void Menu::drawObject(Window* window) {
 	}
 	ver.printText(
 	WINDOW_WIDTH - ver.getScreenLength() - 10,
-	WINDOW_HEIGHT - ver.getFontHeight() - 2);
+					WINDOW_HEIGHT - ver.getFontHeight() - 2);
 }
 
 /**

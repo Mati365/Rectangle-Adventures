@@ -24,7 +24,7 @@ bool CharacterStatus::load(FILE* _file) {
 //------------------------
 
 Character::Character(const string& _nick, float _x, float _y,
-	PlatformShape* _shape, usint _type) :
+						PlatformShape* _shape, usint _type) :
 		IrregularPlatform(_x, _y, true, _shape),
 		nick(Color(255, 255, 255), _nick, GLUT_BITMAP_HELVETICA_12, 12),
 		jumping(true),
@@ -54,6 +54,10 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	/**
 	 * Akcje gracza!
 	 */
+	if (body->type == Body::TRIGGER) {
+		dynamic_cast<Trigger*>(body)->generate();
+		return;
+	}
 	Character* enemy = dynamic_cast<Character*>(body);
 	if (!enemy) {
 		return;
