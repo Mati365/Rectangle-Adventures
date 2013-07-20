@@ -6,8 +6,10 @@
  */
 #include <sys/time.h>
 
-#include "../../Tools/Logger.hpp"
 #include "../../Gameplay/Screens/Screens.hpp"
+
+#include "../../Gameplay/Script/Script.hpp"
+#include "../../Tools/Logger.hpp"
 
 using namespace Engine;
 using namespace Gameplay;
@@ -35,13 +37,15 @@ Window::Window(const Vector<usint>& _bounds, const string& _title) :
 		screen(NULL),
 		bounds(_bounds) {
 	screen = SDL_SetVideoMode(bounds.x, bounds.y, 32,
-	SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_OPENGL);
+	SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER);
 	if (!screen) {
 		return;
 	}
-	SDL_Init(
-	SDL_INIT_EVERYTHING);
+	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_WM_SetCaption(_title.c_str(), _title.c_str());
+	if (screen->flags & SDL_OPENGL) {
+		logEvent(Logger::LOG_INFO, "OpenGL obsługiwany!");
+	}
 }
 
 void Window::init() {
@@ -55,6 +59,15 @@ void Window::init() {
 	active_screen = splash;
 	splash->pushTitle("cziken58 prezentuje..", 320);
 	splash->pushTitle("Przygody Prostokata", 490);
+	/**
+	 * TEST
+	 */
+	char d[] =
+			"SHOW_SPLASH Tymczasem%gdzies%w%odleglej%galaktyce.. SHOW_MESSAGE Sterowanie Poruszanie%sie:%%%w%-%skok%%%%a%-%lewo%%%%d%-%prawo CREATE_OBJECT 5 550.0 130.0 CREATE_OBJECT 5 650.0 130.0 ";
+	Script* script = Interpreter::getIstance().compile(d);
+	if (!Interpreter::getIstance().interpret(script)) {
+		logEvent(Logger::LOG_WARNING, "Nie mogłem zinterpretować skryptu!");
+	}
 	/**
 	 *
 	 */
@@ -105,8 +118,7 @@ void Window::init() {
 					break;
 			}
 		}
-		Uint8 *keystate = SDL_GetKeyState(
-		NULL);
+		Uint8 *keystate = SDL_GetKeyState(NULL);
 		if (keystate[SDLK_ESCAPE]) {
 			window_opened = false;
 		}
@@ -118,6 +130,7 @@ void Window::init() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		active_screen->drawObject(this);
+		glFlush();
 		SDL_GL_SwapBuffers();
 
 		int frame_time = SDL_GetTicks() - frame_start;
@@ -132,29 +145,19 @@ void Window::init() {
 }
 
 bool Window::setupOpenGL() {
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	glDisable (GL_DEPTH_TEST);
+	glDepthMask (GL_FALSE);
 
-	glDisable(GL_DEPTH_TEST);
-	glEnable (GL_SCISSOR_TEST);
 	glEnable (GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	glClearColor(0, 0, 0, 0);
 	glViewport(0, 0, bounds.x, bounds.y);
 	glMatrixMode (GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, bounds.x, bounds.y, 0, -1, 1);
 	glMatrixMode (GL_MODELVIEW);
 	glLoadIdentity();
-
-	if (!GL_ARB_vertex_shader || !GL_ARB_fragment_shader) {
-		logEvent(Logger::LOG_ERROR, "Brak obsługi shaderów!");
-		return false;
-	}
 	return true;
 }
 

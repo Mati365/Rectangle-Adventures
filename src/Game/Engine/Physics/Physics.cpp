@@ -17,7 +17,7 @@ pEngine::pEngine(const Rect<float>& _bounds, float _gravity_speed) :
 		pause(false),
 		timer(0),
 		sleep_time(0) {
-	quadtree = new QuadTree(_bounds, 0, 3);
+	quadtree = new QuadTree(NULL, _bounds, 0, 2);
 }
 
 void pEngine::setSleep(usint _sleep_time) {
@@ -38,12 +38,12 @@ void pEngine::updateWorld() {
 		}
 	}
 	bodies.clear();
-	quadtree->clear();
 
 	if (!to_remove.empty()) {
 		for (auto iter = to_remove.begin(); iter != to_remove.end(); ++iter) {
 			auto _pos = find(list.begin(), list.end(), *iter);
 			if (_pos != list.end()) {
+				quadtree->remove(*_pos);
 				if (*_pos && (*_pos)->dynamically_allocated) {
 					delete *_pos;
 					*_pos = NULL;
@@ -53,13 +53,18 @@ void pEngine::updateWorld() {
 		}
 		to_remove.clear();
 	}
-
+	/**
+	 * Sprawdzenie kolizji!
+	 */
+	quadtree->clear();
 	quadtree->insert(&list);
 	quadtree->getLowestElements(bodies);
-
 	for (usint i = 0; i < bodies.size(); ++i) {
 		checkCollisions(bodies[i]);
 	}
+	/**
+	 * Grawitacja!
+	 */
 	for (usint i = 0; i < list.size(); ++i) {
 		if (IS_SET(list[i]->state, Body::STATIC)
 				|| IS_SET(list[i]->state, Body::HIDDEN)) {

@@ -9,28 +9,51 @@
 #define SCRIPT_HPP_
 #include "../../Tools/Tools.hpp"
 
+#define ARG_COUNT 5 // Maksymalna ilość argumentów!
+#define SPACE_CHARACTER '%'
+
 /**
  * Deklaracja funkcji
  */
 struct Func {
 		usint id; // identyfikator
-		const char* func_name; // nazwa funkcji
+		char func_name[40]; // nazwa funkcji
 		usint argc; // ilość argumentów
+		char args[ARG_COUNT][255]; //argumenty
 };
 
 /**
  * Deklaracje!!
  */
 enum {
-	SET_INTRO_TEXT, LOAD_MAP, CREATE_OBJECT
+	SHOW_MESSAGE, SHOW_SPLASH, LOAD_MAP, CREATE_OBJECT
 };
 
-Func funcs[] = { { SET_INTRO_TEXT, "SET_INTRO_TEXT", 1 }, {
-		LOAD_MAP, "LOAD_MAP", 1 }, { CREATE_OBJECT, "CREATE_OBJECT", 5 } };
+extern Func funcs[];
 
 /**
  * Interpreter!
  * Wzorzec singleton!
+ */
+class Script {
+	public:
+		size_t length;
+		Func* commands;
+
+		Script(size_t _length) :
+				length(_length) {
+			commands = new Func[length];
+		}
+
+		~Script() {
+			if (length != 0 && commands) {
+				delete[] commands;
+			}
+		}
+};
+
+/**
+ * Singleton, na później..
  */
 class Interpreter {
 	private:
@@ -44,7 +67,14 @@ class Interpreter {
 			return inter;
 		}
 		/**
-		 * Interpretacja!
+		 * Kompilacja z tekstu!
+		 * Zwracanie dynamicznej wartości!
+		 * Przyjmowanie również dynamiczne!
 		 */
+		Script* compile(char*);
+		/**
+		 * Interpretacja z tekstu!
+		 */
+		bool interpret(Script*);
 };
 #endif /* SCRIPT_HPP_ */

@@ -43,6 +43,7 @@ class Logger {
 			}
 			buffer += file + " in " + Convert::toString<usint>(row)
 					+ " line -> " + log;
+			//
 			cout << buffer << endl;
 		}
 };

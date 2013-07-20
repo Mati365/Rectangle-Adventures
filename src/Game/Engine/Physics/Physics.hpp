@@ -16,7 +16,7 @@
 #define IS_SET(source, flag) (source&flag)
 
 #define STATIC_LAYER 0
-#define MAX_LAYER 3
+#define MAX_LAYER 2
 
 namespace Physics {
 	using namespace std;
@@ -48,7 +48,7 @@ namespace Physics {
 			/**
 			 * Flaga obiektu, czym on jest?
 			 */
-			enum Flag {
+			enum Type {
 				HERO, ENEMY, PLATFORM, SCORE, BULLET
 			};
 
@@ -68,16 +68,15 @@ namespace Physics {
 			/**
 			 * Flaga, typ obiektu
 			 */
-			usint flag;
+			usint type;
 			usint layer;
 
 			Body() :
 					state(NONE),
 					elasticity(0),
 					weight(0),
-					flag(PLATFORM),
-					layer(
-					STATIC_LAYER) {
+					type(PLATFORM),
+					layer(STATIC_LAYER) {
 				x = 0;
 				y = 0;
 				w = 0;
@@ -90,7 +89,7 @@ namespace Physics {
 					state(_state),
 					elasticity(_elasticity),
 					weight(_weight),
-					flag(PLATFORM),
+					type(PLATFORM),
 					layer(STATIC_LAYER) {
 				x = _x;
 				y = _y;
@@ -105,10 +104,10 @@ namespace Physics {
 				h = _h;
 			}
 			/**
-			 * Nadawanie flagi!
+			 * Nadawanie type!
 			 */
-			void setFlag(usint _flag) {
-				flag = _flag;
+			void setType(usint _type) {
+				type = _type;
 			}
 			/**
 			 * Nadawanie stanu!
@@ -130,23 +129,26 @@ namespace Physics {
 		private:
 			Rect<float> rect;
 			deque<Body*> bodies;
+
 			usint level;
+			usint max_level;
 			/**
-			 * STAŁE
+			 * STAĹ�E
 			 */
+			QuadTree* parent;
 			QuadTree* NW;
 			QuadTree* NE;
 			QuadTree* SW;
 			QuadTree* SE;
 
 		public:
-			QuadTree(const Rect<float>&, usint, usint);
+			QuadTree(QuadTree*, const Rect<float>&, usint, usint);
 
 			/**
 			 * Aktualizacja drzewa!
-			 * Nie kasowanie obeiktów!
+			 * Nie kasowanie obeiktĂłw!
 			 */
-			void update();
+			void remove(Body*);
 
 			void insert(deque<Body*>*);
 			void insert(Body*);
@@ -160,6 +162,7 @@ namespace Physics {
 
 		private:
 			void insertToSubQuad(Body*);
+
 			bool containsObject(const Rect<float>*, const Rect<float>*);
 	};
 
@@ -192,6 +195,7 @@ namespace Physics {
 
 			void insert(Body* body) {
 				list.push_back(body);
+				quadtree->insert(body);
 			}
 			void remove(Body* body) {
 				to_remove.push_back(body);

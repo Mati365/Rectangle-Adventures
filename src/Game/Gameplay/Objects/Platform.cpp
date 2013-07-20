@@ -19,7 +19,7 @@ Platform::Platform(float _x, float _y, float _w, float _h, const Color& _col,
 		type(SIMPLE) {
 	state = _state;
 	elasticity = 0.45f;
-	flag = PLATFORM;
+	type = PLATFORM;
 	//
 	for (usint i = 0; i < 4; ++i) {
 		border[i] = false;
@@ -210,5 +210,4 @@ void IrregularPlatform::drawObject(Window*) {
 		glCallList(shape->getID());
 	}
 	glPopMatrix();
-	//oglWrapper::drawRect(x, y, w, h, oglWrapper::GREEN, 1);
 }

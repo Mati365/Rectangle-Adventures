@@ -14,7 +14,7 @@ FireEmitter::FireEmitter(const Rect<float>& _pos, usint _delay) :
 /**
  * Rysowanie pojedynczej cząsteczki..
  */
-void FireEmitter::drawParticle(usint _index, Window* _window) {
+bool FireEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 
 	particle.life_duration++;
@@ -32,7 +32,9 @@ void FireEmitter::drawParticle(usint _index, Window* _window) {
 
 	if (particle.life_duration > particle.max_life_duration || destroyed) {
 		particles.erase(particles.begin() + _index);
+		return false;
 	}
+	return true;
 }
 
 /**

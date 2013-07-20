@@ -11,8 +11,8 @@
 #include <SDL/SDL.h>
 #include <string>
 
-#define WINDOW_WIDTH 600
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 640
+#define WINDOW_HEIGHT 480
 
 using namespace std;
 
@@ -92,55 +92,6 @@ namespace oglWrapper {
 	extern void drawLine(float, float, float, float, const Color&, float);
 
 	extern void drawTriangle(float, float, float, float, const Color&, float);
-
-	/**
-	 * Shadery!
-	 */
-	extern GLuint createShader(GLuint, FILE*, size_t);
-
-	class Shader {
-		private:
-			GLuint program_object, vertex_shader, fragment_shader;
-
-		public:
-			Shader() :
-					program_object(0),
-					vertex_shader(0),
-					fragment_shader(0) {
-			}
-
-			Shader(FILE*, size_t, FILE*, size_t);
-
-			void loadShader(FILE*, size_t, FILE*, size_t);
-
-			GLuint getShaderProgram() const {
-				return program_object;
-			}
-
-			GLuint getVertexShader() const {
-				return vertex_shader;
-			}
-
-			GLuint getFragmentShader() const {
-				return fragment_shader;
-			}
-			/**
-			 * Wywołuwanie shaderu!
-			 */
-			void begin();
-			void end();
-
-			/**
-			 * Uniformy!
-			 */
-			void setUniform1f(const char*, float);
-			void setUniform4fv(const char*, float*, size_t);
-
-			~Shader();
-
-		protected:
-			void linkShader();
-	};
 }
 
 /**

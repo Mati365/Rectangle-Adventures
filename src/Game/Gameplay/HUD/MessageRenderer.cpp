@@ -17,15 +17,13 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 	const Color& _contents_color, IntroBackground* _background) :
 		height(_height),
 		closed(false),
-		text(_contents_color, "",
-		GLUT_BITMAP_HELVETICA_18, 18),
-		title(_title_color, "",
-		GLUT_BITMAP_HELVETICA_18, 18),
+		text(_contents_color, "", GLUT_BITMAP_HELVETICA_18, 18),
+		title(_title_color, "", GLUT_BITMAP_HELVETICA_18, 18),
 		border_color(255, 255, 255),
 		background_color(0, 0, 0),
 		// HUD
 		health(oglWrapper::WHITE, "Zdrowie:", GLUT_BITMAP_HELVETICA_18, 18),
-		health_bar(Rect<float>(0, 0, 0, 0), oglWrapper::ORANGE, MAX_LIVES,
+		health_bar(Rect<float>(0, 0, 0, 0), oglWrapper::GREEN, MAX_LIVES,
 				Control::VERTICAL),
 
 		score(oglWrapper::WHITE, "Punkty:", GLUT_BITMAP_HELVETICA_18, 18),
@@ -35,8 +33,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 
 		background(_background),
 		hero(NULL),
-		cutscene_box(
-		NULL) {
+		cutscene_box(NULL) {
 }
 
 /**
@@ -55,8 +52,7 @@ void MessageRenderer::openCutscene(const Message& msg) {
 	}
 	cutscene_box = new IrregularPlatform(-2000, -2000, Body::STATIC,
 			msg.cutscene);
-	cutscene_box->fitToWidth(
-	WINDOW_WIDTH);
+	cutscene_box->fitToWidth(WINDOW_WIDTH);
 	//
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
 
@@ -89,18 +85,19 @@ void MessageRenderer::addMessage(const Message& msg) {
 }
 
 void MessageRenderer::drawBorder(Window* _window) {
+	oglWrapper::drawFillRect(SPACES, _window->getBounds()->y - height + SPACES,
+			_window->getBounds()->x - SPACES * 2, height - SPACES * 2,
+			oglWrapper::BLACK);
 	glPushAttrib (GL_ENABLE_BIT);
 	glLineStipple(1, 0xAAAA);
 	glEnable (GL_LINE_STIPPLE);
-	oglWrapper::drawRect(
-	SPACES, _window->getBounds()->y - height + SPACES,
+	oglWrapper::drawRect(SPACES, _window->getBounds()->y - height + SPACES,
 			_window->getBounds()->x - SPACES * 2, height - SPACES * 2,
 			border_color, closed ?
 					3 : 2);
 	glPopAttrib();
 	if (closed) {
-		oglWrapper::drawFillRect(
-		SPACES * 2, _window->getBounds()->y - height,
+		oglWrapper::drawFillRect(SPACES * 2, _window->getBounds()->y - height,
 				title.getScreenLength() + 20, 17, background_color);
 	}
 }
@@ -150,8 +147,8 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 		hero = background->getHero();
 	}
 	if (health_bar.w == 0) {
-		health_bar.setBounds(
-		SPACES * 2 + 75, _window->getBounds()->y - height + 13, 152, 25);
+		health_bar.setBounds(SPACES * 2 + 75,
+				_window->getBounds()->y - height + 13, 152, 25);
 		score_bar.setBounds(_window->getBounds()->x - 152 - SPACES * 2,
 				_window->getBounds()->y - height + 13, 152, 25);
 	}
@@ -159,18 +156,15 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	 * Pasek życia!
 	 */
 	health_bar.setValue(hero->getStatus()->health);
-	health.printText(
-	SPACES * 2, _window->getBounds()->y - height + 30);
-	health_bar.drawObject(
-	NULL);
+	health.printText(SPACES * 2, _window->getBounds()->y - height + 30);
+	health_bar.drawObject(NULL);
 	/**
 	 * Punkty!
 	 */
 	score_bar.setValue(hero->getStatus()->score);
 	score.printText(_window->getBounds()->x - 227,
 			_window->getBounds()->y - height + 30);
-	score_bar.drawObject(
-	NULL);
+	score_bar.drawObject(NULL);
 }
 
 /**
@@ -184,7 +178,7 @@ void MessageRenderer::drawIntroMessage(Window* _window) {
 		if (background->getState() == IntroBackground::PAUSE) {
 			glText t(oglWrapper::YELLOW, "Aby kontynuowac wcisnij [SPACJE]!",
 			GLUT_BITMAP_HELVETICA_18, 18);
-			t.printText(_window->getBounds()->y / 2 - t.getScreenLength() / 2,
+			t.printText(_window->getBounds()->x / 2 - t.getScreenLength() / 2,
 					90);
 		} else {
 			popMessage();
@@ -196,10 +190,8 @@ void MessageRenderer::drawIntroMessage(Window* _window) {
 	/**
 	 * Wyświetlanie INTRO/OUTRO
 	 */
-	title.printText(
-	SPACES * 2 + 5, _window->getBounds()->y - height + 13);
-	text.printText(
-	SPACES * 2, _window->getBounds()->y - height + 40);
+	title.printText(SPACES * 2 + 5, _window->getBounds()->y - height + 13);
+	text.printText(SPACES * 2, _window->getBounds()->y - height + 40);
 }
 
 void MessageRenderer::drawObject(Window* _window) {

@@ -15,8 +15,7 @@ void Bullet::drawObject(Window*) {
 		destroyed = true;
 	}
 	//
-	Character::drawObject(
-	NULL);
+	Character::drawObject(NULL);
 }
 
 void Bullet::catchCollision(pEngine*, usint, Body*) {
@@ -55,7 +54,6 @@ void Gun::drawObject(Window*) {
 		//
 		shot();
 	}
-	IrregularPlatform::drawObject(
-	NULL);
+	IrregularPlatform::drawObject(NULL);
 }
 

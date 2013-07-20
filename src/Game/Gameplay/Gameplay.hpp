@@ -32,7 +32,7 @@ namespace Gameplay {
 
 	class Camera {
 		public:
-			Rect<float> pos; // problem z rzutowaniem
+			Rect<float> pos;
 			Body* focus;
 
 			Camera(Body* _focus) :

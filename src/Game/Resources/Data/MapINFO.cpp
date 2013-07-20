@@ -38,8 +38,8 @@ bool readMob(FILE* file) {
 
 	fscanf(file, "%hu %f %f %s\n", &type, &pos.x, &pos.y, shape);
 	//
-	ObjectFactory::getIstance(
-	NULL).createObject((ObjectFactory::Types) type, pos.x, pos.y, 0, 0, NULL);
+	ObjectFactory::getIstance(NULL).createObject((ObjectFactory::Types) type,
+			pos.x, pos.y, 0, 0, NULL);
 	return true;
 }
 

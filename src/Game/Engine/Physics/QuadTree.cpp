@@ -5,6 +5,7 @@
  *      Author: mati
  */
 #include <map>
+#include <iostream>
 
 #include "Physics.hpp"
 
@@ -13,9 +14,12 @@ using namespace Physics;
 
 #define OBJECT_MARGIN 5
 
-QuadTree::QuadTree(const Rect<float>& _rect, usint _level, usint _max_level) :
+QuadTree::QuadTree(QuadTree* _parent, const Rect<float>& _rect, usint _level,
+	usint _max_level) :
 		rect(_rect),
 		level(_level),
+		max_level(_max_level),
+		parent(_parent),
 		NW(NULL),
 		NE(NULL),
 		SW(NULL),
@@ -23,15 +27,16 @@ QuadTree::QuadTree(const Rect<float>& _rect, usint _level, usint _max_level) :
 	if (_level + 1 > _max_level) {
 		return;
 	}
-	NW = new QuadTree(Rect<float>(_rect.x, _rect.y, _rect.w / 2, _rect.h / 2),
-			level + 1, _max_level);
-	NE = new QuadTree(
+	NW = new QuadTree(this,
+			Rect<float>(_rect.x, _rect.y, _rect.w / 2, _rect.h / 2), level + 1,
+			_max_level);
+	NE = new QuadTree(this,
 			Rect<float>(_rect.x + _rect.w / 2, _rect.y, _rect.w / 2,
 					_rect.h / 2), level + 1, _max_level);
-	SW = new QuadTree(
+	SW = new QuadTree(this,
 			Rect<float>(_rect.x, _rect.y + _rect.h / 2, _rect.w / 2,
 					_rect.h / 2), level + 1, _max_level);
-	SE = new QuadTree(
+	SE = new QuadTree(this,
 			Rect<float>(_rect.x + _rect.w / 2, _rect.y + _rect.h / 2,
 					_rect.w / 2, _rect.h / 2), level + 1, _max_level);
 }
@@ -55,15 +60,32 @@ void QuadTree::drawObject(Window*) {
 }
 
 /**
- * Aktualizacja!
- */
-void QuadTree::update() {
-
-}
-
-/**
  * Rozdzielenie obiektów!
  */
+void QuadTree::remove(Body* body) {
+	if (!NW) {
+		for (usint i = 0; i < bodies.size(); ++i) {
+			if (body == bodies[i]) {
+				bodies.erase(bodies.begin() + i);
+				return;
+			}
+		}
+		return;
+	}
+	if (containsObject(&NW->rect, body)) {
+		NW->remove(body);
+	}
+	if (containsObject(&NE->rect, body)) {
+		NE->remove(body);
+	}
+	if (containsObject(&SE->rect, body)) {
+		SE->remove(body);
+	}
+	if (containsObject(&SW->rect, body)) {
+		SW->remove(body);
+	}
+}
+
 void QuadTree::insertToSubQuad(Body* body) {
 	if (!NW) {
 		bodies.push_back(body);
@@ -85,7 +107,7 @@ void QuadTree::insertToSubQuad(Body* body) {
 
 void QuadTree::insert(deque<Body*>* bodies) {
 	for (usint i = 0; i < bodies->size(); ++i) {
-		insert((*bodies)[i]);
+		insertToSubQuad((*bodies)[i]);
 	}
 }
 
@@ -100,11 +122,14 @@ void QuadTree::getBodiesAt(const Rect<float>& _rect, deque<Body*>* _bodies) {
 	}
 	if (containsObject(&NW->rect, &_rect)) {
 		NW->getBodiesAt(_rect, _bodies);
-	} else if (containsObject(&NE->rect, &_rect)) {
+	}
+	if (containsObject(&NE->rect, &_rect)) {
 		NE->getBodiesAt(_rect, _bodies);
-	} else if (containsObject(&SW->rect, &_rect)) {
+	}
+	if (containsObject(&SW->rect, &_rect)) {
 		SW->getBodiesAt(_rect, _bodies);
-	} else if (containsObject(&SE->rect, &_rect)) {
+	}
+	if (containsObject(&SE->rect, &_rect)) {
 		SE->getBodiesAt(_rect, _bodies);
 	}
 }
@@ -123,13 +148,8 @@ void QuadTree::getLowestElements(deque<deque<Body*> >& _bodies) {
 
 bool QuadTree::containsObject(const Rect<float>* quad,
 	const Rect<float>* body) {
-	if (body->x - OBJECT_MARGIN <= quad->x + quad->w
-			&& body->x + body->w + OBJECT_MARGIN >= quad->x
-			&& body->y - OBJECT_MARGIN <= quad->y + quad->h
-			&& body->y + body->h + OBJECT_MARGIN >= quad->y) {
-		return true;
-	}
-	return false;
+	return (body->x <= quad->x + quad->w && body->x + body->w >= quad->x
+			&& body->y <= quad->y + quad->h && body->y + body->h >= quad->y);
 }
 
 void QuadTree::clear() {

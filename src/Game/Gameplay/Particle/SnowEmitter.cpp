@@ -5,39 +5,57 @@
  *      Author: mateusz
  */
 #include "Particle.hpp"
+
 #include "../../Tools/Tools.hpp"
 
 SnowEmitter::SnowEmitter(const Rect<float>& _pos) :
-		ParticleEmitter(_pos, 40) {
+		ParticleEmitter(_pos, 120) {
 }
 
 /**
  * Rysowanie pojedynczej cząsteczki..
  */
-void SnowEmitter::drawParticle(usint _index, Window* _window) {
+bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 
 	particle.life_duration++;
 	particle.pos += particle.velocity;
+	if (particle.max_life_duration == 0) {
+		particles.erase(particles.begin() + _index);
+		return false;
+	}
 	if (particle.col.a > 30) {
 		particle.col.a = 255
 				- 255 * particle.life_duration / particle.max_life_duration;
 	}
+	/**
+	 * Optymalizacja!
+	 oglWrapper::drawRect(particle.pos.x, particle.pos.y, particle.size,
+	 particle.size, particle.col, 1);
+	 */
+	float x = particle.pos.x, y = particle.pos.y, w = particle.size;
 
-	oglWrapper::drawRect(particle.pos.x, particle.pos.y, particle.size,
-			particle.size, particle.col, 1);
+	glColor4ub(particle.col.r, particle.col.g, particle.col.b, particle.col.a);
+	glVertex2f(x, y);
+	glVertex2f(x + w, y);
+	glVertex2f(x + w, y + w);
+	glVertex2f(x, y + w);
+	//glVertex2f(x, y);
 
 	if (particle.life_duration > particle.max_life_duration
 			|| particle.col.a < 30) {
 		particles.erase(particles.begin() + _index);
+		return false;
 	}
+	return true;
 }
 
 /**
  * Tworzenie cząsteczki..
  */
 void SnowEmitter::createNewParticle(Window* _window) {
-	for (usint i = 0; i < getIntRandom(2, 30); ++i) {
+	for (usint i = 0; i < getIntRandom(2, (int) (30 * (40.f / (float) delay)));
+			++i) {
 		Particle part(pos, getIntRandom(10, 20), getIntRandom(50, 200),
 				oglWrapper::GRAY);
 

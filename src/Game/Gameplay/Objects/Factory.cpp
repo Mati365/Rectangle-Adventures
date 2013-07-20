@@ -64,7 +64,6 @@ bool ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 		_object = new Gun(physics, _x, _y, 32, textures[_type],
 				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 						"bullet")), 140);
-		_object->setState(Body::STATIC);
 		/**
 		 *
 		 */
@@ -72,7 +71,6 @@ bool ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 		_object = new Gun(physics, _x, _y, 32, textures[_type],
 				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 						"bullet_green")), 60);
-		_object->setState(Body::STATIC);
 		/**
 		 *
 		 */
@@ -82,7 +80,7 @@ bool ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 		Character* character = dynamic_cast<Character*>(_object);
 		switch (_type) {
 			case HEALTH: {
-				character->setFlag(Character::SCORE);
+				character->setType(Character::SCORE);
 				character->setNick("Zycie");
 				character->fitToWidth(32);
 				character->setStatus(health_status);
@@ -92,7 +90,7 @@ bool ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				 *
 				 */
 			case GHOST: {
-				character->setFlag(Character::ENEMY);
+				character->setType(Character::ENEMY);
 				character->setNick("Trup");
 				character->fitToWidth(32);
 				character->setStatus(ghost_enemy_status);
@@ -103,14 +101,14 @@ bool ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				 *
 				 */
 			case OBJECT:
-				character->setFlag(Character::PLATFORM);
+				character->setType(Character::PLATFORM);
 				character->fitToWidth(_w);
 				break;
 				/**
 				 *
 				 */
 			case SCORE: {
-				character->setFlag(Character::SCORE);
+				character->setType(Character::SCORE);
 				character->fitToWidth(26);
 				character->setStatus(score_status);
 			}

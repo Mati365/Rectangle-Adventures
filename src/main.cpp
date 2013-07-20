@@ -33,15 +33,12 @@ int main(int argc, char **argv) {
 	glutInit(&argc, argv);
 	glewInit();
 	//
-	srand(time(
-	NULL));
+	srand(time(NULL));
 	if (isFilesystemFake()) {
 		logEvent(Logger::LOG_ERROR, "Plik archiwum gry nie jest autentyczny!");
 		return 1;
 	}
-	Engine::Window win(Vector<usint>(
-	WINDOW_WIDTH,
-	WINDOW_HEIGHT), "Gra");
+	Engine::Window win(Vector<usint>(WINDOW_WIDTH, WINDOW_HEIGHT), "Gra");
 	win.init();
 #else
 	/**

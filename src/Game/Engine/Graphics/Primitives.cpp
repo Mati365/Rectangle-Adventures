@@ -14,7 +14,7 @@
  */
 Color oglWrapper::RED(255, 0, 0);
 Color oglWrapper::DARK_RED(128, 0, 0);
-Color oglWrapper::GREEN(0, 255, 0);
+Color oglWrapper::GREEN(124, 225, 24);
 Color oglWrapper::DARK_GREEN(0, 128, 0);
 Color oglWrapper::BLUE(0, 0, 255);
 Color oglWrapper::DARK_BLUE(128, 0, 0);

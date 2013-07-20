@@ -24,12 +24,11 @@ bool CharacterStatus::load(FILE* _file) {
 //------------------------
 
 Character::Character(const string& _nick, float _x, float _y,
-	PlatformShape* _shape, usint _flag) :
+	PlatformShape* _shape, usint _type) :
 		IrregularPlatform(_x, _y, true, _shape),
 		nick(Color(255, 255, 255), _nick, GLUT_BITMAP_HELVETICA_12, 12),
 		jumping(true),
-		status(
-		NULL, MAX_LIVES, false, 0, 0, _x, _y),
+		status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
 		ai(NULL),
 		//
 		source_color(col),
@@ -39,24 +38,27 @@ Character::Character(const string& _nick, float _x, float _y,
 		anim_cycles(8),
 		//
 		hit(false) {
-	flag = _flag;
+	type = _type;
 }
 
 void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (ai) {
 		ai->getCollision(physics, dir, body);
 	}
-	if (dir == pEngine::DOWN && IS_SET(body->flag, Body::STATIC)) {
+	if (dir == pEngine::DOWN) {
 		jumping = false;
 	}
-	if (flag != HERO) {
+	if (type != HERO) {
 		return;
 	}
 	/**
 	 * Akcje gracza!
 	 */
 	Character* enemy = dynamic_cast<Character*>(body);
-	switch (body->flag) {
+	if (!enemy) {
+		return;
+	}
+	switch (enemy->type) {
 		case SCORE:
 			status += enemy->status;
 			if (status.health > MAX_LIVES) {

@@ -183,7 +183,7 @@ bool Package::deleteObject(const char* label) {
 
 	// Zmiana rozmiaru
 	fflush(file);
-	ftruncate(fileno(file), header.getLength() + header.data_length);
+	//ftruncate(fileno(file), header.getLength() + header.data_length);
 	fclose(file);
 	file = fopen(file_path, "rb+");
 	//

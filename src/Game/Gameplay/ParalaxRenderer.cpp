@@ -39,8 +39,10 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	glPushMatrix();
 	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
 	if (draw_quad) {
-		physics->getQuadTree()->drawObject(
-		NULL);
+		physics->getQuadTree()->drawObject(NULL);
+	}
+	for (usint i = 0; i < static_objects.size(); ++i) {
+		static_objects[i]->drawObject(_window);
 	}
 	for (usint i = 0; i < list->size(); ++i) {
 		Body* body = (*list)[i];
@@ -51,9 +53,6 @@ void ParalaxRenderer::drawObject(Window* _window) {
 			continue;
 		}
 		body->drawObject(_window);
-	}
-	for (usint i = 0; i < static_objects.size(); ++i) {
-		static_objects[i]->drawObject(_window);
 	}
 	glPopMatrix();
 }

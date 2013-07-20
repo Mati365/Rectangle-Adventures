@@ -89,7 +89,7 @@ class ParticleEmitter: public Renderer {
 
 	protected:
 		virtual void updateSystem() = 0;
-		virtual void drawParticle(usint, Window*) = 0;
+		virtual bool drawParticle(usint, Window*) = 0;
 		virtual void createNewParticle(Window*) = 0;
 };
 
@@ -106,7 +106,7 @@ class SnowEmitter: public ParticleEmitter {
 		virtual void updateSystem() {
 		}
 
-		virtual void drawParticle(usint, Window*);
+		virtual bool drawParticle(usint, Window*);
 		virtual void createNewParticle(Window*);
 };
 
@@ -124,7 +124,7 @@ class FireEmitter: public ParticleEmitter {
 		virtual void updateSystem() {
 		}
 
-		virtual void drawParticle(usint, Window*);
+		virtual bool drawParticle(usint, Window*);
 		virtual void createNewParticle(Window*);
 };
 
@@ -142,7 +142,7 @@ class JetEmitter: public ParticleEmitter {
 		virtual void updateSystem() {
 		}
 
-		virtual void drawParticle(usint, Window*);
+		virtual bool drawParticle(usint, Window*);
 		virtual void createNewParticle(Window*);
 };
 

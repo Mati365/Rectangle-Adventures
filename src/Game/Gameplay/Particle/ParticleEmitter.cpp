@@ -43,11 +43,13 @@ void ParticleEmitter::drawObject(Window* _window) {
 		pos = *focus;
 	}
 	updateSystem();
+	//
+	glLineWidth(1);
+	glBegin (GL_QUADS);
 	for (usint i = 0; i < particles.size();) {
-		usint size = particles.size();
-		drawParticle(i, _window);
-		if (size == particles.size()) {
+		if (drawParticle(i, _window)) {
 			++i;
 		}
 	}
+	glEnd();
 }

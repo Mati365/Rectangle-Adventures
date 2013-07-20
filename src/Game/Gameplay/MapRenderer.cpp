@@ -80,17 +80,14 @@ void MapRenderer::setHero(Character* _hero) {
 }
 
 void MapRenderer::drawObject(Window* _window) {
-	glEnable (GL_SCISSOR_TEST);
-	if (hud_enabled) {
-		glScissor(0, msg.getHeight(), _window->getBounds()->x,
-				_window->getBounds()->y - msg.getHeight());
-
-	}
+	/**
+	 * Z powodu zje**nych sterowniów GPU intel'a..
+	 * glScissor() musi zostac wylaczone..
+	 */
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}
 	ParalaxRenderer::drawObject(_window);
-	glDisable(GL_SCISSOR_TEST);
 	/**
 	 * Elementy HUDu
 	 */
