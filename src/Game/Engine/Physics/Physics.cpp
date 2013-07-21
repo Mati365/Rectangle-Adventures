@@ -66,19 +66,24 @@ void pEngine::updateWorld() {
 	 * Grawitacja!
 	 */
 	for (usint i = 0; i < list.size(); ++i) {
-		if (IS_SET(list[i]->state, Body::STATIC)
-				|| IS_SET(list[i]->state, Body::HIDDEN)) {
+		Body* object = list[i];
+		if (IS_SET(object->state, Body::STATIC)
+				|| IS_SET(object->state, Body::HIDDEN)) {
 			continue;
+		}
+		Body* down_collision = list[i]->collisions[DOWN - 1];
+		if (down_collision && down_collision->velocity.x != 0) {
+			list[i]->x += down_collision->velocity.x;
 		}
 		if (list[i]->velocity.y < 20.f) {
 			list[i]->velocity.y += gravity_speed;
 		}
-		if (abs(list[i]->velocity.x) > 0) {
-			list[i]->velocity.x *= 0.85f;
+		if (abs(object->velocity.x) > 0) {
+			object->velocity.x *= 0.85f;
 		}
-		list[i]->y += list[i]->velocity.y;
-		list[i]->x += list[i]->velocity.x;
-		if (list[i]->destroyed) {
+		object->y += object->velocity.y;
+		object->x += object->velocity.x;
+		if (object->destroyed) {
 			remove(list[i]);
 		}
 	}
@@ -86,67 +91,72 @@ void pEngine::updateWorld() {
 
 void pEngine::checkCollisions(deque<Body*>& _bodies) {
 	for (usint i = 0; i < _bodies.size(); ++i) {
+		Body* source = _bodies[i];
+		for (usint j = 0; j < 4; ++j) {
+			source->collisions[j] = NULL;
+		}
 		if (IS_SET(_bodies[i]->state, Body::STATIC)) {
 			continue;
 		}
 		for (usint j = 0; j < _bodies.size(); ++j) {
-			if (_bodies[i]->destroyed || j == i
-					|| (_bodies[i]->layer != _bodies[j]->layer
-							&& !IS_SET(_bodies[j]->state, Body::STATIC)
-							&& !IS_SET(_bodies[i]->state, Body::STATIC))
-					|| (IS_SET(_bodies[i]->state, Body::STATIC)
-							&& IS_SET(_bodies[j]->state, Body::STATIC))) {
+			Body* target = _bodies[j];
+			if (source->destroyed || j == i
+					|| (source->layer != target->layer
+							&& !IS_SET(target->state, Body::STATIC)
+							&& !IS_SET(source->state, Body::STATIC))
+					|| (IS_SET(source->state, Body::STATIC)
+							&& IS_SET(target->state, Body::STATIC))) {
 				continue;
 			}
 			/**
 			 * Kolizje Góra/ Dół
 			 */
-			usint horizont_side = checkHorizontalCollision(_bodies[i],
-															_bodies[j]);
+			usint horizont_side = checkHorizontalCollision(source, target);
 			if (horizont_side != NONE) {
-				if (!IS_SET(_bodies[i]->state, Body::HIDDEN)
-						&& !IS_SET(_bodies[j]->state, Body::HIDDEN)) {
+				if (!IS_SET(source->state, Body::HIDDEN)
+						&& !IS_SET(target->state, Body::HIDDEN)) {
 					if (horizont_side == DOWN) {
 						/**
 						 * Dół
 						 */
-						_bodies[i]->y = _bodies[j]->y - _bodies[i]->h
+						source->y = target->y - source->h - source->velocity.y
 								+ gravity_speed;
-						//_bodies[i]->x = _bodies[j]->velocity.x;
 						/**
 						 *
 						 */
-						if (abs(_bodies[i]->velocity.y) * 0.5f
-								< gravity_speed) {
-							_bodies[i]->velocity.y = _bodies[j]->velocity.y;
+						if (abs(source->velocity.y) * 0.5f < gravity_speed) {
+							source->velocity.y = target->velocity.y;
 						} else {
-							_bodies[i]->velocity.y = -_bodies[i]->velocity.y
-									* 0.5f + _bodies[j]->velocity.y
-									- (_bodies[j]->velocity.y < 0 ?
+							source->velocity.y = -source->velocity.y * 0.5f
+									+ target->velocity.y
+									- (target->velocity.y < 0 ?
 											gravity_speed : -gravity_speed);
 						}
 					} else {
 						/**
 						 * Góra
 						 */
-						_bodies[i]->y = _bodies[j]->y + _bodies[j]->h
-								- _bodies[i]->velocity.y + gravity_speed;
-						_bodies[i]->velocity.y = 0;
+						source->y = target->y + target->h - source->velocity.y
+								+ gravity_speed;
+						source->velocity.y = 0;
 					}
 				}
-				_bodies[i]->catchCollision(this, horizont_side, _bodies[j]);
+				source->collisions[horizont_side - 1] = target;
+				source->catchCollision(this, horizont_side, target);
+				break;
 			}
 			/**
 			 * Kolizje Lewo
 			 */
-			usint vertical_side = checkVerticalCollision(_bodies[i],
-															_bodies[j]);
+			usint vertical_side = checkVerticalCollision(source, target);
 			if (vertical_side != NONE) {
-				if (!IS_SET(_bodies[i]->state, Body::HIDDEN)
-						&& !IS_SET(_bodies[j]->state, Body::HIDDEN)) {
-					_bodies[i]->velocity.x = -_bodies[i]->velocity.x / 2;
+				if (!IS_SET(source->state, Body::HIDDEN)
+						&& !IS_SET(target->state, Body::HIDDEN)) {
+					source->velocity.x = -source->velocity.x / 2;
 				}
-				_bodies[i]->catchCollision(this, vertical_side, _bodies[j]);
+				source->collisions[vertical_side - 1] = target;
+				source->catchCollision(this, vertical_side, target);
+				break;
 			}
 		}
 	}

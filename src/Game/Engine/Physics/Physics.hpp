@@ -45,6 +45,8 @@ namespace Physics {
 	class pEngine;
 	class Body: public Rect<float>, public Renderer {
 		public:
+			Body* collisions[4];
+
 			/**
 			 * Flaga obiektu, czym on jest?
 			 */
@@ -133,7 +135,7 @@ namespace Physics {
 			usint level;
 			usint max_level;
 			/**
-			 * STAĹ�E
+			 * STAŁE
 			 */
 			QuadTree* parent;
 			QuadTree* NW;
