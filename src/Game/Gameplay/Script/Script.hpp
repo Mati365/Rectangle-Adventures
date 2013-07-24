@@ -9,9 +9,8 @@
 #define SCRIPT_HPP_
 #include "../../Tools/Tools.hpp"
 
-#define ARG_COUNT 5 // Maksymalna ilość argumentów!
-#define SPACE_CHARACTER '%'
-
+#define ARG_COUNT 8 // Maksymalna ilość argumentów!
+#define SPACE_CHARACTER '%' // Znak spacji w skryptach
 /**
  * Deklaracja funkcji
  */
@@ -26,7 +25,13 @@ struct Func {
  * Deklaracje!!
  */
 enum {
-	SHOW_MESSAGE, SHOW_SPLASH, LOAD_MAP, CREATE_OBJECT
+	SELECT_PLATFORM,
+	SET_STATE,
+	SET_MOVING_DIR,
+	SHOW_MESSAGE,
+	SHOW_SPLASH,
+	LOAD_MAP,
+	CREATE_OBJECT
 };
 
 extern Func funcs[];
@@ -73,7 +78,7 @@ class Interpreter {
 		 */
 		Script* compile(char*);
 		/**
-		 * Interpretacja z tekstu!
+		 * Interpretacja ze skryptu!
 		 */
 		bool interpret(Script*);
 };

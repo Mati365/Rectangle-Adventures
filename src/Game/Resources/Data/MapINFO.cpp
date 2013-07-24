@@ -39,7 +39,8 @@ bool readMob(FILE* file) {
 	fscanf(file, "%hu %f %f %s\n", &type, &pos.x, &pos.y, shape);
 	//
 	ObjectFactory::getIstance(NULL).createObject((ObjectFactory::Types) type,
-													pos.x, pos.y, 0, 0, NULL);
+													pos.x, pos.y, 0, 0, NULL,
+													NULL);
 	return true;
 }
 
@@ -91,6 +92,8 @@ bool MapINFO::load(FILE* map) {
 	 */
 	usint type;
 	usint with_shape;
+	usint script_id;
+
 	char shape[255];
 	int border[4];
 
@@ -99,7 +102,7 @@ bool MapINFO::load(FILE* map) {
 
 	// Wczytywanie listy kształtów
 	fscanf(map, "%hu\n", &size);
-	for (int i = 0; i < size; ++i) {
+	for (usint i = 0; i < size; ++i) {
 		fscanf(map, "%s\n", shape);
 		//
 		resources.push_back(readShape(shape, shape)->getResourceID());
@@ -107,13 +110,14 @@ bool MapINFO::load(FILE* map) {
 
 	// Wczytywanie parametrów graficznych platform..
 	fscanf(map, "%hu\n", &size);
-	for (int i = 0; i < size; ++i) {
+	for (usint i = 0; i < size; ++i) {
 		fscanf(map,
-				"%d %d %d %d %hu %hu %f %f %f %f %hu %f %f %f %f %hu %hu %hu %hu %hu %hu %s\n",
-				&border[0], &border[1], &border[2], &border[3], &type,
-				&repeat_movement, &max_distance.x, &max_distance.y, &velocity.x,
-				&velocity.y, &state, &rect.x, &rect.y, &rect.w, &rect.h, &col.r,
-				&col.g, &col.b, &col.a, &layer, &with_shape, shape);
+				"%hu %d %d %d %d %hu %hu %f %f %f %f %hu %f %f %f %f %hu %hu %hu %hu %hu %hu %s\n",
+				&script_id, &border[0], &border[1], &border[2], &border[3],
+				&type, &repeat_movement, &max_distance.x, &max_distance.y,
+				&velocity.x, &velocity.y, &state, &rect.x, &rect.y, &rect.w,
+				&rect.h, &col.r, &col.g, &col.b, &col.a, &layer, &with_shape,
+				shape);
 		//
 		Platform* platform = NULL;
 		/**
@@ -133,6 +137,7 @@ bool MapINFO::load(FILE* map) {
 			platform->setBorder(border[0], border[1], border[2], border[3]);
 		}
 		platform->layer = layer;
+		platform->script_id = script_id;
 
 		platform->setType(type);
 		if (velocity.x != 0 || velocity.y != 0) {
@@ -155,10 +160,25 @@ bool MapINFO::load(FILE* map) {
 	ObjectFactory::getIstance(physics);
 
 	Vector<float> pos;
-
+	/**
+	 * Wczytywanie mobów!
+	 */
 	fscanf(map, "%hu\n", &size);
-	for (int i = 0; i < size; ++i) {
+	for (usint i = 0; i < size; ++i) {
 		readMob(map);
+	}
+	/**
+	 * Wczytywanie skryptów!
+	 */
+	memset(shape, 0, 255 * sizeof(char));
+	fscanf(map, "%hu\n", &size);
+	for (usint i = 0; i < size; ++i) {
+		fscanf(map, "%f %f %f %f %255c\n", &rect.x, &rect.y, &rect.w, &rect.h,
+				shape);
+		//
+		ObjectFactory::getIstance(physics).createObject(
+				ObjectFactory::SCRIPT_BOX, rect.x, rect.y, rect.w, rect.h, NULL,
+				shape);
 	}
 	return true;
 }
@@ -171,8 +191,7 @@ void MapINFO::unload() {
 		delete objects[i];
 	}
 
-	ObjectFactory::getIstance(
-	NULL).unloadObjects();
+	ObjectFactory::getIstance(NULL).unloadObjects();
 	// Usuwanie kształtów! Woolne!
 	for (usint i = 0; i < resources.size(); ++i) {
 		main_resource_manager.deleteResource(i);

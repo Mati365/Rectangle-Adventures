@@ -36,7 +36,7 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	float x = particle.pos.x, y = particle.pos.y, w = particle.size;
 
 	glColor4ub(particle.col.r, particle.col.g, particle.col.b, particle.col.a);
-	glBegin(GL_LINE_LOOP);
+	glBegin (GL_LINE_LOOP);
 	glVertex2f(x, y);
 	glVertex2f(x + w, y);
 	glVertex2f(x + w, y + w);

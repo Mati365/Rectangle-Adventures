@@ -13,7 +13,6 @@ using namespace GameScreen;
 
 Game::Game(const char* map_path) {
 	MapINFO* map = loadMap(map_path);
-	MapINFO* paralax_1 = loadMap("paralax_1.txt");
 
 	lvl = new MapRenderer(NULL, map);
 	//
@@ -26,20 +25,10 @@ Game::Game(const char* map_path) {
 			Body::HERO);
 	hero->fitToWidth(map->hero_bounds.w);
 
-	lvl->addToParalax(paralax_1, 0.45f, hero);
 	lvl->addWeather(MapRenderer::SNOWING);
 
 	lvl->getPhysics()->insert(hero);
 	lvl->setHero(hero);
-	//
-	/**
-	 * TEST
-	 */
-	char d[] =
-			"SHOW_SPLASH Tymczasem%gdzies%w%odleglej%galaktyce.. SHOW_MESSAGE Sterowanie Poruszanie%sie:%%%w%-%skok%%%%a%-%lewo%%%%d%-%prawo CREATE_OBJECT 5 550.0 130.0 CREATE_OBJECT 5 650.0 130.0 ";
-	Script* script = Interpreter::getIstance().compile(d);
-	Trigger* trigger = new Trigger(script, 200, 350, 300, 300);
-	lvl->getPhysics()->insert(trigger);
 }
 
 void Game::catchEvent(const Event& event) {

@@ -45,7 +45,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (ai) {
 		ai->getCollision(physics, dir, body);
 	}
-	if (dir == pEngine::DOWN) {
+	if (dir == pEngine::DOWN && !IS_SET(body->state, Body::HIDDEN)) {
 		jumping = false;
 	}
 	if (type != HERO) {
@@ -148,8 +148,7 @@ void Character::drawObject(Window*) {
 		ai->drive();
 	}
 	drawHitAnimation();
-	IrregularPlatform::drawObject(
-	NULL);
+	IrregularPlatform::drawObject(NULL);
 	/**
 	 * Nieoptymalne rozwiązanie..
 	 * Za dużo push!
@@ -157,7 +156,7 @@ void Character::drawObject(Window*) {
 	if (!nick.getString()->empty()) {
 		glPushMatrix();
 		glTranslatef(x, y, 1);
-		nick.printText(w / 2 - nick.getScreenLength() / 2, -20);
+		nick.printText(w / 2 - nick.getScreenLength() / 2, -10);
 		glPopMatrix();
 	}
 }

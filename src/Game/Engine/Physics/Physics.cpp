@@ -67,7 +67,7 @@ void pEngine::updateWorld() {
 	 */
 	for (usint i = 0; i < list.size(); ++i) {
 		Body* object = list[i];
-		if (IS_SET(object->state, Body::STATIC)
+		if (!object || IS_SET(object->state, Body::STATIC)
 				|| IS_SET(object->state, Body::HIDDEN)) {
 			continue;
 		}
@@ -143,7 +143,6 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 				}
 				source->collisions[horizont_side - 1] = target;
 				source->catchCollision(this, horizont_side, target);
-				break;
 			}
 			/**
 			 * Kolizje Lewo
@@ -156,7 +155,6 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 				}
 				source->collisions[vertical_side - 1] = target;
 				source->catchCollision(this, vertical_side, target);
-				break;
 			}
 		}
 	}

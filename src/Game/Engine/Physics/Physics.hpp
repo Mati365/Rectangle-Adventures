@@ -72,13 +72,15 @@ namespace Physics {
 			 */
 			usint type;
 			usint layer;
+			usint script_id;
 
 			Body() :
 					state(NONE),
 					elasticity(0),
 					weight(0),
 					type(PLATFORM),
-					layer(STATIC_LAYER) {
+					layer(STATIC_LAYER),
+					script_id(0) {
 				x = 0;
 				y = 0;
 				w = 0;
@@ -92,7 +94,8 @@ namespace Physics {
 					elasticity(_elasticity),
 					weight(_weight),
 					type(PLATFORM),
-					layer(STATIC_LAYER) {
+					layer(STATIC_LAYER),
+					script_id(0) {
 				x = _x;
 				y = _y;
 				w = _w;

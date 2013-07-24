@@ -51,14 +51,32 @@ void ObjectFactory::putTexture(usint id, PlatformShape* shape) {
 }
 
 /**
+ * Generowanie skryptów!
+ */
+
+/**
  * Generowanie obiektu!
  */
-bool ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
-									float _h, PlatformShape* _shape) {
+Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
+									float _h, PlatformShape* _shape,
+									char* _script) {
 	if (physics == NULL) {
-		return false;
+		logEvent(Logger::LOG_ERROR, "Fabryka zgłasza praw fizyki brak!");
+		return NULL;
 	}
 	//
+	if (_type == SCRIPT_BOX) {
+		if (!_script) {
+			logEvent(Logger::LOG_WARNING, "Nie mogę utworzyć triggera!");
+			return false;
+		}
+		Trigger* trigger = new Trigger(
+				Interpreter::getIstance().compile(_script), _x, _y, _w, _h);
+		triggers.push_back(trigger);
+		physics->insert(trigger);
+		//
+		return trigger;
+	}
 	Platform* _object = NULL;
 	if (_type == GUN) {
 		_object = new Gun(
@@ -104,10 +122,10 @@ bool ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				 */
 			case GHOST: {
 				character->setType(Character::ENEMY);
-				character->setNick("Trup");
-				character->fitToWidth(32);
+				character->setNick("Kupa");
+				character->fitToWidth(40);
 				character->setStatus(ghost_enemy_status);
-				character->setAI(new SnailAI(character, 3));
+				character->setAI(new SnailAI(character, 1.2));
 			}
 				break;
 				/**
@@ -132,13 +150,20 @@ bool ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 		created.push_back(_object);
 		physics->insert(_object);
 	}
-	return true;
+	return _object;
 }
 
 /**
  * Kasowanie całego poziomu!
  */
 void ObjectFactory::unloadObjects() {
+	for (usint i = 0; i < triggers.size(); ++i) {
+		if (triggers[i]) {
+			delete triggers[i];
+		}
+	}
+	triggers.clear();
+	//
 	for (usint i = 0; i < created.size(); ++i) {
 		if (created[i]) {
 			delete created[i];

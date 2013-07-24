@@ -350,6 +350,7 @@ class Trigger: public Body {
 				Body(_x, _y, _w, _h, 1.f, 1.f, Body::HIDDEN),
 				script(_script) {
 			type = Body::TRIGGER;
+			state = Body::HIDDEN;
 		}
 
 		/**
@@ -378,6 +379,7 @@ class Trigger: public Body {
 class ObjectFactory {
 	private:
 		deque<Platform*> created;
+		deque<Trigger*> triggers;
 		map<usint, PlatformShape*> textures;
 		/**
 		 * STATUSY!!!!
@@ -389,7 +391,7 @@ class ObjectFactory {
 
 	public:
 		enum Types {
-			SCORE, HEALTH, GHOST, OBJECT, GUN, GREEN_GUN
+			SCORE, HEALTH, GHOST, OBJECT, GUN, GREEN_GUN, SCRIPT_BOX
 		};
 
 		/**
@@ -400,7 +402,9 @@ class ObjectFactory {
 		/**
 		 * Deklaruje dynamicznie!
 		 */
-		bool createObject(usint, float, float, float, float, PlatformShape*);
+		Body* createObject(usint, float, float, float, float, PlatformShape*,
+							char*);
+
 		void unloadObjects();
 		/**
 		 * Pobieranie instancji i inicjowanie!

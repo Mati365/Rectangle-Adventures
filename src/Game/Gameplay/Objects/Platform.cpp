@@ -66,10 +66,10 @@ void Platform::setMovingDir(const Vector<float>& _velocity,
  * Ustawienie obramowania!
  */
 void Platform::setBorder(bool top, bool right, bool down, bool left) {
-	border[pEngine::UP] = top;
-	border[pEngine::RIGHT] = right;
-	border[pEngine::DOWN] = down;
-	border[pEngine::LEFT] = left;
+	border[pEngine::UP - 1] = top;
+	border[pEngine::RIGHT - 1] = right;
+	border[pEngine::DOWN - 1] = down;
+	border[pEngine::LEFT - 1] = left;
 }
 
 void Platform::drawBorder() {
@@ -88,19 +88,19 @@ void Platform::drawBorder() {
 		glEnd();
 	} else {
 		glBegin (GL_LINES);
-		if (border[pEngine::UP]) {
+		if (border[pEngine::UP - 1]) {
 			glVertex2f(x, y);
 			glVertex2f(x + w, y);
 		}
-		if (border[pEngine::DOWN]) {
+		if (border[pEngine::DOWN - 1]) {
 			glVertex2f(x, y + h);
 			glVertex2f(x + w, y + h);
 		}
-		if (border[pEngine::LEFT]) {
+		if (border[pEngine::LEFT - 1]) {
 			glVertex2f(x, y);
 			glVertex2f(x, y + h);
 		}
-		if (border[pEngine::RIGHT]) {
+		if (border[pEngine::RIGHT - 1]) {
 			glVertex2f(x + w, y);
 			glVertex2f(x + w, y + h);
 		}
