@@ -94,7 +94,7 @@ bool MapINFO::load(FILE* map) {
 	usint with_shape;
 	usint script_id;
 
-	char shape[255];
+	char shape[256];
 	int border[4];
 
 	// Wczytywanie pozycji początkowej gracza
@@ -136,13 +136,15 @@ bool MapINFO::load(FILE* map) {
 			platform = new Platform(rect.x, rect.y, rect.w, rect.h, col, state);
 			platform->setBorder(border[0], border[1], border[2], border[3]);
 		}
+		//
 		platform->layer = layer;
 		platform->script_id = script_id;
-
-		platform->setType(type);
+		platform->setFillType(type);
+		//
 		if (velocity.x != 0 || velocity.y != 0) {
 			platform->setMovingDir(velocity, max_distance, repeat_movement);
 		}
+		platform->compileList();
 		//
 		objects.push_back(platform);
 	}
@@ -170,10 +172,11 @@ bool MapINFO::load(FILE* map) {
 	/**
 	 * Wczytywanie skryptów!
 	 */
-	memset(shape, 0, 255 * sizeof(char));
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
-		fscanf(map, "%f %f %f %f %255c\n", &rect.x, &rect.y, &rect.w, &rect.h,
+		memset(shape, 0, 256 * sizeof(char));
+		//
+		fscanf(map, "%f %f %f %f %[^\n]s\n", &rect.x, &rect.y, &rect.w, &rect.h,
 				shape);
 		//
 		ObjectFactory::getIstance(physics).createObject(

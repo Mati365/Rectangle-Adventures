@@ -43,7 +43,7 @@ void MapRenderer::catchEvent(const Event& _event) {
 				msg.catchEvent(_event);
 			} else {
 				if (_event.key == 'w') {
-					hero->jump(10.f);
+					hero->jump(9.f, false);
 				} else if (_event.key == 'a') {
 					hero->move(-2.f, 0.f);
 				} else if (_event.key == 'd') {
@@ -65,6 +65,9 @@ void MapRenderer::catchEvent(const Event& _event) {
  */
 void MapRenderer::addWeather(usint _type) {
 	switch (_type) {
+		/**
+		 *
+		 */
 		case SNOWING: {
 			SnowEmitter* snow = new SnowEmitter(
 					Rect<float>(0, 20, WINDOW_WIDTH, 0));
@@ -81,9 +84,11 @@ void MapRenderer::setHero(Character* _hero) {
 
 void MapRenderer::drawObject(Window* _window) {
 	/**
-	 * Z powodu zje**nych sterowniów GPU intel'a..
-	 * glScissor() musi zostac wylaczone..
+	 * glScissor - rzecz sporna dla GPU intel!
 	 */
+	glEnable (GL_SCISSOR_TEST);
+	glScissor(0, 0, cam.pos.w, cam.pos.h);
+	//
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}

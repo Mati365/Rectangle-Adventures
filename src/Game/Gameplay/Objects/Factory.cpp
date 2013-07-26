@@ -68,7 +68,7 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 	if (_type == SCRIPT_BOX) {
 		if (!_script) {
 			logEvent(Logger::LOG_WARNING, "Nie mogę utworzyć triggera!");
-			return false;
+			return NULL;
 		}
 		Trigger* trigger = new Trigger(
 				Interpreter::getIstance().compile(_script), _x, _y, _w, _h);
@@ -83,11 +83,11 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				physics,
 				_x,
 				_y,
-				32,
+				16,
 				textures[_type],
 				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 						"bullet")),
-				140);
+				240);
 		/**
 		 *
 		 */
@@ -96,11 +96,11 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				physics,
 				_x,
 				_y,
-				32,
+				16,
 				textures[_type],
 				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 						"bullet_green")),
-				60);
+				160);
 		/**
 		 *
 		 */
@@ -113,7 +113,7 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 			case HEALTH: {
 				character->setType(Character::SCORE);
 				character->setNick("Zycie");
-				character->fitToWidth(32);
+				character->fitToWidth(16);
 				character->setStatus(health_status);
 			}
 				break;
@@ -123,7 +123,7 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 			case GHOST: {
 				character->setType(Character::ENEMY);
 				character->setNick("Kupa");
-				character->fitToWidth(40);
+				character->fitToWidth(20);
 				character->setStatus(ghost_enemy_status);
 				character->setAI(new SnailAI(character, 1.2));
 			}
@@ -140,7 +140,7 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				 */
 			case SCORE: {
 				character->setType(Character::SCORE);
-				character->fitToWidth(26);
+				character->fitToWidth(12);
 				character->setStatus(score_status);
 			}
 				break;

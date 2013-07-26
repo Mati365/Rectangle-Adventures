@@ -22,12 +22,31 @@ struct Func {
 };
 
 /**
+ * Typy skryptu!
+ */
+enum {
+	COLLISION, JUMP
+};
+
+/**
+ * Typy particle
+ */
+enum {
+	FIRE
+};
+
+/**
  * Deklaracje!!
  */
 enum {
+	SCRIPT_TYPE,
 	SELECT_PLATFORM,
 	SET_STATE,
+	SET_LAYER,
 	SET_MOVING_DIR,
+	ATTACH_PARTICLE,
+	DISABLE_MOVING,
+	DESTROY_OBJECT,
 	SHOW_MESSAGE,
 	SHOW_SPLASH,
 	LOAD_MAP,

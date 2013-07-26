@@ -19,8 +19,7 @@ using namespace Physics;
  * Kule to tak naprawde przeciwnicy!
  */
 class Bullet: public Character {
-#define BULLET_WIDTH 8
-#define BULLET_HEIGHT 8
+#define BULLET_WIDTH 4
 	private:
 		/**
 		 * Wysokość lotu
@@ -36,6 +35,8 @@ class Bullet: public Character {
 				max_flight_height(_max_flight_height),
 				flight_height(0) {
 			dynamically_allocated = true;
+			//
+			fitToWidth(BULLET_WIDTH);
 		}
 
 		virtual void catchCollision(pEngine*, usint, Body*);

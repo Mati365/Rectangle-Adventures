@@ -24,7 +24,6 @@ Game::Game(const char* map_path) {
 					"player")),
 			Body::HERO);
 	hero->fitToWidth(map->hero_bounds.w);
-
 	lvl->addWeather(MapRenderer::SNOWING);
 
 	lvl->getPhysics()->insert(hero);

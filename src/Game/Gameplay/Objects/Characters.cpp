@@ -76,7 +76,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 		case ENEMY:
 			if (dir == pEngine::DOWN || dir == pEngine::UP) {
 				status += enemy->status;
-				jump(15);
+				jump(9, true);
 				body->destroyed = true;
 			} else {
 				status -= enemy->status;
@@ -91,7 +91,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 				status.health -= 1;
 			}
 			enableHitAnim();
-			jump(15);
+			jump(9, true);
 			body->destroyed = true;
 			break;
 	}
@@ -100,8 +100,8 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 /**
  * Skok z określoną prędkością!
  */
-void Character::jump(float _y_speed) {
-	if (!jumping) {
+void Character::jump(float _y_speed, bool _force) {
+	if (!jumping || _force) {
 		jumping = true;
 		velocity.y = -_y_speed;
 	}

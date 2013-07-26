@@ -19,8 +19,8 @@ ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, bool _draw_quad,
 /**
  * Obiekty nie podlegające fizyce typu particle
  */
-void ParalaxRenderer::addStaticObject(Renderer* _renderer) {
-	static_objects.push_back(AllocKiller<Renderer>(_renderer));
+void ParalaxRenderer::addStaticObject(Body* _renderer) {
+	static_objects.push_back(AllocKiller<Body>(_renderer));
 }
 
 void ParalaxRenderer::drawObject(Window* _window) {
@@ -28,9 +28,12 @@ void ParalaxRenderer::drawObject(Window* _window) {
 		return;
 	}
 	pEngine* physics = map->physics;
-	if (state != PAUSE && draw_quad) {
+	if (draw_quad) {
 		physics->updateWorld();
 	}
+	/**
+	 *
+	 */
 	cam.updateCam(_window);
 
 	const Vector<usint>* bounds = _window->getBounds();
@@ -38,11 +41,16 @@ void ParalaxRenderer::drawObject(Window* _window) {
 
 	glPushMatrix();
 	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
-	if (draw_quad) {
-		physics->getQuadTree()->drawObject(NULL);
+	if (state != PAUSE && draw_quad) {
+		//physics->getQuadTree()->drawObject(NULL);
 	}
+	/**
+	 * Obiekty poza ekranem wycinamy!
+	 */
 	for (usint i = 0; i < static_objects.size(); ++i) {
-		static_objects[i]->drawObject(_window);
+		Body* body = static_objects[i];
+		//
+		body->drawObject(_window);
 	}
 	for (usint i = 0; i < list->size(); ++i) {
 		Body* body = (*list)[i];

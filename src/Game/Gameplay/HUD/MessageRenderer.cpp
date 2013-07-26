@@ -86,9 +86,15 @@ void MessageRenderer::addMessage(const Message& msg) {
 }
 
 void MessageRenderer::drawBorder(Window* _window) {
+	/**
+	 * Wypełnienie
+	 */
 	oglWrapper::drawFillRect(SPACES, _window->getBounds()->y - height + SPACES,
 								_window->getBounds()->x - SPACES * 2,
 								height - SPACES * 2, oglWrapper::BLACK);
+	/**
+	 * Obramówka
+	 */
 	glPushAttrib (GL_ENABLE_BIT);
 	glLineStipple(1, 0xAAAA);
 	glEnable (GL_LINE_STIPPLE);
@@ -106,7 +112,9 @@ void MessageRenderer::drawBorder(Window* _window) {
 
 bool MessageRenderer::popMessage() {
 	static int _old_height;
-	//
+	/**
+	 * Zamykanie intro!
+	 */
 	closeCutscene();
 	if (msgs.empty()) {
 		height = _old_height;
@@ -114,6 +122,9 @@ bool MessageRenderer::popMessage() {
 		closed = false;
 		return false;
 	}
+	/**
+	 * Jeśli otwarte..
+	 */
 	if (height != 100) {
 		_old_height = height;
 	}

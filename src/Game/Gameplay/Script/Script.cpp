@@ -7,6 +7,9 @@
 #include <string.h>
 
 #include "Script.hpp"
+
+#include "../Particle/Particle.hpp"
+
 #include "../Screens/Screens.hpp"
 
 #include "../../Tools/Logger.hpp"
@@ -17,6 +20,10 @@ using namespace GameScreen;
 //---------------------
 
 Func funcs[] = {
+					{
+						SCRIPT_TYPE,
+						"SCRIPT_TYPE",
+						1 },
 					{
 						SELECT_PLATFORM,
 						"SELECT_PLATFORM",
@@ -29,6 +36,22 @@ Func funcs[] = {
 						SET_MOVING_DIR,
 						"SET_MOVING_DIR",
 						5 },
+					{
+						SET_LAYER,
+						"SET_LAYER",
+						1 },
+					{
+						ATTACH_PARTICLE,
+						"ATTACH_PARTICLE",
+						3 },
+					{
+						DISABLE_MOVING,
+						"DISABLE_MOVING",
+						0 },
+					{
+						DESTROY_OBJECT,
+						"DESTROY_OBJECT",
+						0 },
 					{
 						SHOW_MESSAGE,
 						"SHOW_MESSAGE",
@@ -61,7 +84,7 @@ Script* Interpreter::compile(char* str) {
 	char* tok = strtok(str, " ");
 	//
 	while (tok != NULL) {
-		for (usint i = 0; i < 8; ++i) {
+		for (usint i = 0; i < CREATE_OBJECT + 1; ++i) {
 			if (strcmp(tok, funcs[i].func_name) == 0) {
 				array.push_back(funcs[i]);
 				arg_ac = 0;
@@ -76,7 +99,7 @@ Script* Interpreter::compile(char* str) {
 					ptr[i] = ' ';
 				}
 			}
-		} else if (arg_ac - 1 >= array.back().argc) {
+		} else if (!array.empty() && arg_ac - 1 >= array.back().argc) {
 			arg_ac = 0;
 		}
 		arg_ac++;
@@ -107,15 +130,46 @@ bool Interpreter::interpret(Script* script) {
 		/**
 		 * Sprawdzenie zaznaczenia!
 		 */
-		if (!selected && (func.id == SET_STATE || func.id == SET_MOVING_DIR)) {
+		if (!selected
+				&& (func.id == SET_STATE || func.id == SET_MOVING_DIR
+						|| func.id == DISABLE_MOVING
+						|| func.id == ATTACH_PARTICLE)) {
 			logEvent(Logger::LOG_WARNING, "Brak zaznaczenia!");
 			continue;
 		}
 		switch (func.id) {
 			/**
-			 * Oznaczenie platform, wyszukiwanie platformy
-			 * z listy platform!
+			 * Typ skryptu!
 			 */
+			case SCRIPT_TYPE: {
+				int type = Convert::stringTo<int>(func.args[0]);
+				switch (type) {
+					case JUMP:
+						if (!map->getHero()->isJumping()
+								|| map->getHero()->velocity.y > 0) {
+							return false;
+						}
+						break;
+						/**
+						 *
+						 */
+					default:
+						break;
+				}
+			}
+				break;
+
+				/**
+				 * Warstwa
+				 */
+			case SET_LAYER:
+				selected->layer = Convert::stringTo<usint>(func.args[0]);
+				break;
+
+				/**
+				 * Oznaczenie platform, wyszukiwanie platformy
+				 * z listy platform!
+				 */
 			case SELECT_PLATFORM: {
 				deque<Body*>* list = map->getPhysics()->getList();
 				int id = Convert::stringTo<int>(func.args[0]);
@@ -143,6 +197,20 @@ bool Interpreter::interpret(Script* script) {
 				break;
 
 				/**
+				 * Wyłączenie ruchu!
+				 */
+			case DISABLE_MOVING:
+				selected->disableMoving();
+				break;
+
+				/**
+				 * Zniszczenie obiektu!
+				 */
+			case DESTROY_OBJECT:
+				selected->destroyed = true;
+				break;
+
+				/**
 				 * Ustawienie kierunku ruchu!
 				 */
 			case SET_MOVING_DIR:
@@ -152,6 +220,36 @@ bool Interpreter::interpret(Script* script) {
 						Vector<float>(Convert::stringTo<float>(func.args[2]),
 										Convert::stringTo<float>(func.args[3])),
 						Convert::stringTo<bool>(func.args[4]));
+				break;
+
+				/**
+				 * 'Doczepienie' particle do obiektu!
+				 */
+			case ATTACH_PARTICLE: {
+				usint particle_type = Convert::stringTo<usint>(func.args[0]);
+				ParticleEmitter* emitter = NULL;
+				//
+				switch (particle_type) {
+					case FIRE:
+						emitter = new FireEmitter(Rect<float>(0, 0, 36, 64),
+													25);
+						break;
+						/**
+						 *
+						 */
+					default:
+						logEvent(Logger::LOG_WARNING, "Nieznany typ particle!");
+						break;
+				}
+				if (emitter) {
+					emitter->setFocus(selected);
+					emitter->setPosInBody(
+							Vector<float>(
+									Convert::stringTo<float>(func.args[1]),
+									Convert::stringTo<float>(func.args[2])));
+					game->getMapRenderer()->addStaticObject(emitter);
+				}
+			}
 				break;
 
 				/**
@@ -179,7 +277,7 @@ bool Interpreter::interpret(Script* script) {
 				 */
 			case CREATE_OBJECT:
 				ObjectFactory::getIstance(map->getPhysics()).createObject(
-						(ObjectFactory::Types) Convert::stringTo<int>(
+						(ObjectFactory::Types) Convert::stringTo<usint>(
 								func.args[0]),
 						Convert::stringTo<float>(func.args[1]),
 						Convert::stringTo<float>(func.args[2]), 0, 0, NULL,

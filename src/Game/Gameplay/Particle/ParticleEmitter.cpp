@@ -7,12 +7,15 @@
 #include "Particle.hpp"
 
 ParticleEmitter::ParticleEmitter(const Rect<float>& _pos, usint _delay) :
-		pos(_pos),
 		focus(NULL),
 		delay(_delay),
 		timer(0),
 		max_emit_count(0),
 		emit_count(0) {
+	x = _pos.x;
+	y = _pos.y;
+	w = _pos.w;
+	h = _pos.h;
 }
 
 /**
@@ -40,7 +43,8 @@ void ParticleEmitter::drawObject(Window* _window) {
 		timer = 0;
 	}
 	if (focus) {
-		pos = *focus;
+		x = focus->x;
+		y = focus->y;
 	}
 	updateSystem();
 	//

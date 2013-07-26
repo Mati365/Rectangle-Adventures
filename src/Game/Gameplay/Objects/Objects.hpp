@@ -41,7 +41,12 @@ class Platform: public Body, public Cloneable {
 		Vector<float> max_distance;
 		bool repeat_movement;
 
-		usint type;
+		usint fill_type;
+		usint orientation;
+		/**
+		 * Dla przyśpieszenia renderingu!
+		 */
+		usint list;
 		/**
 		 * Obramowanie platformy
 		 */
@@ -54,23 +59,32 @@ class Platform: public Body, public Cloneable {
 		 * Odblokowanie poruszania się!
 		 */
 		void setMovingDir(const Vector<float>&, const Vector<float>&, bool);
+		void disableMoving();
+
 		// Argumenty zgodnie z ruchem wskazówek zegara
 		void setBorder(bool, bool, bool, bool);
+		void setOrientation(usint);
+		void setFillType(usint);
 
 		virtual void drawObject(Window*);
 		virtual void catchCollision(pEngine*, usint, Body*) {
 		}
 
 		/**
+		 * Kompilacja listy dla statycznej!
+		 */
+		void compileList();
+
+		/**
 		 * Typy platformy pod względem
 		 * rysowania!
 		 */
-		void setType(usint _type) {
-			type = _type;
+		usint setOrientation() const {
+			return orientation;
 		}
 
-		usint getType() const {
-			return type;
+		usint getFillType() const {
+			return fill_type;
 		}
 		Color* getColor() {
 			return &col;
@@ -92,9 +106,18 @@ class Platform: public Body, public Cloneable {
 			return true;
 		}
 
+		~Platform() {
+			if (list) {
+				glDeleteLists(list, 1);
+			}
+		}
 	protected:
-		void updatePlatform();
+		bool updatePlatform();
+		/**
+		 *  Rysowanie!
+		 */
 		void drawBorder();
+		void drawBody();
 };
 
 //------------------------ Platforma z łamanymi, wolniejsza
@@ -272,9 +295,12 @@ class Character: public IrregularPlatform {
 		 * Uderzenie, postać staje się naprzemian
 		 * normalna
 		 */
+		bool isJumping() const {
+			return jumping;
+		}
 
 		void move(float, float);
-		void jump(float);
+		void jump(float, bool);
 
 		void enableHitAnim() {
 			hit = true;
@@ -303,9 +329,11 @@ class Character: public IrregularPlatform {
 		void setNick(const string& _nick) {
 			nick.setString(_nick, -1);
 		}
+
 		void setStatus(const CharacterStatus& _status) {
 			status = _status;
 		}
+
 		CharacterStatus* getStatus() {
 			return &status;
 		}
@@ -352,7 +380,6 @@ class Trigger: public Body {
 			type = Body::TRIGGER;
 			state = Body::HIDDEN;
 		}
-
 		/**
 		 * Generowanie zdarzenia!
 		 */
@@ -360,8 +387,9 @@ class Trigger: public Body {
 			if (destroyed) {
 				return;
 			}
-			Interpreter::getIstance().interpret(script);
-			destroyed = true;
+			if (Interpreter::getIstance().interpret(script)) {
+				destroyed = true;
+			}
 		}
 
 		~Trigger() {
@@ -377,6 +405,11 @@ class Trigger: public Body {
  * + Generowanie tymczasowych particle np. eksplozja
  */
 class ObjectFactory {
+	public:
+		enum Types {
+			SCORE, HEALTH, GHOST, OBJECT, GUN, GREEN_GUN, SCRIPT_BOX
+		};
+
 	private:
 		deque<Platform*> created;
 		deque<Trigger*> triggers;
@@ -390,10 +423,6 @@ class ObjectFactory {
 		ObjectFactory();
 
 	public:
-		enum Types {
-			SCORE, HEALTH, GHOST, OBJECT, GUN, GREEN_GUN, SCRIPT_BOX
-		};
-
 		/**
 		 *
 		 */

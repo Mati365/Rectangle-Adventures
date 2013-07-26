@@ -60,7 +60,7 @@ namespace Gameplay {
 			 * AllocKiller nie powinien zmniejszyć
 			 * wydajności
 			 */
-			deque<AllocKiller<Renderer> > static_objects;
+			deque<AllocKiller<Body> > static_objects;
 
 			Camera cam;
 			float ratio;
@@ -71,7 +71,7 @@ namespace Gameplay {
 		public:
 			ParalaxRenderer(Body*, float, bool, MapINFO*);
 
-			void addStaticObject(Renderer*);
+			void addStaticObject(Body*);
 
 			virtual void drawObject(Window*);
 

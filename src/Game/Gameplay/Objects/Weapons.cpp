@@ -9,7 +9,7 @@
 //////////////////// Bullet
 
 void Bullet::drawObject(Window*) {
-	velocity.y = -2.5f;
+	velocity.y = -1.0f;
 	flight_height += -velocity.y;
 	if (flight_height >= max_flight_height) {
 		destroyed = true;
@@ -45,7 +45,7 @@ void Gun::shot() {
 	}
 	physics->insert(
 			new Bullet(x + w / 2 - BULLET_WIDTH / 2, y - h * 2, bullet_shape,
-						300));
+						200));
 }
 
 void Gun::drawObject(Window*) {

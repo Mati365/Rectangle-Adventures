@@ -57,11 +57,11 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 void SnowEmitter::createNewParticle(Window* _window) {
 	for (usint i = 0; i < getIntRandom(2, (int) (30 * (40.f / (float) delay)));
 			++i) {
-		Particle part(pos, getIntRandom(10, 20), getIntRandom(50, 200),
-						oglWrapper::GRAY);
+		Particle part(Vector<float>(x, y), getIntRandom(10, 20),
+						getIntRandom(50, 200), oglWrapper::GRAY);
 
 		part.velocity.y = getIntRandom(150, 350) / 150;
-		part.pos.x = pos.x + getIntRandom(-100, (int) pos.w + 100);
+		part.pos.x = x + getIntRandom(-100, (int) w + 100);
 
 		particles.push_back(part);
 	}

@@ -48,9 +48,8 @@ class Particle {
  * Nie jest obiektem zaś może mieć na
  * niego focusa!
  */
-class ParticleEmitter: public Renderer {
+class ParticleEmitter: public Body {
 	protected:
-		Rect<float> pos;
 		Vector<float> pos_in_body;
 
 		Rect<float>* focus;
@@ -118,7 +117,7 @@ class FireEmitter: public ParticleEmitter {
 		FireEmitter(const Rect<float>&, usint);
 
 		usint getTemperature() const {
-			return pos.w * pos.h / 60 * 100 * delay;
+			return w * h / 60 * 100 * delay;
 		}
 	protected:
 		virtual void updateSystem() {

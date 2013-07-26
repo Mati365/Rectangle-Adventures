@@ -37,8 +37,10 @@ void pEngine::updateWorld() {
 			return;
 		}
 	}
+	/**
+	 * Usuwanie wykasowanych obiektów!
+	 */
 	bodies.clear();
-
 	if (!to_remove.empty()) {
 		for (auto iter = to_remove.begin(); iter != to_remove.end(); ++iter) {
 			auto _pos = find(list.begin(), list.end(), *iter);
@@ -75,9 +77,15 @@ void pEngine::updateWorld() {
 		if (down_collision && down_collision->velocity.x != 0) {
 			list[i]->x += down_collision->velocity.x;
 		}
+		/**
+		 * Grawitacja
+		 */
 		if (list[i]->velocity.y < 20.f) {
 			list[i]->velocity.y += gravity_speed;
 		}
+		/**
+		 * Siła tarcia
+		 */
 		if (abs(object->velocity.x) > 0) {
 			object->velocity.x *= 0.85f;
 		}
@@ -140,8 +148,8 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 								+ gravity_speed;
 						source->velocity.y = 0;
 					}
+					source->collisions[horizont_side - 1] = target;
 				}
-				source->collisions[horizont_side - 1] = target;
 				source->catchCollision(this, horizont_side, target);
 			}
 			/**
@@ -152,8 +160,8 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 				if (!IS_SET(source->state, Body::HIDDEN)
 						&& !IS_SET(target->state, Body::HIDDEN)) {
 					source->velocity.x = -source->velocity.x / 2;
+					source->collisions[vertical_side - 1] = target;
 				}
-				source->collisions[vertical_side - 1] = target;
 				source->catchCollision(this, vertical_side, target);
 			}
 		}
