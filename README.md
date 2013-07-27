@@ -1,11 +1,13 @@
 Rect-Adventures
 ===============
 
-Jest to gra platformowo-zręcznościowa, której głównym założeniem było renderowanie całej grafiki przy pomocy tylko i wyłącznie wektorów. Celem tej gry jest 'uzbieranie' określonej ilości śmieci z planszy przez robota omijając przeszkód.
+Jest to gra platformowo-zręcznościowa, której głównym założeniem jest renderowanie całej grafiki przy pomocy tylko i wyłącznie wektorów. Celem tej gry jest 'uzbieranie' określonej ilości śmieci z planszy przez robota pamiętając o omijaniu przeszkód.
 
 Technologie jakie użyłem:
 - System operacyjny: Ubuntu 13.04 64 bit
 - Eclipse Kepler z pluginami CDT i Javy
+- g++ wersja 4.7.3
+- valgrind 
 
 Biblioteki jakie zasosowałem:
 - OpenGL 1.1 - shadery zbyt zmniejszały prędkość na GPU Intel GMA945(ver. OpenGL to 1.5), optymalizacje gry poprzez użycie list renderowania(glCallList) oraz transformacji kamer.
@@ -25,3 +27,9 @@ Języki programowania to: C++0x oraz Java, zaimplementowane technologie:
 
 Wymagania:
 RAM: 32mb / Procesor: min.1GHZ / GPU, nie testowane, brak użycia VBO zmniejsza ilosć wymaganej pamięci.
+
+Uruchomienie:
+chmod +x ./Rect\ Adventures
+./Rect\ Adventures
+
+W razie błędów i niedoróbek pisać na email: cziken58@gmail.com
