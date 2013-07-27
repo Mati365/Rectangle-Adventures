@@ -407,7 +407,20 @@ class Trigger: public Body {
 class ObjectFactory {
 	public:
 		enum Types {
-			SCORE, HEALTH, GHOST, OBJECT, GUN, GREEN_GUN, SCRIPT_BOX
+			SCORE,
+			HEALTH,
+			GHOST,
+			OBJECT,
+			GUN,
+			GREEN_GUN,
+			SCRIPT_BOX,
+			/**
+			 * Kolce
+			 */
+			SPIKES_UP,
+			SPIKES_DOWN,
+			SPIKES_LEFT,
+			SPIKES_RIGHT
 		};
 
 	private:

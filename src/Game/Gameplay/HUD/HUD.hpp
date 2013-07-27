@@ -74,6 +74,9 @@ class MessageRenderer: public Renderer, public EventListener {
 		float height;
 		bool closed;
 
+		/**
+		 * Kolejka wiadomości
+		 */
 		deque<Message> msgs;
 
 		glText text;

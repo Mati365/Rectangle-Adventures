@@ -24,7 +24,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 		background_color(0, 0, 0),
 		// HUD
 		health(oglWrapper::WHITE, "Zdrowie:", GLUT_BITMAP_HELVETICA_18, 18),
-		health_bar(Rect<float>(0, 0, 0, 0), oglWrapper::GREEN, MAX_LIVES,
+		health_bar(Rect<float>(0, 0, 0, 0), oglWrapper::RED, MAX_LIVES,
 					Control::VERTICAL),
 
 		score(oglWrapper::WHITE, "Punkty:", GLUT_BITMAP_HELVETICA_18, 18),
@@ -87,21 +87,35 @@ void MessageRenderer::addMessage(const Message& msg) {
 
 void MessageRenderer::drawBorder(Window* _window) {
 	/**
-	 * Wypełnienie
+	 * Wypełnienie!
 	 */
 	oglWrapper::drawFillRect(SPACES, _window->getBounds()->y - height + SPACES,
 								_window->getBounds()->x - SPACES * 2,
 								height - SPACES * 2, oglWrapper::BLACK);
+
 	/**
-	 * Obramówka
+	 * Obramowanie!
 	 */
 	glPushAttrib (GL_ENABLE_BIT);
 	glLineStipple(1, 0xAAAA);
 	glEnable (GL_LINE_STIPPLE);
-	oglWrapper::drawRect(SPACES, _window->getBounds()->y - height + SPACES,
-							_window->getBounds()->x - SPACES * 2,
-							height - SPACES * 2, border_color, closed ?
-									3 : 2);
+	/**
+	 * Optymalizacja!
+	 */
+	float x = SPACES, y = _window->getBounds()->y - height + SPACES, w =
+			_window->getBounds()->x - SPACES * 2, h = height - SPACES * 2;
+	glLineWidth(closed ?
+			3 : 2);
+	//
+	glBegin (GL_LINE_LOOP);
+	glColor4ub(border_color.r, border_color.g, border_color.b, 150.f);
+	glVertex2f(x, y);
+	glVertex2f(x + w, y);
+	glColor4ub(border_color.r, border_color.g, border_color.b, 0.f);
+	glVertex2f(x + w, y + h);
+	glVertex2f(x, y + h);
+	glEnd();
+	//
 	glPopAttrib();
 	if (closed) {
 		oglWrapper::drawFillRect(SPACES * 2, _window->getBounds()->y - height,

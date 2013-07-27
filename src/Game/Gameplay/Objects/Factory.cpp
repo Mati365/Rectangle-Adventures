@@ -25,12 +25,24 @@ void ObjectFactory::loadGameTexturePack() {
 	readShape("pocisk_zielony.txt", "bullet_green");
 	readShape("pocisk.txt", "bullet");
 	readShape("gracz.txt", "player");
-	//
+
+	// Kolce
+	putTexture(ObjectFactory::SPIKES_UP,
+				readShape("kolce_gora.txt", "kolce_gora"));
+	putTexture(ObjectFactory::SPIKES_DOWN,
+				readShape("kolce_dol.txt", "kolce_dol"));
+	putTexture(ObjectFactory::SPIKES_LEFT,
+				readShape("kolce_lewo.txt", "kolce_lewo"));
+	putTexture(ObjectFactory::SPIKES_RIGHT,
+				readShape("kolce_prawo.txt", "kolce_prawo"));
+
+	// Tekstury wrogów
 	putTexture(ObjectFactory::SCORE, readShape("punkt.txt", "score"));
 	putTexture(ObjectFactory::HEALTH, readShape("zycie.txt", "health"));
 	putTexture(ObjectFactory::GHOST, readShape("wrog.txt", "enemy"));
 	putTexture(ObjectFactory::GUN, readShape("bron.txt", "gun"));
 	putTexture(ObjectFactory::GREEN_GUN, readShape("bron.txt", "gun2"));
+
 	//
 	logEvent(Logger::LOG_INFO, "Pomyślnie wczytano paczkę postaci!");
 }
@@ -110,12 +122,42 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 								Character::NONE);
 		Character* character = dynamic_cast<Character*>(_object);
 		switch (_type) {
-			case HEALTH: {
+			/**
+			 *
+			 */
+			case SPIKES_UP:
+			case SPIKES_DOWN:
+			case SPIKES_LEFT:
+			case SPIKES_RIGHT:
+				character->setType(Character::SPIKES);
+				/**
+				 * Orientacja ;>
+				 */
+				if (_type == SPIKES_UP)
+					character->setOrientation(pEngine::UP);
+				if (_type == SPIKES_DOWN)
+					character->setOrientation(pEngine::DOWN);
+				if (_type == SPIKES_LEFT)
+					character->setOrientation(pEngine::LEFT);
+				if (_type == SPIKES_RIGHT)
+					character->setOrientation(pEngine::RIGHT);
+				/**
+				 * Wymiary!
+				 */
+				if (_type == SPIKES_DOWN || _type == SPIKES_UP) {
+					character->fitToWidth(24);
+				} else {
+					character->fitToWidth(16);
+				}
+				break;
+				/**
+				 *
+				 */
+			case HEALTH:
 				character->setType(Character::SCORE);
 				character->setNick("Zycie");
 				character->fitToWidth(16);
 				character->setStatus(health_status);
-			}
 				break;
 				/**
 				 *
@@ -144,6 +186,15 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				character->setStatus(score_status);
 			}
 				break;
+				/**
+				 *
+				 */
+			default:
+				delete _object;
+				//
+				logEvent(Logger::LOG_WARNING, "Nieznany typ moba!");
+				//
+				return NULL;
 		}
 	}
 	if (_object) {

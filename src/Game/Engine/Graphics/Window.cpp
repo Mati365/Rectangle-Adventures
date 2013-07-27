@@ -22,7 +22,7 @@ bool Engine::window_opened = true;
 //
 
 void translateKeyEvent(Uint8* keystate, Uint8 key, char translated,
-						Event& event, Screen* renderer) {
+		Event& event, Screen* renderer) {
 	if (keystate[key]) {
 		event.key = translated;
 	}
@@ -36,7 +36,7 @@ Window::Window(const Vector<usint>& _bounds, const string& _title) :
 		screen(NULL),
 		bounds(_bounds) {
 	screen = SDL_SetVideoMode(bounds.x, bounds.y, 32,
-	SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER);
+			SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER);
 	if (!screen) {
 		return;
 	}
@@ -52,7 +52,7 @@ void Window::init() {
 	//
 	if (!menu) {
 		logEvent(Logger::LOG_INFO,
-					"Nastąpił problem podczas wczytywania menu.");
+				"Nastąpił problem podczas wczytywania menu.");
 		return;
 	}
 	active_screen = game;
@@ -123,7 +123,7 @@ void Window::init() {
 
 		int frame_time = SDL_GetTicks() - frame_start;
 		if (frame_time <= FPS) {
-			frame_start = SDL_GetTicks();
+			frame_start = SDL_GetTicks() - FPS;
 			//
 			SDL_Delay(FPS - frame_time);
 		}
@@ -133,18 +133,18 @@ void Window::init() {
 }
 
 bool Window::setupOpenGL() {
-	glDisable (GL_DEPTH_TEST);
-	glDepthMask (GL_FALSE);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
 
-	glEnable (GL_BLEND);
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glClearColor(0, 0, 0, 0);
 	glViewport(0, 0, bounds.x, bounds.y);
-	glMatrixMode (GL_PROJECTION);
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, bounds.x, bounds.y, 0, -1, 1);
-	glMatrixMode (GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	return true;
 }

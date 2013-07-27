@@ -143,7 +143,7 @@ void Platform::drawBody() {
 	/**
 	 * Wypełnienie!
 	 */
-	glLineWidth(1);
+	glLineWidth(2);
 	switch (fill_type) {
 		/**
 		 *  Proste!
@@ -158,10 +158,9 @@ void Platform::drawBody() {
 					glVertex2f(x + i * 10, y);
 				}
 			} else {
-				//glColor4ub(col.r, col.g, col.b, col.a * 0.4f);
 				for (usint i = 0; i < h / 10; ++i) {
 					float proc = (float) i / (h / 10.f);
-					cout << proc << endl;
+					//
 					glColor4ub(col.r, col.g, col.b,
 								col.a * 0.3f * (1.f - proc));
 					glVertex2f(x + w, y + i * 10);

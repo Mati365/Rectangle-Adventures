@@ -51,7 +51,7 @@ namespace Physics {
 			 * Flaga obiektu, czym on jest?
 			 */
 			enum Type {
-				HERO, ENEMY, PLATFORM, SCORE, BULLET, TRIGGER
+				HERO, ENEMY, PLATFORM, SCORE, BULLET, TRIGGER, SPIKES
 			};
 
 			/**
