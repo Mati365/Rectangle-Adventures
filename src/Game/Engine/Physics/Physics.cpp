@@ -73,15 +73,28 @@ void pEngine::updateWorld() {
 				|| IS_SET(object->state, Body::HIDDEN)) {
 			continue;
 		}
-		Body* down_collision = list[i]->collisions[DOWN - 1];
-		if (down_collision && down_collision->velocity.x != 0) {
-			list[i]->x += down_collision->velocity.x;
+		/**
+		 * BUG
+		 Body* down_collision = list[i]->collisions[DOWN - 1];
+		 if (down_collision && down_collision->velocity.x != 0) {
+		 list[i]->x += down_collision->velocity.x;
+		 }
+		 */
+		/**
+		 * Żywotność
+		 */
+		if (object->max_lifetime != 0) {
+			object->lifetime++;
+			if (object->lifetime >= object->max_lifetime) {
+				object->destroyed = true;
+				object->max_lifetime = 0;
+			}
 		}
 		/**
 		 * Grawitacja
 		 */
-		if (list[i]->velocity.y < 20.f) {
-			list[i]->velocity.y += gravity_speed;
+		if (object->velocity.y < 20.f) {
+			object->velocity.y += gravity_speed;
 		}
 		/**
 		 * Siła tarcia
@@ -92,7 +105,7 @@ void pEngine::updateWorld() {
 		object->y += object->velocity.y;
 		object->x += object->velocity.x;
 		if (object->destroyed) {
-			remove(list[i]);
+			remove(object);
 		}
 	}
 }
@@ -100,9 +113,11 @@ void pEngine::updateWorld() {
 void pEngine::checkCollisions(deque<Body*>& _bodies) {
 	for (usint i = 0; i < _bodies.size(); ++i) {
 		Body* source = _bodies[i];
+		// Czyszczenie
 		for (usint j = 0; j < 4; ++j) {
 			source->collisions[j] = NULL;
 		}
+		//
 		if (IS_SET(_bodies[i]->state, Body::STATIC)) {
 			continue;
 		}

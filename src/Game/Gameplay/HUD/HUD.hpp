@@ -67,7 +67,7 @@ class MessageRenderer: public Renderer, public EventListener {
 						cutscene(
 						NULL) {
 					if (_cutscene_path)
-						cutscene = readShape(_cutscene_path, _cutscene_path);
+						cutscene = readShape(_cutscene_path, _cutscene_path, 0);
 				}
 		};
 	private:

@@ -11,10 +11,13 @@
 #include <ctime>
 #include <deque>
 #include <map>
+#include <cmath>
 
 using namespace std;
 
 #define USINT_SUB(a, b) ((int)a - (int)b < 0?a=0:a -= b)
+#define PI 3.14159265
+#define TO_RAD(a) (a * PI / 180)
 
 typedef unsigned short int usint;
 
@@ -106,6 +109,7 @@ namespace Memory {
 	};
 
 	class Snapshot {
+		public:
 			class SourcePtr {
 				public:
 					Cloneable* source;
@@ -120,11 +124,18 @@ namespace Memory {
 			deque<SourcePtr> clones;
 
 		public:
+			Snapshot() {
+			}
+
 			Snapshot(initializer_list<Cloneable*> _clones) {
 				for (auto iter = _clones.begin(); iter != _clones.end();
 						++iter) {
 					add(*iter);
 				}
+			}
+
+			deque<SourcePtr>* getClones() {
+				return &clones;
 			}
 
 			SourcePtr& operator[](usint i) {

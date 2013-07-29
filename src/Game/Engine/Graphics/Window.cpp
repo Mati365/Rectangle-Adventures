@@ -114,6 +114,7 @@ void Window::init() {
 		translateKeyEvent(keystate, SDLK_a, 'a', key, game);
 		translateKeyEvent(keystate, SDLK_d, 'd', key, game);
 		translateKeyEvent(keystate, SDLK_SPACE, '*', key, game);
+		translateKeyEvent(keystate, SDLK_e, 'e', key, game);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();

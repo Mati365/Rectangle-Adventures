@@ -22,26 +22,26 @@ ObjectFactory::ObjectFactory() :
  * Mapowanie podstawowych tekstur w grze!
  */
 void ObjectFactory::loadGameTexturePack() {
-	readShape("pocisk_zielony.txt", "bullet_green");
-	readShape("pocisk.txt", "bullet");
-	readShape("gracz.txt", "player");
+	readShape("pocisk_zielony.txt", "bullet_green", 0);
+	readShape("pocisk.txt", "bullet", 0);
+	readShape("gracz.txt", "player", 0);
 
 	// Kolce
 	putTexture(ObjectFactory::SPIKES_UP,
-				readShape("kolce_gora.txt", "kolce_gora"));
+				readShape("kolce.txt", "kolce_gora", 0));
 	putTexture(ObjectFactory::SPIKES_DOWN,
-				readShape("kolce_dol.txt", "kolce_dol"));
+				readShape("kolce.txt", "kolce_dol", 270));
 	putTexture(ObjectFactory::SPIKES_LEFT,
-				readShape("kolce_lewo.txt", "kolce_lewo"));
+				readShape("kolce.txt", "kolce_lewo", -90));
 	putTexture(ObjectFactory::SPIKES_RIGHT,
-				readShape("kolce_prawo.txt", "kolce_prawo"));
+				readShape("kolce.txt", "kolce_prawo", 90));
 
 	// Tekstury wrogów
-	putTexture(ObjectFactory::SCORE, readShape("punkt.txt", "score"));
-	putTexture(ObjectFactory::HEALTH, readShape("zycie.txt", "health"));
-	putTexture(ObjectFactory::GHOST, readShape("wrog.txt", "enemy"));
-	putTexture(ObjectFactory::GUN, readShape("bron.txt", "gun"));
-	putTexture(ObjectFactory::GREEN_GUN, readShape("bron.txt", "gun2"));
+	putTexture(ObjectFactory::SCORE, readShape("punkt.txt", "score", 0));
+	putTexture(ObjectFactory::HEALTH, readShape("zycie.txt", "health", 0));
+	putTexture(ObjectFactory::GHOST, readShape("wrog.txt", "enemy", 0));
+	putTexture(ObjectFactory::GUN, readShape("bron.txt", "gun", 0));
+	putTexture(ObjectFactory::GREEN_GUN, readShape("bron.txt", "gun2", 0));
 
 	//
 	logEvent(Logger::LOG_INFO, "Pomyślnie wczytano paczkę postaci!");
@@ -162,13 +162,12 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				/**
 				 *
 				 */
-			case GHOST: {
+			case GHOST:
 				character->setType(Character::ENEMY);
 				character->setNick("Kupa");
 				character->fitToWidth(20);
 				character->setStatus(ghost_enemy_status);
 				character->setAI(new SnailAI(character, 1.2));
-			}
 				break;
 				/**
 				 *
@@ -180,11 +179,10 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				/**
 				 *
 				 */
-			case SCORE: {
+			case SCORE:
 				character->setType(Character::SCORE);
 				character->fitToWidth(12);
 				character->setStatus(score_status);
-			}
 				break;
 				/**
 				 *

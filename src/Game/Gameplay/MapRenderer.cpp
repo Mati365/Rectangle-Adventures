@@ -12,6 +12,8 @@
 
 using namespace Gameplay;
 
+Snapshot snapshot;
+
 MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 		ParalaxRenderer(_hero, 1.f, true, _map),
 		msg(50, Color(0, 128, 255), Color(255, 255, 255), this),
@@ -41,7 +43,7 @@ void MapRenderer::catchEvent(const Event& _event) {
 		case Event::KEY_PRESSED:
 			if (state == IntroBackground::PAUSE) {
 				msg.catchEvent(_event);
-			} else {
+			} else if (hero) {
 				if (_event.key == 'w') {
 					hero->jump(9.f, false);
 				} else if (_event.key == 'a') {

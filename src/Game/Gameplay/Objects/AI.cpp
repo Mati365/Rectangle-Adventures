@@ -13,13 +13,19 @@ SnailAI::SnailAI(Character* _character, float _speed) :
 		speed(_speed) {
 }
 
+/**
+ * Sterowanie
+ */
 void SnailAI::drive() {
-	if (!character) {
+	if (!character || !character->collisions[pEngine::DOWN - 1]) {
 		return;
 	}
 	character->velocity.x = speed;
 }
 
+/**
+ * Pobieranie kolizji!
+ */
 void SnailAI::getCollision(pEngine* physics, usint dir, Body* body) {
 	if (!character) {
 		return;

@@ -104,8 +104,8 @@ bool MapINFO::load(FILE* map) {
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
 		fscanf(map, "%s\n", shape);
-		//
-		resources.push_back(readShape(shape, shape)->getResourceID());
+		// Domyślny kąt to 0*
+		resources.push_back(readShape(shape, shape, 0)->getResourceID());
 	}
 
 	// Wczytywanie parametrów graficznych platform..

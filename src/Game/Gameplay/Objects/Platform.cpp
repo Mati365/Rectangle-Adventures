@@ -24,7 +24,7 @@ Platform::Platform(float _x, float _y, float _w, float _h, const Color& _col,
 	type = PLATFORM;
 	//
 	for (usint i = 0; i < 4; ++i) {
-		border[i] = false;
+		border[i] = true;
 	}
 }
 
@@ -138,8 +138,9 @@ void Platform::drawBorder() {
  * Rysowanie wypełnienia!
  */
 void Platform::drawBody() {
-	if (!IS_SET(state, Body::STATIC))
+	if (fill_type == NONE) {
 		return;
+	}
 	/**
 	 * Wypełnienie!
 	 */

@@ -15,7 +15,7 @@ void Button::drawObject(Window*) {
 	switch (control_state) {
 		case NORMAL:
 			if (border_enabled) {
-				oglWrapper::drawRect(x, y, w, h - 4, oglWrapper::WHITE, 2);
+				oglWrapper::drawRect(x, y, w, h, oglWrapper::WHITE, 2);
 			}
 			if (old_state != control_state) {
 				text.setColor(oglWrapper::WHITE);
@@ -25,7 +25,7 @@ void Button::drawObject(Window*) {
 			 *
 			 */
 		case CLICKED:
-			oglWrapper::drawFillRect(x, y, w, h - 4, oglWrapper::WHITE);
+			oglWrapper::drawFillRect(x, y, w, h, oglWrapper::WHITE);
 			if (old_state != control_state) {
 				text.setColor(oglWrapper::BLACK);
 			}

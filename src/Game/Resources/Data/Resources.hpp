@@ -46,8 +46,8 @@ MapINFO* loadMap(const char*);
 /**
  * Wczytywanie kształtu!
  */
-PlatformShape* readShape(const string&, const char*);
-PlatformShape* readShape(FILE*, const char*);
+PlatformShape* readShape(const string&, const char*, float);
+PlatformShape* readShape(FILE*, const char*, float);
 
 /**
  * Wczytywanie Mob'a
@@ -100,18 +100,33 @@ class MapINFO: public Resource<usint> {
  * W następnym projekcie będzie VBO..
  */
 class PlatformShape: public Resource<usint> {
+		struct Point {
+				char type;
+				Color col;
+				Vector<float> pos;
+		};
+
 	protected:
 		GLuint id;
 		Vector<float> bounds;
 
+		// Kąt obrotu!
+		float angle;
+
+		// Punkty
+		Point* points;
+		usint count;
+
 	public:
-		PlatformShape(FILE*, const char*);
+		PlatformShape(FILE*, const char*, float);
 
 		/**
 		 * Elementy Resource'a
 		 */
 		virtual bool load(FILE*);
 		virtual void unload();
+
+		bool recompile();
 
 		/**
 		 * Przeszukiwanie wierzchołków,

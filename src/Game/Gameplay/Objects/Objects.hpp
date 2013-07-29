@@ -23,9 +23,13 @@
 using namespace Engine;
 using namespace Physics;
 
-#define MAX_LIVES 6
+#define MAX_LIVES 3
 #define MAX_SCORE 500
+#define DEATH -1
 
+/**
+ * Platforma, po której porusza się gracz
+ */
 class Platform: public Body, public Cloneable {
 	public:
 		enum Type {
@@ -135,6 +139,8 @@ class IrregularPlatform: public Platform {
 	public:
 		IrregularPlatform(float, float, usint, PlatformShape*);
 
+		virtual void drawObject(Window*);
+
 		/**
 		 * Kształt platformy!
 		 */
@@ -143,7 +149,12 @@ class IrregularPlatform: public Platform {
 		}
 		void setShape(PlatformShape*);
 
-		virtual void drawObject(Window*);
+		/**
+		 * Klonowanie obiektów!
+		 */
+		virtual Cloneable* getClone() const {
+			return new IrregularPlatform(*this);
+		}
 
 		/**
 		 * Zmiana rozmiaru tylko
@@ -180,9 +191,9 @@ class IrregularPlatform: public Platform {
  * + Wczytywanie zachowań z pliku
  */
 struct CharacterStatus: public Resource<usint> {
-		usint health;
-		usint shield_health;
-		usint score;
+		int health;
+		int shield_health;
+		int score;
 
 		bool shield;
 		Vector<float> start_pos;
@@ -300,6 +311,7 @@ class Character: public IrregularPlatform {
 		}
 
 		void move(float, float);
+		void die(pEngine*, usint); // śmierć, rozprucie ;)
 		void jump(float, bool);
 
 		void enableHitAnim() {
@@ -407,20 +419,11 @@ class Trigger: public Body {
 class ObjectFactory {
 	public:
 		enum Types {
-			SCORE,
-			HEALTH,
-			GHOST,
-			OBJECT,
-			GUN,
-			GREEN_GUN,
-			SCRIPT_BOX,
+			SCORE, HEALTH, GHOST, OBJECT, GUN, GREEN_GUN, SCRIPT_BOX,
 			/**
 			 * Kolce
 			 */
-			SPIKES_UP,
-			SPIKES_DOWN,
-			SPIKES_LEFT,
-			SPIKES_RIGHT
+			SPIKES_UP, SPIKES_DOWN, SPIKES_LEFT, SPIKES_RIGHT
 		};
 
 	private:

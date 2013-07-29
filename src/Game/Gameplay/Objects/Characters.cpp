@@ -41,11 +41,85 @@ Character::Character(const string& _nick, float _x, float _y,
 	type = _type;
 }
 
+/**
+ * Eksplozja
+ */
+void Character::die(pEngine* physics, usint _dir) {
+	if (status.health == DEATH) {
+		return;
+	}
+	/**
+	 * TRRUP
+	 */
+	status.health = DEATH;
+	float cx, cy, angle;
+
+	for (usint i = 0; i < 30; ++i) {
+		angle = 2.0f * 3.1415926f * (float) i / (float) 36;
+		cx = w / 2 * cosf(angle);
+		cy = w / 2 * sinf(angle);
+		//
+		float size = getIntRandom<int>(3, 6);
+		//
+		Vector<float> vec(cosf(angle) * 16, sinf(angle) * 25);
+		if (_dir != pEngine::NONE) {
+			/**
+			 * Kierunek rozprucia odwrotny
+			 * do kierunku uderzenia!
+			 */
+			switch (_dir) {
+				case pEngine::LEFT:
+					vec.x = -abs(vec.x);
+					break;
+
+				case pEngine::RIGHT:
+					vec.x = abs(vec.x);
+					break;
+
+				case pEngine::UP:
+					vec.y = abs(vec.y);
+					break;
+
+				case pEngine::DOWN:
+					vec.y = -abs(vec.y);
+					break;
+					/**
+					 *
+					 */
+				default:
+					break;
+			}
+		}
+		Platform* platform = new Platform(x + cx, y + cy, size, size,
+											oglWrapper::RED, Body::NONE);
+		//
+		platform->setMaxLifetime(size * 200);
+		platform->setBorder(false, false, false, false);
+		platform->setFillType(Platform::FILLED);
+		//
+		platform->layer = STATIC_LAYER + 1;
+		platform->velocity = vec;
+		//
+		physics->insert(platform);
+	}
+	setState(Body::HIDDEN);
+}
+
+/**
+ * Kolizja gracza
+ */
 void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (ai) {
 		ai->getCollision(physics, dir, body);
 	}
-	if (dir == pEngine::DOWN && !IS_SET(body->state, Body::HIDDEN)) {
+	if ((type == Body::HERO || type == Body::ENEMY)
+			&& dir == pEngine::DOWN&& !IS_SET(body->state, Body::HIDDEN)) {
+		/**
+		 * Wektor ruchu został odwrócony!
+		 */
+		if (velocity.y < -9 && status.health > 0) {
+			die(physics, dir);
+		}
 		jumping = false;
 	}
 	if (type != HERO) {
@@ -68,8 +142,10 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			if (status.health > MAX_LIVES) {
 				status.health = MAX_LIVES;
 			}
+			//
 			body->destroyed = true;
 			break;
+
 			/**
 			 *
 			 */
@@ -77,12 +153,14 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			if (dir == pEngine::DOWN || dir == pEngine::UP) {
 				status += enemy->status;
 				jump(9, true);
+				//
 				body->destroyed = true;
 			} else {
 				status -= enemy->status;
 				enableHitAnim();
 			}
 			break;
+
 			/**
 			 *
 			 */
@@ -92,8 +170,29 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			}
 			enableHitAnim();
 			jump(9, true);
+			//
 			body->destroyed = true;
 			break;
+
+			/**
+			 *
+			 */
+		case SPIKES:
+			if (status.health > 0) {
+				status.health -= 1;
+			}
+			enableHitAnim();
+			jump(13, true);
+			break;
+
+			/**
+			 *
+			 */
+		default:
+			break;
+	}
+	if (status.health == 0) {
+		die(physics, dir);
 	}
 }
 

@@ -74,13 +74,21 @@ namespace Physics {
 			usint layer;
 			usint script_id;
 
+			/**
+			 * Długość życia ciała
+			 */
+			usint max_lifetime;
+			usint lifetime;
+
 			Body() :
 					state(NONE),
 					elasticity(0),
 					weight(0),
 					type(PLATFORM),
 					layer(STATIC_LAYER),
-					script_id(0) {
+					script_id(0),
+					max_lifetime(0),
+					lifetime(0) {
 				x = 0;
 				y = 0;
 				w = 0;
@@ -95,13 +103,28 @@ namespace Physics {
 					weight(_weight),
 					type(PLATFORM),
 					layer(STATIC_LAYER),
-					script_id(0) {
+					script_id(0),
+					max_lifetime(0),
+					lifetime(0) {
 				x = _x;
 				y = _y;
 				w = _w;
 				h = _h;
 			}
 
+			/**
+			 * Długość życia do skasowania!
+			 * Particle
+			 */
+			void setMaxLifetime(usint _max_lifetime) {
+				max_lifetime = _max_lifetime;
+				lifetime = 0;
+				dynamically_allocated = true;
+			}
+
+			/**
+			 * Wymiary!
+			 */
 			void setBounds(float _x, float _y, float _w, float _h) {
 				x = _x;
 				y = _y;
@@ -206,6 +229,11 @@ namespace Physics {
 				to_remove.push_back(body);
 			}
 
+			void clear() {
+				to_remove.clear();
+				list.clear();
+			}
+
 			bool collide(const Body*, const Body*) const;
 			bool moveAndCheck(float, float, Body*, const Body*);
 			void updateWorld();
@@ -225,6 +253,10 @@ namespace Physics {
 
 			deque<Body*>* getList() {
 				return &list;
+			}
+
+			float getGravitySpeed() const {
+				return gravity_speed;
 			}
 
 			~pEngine();
