@@ -21,53 +21,28 @@ bool CharacterStatus::load(FILE* _file) {
 	return false;
 }
 
-//------------------------
-
-Character::Character(const string& _nick, float _x, float _y,
-						PlatformShape* _shape, usint _type) :
-		IrregularPlatform(_x, _y, true, _shape),
-		nick(Color(255, 255, 255), _nick, GLUT_BITMAP_HELVETICA_12, 12),
-		jumping(true),
-		status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
-		ai(NULL),
-		//
-		source_color(col),
-		actual_anim_time(0),
-		anim_time(9),
-		actual_cycles(0),
-		anim_cycles(8),
-		//
-		hit(false) {
-	type = _type;
-}
-
 /**
- * Eksplozja
+ * Generowanie krwii
  */
-void Character::die(pEngine* physics, usint _dir) {
-	if (status.health == DEATH) {
-		return;
-	}
-	/**
-	 * TRRUP
-	 */
-	status.health = DEATH;
+void generateBlood(usint dir, pEngine* physics, Body* body, usint count) {
 	float cx, cy, angle;
-
-	for (usint i = 0; i < 30; ++i) {
+	/**
+	 * Generowanie cząsteczek krwii w postaci eksplozji
+	 */
+	for (usint i = 0; i < count; ++i) {
 		angle = 2.0f * 3.1415926f * (float) i / (float) 36;
-		cx = w / 2 * cosf(angle);
-		cy = w / 2 * sinf(angle);
+		cx = body->w / 2 * cosf(angle);
+		cy = body->w / 2 * sinf(angle);
 		//
 		float size = getIntRandom<int>(3, 6);
 		//
 		Vector<float> vec(cosf(angle) * 16, sinf(angle) * 25);
-		if (_dir != pEngine::NONE) {
+		if (dir != pEngine::NONE) {
 			/**
 			 * Kierunek rozprucia odwrotny
 			 * do kierunku uderzenia!
 			 */
-			switch (_dir) {
+			switch (dir) {
 				case pEngine::LEFT:
 					vec.x = -abs(vec.x);
 					break;
@@ -90,10 +65,10 @@ void Character::die(pEngine* physics, usint _dir) {
 					break;
 			}
 		}
-		Platform* platform = new Platform(x + cx, y + cy, size, size,
-											oglWrapper::RED, Body::NONE);
+		Platform* platform = new Platform(body->x + cx, body->y + cy, size,
+		                                  size, oglWrapper::RED, Body::NONE);
 		//
-		platform->setMaxLifetime(size * 200);
+		platform->setMaxLifetime(size * 140);
 		platform->setBorder(false, false, false, false);
 		platform->setFillType(Platform::FILLED);
 		//
@@ -102,6 +77,51 @@ void Character::die(pEngine* physics, usint _dir) {
 		//
 		physics->insert(platform);
 	}
+}
+
+//------------------------
+
+Character::Character(const string& _nick, float _x, float _y,
+                     PlatformShape* _shape, usint _type) :
+		IrregularPlatform(_x, _y, true, _shape),
+		nick(Color(255, 255, 255), _nick, GLUT_BITMAP_HELVETICA_12, 12),
+		jumping(true),
+		status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
+		ai(NULL),
+		//
+		source_color(col),
+		actual_anim_time(0),
+		anim_time(9),
+		actual_cycles(0),
+		anim_cycles(8),
+		//
+		hit(false) {
+	type = _type;
+}
+
+/**
+ * Uderzenie - zmniejszenie życia
+ */
+void Character::hitMe(pEngine* physics) {
+	hit = true;
+	//
+	generateBlood(pEngine::NONE, physics, this, 5);
+}
+
+/**
+ * Eksplozja
+ */
+void Character::die(pEngine* physics, usint _dir) {
+	if (status.health == DEATH) {
+		return;
+	}
+	/**
+	 * TRRUP
+	 */
+	status.health = DEATH;
+	//
+	generateBlood(_dir, physics, this, 30);
+	//
 	setState(Body::HIDDEN);
 }
 
@@ -113,7 +133,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 		ai->getCollision(physics, dir, body);
 	}
 	if ((type == Body::HERO || type == Body::ENEMY)
-			&& dir == pEngine::DOWN&& !IS_SET(body->state, Body::HIDDEN)) {
+	        && dir == pEngine::DOWN&& !IS_SET(body->state, Body::HIDDEN)) {
 		/**
 		 * Wektor ruchu został odwrócony!
 		 */
@@ -152,12 +172,12 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 		case ENEMY:
 			if (dir == pEngine::DOWN || dir == pEngine::UP) {
 				status += enemy->status;
-				jump(9, true);
+				velocity.invert();
 				//
 				body->destroyed = true;
 			} else {
 				status -= enemy->status;
-				enableHitAnim();
+				hitMe(physics);
 			}
 			break;
 
@@ -168,8 +188,8 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			if (status.health > 0) {
 				status.health -= 1;
 			}
-			enableHitAnim();
-			jump(9, true);
+			hitMe(physics);
+			velocity.invert();
 			//
 			body->destroyed = true;
 			break;
@@ -181,7 +201,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			if (status.health > 0) {
 				status.health -= 1;
 			}
-			enableHitAnim();
+			hitMe(physics);
 			jump(13, true);
 			break;
 

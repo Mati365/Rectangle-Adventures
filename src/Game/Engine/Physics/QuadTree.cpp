@@ -5,7 +5,6 @@
  *      Author: mati
  */
 #include <map>
-#include <iostream>
 
 #include "Physics.hpp"
 
@@ -14,37 +13,38 @@ using namespace Physics;
 
 #define OBJECT_MARGIN 5
 
-QuadTree::QuadTree(QuadTree* _parent, const Rect<float>& _rect, usint _level,
-					usint _max_level) :
+QuadTree::QuadTree(QuadTree* _parent, const Rect<float>& _rect, usint _level) :
 		rect(_rect),
 		level(_level),
-		max_level(_max_level),
 		parent(_parent),
 		NW(NULL),
 		NE(NULL),
 		SW(NULL),
 		SE(NULL) {
-	if (_level + 1 > _max_level) {
+}
+
+/**
+ * Rozdzielenie!
+ */
+void QuadTree::subdive() {
+	if (NW) {
 		return;
 	}
-	NW = new QuadTree(this,
-						Rect<float>(_rect.x, _rect.y, _rect.w / 2, _rect.h / 2),
-						level + 1, _max_level);
+	NW = new QuadTree(this, Rect<float>(rect.x, rect.y, rect.w / 2, rect.h / 2),
+	                  level + 1);
 	NE = new QuadTree(
-			this,
-			Rect<float>(_rect.x + _rect.w / 2, _rect.y, _rect.w / 2,
-						_rect.h / 2),
-			level + 1, _max_level);
+	        this,
+	        Rect<float>(rect.x + rect.w / 2, rect.y, rect.w / 2, rect.h / 2),
+	        level + 1);
 	SW = new QuadTree(
-			this,
-			Rect<float>(_rect.x, _rect.y + _rect.h / 2, _rect.w / 2,
-						_rect.h / 2),
-			level + 1, _max_level);
+	        this,
+	        Rect<float>(rect.x, rect.y + rect.h / 2, rect.w / 2, rect.h / 2),
+	        level + 1);
 	SE = new QuadTree(
-			this,
-			Rect<float>(_rect.x + _rect.w / 2, _rect.y + _rect.h / 2,
-						_rect.w / 2, _rect.h / 2),
-			level + 1, _max_level);
+	        this,
+	        Rect<float>(rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w / 2,
+	                    rect.h / 2),
+	        level + 1);
 }
 
 /**
@@ -55,8 +55,8 @@ void QuadTree::drawObject(Window*) {
 		return;
 	}
 	oglWrapper::drawRect(rect.x, rect.y, rect.w, rect.h,
-							Color(level * 15, level * 15, level * 15, 255),
-							(MAX_LAYER - level) * 2);
+	                     Color(level * 15, level * 15, level * 15, 255),
+	                     (MAX_LAYER - level) * 2);
 	if (NW) {
 		NW->drawObject(NULL);
 		NE->drawObject(NULL);
@@ -78,40 +78,46 @@ void QuadTree::remove(Body* body) {
 		}
 		return;
 	}
-	if (containsObject(&NW->rect, body)) {
+	if (NW->rect.intersect(*body)) {
 		NW->remove(body);
-	}
-	if (containsObject(&NE->rect, body)) {
+	} else if (NE->rect.intersect(*body)) {
 		NE->remove(body);
-	}
-	if (containsObject(&SE->rect, body)) {
+	} else if (SE->rect.intersect(*body)) {
 		SE->remove(body);
-	}
-	if (containsObject(&SW->rect, body)) {
+	} else if (SW->rect.intersect(*body)) {
 		SW->remove(body);
 	}
 }
 
-void QuadTree::insertToSubQuad(Body* body) {
-	if (!NW) {
+/**
+ * Dodawanie elementu!
+ */
+bool QuadTree::insertToSubQuad(Body* body) {
+	if (!rect.intersect(*body)) {
+		return false;
+	}
+	/**
+	 * Jeśli 1 lub więcej quadów ma ten sam element to
+	 * wrzuca do rodzica!
+	 */
+	if (bodies.size() < 4 || body->w >= rect.w / 2 || body->h >= rect.h / 2) {
 		bodies.push_back(body);
-		return;
+		return true;
 	}
-	if (containsObject(&NW->rect, body)) {
-		NW->insertToSubQuad(body);
+	if (!NW) {
+		subdive();
 	}
-	if (containsObject(&NE->rect, body)) {
-		NE->insertToSubQuad(body);
+	/**
+	 * Umieszczanie do dzieci
+	 */
+	if (NW->insertToSubQuad(body) || NE->insertToSubQuad(body)
+	        || SE->insertToSubQuad(body) || SW->insertToSubQuad(body)) {
+		return true;
 	}
-	if (containsObject(&SE->rect, body)) {
-		SE->insertToSubQuad(body);
-	}
-	if (containsObject(&SW->rect, body)) {
-		SW->insertToSubQuad(body);
-	}
+	return false;
 }
 
-void QuadTree::insert(deque<Body*>* bodies) {
+void QuadTree::insertGroup(deque<Body*>* bodies) {
 	for (usint i = 0; i < bodies->size(); ++i) {
 		insertToSubQuad((*bodies)[i]);
 	}
@@ -121,41 +127,27 @@ void QuadTree::insert(Body* body) {
 	insertToSubQuad(body);
 }
 
-void QuadTree::getBodiesAt(const Rect<float>& _rect, deque<Body*>* _bodies) {
-	if (!NW) {
-		_bodies = &bodies;
+/**
+ * Pobieranie elemntów z wycinka!
+ */
+void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
+	if (!rect.intersect(_bounds)) {
 		return;
 	}
-	if (containsObject(&NW->rect, &_rect)) {
-		NW->getBodiesAt(_rect, _bodies);
-	}
-	if (containsObject(&NE->rect, &_rect)) {
-		NE->getBodiesAt(_rect, _bodies);
-	}
-	if (containsObject(&SW->rect, &_rect)) {
-		SW->getBodiesAt(_rect, _bodies);
-	}
-	if (containsObject(&SE->rect, &_rect)) {
-		SE->getBodiesAt(_rect, _bodies);
-	}
-}
-
-void QuadTree::getLowestElements(deque<deque<Body*> >& _bodies) {
-	if (!bodies.empty()) {
-		_bodies.push_back(bodies);
+	for (usint i = 0; i < bodies.size(); ++i) {
+		Body* body = bodies[i];
+		//
+		if (_bounds.intersect(
+		        Rect<float>(body->x, body->y, body->w, body->h))) {
+			_bodies.push_back(body);
+		}
 	}
 	if (NW) {
-		NW->getLowestElements(_bodies);
-		NE->getLowestElements(_bodies);
-		SW->getLowestElements(_bodies);
-		SE->getLowestElements(_bodies);
+		NW->getBodiesAt(_bounds, _bodies);
+		NE->getBodiesAt(_bounds, _bodies);
+		SW->getBodiesAt(_bounds, _bodies);
+		SE->getBodiesAt(_bounds, _bodies);
 	}
-}
-
-bool QuadTree::containsObject(const Rect<float>* quad,
-								const Rect<float>* body) {
-	return (body->x <= quad->x + quad->w && body->x + body->w >= quad->x
-			&& body->y <= quad->y + quad->h && body->y + body->h >= quad->y);
 }
 
 void QuadTree::clear() {

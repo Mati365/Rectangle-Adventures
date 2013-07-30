@@ -126,7 +126,11 @@ class PlatformShape: public Resource<usint> {
 		virtual bool load(FILE*);
 		virtual void unload();
 
+		/**
+		 * Rekompilacja listy po transformacji!
+		 */
 		bool recompile();
+		void rotate(float);
 
 		/**
 		 * Przeszukiwanie wierzchołków,

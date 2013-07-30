@@ -68,6 +68,14 @@ struct Vector {
 				y(_y) {
 		}
 
+		/**
+		 * Odwrócenie wektora!
+		 */
+		void invert() {
+			x = -x;
+			y = -y;
+		}
+
 		inline Vector<T>& operator+=(const Vector<T>& right) {
 			x += right.x;
 			y += right.y;
@@ -80,13 +88,16 @@ struct Vector {
  */
 namespace oglWrapper {
 	extern Color RED, DARK_RED, GREEN, DARK_GREEN, BLUE, DARK_BLUE, BLACK,
-			WHITE, GRAY, YELLOW, ORANGE, PURPLE;
+	        WHITE, GRAY, YELLOW, ORANGE, PURPLE;
 
 	/**
 	 * Prymitywy!
 	 */
 	extern void drawRect(float, float, float, float, const Color&, float);
 	extern void drawFillRect(float, float, float, float, const Color&);
+
+	extern void beginStroke(GLushort);
+	extern void endStroke();
 
 	extern void drawCircle(float, float, float, float, const Color&, float);
 	extern void drawLine(float, float, float, float, const Color&, float);

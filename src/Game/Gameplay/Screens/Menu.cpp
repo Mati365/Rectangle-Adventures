@@ -13,10 +13,11 @@ using namespace GameScreen;
 Menu::Menu() :
 		Game("menu.txt"),
 		ver(oglWrapper::GRAY,
-			"Wersja: 0.5 beta | Autor: Mateusz Baginski | email:cziken58@gmail.com",
-			GLUT_BITMAP_HELVETICA_12,
-			12) {
+		    "Wersja: 0.5 beta | Autor: Mateusz Baginski | email:cziken58@gmail.com",
+		    GLUT_BITMAP_HELVETICA_12,
+		    12) {
 	lvl->enableHUD(false);
+	hero->getStatus()->health = 1;
 	//
 	createMenuEntries();
 }
@@ -27,19 +28,19 @@ Menu::Menu() :
 void Menu::createMenuEntries() {
 	// Dodawanie pojedynczych przycisków do listy obiektów!
 	const char* _entries[] = {
-								"Kontynuuj",
-								"Nowa gra",
-								"Koniec gry" };
+	                           "Kontynuuj",
+	                           "Nowa gra",
+	                           "Koniec gry" };
 	for (usint i = 0; i < 3; ++i) {
 		entries.push_back(
-				new Button(Rect<float>(210 + 135 * i, 890, 100, 40),
-							_entries[i]));
+		        new Button(Rect<float>(210 + 135 * i, 590, 100, 40),
+		                   _entries[i]));
 	}
 
 	// Dodawanie listy obiektów do świata!
 	for (auto iter = entries.begin(); iter != entries.end(); ++iter) {
 		(*iter)->putCallback(Event::MOUSE_RELEASED,
-								dynamic_cast<Callback*>(this));
+		                     dynamic_cast<Callback*>(this));
 		lvl->getPhysics()->insert(*iter);
 	}
 }
@@ -65,8 +66,8 @@ void Menu::getCallback(Control* const & control) {
 					 * Nowa gra
 					 */
 					splash->pushTitle(
-							"Tip: Skaczac na kupy pasek zycia regeneruj sie..",
-							211); // dla picu ;0
+					        "Tip: Skaczac na kupy pasek zycia regeneruj sie..",
+					        211); // dla picu ;0
 					active_screen = splash;
 					splash->endTo(game);
 					break;
@@ -102,7 +103,7 @@ void Menu::drawObject(Window* window) {
 	}
 	ver.printText(
 	WINDOW_WIDTH - ver.getScreenLength() - 10,
-					22);
+	              22);
 }
 
 /**

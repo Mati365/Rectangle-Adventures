@@ -185,6 +185,15 @@ bool PlatformShape::recompile() {
 	return true;
 }
 
+/**
+ *
+ */
+void PlatformShape::rotate(float _angle) {
+	angle = TO_RAD(_angle);
+	//
+	recompile();
+}
+
 void PlatformShape::unload() {
 	if (points) {
 		delete[] points;

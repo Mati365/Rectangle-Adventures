@@ -186,9 +186,6 @@ class IrregularPlatform: public Platform {
 /*
  * Klasa magazynująca dane o obiektcie
  *  nie będzie renderowana!
- * Todo:
- * + Przechowywanie wierzchołków modelu
- * + Wczytywanie zachowań z pliku
  */
 struct CharacterStatus: public Resource<usint> {
 		int health;
@@ -208,8 +205,8 @@ struct CharacterStatus: public Resource<usint> {
 		}
 
 		CharacterStatus(const char* _label, usint _health, bool _shield,
-						usint _shield_health, usint _score, float _x = 0,
-						float _y = 0) :
+		                usint _shield_health, usint _score, float _x = 0,
+		                float _y = 0) :
 				Resource<usint>(_label),
 				health(_health),
 				shield_health(_shield_health),
@@ -267,6 +264,15 @@ class AI {
 		}
 };
 
+//-------------------------
+
+/**
+ * Generowanie 'krwii' ;)
+ */
+void generateBlood(usint, pEngine*, Body*, usint);
+
+//
+
 class Character: public IrregularPlatform {
 	protected:
 		glText nick;
@@ -311,12 +317,10 @@ class Character: public IrregularPlatform {
 		}
 
 		void move(float, float);
-		void die(pEngine*, usint); // śmierć, rozprucie ;)
-		void jump(float, bool);
 
-		void enableHitAnim() {
-			hit = true;
-		}
+		void die(pEngine*, usint); // śmierć, rozprucie ;)
+		void hitMe(pEngine*); // uderz mnie ;_;
+		void jump(float, bool);
 
 		void setAI(AI* _ai) {
 			ai = _ai;
@@ -413,8 +417,6 @@ class Trigger: public Body {
 
 /**
  * Wzorzec singleton!
- * Todo:
- * + Generowanie tymczasowych particle np. eksplozja
  */
 class ObjectFactory {
 	public:
@@ -448,7 +450,7 @@ class ObjectFactory {
 		 * Deklaruje dynamicznie!
 		 */
 		Body* createObject(usint, float, float, float, float, PlatformShape*,
-							char*);
+		                   char*);
 
 		void unloadObjects();
 		/**

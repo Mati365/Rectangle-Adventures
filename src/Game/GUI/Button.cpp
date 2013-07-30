@@ -10,12 +10,14 @@ using namespace GUI;
 
 void Button::drawObject(Window*) {
 	/**
-	 * Ciągłe ustawianie kolorów - bug!
+	 * Nie wymaga optymalizacji!
 	 */
 	switch (control_state) {
 		case NORMAL:
 			if (border_enabled) {
+				oglWrapper::beginStroke(0xAAAA);
 				oglWrapper::drawRect(x, y, w, h, oglWrapper::WHITE, 2);
+				oglWrapper::endStroke();
 			}
 			if (old_state != control_state) {
 				text.setColor(oglWrapper::WHITE);
@@ -32,7 +34,7 @@ void Button::drawObject(Window*) {
 			break;
 	}
 	text.printText(x + w / 2 - text.getScreenLength() / 2,
-					y + h / 2 + text.getFontHeight() / 2 - 4);
+	               y + h / 2 + text.getFontHeight() / 2 - 4);
 	//
 	old_state = control_state;
 }

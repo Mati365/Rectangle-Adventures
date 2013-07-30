@@ -17,9 +17,12 @@ pEngine::pEngine(const Rect<float>& _bounds, float _gravity_speed) :
 		pause(false),
 		timer(0),
 		sleep_time(0) {
-	quadtree = new QuadTree(NULL, _bounds, 0, 2);
+	quadtree = new QuadTree(NULL, _bounds, 0);
 }
 
+/**
+ * Usypianie silnika!
+ */
 void pEngine::setSleep(usint _sleep_time) {
 	timer = 0;
 	sleep_time = _sleep_time;
@@ -40,7 +43,7 @@ void pEngine::updateWorld() {
 	/**
 	 * Usuwanie wykasowanych obiektów!
 	 */
-	bodies.clear();
+	visible_bodies.clear();
 	if (!to_remove.empty()) {
 		for (auto iter = to_remove.begin(); iter != to_remove.end(); ++iter) {
 			auto _pos = find(list.begin(), list.end(), *iter);
@@ -56,21 +59,24 @@ void pEngine::updateWorld() {
 		to_remove.clear();
 	}
 	/**
-	 * Sprawdzenie kolizji!
+	 * Tworzenie quadtree!
 	 */
 	quadtree->clear();
-	quadtree->insert(&list);
-	quadtree->getLowestElements(bodies);
-	for (usint i = 0; i < bodies.size(); ++i) {
-		checkCollisions(bodies[i]);
-	}
+	quadtree->insertGroup(&list);
+	quadtree->getBodiesAt(active_range, visible_bodies);
+
+	/**
+	 * Sprawdzenie kolizji!
+	 */
+	checkCollisions(visible_bodies);
+
 	/**
 	 * Grawitacja!
 	 */
-	for (usint i = 0; i < list.size(); ++i) {
-		Body* object = list[i];
+	for (usint i = 0; i < visible_bodies.size(); ++i) {
+		Body* object = visible_bodies[i];
 		if (!object || IS_SET(object->state, Body::STATIC)
-				|| IS_SET(object->state, Body::HIDDEN)) {
+		        || IS_SET(object->state, Body::HIDDEN)) {
 			continue;
 		}
 		/**
@@ -80,6 +86,7 @@ void pEngine::updateWorld() {
 		 list[i]->x += down_collision->velocity.x;
 		 }
 		 */
+
 		/**
 		 * Żywotność
 		 */
@@ -90,12 +97,14 @@ void pEngine::updateWorld() {
 				object->max_lifetime = 0;
 			}
 		}
+
 		/**
 		 * Grawitacja
 		 */
 		if (object->velocity.y < 20.f) {
 			object->velocity.y += gravity_speed;
 		}
+
 		/**
 		 * Siła tarcia
 		 */
@@ -113,10 +122,12 @@ void pEngine::updateWorld() {
 void pEngine::checkCollisions(deque<Body*>& _bodies) {
 	for (usint i = 0; i < _bodies.size(); ++i) {
 		Body* source = _bodies[i];
+
 		// Czyszczenie
-		for (usint j = 0; j < 4; ++j) {
-			source->collisions[j] = NULL;
+		for (auto*& col : source->collisions) {
+			col = NULL;
 		}
+
 		//
 		if (IS_SET(_bodies[i]->state, Body::STATIC)) {
 			continue;
@@ -124,26 +135,27 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 		for (usint j = 0; j < _bodies.size(); ++j) {
 			Body* target = _bodies[j];
 			if (source->destroyed || j == i
-					|| (source->layer != target->layer
-							&& !IS_SET(target->state, Body::STATIC)
-							&& !IS_SET(source->state, Body::STATIC))
-					|| (IS_SET(source->state, Body::STATIC)
-							&& IS_SET(target->state, Body::STATIC))) {
+			        || (source->layer != target->layer
+			                && !IS_SET(target->state, Body::STATIC)
+			                && !IS_SET(source->state, Body::STATIC))
+			        || (IS_SET(source->state, Body::STATIC)
+			                && IS_SET(target->state, Body::STATIC))) {
 				continue;
 			}
+
 			/**
 			 * Kolizje Góra/ Dół
 			 */
 			usint horizont_side = checkHorizontalCollision(source, target);
 			if (horizont_side != NONE) {
 				if (!IS_SET(source->state, Body::HIDDEN)
-						&& !IS_SET(target->state, Body::HIDDEN)) {
+				        && !IS_SET(target->state, Body::HIDDEN)) {
 					if (horizont_side == DOWN) {
 						/**
 						 * Dół
 						 */
 						source->y = target->y - source->h - source->velocity.y
-								+ gravity_speed;
+						        + gravity_speed;
 						/**
 						 *
 						 */
@@ -151,29 +163,30 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 							source->velocity.y = target->velocity.y;
 						} else {
 							source->velocity.y = -source->velocity.y * 0.5f
-									+ target->velocity.y
-									- (target->velocity.y < 0 ?
-											gravity_speed : -gravity_speed);
+							        + target->velocity.y
+							        - (target->velocity.y < 0 ?
+							                gravity_speed : -gravity_speed);
 						}
 					} else {
 						/**
 						 * Góra
 						 */
 						source->y = target->y + target->h - source->velocity.y
-								+ gravity_speed;
+						        + gravity_speed;
 						source->velocity.y = 0;
 					}
 					source->collisions[horizont_side - 1] = target;
 				}
 				source->catchCollision(this, horizont_side, target);
 			}
+
 			/**
 			 * Kolizje Lewo
 			 */
 			usint vertical_side = checkVerticalCollision(source, target);
 			if (vertical_side != NONE) {
 				if (!IS_SET(source->state, Body::HIDDEN)
-						&& !IS_SET(target->state, Body::HIDDEN)) {
+				        && !IS_SET(target->state, Body::HIDDEN)) {
 					source->velocity.x = -source->velocity.x / 2;
 					source->collisions[vertical_side - 1] = target;
 				}
@@ -188,15 +201,15 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
  */
 usint pEngine::checkVerticalCollision(Body* _body, Body* _body2) {
 	if (_body2->x + _body2->w <= _body->x
-			&& moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body,
-							_body2)) {
+	        && moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body,
+	                        _body2)) {
 		return LEFT;
 		/**
 		 *
 		 */
 	} else if (_body2->x >= _body->x + _body->w
-			&& moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body,
-							_body2)) {
+	        && moveAndCheck(_body->velocity.x, -gravity_speed * 2, _body,
+	                        _body2)) {
 		/**
 		 *
 		 */
@@ -214,11 +227,11 @@ usint pEngine::checkHorizontalCollision(Body* _body, Body* _body2) {
 		 *
 		 */
 		if (_body->y + _body->h + _body->velocity.y <= _body2->y + _body2->h
-				&& _body->y + _body->h + _body->velocity.y >= _body2->y
-				&& _body->y < _body2->y) {
+		        && _body->y + _body->h + _body->velocity.y >= _body2->y
+		        && _body->y < _body2->y) {
 			return DOWN;
 		} else if (_body->y + _body->velocity.y <= _body2->y + _body2->h
-				&& _body->y >= _body2->y + _body2->h && _body->y > _body2->y) {
+		        && _body->y >= _body2->y + _body2->h && _body->y > _body2->y) {
 			return UP;
 		}
 	}
@@ -226,7 +239,7 @@ usint pEngine::checkHorizontalCollision(Body* _body, Body* _body2) {
 }
 
 bool pEngine::moveAndCheck(float _x, float _y, Body* _body,
-							const Body* _body2) {
+                           const Body* _body2) {
 	bool collision;
 
 	_body->x += _x;
@@ -240,8 +253,8 @@ bool pEngine::moveAndCheck(float _x, float _y, Body* _body,
 
 bool pEngine::collide(const Body* _body, const Body* _body2) const {
 	if (_body->x + _body->w >= _body2->x && _body->x <= _body2->x + _body2->w
-			&& _body->y + _body->h > _body2->y
-			&& _body->y < _body2->y + _body2->h) {
+	        && _body->y + _body->h > _body2->y
+	        && _body->y < _body2->y + _body2->h) {
 		return true;
 	}
 	return false;

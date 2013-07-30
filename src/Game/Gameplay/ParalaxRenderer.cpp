@@ -9,7 +9,7 @@
 using namespace Gameplay;
 
 ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, bool _draw_quad,
-									MapINFO* _map) :
+                                 MapINFO* _map) :
 		map(_map),
 		cam(_target),
 		ratio(_ratio),
@@ -28,7 +28,11 @@ void ParalaxRenderer::drawObject(Window* _window) {
 		return;
 	}
 	pEngine* physics = map->physics;
+	/**
+	 *
+	 */
 	if (draw_quad) {
+		physics->setActiveRange(cam.pos);
 		physics->updateWorld();
 	}
 	/**
@@ -36,31 +40,30 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	 */
 	cam.updateCam(_window);
 
-	const Vector<usint>* bounds = _window->getBounds();
-	deque<Body*>* list = physics->getList();
+	/**
+	 * Lista aktualnie widocznych elementów!
+	 */
+	deque<Body*>* list = physics->getVisibleBodies();
 
 	glPushMatrix();
 	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
 	if (state != PAUSE && draw_quad) {
-		//physics->getQuadTree()->drawObject(NULL);
+		physics->getQuadTree()->drawObject(NULL);
 	}
+
 	/**
 	 * Obiekty poza ekranem wycinamy!
 	 */
 	for (usint i = 0; i < static_objects.size(); ++i) {
-		Body* body = static_objects[i];
-		//
-		body->drawObject(_window);
+		static_objects[i]->drawObject(_window);
 	}
 	for (usint i = 0; i < list->size(); ++i) {
 		Body* body = (*list)[i];
-		if (IS_SET(body->state, Body::HIDDEN) || body->x - cam.pos.x > bounds->x
-				|| body->y - cam.pos.y > bounds->y
-				|| body->y - cam.pos.y + body->h < 0
-				|| body->x - cam.pos.x + body->w < 0) {
+		if (IS_SET(body->state, Body::HIDDEN)) {
 			continue;
 		}
 		body->drawObject(_window);
 	}
+
 	glPopMatrix();
 }

@@ -18,6 +18,8 @@
 #define STATIC_LAYER 0
 #define MAX_LAYER 2
 
+#define MAX_QUADTREE_LEVEL 3
+
 namespace Physics {
 	using namespace std;
 	using namespace Engine;
@@ -35,6 +37,22 @@ namespace Physics {
 					y(_y),
 					w(_w),
 					h(_h) {
+			}
+
+			/**
+			 * Czy zawiera obiekt
+			 */
+			inline bool contains(const Rect<T>& _child) {
+				return (_child.x >= x && _child.x + _child.w <= x + w
+				        && _child.y >= y && _child.y + _child.y <= h);
+			}
+
+			/**
+			 * Czy koliduje z obiektem
+			 */
+			inline bool intersect(const Rect<T>& _body) {
+				return (_body.x + _body.w >= x && _body.x <= x + w
+				        && _body.y + _body.h >= y && _body.y <= y + h);
 			}
 
 			operator Vector<float>() {
@@ -96,8 +114,8 @@ namespace Physics {
 			}
 
 			Body(float _x, float _y, float _w, float _h,
-					float _elasticity = 1.f, float _weight = 1.f, usint _state =
-							NONE) :
+			     float _elasticity = 1.f, float _weight = 1.f, usint _state =
+			             NONE) :
 					state(_state),
 					elasticity(_elasticity),
 					weight(_weight),
@@ -146,6 +164,7 @@ namespace Physics {
 
 			virtual void catchCollision(pEngine*, usint, Body*) {
 			}
+
 			virtual void drawObject(Window*) {
 			}
 
@@ -153,13 +172,20 @@ namespace Physics {
 			}
 	};
 
+	/**
+	 * Todo:
+	 * + Przebudowa, sprawdzanie kolizji tylko
+	 * na widocznym skrawku ekranu!
+	 * + Usuwanie poruszających się i dodawanie
+	 * ich spowrotem!
+	 * + Dodawanie tylko do jednego quad'u!
+	 */
 	class QuadTree: public Renderer {
 		private:
 			Rect<float> rect;
 			deque<Body*> bodies;
 
 			usint level;
-			usint max_level;
 			/**
 			 * STAŁE
 			 */
@@ -170,18 +196,18 @@ namespace Physics {
 			QuadTree* SE;
 
 		public:
-			QuadTree(QuadTree*, const Rect<float>&, usint, usint);
+			QuadTree(QuadTree*, const Rect<float>&, usint);
 
 			/**
 			 * Aktualizacja drzewa!
-			 * Nie kasowanie obeiktĂłw!
 			 */
+			void subdive();
 			void remove(Body*);
 
-			void insert(deque<Body*>*);
+			void insertGroup(deque<Body*>*);
 			void insert(Body*);
-			void getBodiesAt(const Rect<float>&, deque<Body*>*);
-			void getLowestElements(deque<deque<Body*> >&);
+
+			void getBodiesAt(Rect<float>&, deque<Body*>&);
 
 			void clear();
 			virtual void drawObject(Window*);
@@ -189,9 +215,7 @@ namespace Physics {
 			~QuadTree();
 
 		private:
-			void insertToSubQuad(Body*);
-
-			bool containsObject(const Rect<float>*, const Rect<float>*);
+			bool insertToSubQuad(Body*);
 	};
 
 	class pEngine {
@@ -203,6 +227,13 @@ namespace Physics {
 		private:
 			QuadTree* quadtree;
 			Rect<float> bounds;
+			/**
+			 * Fizyka sprawdzana jest tylko i
+			 * wyłącznie na widocznym ekranie!
+			 */
+			Rect<float> active_range;
+			deque<Body*> visible_bodies;
+
 			float gravity_speed;
 			/**
 			 * Obiekty buforowe!
@@ -210,7 +241,6 @@ namespace Physics {
 			deque<Body*> list;
 			deque<Body*> to_remove;
 
-			deque<deque<Body*> > bodies;
 			/**
 			 * Timer!
 			 */
@@ -220,6 +250,17 @@ namespace Physics {
 
 		public:
 			pEngine(const Rect<float>&, float);
+
+			/**
+			 * Obszar widoczny!
+			 */
+			deque<Body*>* getVisibleBodies() {
+				return &visible_bodies;
+			}
+
+			void setActiveRange(const Rect<float>& _active_range) {
+				active_range = _active_range;
+			}
 
 			void insert(Body* body) {
 				list.push_back(body);

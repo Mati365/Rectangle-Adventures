@@ -37,18 +37,16 @@ namespace Gameplay {
 
 			Camera(Body* _focus) :
 					focus(_focus) {
+				pos.w = WINDOW_WIDTH;
+				pos.h = WINDOW_HEIGHT;
 			}
 
 			void updateCam(Window* _window) {
 				if (!focus) {
 					return;
 				}
-				if (pos.w == 0 || pos.h == 0) {
-					pos.w = _window->getBounds()->x;
-					pos.h = _window->getBounds()->y;
-				}
-				pos.x = focus->x - _window->getBounds()->x / 2 + focus->w / 2;
-				pos.y = focus->y - _window->getBounds()->y / 2 + focus->h / 2;
+				pos.x = focus->x - pos.w / 2 + focus->w / 2;
+				pos.y = focus->y - pos.h / 2 + focus->h / 2;
 			}
 	};
 
