@@ -6,6 +6,7 @@
  */
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 #include "Physics.hpp"
 
@@ -28,6 +29,9 @@ void pEngine::setSleep(usint _sleep_time) {
 	sleep_time = _sleep_time;
 }
 
+/**
+ * Odświeżanie świata!
+ */
 void pEngine::updateWorld() {
 	if (pause) {
 		return;
@@ -40,24 +44,12 @@ void pEngine::updateWorld() {
 			return;
 		}
 	}
+
 	/**
 	 * Usuwanie wykasowanych obiektów!
 	 */
 	visible_bodies.clear();
-	if (!to_remove.empty()) {
-		for (auto iter = to_remove.begin(); iter != to_remove.end(); ++iter) {
-			auto _pos = find(list.begin(), list.end(), *iter);
-			if (_pos != list.end()) {
-				quadtree->remove(*_pos);
-				if (*_pos && (*_pos)->dynamically_allocated) {
-					delete *_pos;
-					*_pos = NULL;
-				}
-				list.erase(_pos);
-			}
-		}
-		to_remove.clear();
-	}
+
 	/**
 	 * Tworzenie quadtree!
 	 */
@@ -79,13 +71,14 @@ void pEngine::updateWorld() {
 		        || IS_SET(object->state, Body::HIDDEN)) {
 			continue;
 		}
+
 		/**
-		 * BUG
-		 Body* down_collision = list[i]->collisions[DOWN - 1];
-		 if (down_collision && down_collision->velocity.x != 0) {
-		 list[i]->x += down_collision->velocity.x;
-		 }
+		 * Poruszanie się po platformie
 		 */
+		Body* down_collision = object->collisions[DOWN - 1];
+		if (down_collision && down_collision->velocity.x != 0) {
+			object->x += down_collision->velocity.x;
+		}
 
 		/**
 		 * Żywotność
@@ -128,7 +121,7 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 			col = NULL;
 		}
 
-		//
+		// Statyszne obiekty są omijane
 		if (IS_SET(_bodies[i]->state, Body::STATIC)) {
 			continue;
 		}

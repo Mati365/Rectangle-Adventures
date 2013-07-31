@@ -93,6 +93,11 @@ namespace Physics {
 			usint script_id;
 
 			/**
+			 * Orientacja
+			 */
+			usint orientation;
+
+			/**
 			 * Długość życia ciała
 			 */
 			usint max_lifetime;
@@ -105,6 +110,7 @@ namespace Physics {
 					type(PLATFORM),
 					layer(STATIC_LAYER),
 					script_id(0),
+					orientation(0),
 					max_lifetime(0),
 					lifetime(0) {
 				x = 0;
@@ -122,6 +128,7 @@ namespace Physics {
 					type(PLATFORM),
 					layer(STATIC_LAYER),
 					script_id(0),
+					orientation(0),
 					max_lifetime(0),
 					lifetime(0) {
 				x = _x;

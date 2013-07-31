@@ -12,12 +12,11 @@
 #include "../../Tools/Logger.hpp"
 
 Platform::Platform(float _x, float _y, float _w, float _h, const Color& _col,
-					usint _state) :
+                   usint _state) :
 		Body(_x, _y, _w, _h),
 		col(_col),
 		repeat_movement(true),
 		fill_type(SIMPLE),
-		orientation(NONE),
 		list(glGenLists(1)) {
 	state = _state;
 	elasticity = 0.45f;
@@ -32,7 +31,7 @@ bool Platform::updatePlatform() {
 	if (max_distance.x != 0 || max_distance.y != 0) {
 		{
 			float x = abs(distance.x), y = abs(distance.y), to_x = abs(
-					max_distance.x), to_y = abs(max_distance.y);
+			        max_distance.x), to_y = abs(max_distance.y);
 			if ((x > 0 && x >= to_x) || (y > 0 && y >= to_y)) {
 				if (!repeat_movement) {
 					velocity.x = velocity.y = 0;
@@ -48,9 +47,9 @@ bool Platform::updatePlatform() {
 		y += velocity.y;
 		//
 		distance.x += distance.x < max_distance.x ?
-				velocity.x : -velocity.x;
+		        velocity.x : -velocity.x;
 		distance.y += distance.y < max_distance.y ?
-				velocity.y : -velocity.y;
+		        velocity.y : -velocity.y;
 		return true;
 	}
 	return false;
@@ -64,19 +63,12 @@ void Platform::disableMoving() {
 }
 
 void Platform::setMovingDir(const Vector<float>& _velocity,
-							const Vector<float>& _distance,
-							bool _repeat_movement) {
+                            const Vector<float>& _distance,
+                            bool _repeat_movement) {
 	velocity = _velocity;
 	max_distance = _distance;
 	repeat_movement = _repeat_movement;
 	distance.x = distance.y = 0;
-}
-
-/**
- * Orientacja, nie potrzebna przy renderowaniu!
- */
-void Platform::setOrientation(usint _orientation) {
-	orientation = _orientation;
 }
 
 /**
@@ -146,6 +138,7 @@ void Platform::drawBody() {
 	 */
 	glLineWidth(2);
 	switch (fill_type) {
+
 		/**
 		 *  Proste!
 		 */
@@ -163,13 +156,14 @@ void Platform::drawBody() {
 					float proc = (float) i / (h / 10.f);
 					//
 					glColor4ub(col.r, col.g, col.b,
-								col.a * 0.3f * (1.f - proc));
+					           col.a * 0.3f * (1.f - proc));
 					glVertex2f(x + w, y + i * 10);
 					glVertex2f(x, y + i * 10);
 				}
 			}
 			glEnd();
 			break;
+
 			/**
 			 *  Ukośne!
 			 */
@@ -192,6 +186,7 @@ void Platform::drawBody() {
 			}
 			glEnd();
 			break;
+
 			/**
 			 *  Alpha w środku!
 			 */
@@ -201,6 +196,10 @@ void Platform::drawBody() {
 	}
 }
 
+/**
+ * Aby zoptymalizować wyświetlanie statycznych
+ * obiektów muszą być listy!
+ */
 void Platform::compileList() {
 	glDeleteLists(list, 1);
 	//
@@ -229,7 +228,7 @@ void Platform::drawObject(Window*) {
 //---------------------------------------
 
 IrregularPlatform::IrregularPlatform(float _x, float _y, usint _state,
-										PlatformShape* _shape) :
+                                     PlatformShape* _shape) :
 		Platform(_x, _y, 0, 0, oglWrapper::WHITE, _state),
 		scale(1) {
 	if (!_shape) {
@@ -254,6 +253,9 @@ void IrregularPlatform::fitToWidth(float _w) {
 	setScale(_w / w);
 }
 
+/**
+ * Narysuj!
+ */
 void IrregularPlatform::drawObject(Window*) {
 	updatePlatform();
 	//

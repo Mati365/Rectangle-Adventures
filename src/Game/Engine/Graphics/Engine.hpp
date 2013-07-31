@@ -71,9 +71,15 @@ struct Vector {
 		/**
 		 * Odwrócenie wektora!
 		 */
-		void invert() {
+		inline void invert() {
 			x = -x;
 			y = -y;
+		}
+
+		inline Vector<T>& operator-=(const Vector<T>& right) {
+			x -= right.x;
+			y -= right.y;
+			return *this;
 		}
 
 		inline Vector<T>& operator+=(const Vector<T>& right) {

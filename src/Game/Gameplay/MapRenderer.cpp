@@ -12,8 +12,6 @@
 
 using namespace Gameplay;
 
-Snapshot snapshot;
-
 MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 		ParalaxRenderer(_hero, 1.f, true, _map),
 		msg(50, Color(0, 128, 255), Color(255, 255, 255), this),
@@ -25,16 +23,19 @@ MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
  * Dodawanie tła gry!
  */
 ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
-											Body* _body) {
+                                           Body* _body) {
 	if (map->physics) {
 		ParalaxRenderer* renderer = new ParalaxRenderer(_body, _ratio, false,
-														_paralax);
+		                                                _paralax);
 		paralax_background.push_front(renderer);
 		return renderer;
 	}
 	return NULL;
 }
 
+/**
+ * Eventy otrzymywane z okna
+ */
 void MapRenderer::catchEvent(const Event& _event) {
 	if (!hero) {
 		return;
@@ -68,17 +69,22 @@ void MapRenderer::catchEvent(const Event& _event) {
 void MapRenderer::addWeather(usint _type) {
 	switch (_type) {
 		/**
-		 *
+		 * Śnieg
 		 */
 		case SNOWING: {
 			SnowEmitter* snow = new SnowEmitter(
-					Rect<float>(0, 20, WINDOW_WIDTH, 0));
+			        Rect<float>(0, 20, WINDOW_WIDTH, 0));
 			snow->setFocus(&cam.pos);
+			//
 			addStaticObject(snow);
 		}
 			break;
 	}
 }
+
+/**
+ * Ustawienie focusa kamery i bohatera
+ */
 void MapRenderer::setHero(Character* _hero) {
 	hero = _hero;
 	cam.focus = hero;

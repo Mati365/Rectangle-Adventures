@@ -24,7 +24,8 @@ bool CharacterStatus::load(FILE* _file) {
 /**
  * Generowanie krwii
  */
-void generateBlood(usint dir, pEngine* physics, Body* body, usint count) {
+void generateExplosion(usint dir, pEngine* physics, Body* body, usint count,
+                       const Color& col) {
 	float cx, cy, angle;
 	/**
 	 * Generowanie cząsteczek krwii w postaci eksplozji
@@ -36,44 +37,15 @@ void generateBlood(usint dir, pEngine* physics, Body* body, usint count) {
 		//
 		float size = getIntRandom<int>(3, 6);
 		//
-		Vector<float> vec(cosf(angle) * 16, sinf(angle) * 25);
-		if (dir != pEngine::NONE) {
-			/**
-			 * Kierunek rozprucia odwrotny
-			 * do kierunku uderzenia!
-			 */
-			switch (dir) {
-				case pEngine::LEFT:
-					vec.x = -abs(vec.x);
-					break;
-
-				case pEngine::RIGHT:
-					vec.x = abs(vec.x);
-					break;
-
-				case pEngine::UP:
-					vec.y = abs(vec.y);
-					break;
-
-				case pEngine::DOWN:
-					vec.y = -abs(vec.y);
-					break;
-					/**
-					 *
-					 */
-				default:
-					break;
-			}
-		}
 		Platform* platform = new Platform(body->x + cx, body->y + cy, size,
-		                                  size, oglWrapper::RED, Body::NONE);
+		                                  size, col, Body::NONE);
 		//
 		platform->setMaxLifetime(size * 140);
 		platform->setBorder(false, false, false, false);
 		platform->setFillType(Platform::FILLED);
 		//
 		platform->layer = STATIC_LAYER + 1;
-		platform->velocity = vec;
+		platform->velocity = Vector<float>(cosf(angle) * 16, sinf(angle) * 25);
 		//
 		physics->insert(platform);
 	}
@@ -105,7 +77,7 @@ Character::Character(const string& _nick, float _x, float _y,
 void Character::hitMe(pEngine* physics) {
 	hit = true;
 	//
-	generateBlood(pEngine::NONE, physics, this, 5);
+	generateExplosion(pEngine::NONE, physics, this, 5, oglWrapper::RED);
 }
 
 /**
@@ -120,7 +92,7 @@ void Character::die(pEngine* physics, usint _dir) {
 	 */
 	status.health = DEATH;
 	//
-	generateBlood(_dir, physics, this, 30);
+	generateExplosion(_dir, physics, this, 30, oglWrapper::RED);
 	//
 	setState(Body::HIDDEN);
 }
@@ -129,9 +101,15 @@ void Character::die(pEngine* physics, usint _dir) {
  * Kolizja gracza
  */
 void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
+	if (status.health == DEATH) {
+		return;
+	}
 	if (ai) {
 		ai->getCollision(physics, dir, body);
 	}
+	/**
+	 * Ginąć może nie tylko gracz
+	 */
 	if ((type == Body::HERO || type == Body::ENEMY)
 	        && dir == pEngine::DOWN&& !IS_SET(body->state, Body::HIDDEN)) {
 		/**
@@ -139,19 +117,25 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 		 */
 		if (velocity.y < -9 && status.health > 0) {
 			die(physics, dir);
+			return;
 		}
 		jumping = false;
 	}
 	if (type != HERO) {
 		return;
 	}
+
 	/**
-	 * Akcje gracza!
+	 * Skrypty
 	 */
 	if (body->type == Body::TRIGGER) {
 		dynamic_cast<Trigger*>(body)->generate();
 		return;
 	}
+
+	/**
+	 * Akcje gracza
+	 */
 	Character* enemy = dynamic_cast<Character*>(body);
 	if (!enemy) {
 		return;
@@ -172,13 +156,13 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 		case ENEMY:
 			if (dir == pEngine::DOWN || dir == pEngine::UP) {
 				status += enemy->status;
-				velocity.invert();
 				//
 				body->destroyed = true;
 			} else {
 				status -= enemy->status;
 				hitMe(physics);
 			}
+			velocity.invert();
 			break;
 
 			/**
@@ -198,6 +182,9 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			 *
 			 */
 		case SPIKES:
+			if (body->orientation != dir) {
+				break;
+			}
 			if (status.health > 0) {
 				status.health -= 1;
 			}

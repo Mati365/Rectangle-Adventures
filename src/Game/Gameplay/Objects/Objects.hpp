@@ -46,7 +46,6 @@ class Platform: public Body, public Cloneable {
 		bool repeat_movement;
 
 		usint fill_type;
-		usint orientation;
 		/**
 		 * Dla przyśpieszenia renderingu!
 		 */
@@ -59,6 +58,10 @@ class Platform: public Body, public Cloneable {
 	public:
 		Platform(float, float, float, float, const Color&, usint);
 
+		virtual void drawObject(Window*);
+		virtual void catchCollision(pEngine*, usint, Body*) {
+		}
+
 		/**
 		 * Odblokowanie poruszania się!
 		 */
@@ -67,12 +70,7 @@ class Platform: public Body, public Cloneable {
 
 		// Argumenty zgodnie z ruchem wskazówek zegara
 		void setBorder(bool, bool, bool, bool);
-		void setOrientation(usint);
 		void setFillType(usint);
-
-		virtual void drawObject(Window*);
-		virtual void catchCollision(pEngine*, usint, Body*) {
-		}
 
 		/**
 		 * Kompilacja listy dla statycznej!
@@ -269,7 +267,7 @@ class AI {
 /**
  * Generowanie 'krwii' ;)
  */
-void generateBlood(usint, pEngine*, Body*, usint);
+void generateExplosion(usint, pEngine*, Body*, usint, const Color&);
 
 //
 
@@ -399,7 +397,7 @@ class Trigger: public Body {
 		/**
 		 * Generowanie zdarzenia!
 		 */
-		void generate() {
+		inline void generate() {
 			if (destroyed) {
 				return;
 			}

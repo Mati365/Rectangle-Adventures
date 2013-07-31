@@ -118,8 +118,17 @@ bool QuadTree::insertToSubQuad(Body* body) {
 }
 
 void QuadTree::insertGroup(deque<Body*>* bodies) {
-	for (usint i = 0; i < bodies->size(); ++i) {
-		insertToSubQuad((*bodies)[i]);
+	for (auto iter = bodies->begin(); iter != bodies->end();) {
+		if ((*iter)->destroyed) {
+			Body* body = (*iter);
+			iter = bodies->erase(iter);
+			//
+			if (body->dynamically_allocated) {
+				delete body;
+			}
+		} else {
+			insertToSubQuad(*iter++);
+		}
 	}
 }
 

@@ -23,20 +23,26 @@ void ParalaxRenderer::addStaticObject(Body* _renderer) {
 	static_objects.push_back(AllocKiller<Body>(_renderer));
 }
 
+/**
+ * Rysowanie paralaksy
+ */
 void ParalaxRenderer::drawObject(Window* _window) {
 	if (!map) {
 		return;
 	}
-	pEngine* physics = map->physics;
+
 	/**
-	 *
+	 * Odświeżanie fizyki
 	 */
+	pEngine* physics = map->physics;
 	if (draw_quad) {
-		physics->setActiveRange(cam.pos);
+		physics->setActiveRange(
+		        Rect<float>(cam.pos.x - 40, cam.pos.y - 40, WINDOW_WIDTH + 80,
+		        WINDOW_HEIGHT + 80));
 		physics->updateWorld();
 	}
 	/**
-	 *
+	 * Odświeżanie kamery
 	 */
 	cam.updateCam(_window);
 
@@ -47,8 +53,8 @@ void ParalaxRenderer::drawObject(Window* _window) {
 
 	glPushMatrix();
 	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
-	if (state != PAUSE && draw_quad) {
-		physics->getQuadTree()->drawObject(NULL);
+	if (draw_quad) {
+		//physics->getQuadTree()->drawObject(NULL);
 	}
 
 	/**
@@ -57,6 +63,9 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	for (usint i = 0; i < static_objects.size(); ++i) {
 		static_objects[i]->drawObject(_window);
 	}
+	/**
+	 * Renderowanie obiektów podlegających fizyce
+	 */
 	for (usint i = 0; i < list->size(); ++i) {
 		Body* body = (*list)[i];
 		if (IS_SET(body->state, Body::HIDDEN)) {

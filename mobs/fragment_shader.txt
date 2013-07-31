@@ -1,0 +1,9 @@
+uniform float test;
+
+void main(void)
+{
+	vec4 col = gl_Color;
+	col.rgb *= test;
+	
+	gl_FragColor = col;
+}
