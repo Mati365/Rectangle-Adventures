@@ -30,15 +30,15 @@ class Bullet: public Character {
 	public:
 		Bullet(float _x, float _y, PlatformShape* _shape,
 				usint _max_flight_height) :
-				Character("", _x, _y, _shape, Character::BULLET),
-				//
-				max_flight_height(_max_flight_height),
-				flight_height(0) {
+						Character("", _x, _y, _shape, Character::BULLET),
+						//
+						max_flight_height(_max_flight_height),
+						flight_height(0) {
 			dynamically_allocated = true;
 			//
 			fitToWidth(BULLET_WIDTH);
 		}
-
+		
 		virtual void catchCollision(pEngine*, usint, Body*);
 		virtual void drawObject(Window*);
 };
@@ -59,7 +59,7 @@ class Gun: public IrregularPlatform {
 
 	public:
 		Gun(pEngine*, float, float, float, PlatformShape*, PlatformShape*,
-			usint);
+				usint);
 
 		virtual void drawObject(Window*);
 

@@ -11,11 +11,10 @@
 using namespace GameScreen;
 
 Menu::Menu() :
-		Game("menu.txt"),
-		ver(oglWrapper::GRAY,
-		    "Wersja: 0.5 beta | Autor: Mateusz Baginski | email:cziken58@gmail.com",
-		    GLUT_BITMAP_HELVETICA_12,
-		    12) {
+				Game("menu.txt"),
+				ver(oglWrapper::GRAY,
+						"Wersja: 0.5 beta | Autor: Mateusz Baginski | email:cziken58@gmail.com",
+						GLUT_BITMAP_HELVETICA_12, 12) {
 	lvl->enableHUD(false);
 	hero->getStatus()->health = 1;
 	//
@@ -27,20 +26,17 @@ Menu::Menu() :
  */
 void Menu::createMenuEntries() {
 	// Dodawanie pojedynczych przycisków do listy obiektów!
-	const char* _entries[] = {
-	                           "Kontynuuj",
-	                           "Nowa gra",
-	                           "Koniec gry" };
+	const char* _entries[] = { "Kontynuuj", "Nowa gra", "Koniec gry" };
 	for (usint i = 0; i < 3; ++i) {
 		entries.push_back(
-		        new Button(Rect<float>(210 + 135 * i, 590, 100, 40),
-		                   _entries[i]));
+				new Button(Rect<float>(210 + 135 * i, 590, 100, 40),
+						_entries[i]));
 	}
-
+	
 	// Dodawanie listy obiektów do świata!
 	for (auto iter = entries.begin(); iter != entries.end(); ++iter) {
 		(*iter)->putCallback(Event::MOUSE_RELEASED,
-		                     dynamic_cast<Callback*>(this));
+				dynamic_cast<Callback*>(this));
 		lvl->getPhysics()->insert(*iter);
 	}
 }
@@ -60,18 +56,18 @@ void Menu::getCallback(Control* const & control) {
 					 * Kontynuacja gry
 					 */
 					break;
-
+					
 				case 1:
 					/**
 					 * Nowa gra
 					 */
 					splash->pushTitle(
-					        "Tip: Skaczac na kupy pasek zycia regeneruj sie..",
-					        211); // dla picu ;0
+							"Tip: Skaczac na kupy pasek zycia regeneruj sie..",
+							211); // dla picu ;0
 					active_screen = splash;
 					splash->endTo(game);
 					break;
-
+					
 				case 2:
 					/**
 					 * Koniec gry
@@ -101,9 +97,7 @@ void Menu::drawObject(Window* window) {
 	if (lvl) {
 		lvl->drawObject(window);
 	}
-	ver.printText(
-	WINDOW_WIDTH - ver.getScreenLength() - 10,
-	              22);
+	ver.printText(WINDOW_WIDTH - ver.getScreenLength() - 10, 22);
 }
 
 /**

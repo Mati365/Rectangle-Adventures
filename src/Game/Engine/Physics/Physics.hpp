@@ -24,7 +24,7 @@ namespace Physics {
 	using namespace std;
 	using namespace Engine;
 	using namespace Memory;
-
+	
 	template<typename T> class Rect {
 		public:
 			T x;
@@ -33,33 +33,33 @@ namespace Physics {
 			T h;
 
 			Rect(T _x = 0, T _y = 0, T _w = 0, T _h = 0) :
-					x(_x),
-					y(_y),
-					w(_w),
-					h(_h) {
+							x(_x),
+							y(_y),
+							w(_w),
+							h(_h) {
 			}
-
+			
 			/**
 			 * Czy zawiera obiekt
 			 */
 			inline bool contains(const Rect<T>& _child) {
 				return (_child.x >= x && _child.x + _child.w <= x + w
-				        && _child.y >= y && _child.y + _child.y <= h);
+						&& _child.y >= y && _child.y + _child.y <= h);
 			}
-
+			
 			/**
 			 * Czy koliduje z obiektem
 			 */
 			inline bool intersect(const Rect<T>& _body) {
 				return (_body.x + _body.w >= x && _body.x <= x + w
-				        && _body.y + _body.h >= y && _body.y <= y + h);
+						&& _body.y + _body.h >= y && _body.y <= y + h);
 			}
-
+			
 			operator Vector<float>() {
 				return Vector<float>(x, y);
 			}
 	};
-
+	
 	class pEngine;
 	class Body: public Rect<float>, public Renderer {
 		public:
@@ -104,39 +104,39 @@ namespace Physics {
 			usint lifetime;
 
 			Body() :
-					state(NONE),
-					elasticity(0),
-					weight(0),
-					type(PLATFORM),
-					layer(STATIC_LAYER),
-					script_id(0),
-					orientation(0),
-					max_lifetime(0),
-					lifetime(0) {
+							state(NONE),
+							elasticity(0),
+							weight(0),
+							type(PLATFORM),
+							layer(STATIC_LAYER),
+							script_id(0),
+							orientation(0),
+							max_lifetime(0),
+							lifetime(0) {
 				x = 0;
 				y = 0;
 				w = 0;
 				h = 0;
 			}
-
+			
 			Body(float _x, float _y, float _w, float _h,
-			     float _elasticity = 1.f, float _weight = 1.f, usint _state =
-			             NONE) :
-					state(_state),
-					elasticity(_elasticity),
-					weight(_weight),
-					type(PLATFORM),
-					layer(STATIC_LAYER),
-					script_id(0),
-					orientation(0),
-					max_lifetime(0),
-					lifetime(0) {
+					float _elasticity = 1.f, float _weight = 1.f, usint _state =
+							NONE) :
+							state(_state),
+							elasticity(_elasticity),
+							weight(_weight),
+							type(PLATFORM),
+							layer(STATIC_LAYER),
+							script_id(0),
+							orientation(0),
+							max_lifetime(0),
+							lifetime(0) {
 				x = _x;
 				y = _y;
 				w = _w;
 				h = _h;
 			}
-
+			
 			/**
 			 * Długość życia do skasowania!
 			 * Particle
@@ -146,7 +146,7 @@ namespace Physics {
 				lifetime = 0;
 				dynamically_allocated = true;
 			}
-
+			
 			/**
 			 * Wymiary!
 			 */
@@ -168,17 +168,17 @@ namespace Physics {
 			void setState(usint _state) {
 				state = _state;
 			}
-
+			
 			virtual void catchCollision(pEngine*, usint, Body*) {
 			}
-
+			
 			virtual void drawObject(Window*) {
 			}
-
+			
 			virtual ~Body() {
 			}
 	};
-
+	
 	/**
 	 * Todo:
 	 * + Przebudowa, sprawdzanie kolizji tylko
@@ -224,7 +224,7 @@ namespace Physics {
 		private:
 			bool insertToSubQuad(Body*);
 	};
-
+	
 	class pEngine {
 		public:
 			enum {
@@ -264,11 +264,11 @@ namespace Physics {
 			deque<Body*>* getVisibleBodies() {
 				return &visible_bodies;
 			}
-
+			
 			void setActiveRange(const Rect<float>& _active_range) {
 				active_range = _active_range;
 			}
-
+			
 			void insert(Body* body) {
 				list.push_back(body);
 				quadtree->insert(body);
@@ -276,12 +276,12 @@ namespace Physics {
 			void remove(Body* body) {
 				to_remove.push_back(body);
 			}
-
+			
 			void clear() {
 				to_remove.clear();
 				list.clear();
 			}
-
+			
 			bool collide(const Body*, const Body*) const;
 			bool moveAndCheck(float, float, Body*, const Body*);
 			void updateWorld();
@@ -290,23 +290,23 @@ namespace Physics {
 			void setPause(bool _pause) {
 				pause = _pause;
 			}
-
+			
 			QuadTree* getQuadTree() const {
 				return quadtree;
 			}
-
+			
 			Rect<float>& getBounds() {
 				return bounds;
 			}
-
+			
 			deque<Body*>* getList() {
 				return &list;
 			}
-
+			
 			float getGravitySpeed() const {
 				return gravity_speed;
 			}
-
+			
 			~pEngine();
 
 		private:

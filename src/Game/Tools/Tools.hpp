@@ -36,7 +36,7 @@ class AllocKiller {
 	private:
 		T* ptr;
 		long* counter; // licznik referencji
-
+		
 	public:
 		/**
 		 * Przy: void dupa(allocKiller);
@@ -45,33 +45,33 @@ class AllocKiller {
 		 * void dupa(zmienna);
 		 */
 		explicit AllocKiller(T* _ptr) :
-				ptr(_ptr),
-				counter(NULL) {
+						ptr(_ptr),
+						counter(NULL) {
 			pushReference();
 		}
-
+		
 		AllocKiller(const AllocKiller& _copy) :
-				ptr(_copy.ptr),
-				counter(_copy.counter) {
+						ptr(_copy.ptr),
+						counter(_copy.counter) {
 			pushReference();
 		}
-
+		
 		operator T*() {
 			return ptr;
 		}
-
+		
 		T* operator->() const {
 			return ptr;
 		}
-
+		
 		T* getPtr() const {
 			return ptr;
 		}
-
+		
 		~AllocKiller() {
 			releaseReference();
 		}
-
+		
 	private:
 		void pushReference() {
 			if (!ptr) {
@@ -83,7 +83,7 @@ class AllocKiller {
 				(*counter)++;
 			}
 		}
-
+		
 		void releaseReference() {
 			(*counter)--;
 			if ((*counter) == 0) {
@@ -107,7 +107,7 @@ namespace Memory {
 			virtual ~Cloneable() {
 			}
 	};
-
+	
 	class Snapshot {
 		public:
 			class SourcePtr {
@@ -116,8 +116,8 @@ namespace Memory {
 					Cloneable* clone;
 
 					SourcePtr(Cloneable* _source, Cloneable* _clone) :
-							source(_source),
-							clone(_clone) {
+									source(_source),
+									clone(_clone) {
 					}
 			};
 		private:
@@ -126,22 +126,22 @@ namespace Memory {
 		public:
 			Snapshot() {
 			}
-
+			
 			Snapshot(initializer_list<Cloneable*> _clones) {
 				for (auto iter = _clones.begin(); iter != _clones.end();
 						++iter) {
 					add(*iter);
 				}
 			}
-
+			
 			deque<SourcePtr>* getClones() {
 				return &clones;
 			}
-
+			
 			SourcePtr& operator[](usint i) {
 				return clones[i];
 			}
-
+			
 			bool add(Cloneable* _cloneable) {
 				if (!_cloneable) {
 					return false;
@@ -149,12 +149,12 @@ namespace Memory {
 				clones.push_back(SourcePtr(_cloneable, _cloneable->getClone()));
 				return true;
 			}
-
+			
 			bool recover();
 			virtual ~Snapshot() {
 			}
 	};
-
+	
 	class SnapshotManager {
 		private:
 			deque<Snapshot> snapshots;
@@ -163,11 +163,11 @@ namespace Memory {
 			void add(const Snapshot& _snapshot) {
 				snapshots.push_back(_snapshot);
 			}
-
+			
 			Snapshot& operator[](usint i) {
 				return snapshots[i];
 			}
-
+			
 			bool recoverLast();
 	};
 }

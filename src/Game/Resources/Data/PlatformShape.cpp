@@ -11,11 +11,11 @@
 //---------------------------------------
 
 PlatformShape* readShape(const string& _path, const char* _resource_label,
-                         float _angle) {
+		float _angle) {
 	FILE* _file = main_filesystem.getExternalFile(_path.c_str(), NULL);
 	if (!_file) {
 		logEvent(Logger::LOG_ERROR,
-		         ("Podany plik " + _path + " nie istnieje!").c_str());
+				("Podany plik " + _path + " nie istnieje!").c_str());
 		return NULL;
 	}
 	PlatformShape* shape = readShape(_file, _resource_label, _angle);
@@ -25,7 +25,7 @@ PlatformShape* readShape(const string& _path, const char* _resource_label,
 }
 
 PlatformShape* readShape(FILE* _file, const char* _resource_label,
-                         float _angle) {
+		float _angle) {
 	if (!_file) {
 		logEvent(Logger::LOG_ERROR, "Podany obiekt nie istnieje!");
 		return NULL;
@@ -34,16 +34,21 @@ PlatformShape* readShape(FILE* _file, const char* _resource_label,
 	main_resource_manager.addResource(shape);
 	return shape;
 }
+
+PlatformShape* getShapePointer(const char* _label) {
+	return dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(_label));
+}
+
 //---------------------------------------
 
 PlatformShape::PlatformShape(FILE* _file, const char* _label, float _angle) :
-		Resource<usint>(_label),
-		id(0),
-		bounds(0, 0),
-		angle(TO_RAD(_angle)),
-		//
-		points(NULL),
-		count(0) {
+				Resource<usint>(_label),
+				id(0),
+				bounds(0, 0),
+				angle(TO_RAD(_angle)),
+				//
+				points(NULL),
+				count(0) {
 	id = glGenLists(1);
 	if (!id) {
 		logEvent(Logger::LOG_ERROR, "Nie mogę zarejestrować tekstury!");
@@ -68,7 +73,7 @@ bool PlatformShape::load(FILE* _file) {
 	 *
 	 */
 	unload();
-
+	
 	// Odczyt ilości wierzchołków!
 	usint line = 0;
 	fscanf(_file, "%hu\n", &count);
@@ -76,7 +81,7 @@ bool PlatformShape::load(FILE* _file) {
 		return false;
 	}
 	points = new Point[count];
-
+	
 	// Odczytywanie wielkości obiektu!
 	while (line != count) {
 		char type = ' ';
@@ -100,12 +105,12 @@ bool PlatformShape::load(FILE* _file) {
 				}
 			}
 				break;
-
+				
 			case 'C': {
 				Color col;
 				//---
 				fscanf(_file, "%hu %hu %hu %hu\n", &col.r, &col.g, &col.b,
-				       &col.a);
+						&col.a);
 				points[line] = {type, col};
 			}
 			break;
@@ -135,11 +140,11 @@ bool PlatformShape::recompile() {
 		return false;
 	}
 	glDeleteLists(id, 1);
-
+	
 	// Kompilacja!
 	glNewList(id, GL_COMPILE);
 	glLineWidth(2);
-	glBegin (GL_LINE_STRIP);
+	glBegin(GL_LINE_STRIP);
 	for (usint i = 0; i < count; ++i) {
 		Point* point = &points[i];
 		/**
@@ -151,9 +156,9 @@ bool PlatformShape::recompile() {
 		switch (point->type) {
 			case 'C':
 				glColor4ub(point->col.r, point->col.g, point->col.b,
-				           point->col.a);
+						point->col.a);
 				break;
-
+				
 				/**
 				 *
 				 */
@@ -161,15 +166,15 @@ bool PlatformShape::recompile() {
 				Vector<float>* pos = &point->pos;
 				// Obrót wokół środka!
 				glVertex2f(
-				        (pos->x - bounds.x / 2) * cosf(angle)
-				                - (pos->y - bounds.y / 2) * sinf(angle)
-				                + bounds.x / 2,
-				        (pos->x - bounds.x / 2) * sinf(angle)
-				                + (pos->y - bounds.y / 2) * cosf(angle)
-				                + bounds.y / 2);
+						(pos->x - bounds.x / 2) * cosf(angle)
+								- (pos->y - bounds.y / 2) * sinf(angle)
+								+ bounds.x / 2,
+						(pos->x - bounds.x / 2) * sinf(angle)
+								+ (pos->y - bounds.y / 2) * cosf(angle)
+								+ bounds.y / 2);
 			}
 				break;
-
+				
 				/**
 				 *
 				 */

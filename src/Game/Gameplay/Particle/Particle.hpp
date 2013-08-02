@@ -32,14 +32,14 @@ class Particle {
 		Color source_col;
 
 		Particle(const Vector<float>& _pos, float _size,
-					usint _max_life_duration, const Color& _col) :
-				pos(_pos),
-				life_duration(0),
-				max_life_duration(_max_life_duration),
-				angle(0),
-				size(_size),
-				col(_col),
-				source_col(_col) {
+				usint _max_life_duration, const Color& _col) :
+						pos(_pos),
+						life_duration(0),
+						max_life_duration(_max_life_duration),
+						angle(0),
+						size(_size),
+						col(_col),
+						source_col(_col) {
 		}
 };
 
@@ -76,16 +76,16 @@ class ParticleEmitter: public Body {
 		void setFocus(Rect<float>* _focus) {
 			focus = _focus;
 		}
-
+		
 		void setEmitCount(usint);
 
 		Rect<float>* getFocus() const {
 			return focus;
 		}
-
+		
 		virtual ~ParticleEmitter() {
 		}
-
+		
 	protected:
 		virtual void updateSystem() = 0;
 		virtual bool drawParticle(usint, Window*) = 0;
@@ -104,7 +104,7 @@ class SnowEmitter: public ParticleEmitter {
 	protected:
 		virtual void updateSystem() {
 		}
-
+		
 		virtual bool drawParticle(usint, Window*);
 		virtual void createNewParticle(Window*);
 };
@@ -122,7 +122,7 @@ class FireEmitter: public ParticleEmitter {
 	protected:
 		virtual void updateSystem() {
 		}
-
+		
 		virtual bool drawParticle(usint, Window*);
 		virtual void createNewParticle(Window*);
 };
@@ -140,7 +140,7 @@ class JetEmitter: public ParticleEmitter {
 	protected:
 		virtual void updateSystem() {
 		}
-
+		
 		virtual bool drawParticle(usint, Window*);
 		virtual void createNewParticle(Window*);
 };

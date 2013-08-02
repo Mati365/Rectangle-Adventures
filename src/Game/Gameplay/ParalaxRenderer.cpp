@@ -9,11 +9,11 @@
 using namespace Gameplay;
 
 ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, bool _draw_quad,
-                                 MapINFO* _map) :
-		map(_map),
-		cam(_target),
-		ratio(_ratio),
-		draw_quad(_draw_quad) {
+		MapINFO* _map) :
+				map(_map),
+				cam(_target),
+				ratio(_ratio),
+				draw_quad(_draw_quad) {
 }
 
 /**
@@ -30,33 +30,33 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	if (!map) {
 		return;
 	}
-
+	
 	/**
 	 * Odświeżanie fizyki
 	 */
 	pEngine* physics = map->physics;
 	if (draw_quad) {
 		physics->setActiveRange(
-		        Rect<float>(cam.pos.x - 40, cam.pos.y - 40, WINDOW_WIDTH + 80,
-		        WINDOW_HEIGHT + 80));
+				Rect<float>(cam.pos.x - 40, cam.pos.y - 40, WINDOW_WIDTH + 80,
+						WINDOW_HEIGHT + 80));
 		physics->updateWorld();
 	}
 	/**
 	 * Odświeżanie kamery
 	 */
 	cam.updateCam(_window);
-
+	
 	/**
 	 * Lista aktualnie widocznych elementów!
 	 */
 	deque<Body*>* list = physics->getVisibleBodies();
-
+	
 	glPushMatrix();
 	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
 	if (draw_quad) {
 		//physics->getQuadTree()->drawObject(NULL);
 	}
-
+	
 	/**
 	 * Obiekty poza ekranem wycinamy!
 	 */
@@ -73,6 +73,6 @@ void ParalaxRenderer::drawObject(Window* _window) {
 		}
 		body->drawObject(_window);
 	}
-
+	
 	glPopMatrix();
 }

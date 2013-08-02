@@ -26,10 +26,10 @@ Color oglWrapper::ORANGE(255, 165, 0);
 Color oglWrapper::PURPLE(191, 0, 255);
 
 void oglWrapper::drawRect(float x, float y, float w, float h, const Color& col,
-                          float stroke) {
+		float stroke) {
 	glColor4ub(col.r, col.g, col.b, col.a);
 	glLineWidth(stroke);
-	glBegin (GL_LINE_LOOP);
+	glBegin(GL_LINE_LOOP);
 	glVertex2f(x, y);
 	glVertex2f(x + w, y);
 	glVertex2f(x + w, y + h);
@@ -38,10 +38,10 @@ void oglWrapper::drawRect(float x, float y, float w, float h, const Color& col,
 }
 
 void oglWrapper::drawFillRect(float x, float y, float w, float h,
-                              const Color& col) {
+		const Color& col) {
 	glColor4ub(col.r, col.g, col.b, col.a);
 	glLineWidth(1);
-	glBegin (GL_QUADS);
+	glBegin(GL_QUADS);
 	glVertex2f(x, y);
 	glVertex2f(x + w, y);
 	glVertex2f(x + w, y + h);
@@ -53,9 +53,9 @@ void oglWrapper::drawFillRect(float x, float y, float w, float h,
  * Linie przerywane itp.
  */
 void oglWrapper::beginStroke(GLushort attrib) {
-	glPushAttrib (GL_ENABLE_BIT);
+	glPushAttrib(GL_ENABLE_BIT);
 	glLineStipple(1, attrib);
-	glEnable (GL_LINE_STIPPLE);
+	glEnable(GL_LINE_STIPPLE);
 }
 
 void oglWrapper::endStroke() {
@@ -63,11 +63,11 @@ void oglWrapper::endStroke() {
 }
 
 void oglWrapper::drawCircle(float x, float y, float r, float spacing,
-                            const Color& col, float stroke) {
+		const Color& col, float stroke) {
 	float cx, cy, theta;
 	glColor4ub(col.r, col.g, col.b, col.a);
 	glLineWidth(stroke);
-	glBegin (GL_LINE_LOOP);
+	glBegin(GL_LINE_LOOP);
 	for (usint i = 0; i < spacing; ++i) {
 		theta = 2.0f * 3.1415926f * float(i) / float(spacing);
 		cx = r * cosf(theta);
@@ -79,20 +79,20 @@ void oglWrapper::drawCircle(float x, float y, float r, float spacing,
 }
 
 void oglWrapper::drawLine(float x, float y, float tx, float ty,
-                          const Color& col, float stroke) {
+		const Color& col, float stroke) {
 	glColor4ub(col.r, col.g, col.b, col.a);
 	glLineWidth(stroke);
-	glBegin (GL_LINE_STRIP);
+	glBegin(GL_LINE_STRIP);
 	glVertex2f(x, y);
 	glVertex2f(tx, ty);
 	glEnd();
 }
 
 void oglWrapper::drawTriangle(float x, float y, float w, float h,
-                              const Color& col, float stroke) {
+		const Color& col, float stroke) {
 	glColor4ub(col.r, col.g, col.b, col.a);
 	glLineWidth(stroke);
-	glBegin (GL_LINE_LOOP);
+	glBegin(GL_LINE_LOOP);
 	glVertex2f(x, y + h);
 	glVertex2f(x + w, y + h);
 	glVertex2f(x + w / 2, y);

@@ -29,9 +29,9 @@ class IntroBackground {
 
 	public:
 		IntroBackground() :
-				state(RESUME) {
+						state(RESUME) {
 		}
-
+		
 		/**
 		 * Stan intra
 		 */
@@ -41,7 +41,7 @@ class IntroBackground {
 		void setState(usint _state) {
 			state = _state;
 		}
-
+		
 		virtual Character* getHero() = 0;
 
 		virtual ~IntroBackground() {
@@ -62,10 +62,9 @@ class MessageRenderer: public Renderer, public EventListener {
 
 				Message(const string& _title, const string& _text,
 						const char* _cutscene_path = NULL) :
-						title(_title),
-						text(_text),
-						cutscene(
-						NULL) {
+								title(_title),
+								text(_text),
+								cutscene(NULL) {
 					if (_cutscene_path)
 						cutscene = readShape(_cutscene_path, _cutscene_path, 0);
 				}
@@ -119,13 +118,15 @@ class MessageRenderer: public Renderer, public EventListener {
 		bool isClosed() const {
 			return closed;
 		}
+		
 		bool hasMessages() const {
 			return !msgs.empty();
 		}
+		
 		float getHeight() const {
 			return height;
 		}
-
+		
 		~MessageRenderer() {
 			if (cutscene_box) {
 				delete cutscene_box;

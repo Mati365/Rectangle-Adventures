@@ -30,7 +30,7 @@ typedef unsigned short int usint;
  * [ header ] [     dane     ] [ pointery ]
  */
 namespace Filesystem {
-
+	
 	/**
 	 * Interfejs serializacji obiektów!
 	 * TO NIE PLIK ARCHIWUM!!
@@ -60,15 +60,15 @@ namespace Filesystem {
 			size_t data_length;
 
 			Header(const char* _author) :
-					author(Convert::getDynamicValue(_author)),
-					version(BUILD),
-					data_length(0) {
+							author(Convert::getDynamicValue(_author)),
+							version(BUILD),
+							data_length(0) {
 			}
-
+			
 			virtual size_t getLength() {
 				return IO::stringLength(author) + sizeof(int) + sizeof(size_t);
 			}
-
+			
 			virtual bool read(FILE*);
 			virtual size_t write(FILE*);
 
@@ -88,8 +88,8 @@ namespace Filesystem {
 			size_t offset;
 
 			PackagePointer() :
-					label(NULL),
-					offset(0) {
+							label(NULL),
+							offset(0) {
 			}
 			PackagePointer(const char*, size_t);
 
@@ -113,7 +113,7 @@ namespace Filesystem {
 			void addPointer(const PackagePointer& _pointer) {
 				pointers.push_back(_pointer);
 			}
-
+			
 			PackagePointer* getPointer(const char*);
 
 			virtual bool read(FILE*);
@@ -155,6 +155,8 @@ namespace Filesystem {
 			 * trzeba resetować wskaźnik pliku!
 			 */
 			FILE* getExternalFile(const char*, size_t*);
+			char* getExternalFileContent(const char*);
+
 			void closeExternalFile();
 
 			bool edit(usint, const char*, FilePackage*);
@@ -165,35 +167,35 @@ namespace Filesystem {
 			Header* getHeader() {
 				return &header;
 			}
-
+			
 			PointerStack* getPointerStack() {
 				return &pointer_stack;
 			}
-
+			
 			char* const getFilePath() const {
 				return file_path;
 			}
-
+			
 			FILE* getFile() {
 				return file;
 			}
-
+			
 			virtual size_t getLength() {
 				return length;
 			}
-
+			
 			void close() {
 				if (file) {
 					CLOSE_FILE(file);
 				}
 			}
-
+			
 			~Package() {
 				close();
 				//
 				delete[] file_path;
 			}
-
+			
 		private:
 			// Szkielet archiwum!
 			bool createSkel();

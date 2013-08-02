@@ -1,7 +1,7 @@
 /*
  * Shaders.cpp
  *
- *  Created on: 30-06-2013
+ *  Created on: 31 lip 2013
  *      Author: mateusz
  */
 #include <GL/glew.h>
@@ -15,48 +15,52 @@ using namespace oglWrapper;
 
 //--------------------------
 
-GLuint oglWrapper::createShader(GLuint type, FILE* file, size_t length) {
-	if (!file) {
-		logEvent(Logger::LOG_ERROR, "Nie znaleziono pliku shadera!");
+GLuint oglWrapper::createShader(const GLuint type, const GLchar* _text) {
+	if (strlen(_text) == 0) {
+		logEvent(Logger::LOG_ERROR, "Pusty shader!");
 		return 0;
 	}
-	const GLchar* source = IO::getFileContent(file, length);
-	GLint len = IO::getFileLength(file);
 	GLuint shader_id = glCreateShader(type);
-
+	GLint len = strlen(_text);
+			
 	// Tworzenie
-	glShaderSource(shader_id, 1, &source, &len);
-
+	glShaderSource(shader_id, 1, &_text, &len);
+	
 	// Kompilacja
 	glCompileShader(shader_id);
-
+	
 	// Sprawdzenie kompilacji
 	GLint compiled;
 	glGetObjectParameterivARB(shader_id, GL_COMPILE_STATUS, &compiled);
 	if (!compiled) {
 		logEvent(Logger::LOG_ERROR, "Nie mogę skompilować shaderu!");
 	}
-
-	// Zamykanie pliku i powrót!
-	fclose(file);
-	delete source;
+	
+	//
 	return shader_id;
 }
 
 //--------------------------
 
-Shader::Shader(FILE* _vertex, size_t _vertex_length, FILE* _fragment,
-	size_t _fragment_length) {
-	loadShader(_vertex, _vertex_length, _fragment, _fragment_length);
-}
-
-void Shader::loadShader(FILE* _vertex, size_t _vertex_length, FILE* _fragment,
-	size_t _fragment_length) {
+/**
+ * Wczytywanie shaderu!
+ */
+Shader::Shader(GLchar* _vertex, GLchar* _fragment, GLchar* _geometry) {
 	program_object = glCreateProgram();
-	vertex_shader = createShader(
-	GL_VERTEX_SHADER, _vertex, _vertex_length);
-	fragment_shader = createShader(
-	GL_FRAGMENT_SHADER, _fragment, _fragment_length);
+	//
+	if (_vertex) {
+		vertex_shader = createShader(GL_VERTEX_SHADER, _vertex);
+		delete[] _vertex;
+	}
+	if (_fragment) {
+		fragment_shader = createShader(GL_FRAGMENT_SHADER, _fragment);
+		delete[] _fragment;
+	}
+	if (_geometry) {
+		geometry_shader = createShader(GL_GEOMETRY_SHADER, _geometry);
+		delete[] _geometry;
+	}
+	//
 	linkShader();
 }
 
@@ -84,8 +88,7 @@ void Shader::setUniform1f(const char* name, float value) {
 }
 
 void Shader::setUniform4fv(const char* name, float* values, size_t count) {
-	glUniform4fv(
-	glGetUniformLocation(program_object, name), count, values);
+	glUniform4fv(glGetUniformLocation(program_object, name), count, values);
 }
 
 /**
@@ -93,19 +96,31 @@ void Shader::setUniform4fv(const char* name, float* values, size_t count) {
  */
 void Shader::linkShader() {
 	// Linkowanie!
-	glAttachShader(program_object, vertex_shader);
-	glAttachShader(program_object, fragment_shader);
+	if (vertex_shader) {
+		glAttachShader(program_object, vertex_shader);
+	}
+	if (fragment_shader) {
+		glAttachShader(program_object, fragment_shader);
+	}
+	if (geometry_shader) {
+		glAttachShader(program_object, geometry_shader);
+	}
 	glLinkProgram(program_object);
-
+	
 	// Sprawdzenie linkowania!
 	GLint linked;
 	glGetProgramiv(program_object, GL_LINK_STATUS, &linked);
+	//
 	if (!linked) {
 		logEvent(Logger::LOG_ERROR, "Nie mogłem zlinkować shaderu!");
 	}
 }
 
+/**
+ * Kasowanie shaderów!
+ */
 Shader::~Shader() {
 	glUseProgram(0);
 	glDeleteProgram(program_object);
 }
+

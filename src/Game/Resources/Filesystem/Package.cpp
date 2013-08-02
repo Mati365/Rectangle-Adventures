@@ -14,9 +14,9 @@
 using namespace Filesystem;
 
 Package::Package(const char* path, const char* author) :
-		file_path(Convert::getDynamicValue(path)),
-		header(author),
-		last_file_ptr(0) {
+				file_path(Convert::getDynamicValue(path)),
+				header(author),
+				last_file_ptr(0) {
 	file = fopen(path, "rb+");
 	if (!file) {
 		file = fopen(path, "wb+");
@@ -25,7 +25,7 @@ Package::Package(const char* path, const char* author) :
 		 */
 		if (createSkel())
 			logEvent(Logger::LOG_WARNING,
-						"Podany plik nie istnieje, utworzono pusty plik!");
+					"Podany plik nie istnieje, utworzono pusty plik!");
 	}
 	length = IO::getFileLength(file);
 	/**
@@ -72,7 +72,7 @@ bool Package::edit(usint operation, const char* label, FilePackage* object) {
 bool Package::readObject(const char* label, FilePackage* object) {
 	if (!object) {
 		logEvent(Logger::LOG_ERROR,
-					"NULL w object to zuo, napraw to prosze :<");
+				"NULL w object to zuo, napraw to prosze :<");
 		return false;
 	}
 	PackagePointer* pointer = pointer_stack.getPointer(label);
@@ -98,13 +98,13 @@ bool Package::writeObject(const char* label, FilePackage* object) {
 	header.data_length += object->getLength();
 	//
 	pointer_stack.addPointer(PackagePointer(label, offset));
-
+	
 	rewind(file); // cofanie się do początku
 	header.write(file);
-
+	
 	fseek(file, offset, SEEK_SET); // przeskok do bloku danych
 	object->write(file);
-
+	
 	pointer_stack.write(file); // aktualizacja bloku wskaźników
 	return true;
 }
@@ -125,7 +125,7 @@ bool Package::deleteObject(const char* label) {
 	 */
 	size_t buffer_length = 0;
 	deque<PackagePointer>* pointers = &pointer_stack.pointers;
-
+	
 	for (auto iter = pointers->begin(); iter != pointers->end(); ++iter) {
 		if ((buffer_length == 0 || &*iter == &*pointer)
 				&& iter + 1 >= pointers->end()) {
@@ -145,7 +145,7 @@ bool Package::deleteObject(const char* label) {
 			iter->offset -= buffer_length;
 		}
 	}
-
+	
 	/**
 	 * Przesuwanie bajtów w pliku w lewą stronę!
 	 */
@@ -161,7 +161,7 @@ bool Package::deleteObject(const char* label) {
 	char* buffer = new char[buffer_length];
 	memset(buffer, ' ', buffer_length);
 	bool stop = false;
-
+	
 	while (!feof(file)) {
 		// Przeskakiwanie w miejsce po pliku
 		fseek(file, pointer->offset + buffer_length + rewrite_pos, SEEK_SET);
@@ -180,7 +180,7 @@ bool Package::deleteObject(const char* label) {
 		}
 	}
 	delete[] buffer;
-
+	
 	// Zmiana rozmiaru
 	fflush(file);
 	//ftruncate(fileno(file), header.getLength() + header.data_length);
@@ -207,12 +207,22 @@ FILE* Package::getExternalFile(const char* _label, size_t* _length) {
 		logEvent(Logger::LOG_ERROR, "Nie mogę otworzyć wskazanego pliku!");
 		return NULL;
 	}
-	if (length) {
+	if (_length) {
 		fseek(file, pointer->offset, SEEK_SET);
-		fread(&length, sizeof(size_t), 1, file);
+		fread(_length, sizeof(size_t), 1, file);
 	}
 	fseek(file, pointer->offset + sizeof(size_t), SEEK_SET);
 	return file;
+}
+
+/**
+ * Wczytywanie zawartości zewnętrznego pliku!
+ */
+char* Package::getExternalFileContent(const char* _label) {
+	size_t len = 1; // NIE NULL!!!
+	FILE* file = getExternalFile(_label, &len);
+	//
+	return IO::getFileContent(file, len);
 }
 
 /**

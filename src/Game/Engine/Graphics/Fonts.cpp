@@ -7,17 +7,16 @@
 #include "Fonts.hpp"
 
 glText::glText(const Color& _col, const string& _str, void* _font =
-GLUT_BITMAP_TIMES_ROMAN_10,
-				usint _height = 10) :
-		col(_col),
-		str(_str),
-		font(_font),
-		height(_height),
-		text_lines(1),
-		anim(false),
-		hidden(false),
-		actual_anim_time(0),
-		actual_text_pos(0) {
+		GLUT_BITMAP_TIMES_ROMAN_10, usint _height = 10) :
+				col(_col),
+				str(_str),
+				font(_font),
+				height(_height),
+				text_lines(1),
+				anim(false),
+				hidden(false),
+				actual_anim_time(0),
+				actual_text_pos(0) {
 	updateScreenLength();
 }
 
@@ -61,11 +60,10 @@ void glText::printText(float _x, float _y) {
 			}
 		}
 	}
-
+	
 	glColor4ub(col.r, col.g, col.b, col.a);
 	glRasterPos2f(_x, _y);
-	for (usint i = 0; i < (!anim ?
-			str.length() : actual_text_pos); ++i) {
+	for (usint i = 0; i < (!anim ? str.length() : actual_text_pos); ++i) {
 		if (str[i] == NEWLINE_CHARACTER) {
 			_y += height * 1.5f;
 			_x = _x_buf;

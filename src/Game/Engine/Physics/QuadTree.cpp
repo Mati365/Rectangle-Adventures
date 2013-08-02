@@ -14,13 +14,13 @@ using namespace Physics;
 #define OBJECT_MARGIN 5
 
 QuadTree::QuadTree(QuadTree* _parent, const Rect<float>& _rect, usint _level) :
-		rect(_rect),
-		level(_level),
-		parent(_parent),
-		NW(NULL),
-		NE(NULL),
-		SW(NULL),
-		SE(NULL) {
+				rect(_rect),
+				level(_level),
+				parent(_parent),
+				NW(NULL),
+				NE(NULL),
+				SW(NULL),
+				SE(NULL) {
 }
 
 /**
@@ -31,20 +31,16 @@ void QuadTree::subdive() {
 		return;
 	}
 	NW = new QuadTree(this, Rect<float>(rect.x, rect.y, rect.w / 2, rect.h / 2),
-	                  level + 1);
-	NE = new QuadTree(
-	        this,
-	        Rect<float>(rect.x + rect.w / 2, rect.y, rect.w / 2, rect.h / 2),
-	        level + 1);
-	SW = new QuadTree(
-	        this,
-	        Rect<float>(rect.x, rect.y + rect.h / 2, rect.w / 2, rect.h / 2),
-	        level + 1);
-	SE = new QuadTree(
-	        this,
-	        Rect<float>(rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w / 2,
-	                    rect.h / 2),
-	        level + 1);
+			level + 1);
+	NE = new QuadTree(this,
+			Rect<float>(rect.x + rect.w / 2, rect.y, rect.w / 2, rect.h / 2),
+			level + 1);
+	SW = new QuadTree(this,
+			Rect<float>(rect.x, rect.y + rect.h / 2, rect.w / 2, rect.h / 2),
+			level + 1);
+	SE = new QuadTree(this,
+			Rect<float>(rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w / 2,
+					rect.h / 2), level + 1);
 }
 
 /**
@@ -55,8 +51,8 @@ void QuadTree::drawObject(Window*) {
 		return;
 	}
 	oglWrapper::drawRect(rect.x, rect.y, rect.w, rect.h,
-	                     Color(level * 15, level * 15, level * 15, 255),
-	                     (MAX_LAYER - level) * 2);
+			Color(level * 15, level * 15, level * 15, 255),
+			(MAX_LAYER - level) * 2);
 	if (NW) {
 		NW->drawObject(NULL);
 		NE->drawObject(NULL);
@@ -111,7 +107,7 @@ bool QuadTree::insertToSubQuad(Body* body) {
 	 * Umieszczanie do dzieci
 	 */
 	if (NW->insertToSubQuad(body) || NE->insertToSubQuad(body)
-	        || SE->insertToSubQuad(body) || SW->insertToSubQuad(body)) {
+			|| SE->insertToSubQuad(body) || SW->insertToSubQuad(body)) {
 		return true;
 	}
 	return false;
@@ -147,7 +143,7 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 		Body* body = bodies[i];
 		//
 		if (_bounds.intersect(
-		        Rect<float>(body->x, body->y, body->w, body->h))) {
+				Rect<float>(body->x, body->y, body->w, body->h))) {
 			_bodies.push_back(body);
 		}
 	}

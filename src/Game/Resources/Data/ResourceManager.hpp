@@ -29,10 +29,10 @@ class Resource {
 
 	public:
 		Resource(const char* _label) :
-				label(Convert::getDynamicValue(_label)),
-				resource_id(0) {
+						label(Convert::getDynamicValue(_label)),
+						resource_id(0) {
 		}
-
+		
 		virtual bool load(FILE*) = 0;
 		virtual void unload() = 0;
 		/**
@@ -45,11 +45,11 @@ class Resource {
 		ID getResourceID() const {
 			return resource_id;
 		}
-
+		
 		const char* getLabel() {
 			return label;
 		}
-
+		
 		virtual ~Resource() {
 			if (label) {
 				delete[] label;
@@ -76,7 +76,7 @@ class ResourceManager {
 			}
 			AllocKiller<Resource<ID> > alloc(_res);
 			_res->setResourceID(resources.size());
-
+			
 			resources.push_back(alloc);
 			return resources.size() - 1;
 		}
@@ -111,7 +111,7 @@ class ResourceManager {
 		Resource<ID>* operator[](ID _id) {
 			return getByID(_id);
 		}
-
+		
 		Resource<ID>* getByID(ID _id) {
 			if (_id >= resources.size()) {
 				return NULL;

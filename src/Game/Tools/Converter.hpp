@@ -21,14 +21,14 @@ namespace Convert {
 		buf >> num;
 		return num;
 	}
-
+	
 	template<typename T>
 	string toString(T t) {
 		ostringstream buf;
 		buf << t;
 		return buf.str();
 	}
-
+	
 	char* getDynamicValue(const char*);
 }
 

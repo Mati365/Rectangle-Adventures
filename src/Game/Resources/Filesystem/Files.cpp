@@ -12,7 +12,7 @@ using namespace File;
  *  Przenoszenie zawartości z pliku do innego pliku!
  */
 bool File::moveBytes(FILE* source, FILE* destination, size_t buffer_size,
-						size_t source_length, size_t source_start_position) {
+		size_t source_length, size_t source_start_position) {
 	if (!source || !destination || buffer_size == 0 || source_length == 0) {
 		return false;
 	}
@@ -40,7 +40,7 @@ bool File::moveBytes(FILE* source, FILE* destination, size_t buffer_size,
  */
 
 ExternalFile::ExternalFile(const char* _path) :
-		path(_path) {
+				path(_path) {
 	file = fopen(path, "rb+");
 	if (file) {
 		length = getLength();
@@ -65,11 +65,11 @@ bool ExternalFile::read(FILE* _file) {
  * Zapis do archiwum!
  */
 size_t ExternalFile::write(FILE* _file) {
-	size_t source_length = IO::getFileLength(file);
+	length = IO::getFileLength(file);
 	//
-	IO::write<size_t>(_file, source_length);
+	IO::write<size_t>(_file, length);
 	//
-	moveBytes(file, _file, BUFFER_SIZE, source_length, 0);
+	moveBytes(file, _file, BUFFER_SIZE, length, 0);
 	return getLength();
 }
 

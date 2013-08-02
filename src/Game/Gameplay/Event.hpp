@@ -24,13 +24,13 @@ class Event {
 		char key;
 
 		Event(usint _type, char _key) :
-				type(_type),
-				key(_key) {
+						type(_type),
+						key(_key) {
 		}
-
+		
 		Event(usint _type) :
-				type(_type),
-				key(' ') {
+						type(_type),
+						key(' ') {
 		}
 };
 

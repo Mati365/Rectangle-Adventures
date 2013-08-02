@@ -24,28 +24,29 @@ bool CharacterStatus::load(FILE* _file) {
 /**
  * Generowanie krwii
  */
-void generateExplosion(usint dir, pEngine* physics, Body* body, usint count,
-                       const Color& col) {
+void generateExplosion(pEngine* physics, Body* body, usint count,
+		const Color& col, float min_size, float max_size) {
 	float cx, cy, angle;
 	/**
 	 * Generowanie cząsteczek krwii w postaci eksplozji
 	 */
 	for (usint i = 0; i < count; ++i) {
-		angle = 2.0f * 3.1415926f * (float) i / (float) 36;
-		cx = body->w / 2 * cosf(angle);
-		cy = body->w / 2 * sinf(angle);
+		angle = TO_RAD(getIntRandom<int>(0.f, 360.f));
 		//
-		float size = getIntRandom<int>(3, 6);
+		cx = body->w / 2 * cosf(angle);
+		cy = body->h / 2 * sinf(angle);
+		//
+		float size = getIntRandom<int>(min_size, max_size);
 		//
 		Platform* platform = new Platform(body->x + cx, body->y + cy, size,
-		                                  size, col, Body::NONE);
+				size, col, Body::NONE);
 		//
 		platform->setMaxLifetime(size * 140);
 		platform->setBorder(false, false, false, false);
 		platform->setFillType(Platform::FILLED);
 		//
 		platform->layer = STATIC_LAYER + 1;
-		platform->velocity = Vector<float>(cosf(angle) * 16, sinf(angle) * 25);
+		platform->velocity = Vector<float>(cosf(angle) * 8, sinf(angle) * 12);
 		//
 		physics->insert(platform);
 	}
@@ -54,20 +55,20 @@ void generateExplosion(usint dir, pEngine* physics, Body* body, usint count,
 //------------------------
 
 Character::Character(const string& _nick, float _x, float _y,
-                     PlatformShape* _shape, usint _type) :
-		IrregularPlatform(_x, _y, true, _shape),
-		nick(Color(255, 255, 255), _nick, GLUT_BITMAP_HELVETICA_12, 12),
-		jumping(true),
-		status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
-		ai(NULL),
-		//
-		source_color(col),
-		actual_anim_time(0),
-		anim_time(9),
-		actual_cycles(0),
-		anim_cycles(8),
-		//
-		hit(false) {
+		PlatformShape* _shape, usint _type) :
+				IrregularPlatform(_x, _y, true, _shape),
+				nick(Color(255, 255, 255), _nick, GLUT_BITMAP_HELVETICA_12, 12),
+				jumping(true),
+				status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
+				ai(NULL),
+				//
+				source_color(col),
+				actual_anim_time(0),
+				anim_time(9),
+				actual_cycles(0),
+				anim_cycles(8),
+				//
+				hit(false) {
 	type = _type;
 }
 
@@ -77,14 +78,14 @@ Character::Character(const string& _nick, float _x, float _y,
 void Character::hitMe(pEngine* physics) {
 	hit = true;
 	//
-	generateExplosion(pEngine::NONE, physics, this, 5, oglWrapper::RED);
+	generateExplosion(physics, this, 5, oglWrapper::RED, 3, 6);
 }
 
 /**
  * Eksplozja
  */
 void Character::die(pEngine* physics, usint _dir) {
-	if (status.health == DEATH) {
+	if (isDead()) {
 		return;
 	}
 	/**
@@ -92,16 +93,18 @@ void Character::die(pEngine* physics, usint _dir) {
 	 */
 	status.health = DEATH;
 	//
-	generateExplosion(_dir, physics, this, 30, oglWrapper::RED);
+	generateExplosion(physics, this, 30, oglWrapper::RED, 3, 6);
+	setShape(getShapePointer("cranium"));
+	fitToWidth(14);
 	//
-	setState(Body::HIDDEN);
+	nick.setString("Trup", -1);
 }
 
 /**
  * Kolizja gracza
  */
 void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
-	if (status.health == DEATH) {
+	if (isDead()) {
 		return;
 	}
 	if (ai) {
@@ -111,11 +114,12 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	 * Ginąć może nie tylko gracz
 	 */
 	if ((type == Body::HERO || type == Body::ENEMY)
-	        && dir == pEngine::DOWN&& !IS_SET(body->state, Body::HIDDEN)) {
-		/**
-		 * Wektor ruchu został odwrócony!
-		 */
-		if (velocity.y < -9 && status.health > 0) {
+			&& dir == pEngine::DOWN&& !IS_SET(body->state, Body::HIDDEN)) {
+			/**
+			 * Wektor ruchu został odwrócony!
+			 */
+			if
+(		velocity.y < -9 && status.health > 0) {
 			die(physics, dir);
 			return;
 		}
@@ -124,7 +128,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (type != HERO) {
 		return;
 	}
-
+	
 	/**
 	 * Skrypty
 	 */
@@ -132,7 +136,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 		dynamic_cast<Trigger*>(body)->generate();
 		return;
 	}
-
+	
 	/**
 	 * Akcje gracza
 	 */
@@ -147,9 +151,11 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 				status.health = MAX_LIVES;
 			}
 			//
+			generateExplosion(physics, body, 6, oglWrapper::WHITE, 2, 3);
+			//
 			body->destroyed = true;
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -164,7 +170,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			}
 			velocity.invert();
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -177,21 +183,21 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			//
 			body->destroyed = true;
 			break;
-
+			
 			/**
 			 *
 			 */
 		case SPIKES:
-			if (body->orientation != dir) {
-				break;
-			}
+			//if (body->orientation != dir) {
+			//break;
+			//}
 			if (status.health > 0) {
 				status.health -= 1;
 			}
 			hitMe(physics);
 			jump(13, true);
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -207,7 +213,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
  * Skok z określoną prędkością!
  */
 void Character::jump(float _y_speed, bool _force) {
-	if (!jumping || _force) {
+	if (!isDead() && (!jumping || _force)) {
 		jumping = true;
 		velocity.y = -_y_speed;
 	}
@@ -217,7 +223,7 @@ void Character::move(float x_speed, float y_speed) {
 	if ((x_speed > 0 && velocity.x < 0) || (x_speed < 0 && velocity.x > 0)) {
 		velocity.x = 0;
 	}
-	if (velocity.x >= 4.f || velocity.x <= -4.f) {
+	if (velocity.x >= 4.f || velocity.x <= -4.f || isDead()) {
 		return;
 	}
 	velocity.x += x_speed;

@@ -35,21 +35,20 @@ bool readMob(FILE* file) {
 	usint type;
 	Vector<float> pos;
 	char shape[255];
-
+	
 	fscanf(file, "%hu %f %f %s\n", &type, &pos.x, &pos.y, shape);
 	//
-	ObjectFactory::getIstance(NULL).createObject((ObjectFactory::Types) type,
-													pos.x, pos.y, 0, 0, NULL,
-													NULL);
+	ResourceFactory::getIstance(NULL).createObject((ResourceFactory::Types) type,
+			pos.x, pos.y, 0, 0, NULL, NULL);
 	return true;
 }
 
 ///////////////////////////////////////
 
 MapINFO::MapINFO(const char* _label) :
-		Resource<usint>(_label),
-		physics(NULL),
-		hero_bounds(0, 0) {
+				Resource<usint>(_label),
+				physics(NULL),
+				hero_bounds(0, 0) {
 }
 
 void MapINFO::calcBounds() {
@@ -93,13 +92,13 @@ bool MapINFO::load(FILE* map) {
 	usint type;
 	usint with_shape;
 	usint script_id;
-
+	
 	char shape[256];
 	int border[4];
-
+	
 	// Wczytywanie pozycji początkowej gracza
 	fscanf(map, "%f %f %f\n", &hero_bounds.x, &hero_bounds.y, &hero_bounds.w);
-
+	
 	// Wczytywanie listy kształtów
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
@@ -107,7 +106,7 @@ bool MapINFO::load(FILE* map) {
 		// Domyślny kąt to 0*
 		resources.push_back(readShape(shape, shape, 0)->getResourceID());
 	}
-
+	
 	// Wczytywanie parametrów graficznych platform..
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
@@ -125,10 +124,7 @@ bool MapINFO::load(FILE* map) {
 		 */
 		if (with_shape) {
 			platform =
-					new IrregularPlatform(
-							rect.x,
-							rect.y,
-							state,
+					new IrregularPlatform(rect.x, rect.y, state,
 							dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 									shape)));
 			dynamic_cast<IrregularPlatform*>(platform)->fitToWidth(rect.w);
@@ -150,7 +146,7 @@ bool MapINFO::load(FILE* map) {
 	}
 	// Obliczanie wymiarów!
 	calcBounds();
-
+	
 	// Inicjacja fizyki!
 	if (physics) {
 		delete physics;
@@ -159,8 +155,8 @@ bool MapINFO::load(FILE* map) {
 	for (auto iter = objects.begin(); iter != objects.end(); ++iter) {
 		physics->insert(*iter);
 	}
-	ObjectFactory::getIstance(physics);
-
+	ResourceFactory::getIstance(physics);
+	
 	Vector<float> pos;
 	/**
 	 * Wczytywanie mobów!
@@ -179,8 +175,8 @@ bool MapINFO::load(FILE* map) {
 		fscanf(map, "%f %f %f %f %[^\n]s\n", &rect.x, &rect.y, &rect.w, &rect.h,
 				shape);
 		//
-		ObjectFactory::getIstance(physics).createObject(
-				ObjectFactory::SCRIPT_BOX, rect.x, rect.y, rect.w, rect.h, NULL,
+		ResourceFactory::getIstance(physics).createObject(
+				ResourceFactory::SCRIPT_BOX, rect.x, rect.y, rect.w, rect.h, NULL,
 				shape);
 	}
 	return true;
@@ -193,8 +189,8 @@ void MapINFO::unload() {
 	for (usint i = 0; i < objects.size(); ++i) {
 		delete objects[i];
 	}
-
-	ObjectFactory::getIstance(NULL).unloadObjects();
+	
+	ResourceFactory::getIstance(NULL).unloadObjects();
 	// Usuwanie kształtów! Woolne!
 	for (usint i = 0; i < resources.size(); ++i) {
 		main_resource_manager.deleteResource(i);

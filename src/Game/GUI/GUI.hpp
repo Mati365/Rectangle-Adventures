@@ -29,7 +29,7 @@ namespace GUI {
 	};
 	extern Mouse mouse;
 	extern bool isMouseCollision(float, float, float, float);
-
+	
 	/**
 	 *
 	 */
@@ -65,13 +65,13 @@ namespace GUI {
 
 		public:
 			Control(const Rect<float>& _bounds) :
-					Body(_bounds.x, _bounds.y, _bounds.w, _bounds.h),
-					control_state(NORMAL),
-					old_state(NORMAL),
-					position(VERTICAL),
-					border_enabled(true) {
+							Body(_bounds.x, _bounds.y, _bounds.w, _bounds.h),
+							control_state(NORMAL),
+							old_state(NORMAL),
+							position(VERTICAL),
+							border_enabled(true) {
 			}
-
+			
 			/**
 			 * Nadawanie callbacku!
 			 */
@@ -83,7 +83,7 @@ namespace GUI {
 			void enableBorder(bool _border_enabled) {
 				border_enabled = _border_enabled;
 			}
-
+			
 			virtual void drawObject(Window*) = 0;
 			virtual void catchEvent(const Event&);
 
@@ -99,9 +99,9 @@ namespace GUI {
 
 		public:
 			Panel(const Rect<float>& _bounds) :
-					Control(_bounds) {
+							Control(_bounds) {
 			}
-
+			
 			Control* operator[](usint index) const {
 				return objects[index];
 			}
@@ -111,7 +111,7 @@ namespace GUI {
 			void addControl(Control* control) {
 				objects.push_back(control);
 			}
-
+			
 			virtual void drawObject(Window*);
 			virtual void catchEvent(const Event&);
 
@@ -119,7 +119,7 @@ namespace GUI {
 				return &objects;
 			}
 	};
-
+	
 	/**
 	 * Pasek postępu
 	 */
@@ -140,12 +140,12 @@ namespace GUI {
 			void setValue(usint _value) {
 				value = _value;
 			}
-
+			
 			virtual void drawObject(Window*);
 			virtual ~ProgressBar() {
 			}
 	};
-
+	
 	/**
 	 * Przycisk
 	 */
@@ -156,11 +156,12 @@ namespace GUI {
 		public:
 			Button(const Rect<float>& _bounds, const char* _text,
 					bool _border_enabled = true) :
-					Control(_bounds),
-					text(oglWrapper::WHITE, _text, GLUT_BITMAP_HELVETICA_18, 18) {
+							Control(_bounds),
+							text(oglWrapper::WHITE, _text,
+									GLUT_BITMAP_HELVETICA_18, 18) {
 				border_enabled = _border_enabled;
 			}
-
+			
 			virtual void drawObject(Window*);
 	};
 }

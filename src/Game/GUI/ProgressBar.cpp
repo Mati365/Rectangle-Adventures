@@ -9,10 +9,10 @@
 using namespace GUI;
 
 ProgressBar::ProgressBar(const Rect<float>& _bounds, const Color& _col,
-							usint _max_value, usint _position) :
-		Control(_bounds),
-		max_value(_max_value),
-		value(0) {
+		usint _max_value, usint _position) :
+				Control(_bounds),
+				max_value(_max_value),
+				value(0) {
 	col = _col;
 	position = _position;
 }
@@ -29,8 +29,8 @@ void ProgressBar::drawObject(Window*) {
 	 * + Horyzontalne
 	 * + Vertykalne
 	 */
-	float size = (float) value / (float) max_value * (position == HORIZONTAL ?
-			h : w - 5);
+	float size = (float) value / (float) max_value
+			* (position == HORIZONTAL ? h : w - 5);
 	if (value > max_value) {
 		size = max_value;
 	}
@@ -38,7 +38,7 @@ void ProgressBar::drawObject(Window*) {
 		case HORIZONTAL:
 			oglWrapper::drawFillRect(x + 3, y + h - 3 - size, w - 5, size, col);
 			oglWrapper::drawFillRect(x + w - 2 - w * 0.1, y + h - 3 - size,
-										w * 0.1, size, Color(0, 0, 0, 100));
+					w * 0.1, size, Color(0, 0, 0, 100));
 			break;
 			/**
 			 *
@@ -46,7 +46,7 @@ void ProgressBar::drawObject(Window*) {
 		case VERTICAL:
 			oglWrapper::drawFillRect(x + 2, y + 2, size + 1, h - 6, col);
 			oglWrapper::drawFillRect(x + 2, y + h - 4 - h * 0.1, size + 1,
-										h * 0.1, Color(0, 0, 0, 100));
+					h * 0.1, Color(0, 0, 0, 100));
 			break;
 	}
 }

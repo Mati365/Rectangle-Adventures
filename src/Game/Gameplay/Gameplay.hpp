@@ -25,22 +25,24 @@
 
 using namespace std;
 
+using namespace oglWrapper;
+
 namespace Gameplay {
 	using namespace Memory;
 	using namespace Physics;
 	using namespace GUI;
-
+	
 	class Camera {
 		public:
 			Rect<float> pos;
 			Body* focus;
 
 			Camera(Body* _focus) :
-					focus(_focus) {
+							focus(_focus) {
 				pos.w = WINDOW_WIDTH;
 				pos.h = WINDOW_HEIGHT;
 			}
-
+			
 			void updateCam(Window* _window) {
 				if (!focus) {
 					return;
@@ -49,7 +51,7 @@ namespace Gameplay {
 				pos.y = focus->y - pos.h / 2 + focus->h / 2;
 			}
 	};
-
+	
 	class ParalaxRenderer: public Renderer, public IntroBackground {
 		protected:
 			MapINFO* map;
@@ -76,7 +78,7 @@ namespace Gameplay {
 			virtual Character* getHero() {
 				return NULL;
 			}
-
+			
 			pEngine* getPhysics() {
 				return map->physics;
 			}
@@ -84,7 +86,7 @@ namespace Gameplay {
 				return &cam;
 			}
 	};
-
+	
 	/**
 	 * Główny renderer mapy!
 	 */
@@ -110,7 +112,7 @@ namespace Gameplay {
 			void enableHUD(bool _hud_enabled) {
 				hud_enabled = _hud_enabled;
 			}
-
+			
 			// Pogoda :-)
 			void addWeather(usint);
 			void setHero(Character*);
@@ -122,11 +124,11 @@ namespace Gameplay {
 			virtual Character* getHero() {
 				return hero;
 			}
-
+			
 			MessageRenderer* getMessageRenderer() {
 				return &msg;
 			}
-
+			
 			~MapRenderer();
 	};
 }

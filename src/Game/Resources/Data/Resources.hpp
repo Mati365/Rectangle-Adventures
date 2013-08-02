@@ -49,6 +49,8 @@ MapINFO* loadMap(const char*);
 PlatformShape* readShape(const string&, const char*, float);
 PlatformShape* readShape(FILE*, const char*, float);
 
+PlatformShape* getShapePointer(const char*);
+
 /**
  * Wczytywanie Mob'a
  */
@@ -80,7 +82,7 @@ class MapINFO: public Resource<usint> {
 		Rect<float> getBounds() const {
 			return bounds;
 		}
-
+		
 		/**
 		 * Elementy Resource'a
 		 */
@@ -90,7 +92,7 @@ class MapINFO: public Resource<usint> {
 		~MapINFO() {
 			unload();
 		}
-
+		
 	private:
 		// Obliczanie wymiarów planszy
 		void calcBounds();
@@ -139,11 +141,11 @@ class PlatformShape: public Resource<usint> {
 		Vector<float>& getBounds() {
 			return bounds;
 		}
-
+		
 		GLuint getID() const {
 			return id;
 		}
-
+		
 		~PlatformShape();
 };
 

@@ -10,8 +10,8 @@
 using namespace Filesystem;
 
 PackagePointer::PackagePointer(const char* _label, size_t _offset) :
-		label(const_cast<char*>(_label)),
-		offset(_offset) {
+				label(const_cast<char*>(_label)),
+				offset(_offset) {
 }
 
 size_t PackagePointer::write(FILE* file) {

@@ -18,7 +18,7 @@ typedef unsigned short int usint;
 
 class Logger {
 #define logEvent(type, log) Logger::logOperation(type, log, __FILE__, __LINE__)
-
+		
 	public:
 		enum Type {
 			LOG_ERROR, LOG_WARNING, LOG_INFO
@@ -26,17 +26,17 @@ class Logger {
 
 	public:
 		static void logOperation(usint type, const string& log,
-									const string& file, usint row) {
+				const string& file, usint row) {
 			string buffer = "";
 			switch (type) {
 				case LOG_ERROR:
 					buffer += "ERROR! ";
 					break;
-
+					
 				case LOG_WARNING:
 					buffer += "WARN! ";
 					break;
-
+					
 				case LOG_INFO:
 					buffer += "INFO: ";
 					break;

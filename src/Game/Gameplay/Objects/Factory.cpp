@@ -9,70 +9,69 @@
 
 #include "../../Tools/Logger.hpp"
 
-ObjectFactory::ObjectFactory() :
-		// Statusy!
-		health_status("health_status", 1, false, 0, 1),
-		score_status("score_status", 0, false, 0, 15),
-		ghost_enemy_status("health_status", 1, false, 0, 50),
-		//
-		physics(NULL) {
+ResourceFactory::ResourceFactory() :
+				// Statusy!
+				health_status("health_status", 1, false, 0, 1),
+				score_status("score_status", 0, false, 0, 15),
+				ghost_enemy_status("health_status", 1, false, 0, 50),
+				//
+				physics(NULL) {
 }
 
 /**
  * Mapowanie podstawowych tekstur w grze!
  */
-void ObjectFactory::loadGameTexturePack() {
-	readShape("pocisk_zielony.txt", "bullet_green", 0);
-	readShape("pocisk.txt", "bullet", 0);
+void ResourceFactory::loadTexturesPack() {
+	// Gracz
 	readShape("gracz.txt", "player", 0);
-
+	readShape("czaszka.txt", "cranium", 0);
+	
 	// Kolce
-	putTexture(ObjectFactory::SPIKES_UP,
-	           readShape("kolce.txt", "kolce_gora", 0));
-	putTexture(ObjectFactory::SPIKES_DOWN,
-	           readShape("kolce.txt", "kolce_dol", 270));
-	putTexture(ObjectFactory::SPIKES_LEFT,
-	           readShape("kolce.txt", "kolce_lewo", -90));
-	putTexture(ObjectFactory::SPIKES_RIGHT,
-	           readShape("kolce.txt", "kolce_prawo", 90));
-
+	putTexture(SPIKES_UP, readShape("kolce.txt", "spikes_up", 0));
+	putTexture(SPIKES_DOWN, readShape("kolce.txt", "spikes_down", 270));
+	putTexture(SPIKES_LEFT, readShape("kolce.txt", "spikes_left", -90));
+	putTexture(SPIKES_RIGHT, readShape("kolce.txt", "spikes_right", 90));
+	
 	// Tekstury wrogów
-	putTexture(ObjectFactory::SCORE, readShape("punkt.txt", "score", 0));
-	putTexture(ObjectFactory::HEALTH, readShape("zycie.txt", "health", 0));
-	putTexture(ObjectFactory::GHOST, readShape("wrog.txt", "enemy", 0));
-	putTexture(ObjectFactory::GUN, readShape("bron.txt", "gun", 0));
-	putTexture(ObjectFactory::GREEN_GUN, readShape("bron.txt", "gun2", 0));
-
+	putTexture(SCORE, readShape("punkt.txt", "score", 0));
+	putTexture(HEALTH, readShape("zycie.txt", "health", 0));
+	putTexture(GHOST, readShape("wrog.txt", "enemy", 0));
+	putTexture(GUN, readShape("bron.txt", "gun", 0));
+	putTexture(GREEN_GUN, readShape("bron.txt", "gun2", 0));
+	
+	// Pozostałe ksztalty
+	readShape("pocisk.txt", "bullet", 0);
+	readShape("pocisk_zielony.txt", "bullet_green", 0);
+	
 	//
-	logEvent(Logger::LOG_INFO, "Pomyślnie wczytano paczkę postaci!");
+	logEvent(Logger::LOG_INFO, "Pomyślnie wczytano paczkę tekstur!");
 }
 
-ObjectFactory& ObjectFactory::getIstance(pEngine* _physics) {
-	static ObjectFactory factory;
+void ResourceFactory::putTexture(usint id, PlatformShape* shape) {
+	textures[id] = shape;
+}
+
+ResourceFactory& ResourceFactory::getIstance(pEngine* _physics) {
+	static ResourceFactory factory;
 	if (_physics) {
 		if (!factory.physics) {
-			factory.loadGameTexturePack();
+			factory.loadTexturesPack();
 		}
 		factory.physics = _physics;
 	}
 	return factory;
 }
 
-void ObjectFactory::putTexture(usint id, PlatformShape* shape) {
-	textures[id] = shape;
-}
-
 /**
  * Generowanie obiektów wraz ze skryptami
  */
-Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
-                                  float _h, PlatformShape* _shape,
-                                  char* _script) {
+Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
+		float _h, PlatformShape* _shape, char* _script) {
 	if (physics == NULL) {
 		logEvent(Logger::LOG_ERROR, "Fabryka zgłasza praw fizyki brak!");
 		return NULL;
 	}
-
+	
 	/**
 	 * Obiekt skryptu dziedziczy tylko
 	 * od Body!
@@ -83,51 +82,38 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 			return NULL;
 		}
 		Trigger* trigger = new Trigger(
-		        Interpreter::getIstance().compile(_script), _x, _y, _w, _h);
+				Interpreter::getIstance().compile(_script), _x, _y, _w, _h);
 		triggers.push_back(trigger);
 		physics->insert(trigger);
 		//
 		return trigger;
 	}
-
+	
 	/**
 	 * Moby:
 	 * GREEN_GUN strzela szybciej niż GUN!
 	 */
 	Platform* _object = NULL;
 	if (_type == GUN) {
-		_object = new Gun(
-		        physics,
-		        _x,
-		        _y,
-		        16,
-		        textures[_type],
-		        dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-		                "bullet")),
-		        240);
+		_object = new Gun(physics, _x, _y, 16, textures[_type],
+				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
+						"bullet")), 240);
 		/**
 		 *
 		 */
 	} else if (_type == GREEN_GUN) {
-		_object = new Gun(
-		        physics,
-		        _x,
-		        _y,
-		        16,
-		        textures[_type],
-		        dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-		                "bullet_green")),
-		        160);
+		_object = new Gun(physics, _x, _y, 16, textures[_type],
+				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
+						"bullet_green")), 160);
 		/**
 		 *
 		 */
 	} else {
-		_object = new Character("", _x, _y, _shape == NULL ?
-		        textures[_type] : _shape,
-		                        Character::NONE);
+		_object = new Character("", _x, _y,
+				_shape == NULL ? textures[_type] : _shape, Character::NONE);
 		Character* character = dynamic_cast<Character*>(_object);
 		switch (_type) {
-
+			
 			/**
 			 * Kolce!
 			 */
@@ -136,7 +122,7 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 			case SPIKES_LEFT:
 			case SPIKES_RIGHT: {
 				character->setType(Character::SPIKES);
-
+				
 				/**
 				 * Orientacja odwrotna ze względu
 				 * na kąt padania gracza
@@ -144,9 +130,9 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				usint _orientation;
 				if (_type == SPIKES_UP)
 					_orientation = pEngine::DOWN;
-				else if(_type == SPIKES_DOWN)
+				else if (_type == SPIKES_DOWN)
 					_orientation = pEngine::UP;
-				else if(_type == SPIKES_LEFT)
+				else if (_type == SPIKES_LEFT)
 					_orientation = pEngine::RIGHT;
 				else
 					_orientation = pEngine::LEFT;
@@ -158,7 +144,7 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				character->fitToWidth(24);
 			}
 				break;
-
+				
 				/**
 				 * Życie
 				 */
@@ -168,7 +154,7 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				character->fitToWidth(16);
 				character->setStatus(health_status);
 				break;
-
+				
 				/**
 				 * Potwór
 				 */
@@ -179,7 +165,7 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				character->setStatus(ghost_enemy_status);
 				character->setAI(new SnailAI(character, 1.2));
 				break;
-
+				
 				/**
 				 * Platforma
 				 */
@@ -187,7 +173,7 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				character->setType(Character::PLATFORM);
 				character->fitToWidth(_w);
 				break;
-
+				
 				/**
 				 * Punkt
 				 */
@@ -196,7 +182,7 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 				character->fitToWidth(12);
 				character->setStatus(score_status);
 				break;
-
+				
 				/**
 				 *
 				 */
@@ -218,17 +204,17 @@ Body* ObjectFactory::createObject(usint _type, float _x, float _y, float _w,
 /**
  * Kasowanie całego poziomu!
  */
-void ObjectFactory::unloadObjects() {
-	for (usint i = 0; i < triggers.size(); ++i) {
-		if (triggers[i]) {
-			delete triggers[i];
+void ResourceFactory::unloadObjects() {
+	for (auto* trigger : triggers) {
+		if (trigger) {
+			delete trigger;
 		}
 	}
 	triggers.clear();
 	//
-	for (usint i = 0; i < created.size(); ++i) {
-		if (created[i]) {
-			delete created[i];
+	for (auto* object : created) {
+		if (object) {
+			delete object;
 		}
 	}
 	created.clear();

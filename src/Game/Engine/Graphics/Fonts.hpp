@@ -41,37 +41,37 @@ class glText {
 		void setColor(const Color& _col) {
 			col = _col;
 		}
-
+		
 		void setHidden(bool _hidden) {
 			hidden = _hidden;
 		}
 		bool isHidden() const {
 			return hidden;
 		}
-
+		
 		usint getFontHeight() const {
 			return height;
 		}
-
+		
 		usint getLinesOfText() const {
 			return text_lines;
 		}
-
+		
 		bool isAnim() const {
 			return anim;
 		}
-
+		
 		usint getRenderLength() const {
 			return actual_text_pos;
 		}
-
+		
 		string* getString() {
 			return &str;
 		}
 		Color* getColor() {
 			return &col;
 		}
-
+		
 		/**
 		 * Szerokość w pixelach na monitorze!
 		 */
@@ -87,7 +87,7 @@ class glText {
 				}
 			}
 		}
-
+		
 		void setAnim(bool);
 		void setRenderLength(usint);
 		void setString(const string&, int);

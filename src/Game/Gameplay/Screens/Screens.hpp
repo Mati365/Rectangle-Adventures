@@ -30,11 +30,11 @@ namespace GameScreen {
 			virtual void drawObject(Window*)=0;
 			virtual void catchEvent(const Event&) {
 			}
-
+			
 			virtual ~Screen() {
 			}
 	};
-
+	
 	/////////////////////
 	/**
 	 * Aktywne ekrany
@@ -42,22 +42,22 @@ namespace GameScreen {
 	class Game;
 	class Menu;
 	class Splash;
-
+	
 	extern Game* game; // okno gameplay
 	extern Menu* menu; // menu gry
 	extern Splash* splash; // splash
-
+	
 	extern Screen* active_screen;
-
+	
 	/**
 	 * Wczytywanie ekranów musi być
 	 * PO wczytaniu systemu plików!
 	 */
 	void loadScreens();
 	void unloadScreens();
-
+	
 	/////////////////////
-
+	
 	class Game: public Screen {
 		protected:
 			MapRenderer* lvl;
@@ -72,17 +72,17 @@ namespace GameScreen {
 			Character* getHero() const {
 				return hero;
 			}
-
+			
 			MapRenderer* getMapRenderer() const {
 				return lvl;
 			}
-
+			
 			~Game() {
 				if (lvl) {
 					delete lvl;
 				}
 				logEvent(Logger::LOG_INFO,
-							"Usuwanie obiektów sceny zakończone sukcesem!");
+						"Usuwanie obiektów sceny zakończone sukcesem!");
 			}
 	};
 	/**
@@ -125,18 +125,18 @@ namespace GameScreen {
 			usint visible_time;
 
 			SplashInfo(const char* _text, usint _visible_time) :
-					text(Convert::getDynamicValue(_text)),
-					timer(0),
-					visible_time(_visible_time) {
+							text(Convert::getDynamicValue(_text)),
+							timer(0),
+							visible_time(_visible_time) {
 			}
-
+			
 			~SplashInfo() {
 				if (text) {
 					delete[] text;
 				}
 			}
 	};
-
+	
 	class Splash: public Screen {
 		protected:
 			deque<SplashInfo*> texts;
@@ -158,18 +158,18 @@ namespace GameScreen {
 				}
 				texts.clear();
 			}
-
+			
 			/**
 			 * Przerzucanie po splashu!
 			 */
 			void endTo(Screen* _return_to) {
 				return_to = _return_to;
 			}
-
+			
 			void pushTitle(const char* _title, usint _visible_time) {
 				texts.push_front(new SplashInfo(_title, _visible_time));
 			}
-
+			
 			~Splash();
 	};
 }

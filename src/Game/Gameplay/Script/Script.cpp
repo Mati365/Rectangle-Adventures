@@ -20,54 +20,18 @@ using namespace GameScreen;
 //---------------------
 
 Func funcs[] = {
-					{
-						SCRIPT_TYPE,
-						"SCRIPT_TYPE",
-						1 },
-					{
-						SELECT_PLATFORM,
-						"SELECT_PLATFORM",
-						1 },
-					{
-						SET_STATE,
-						"SET_STATE",
-						1 },
-					{
-						SET_MOVING_DIR,
-						"SET_MOVING_DIR",
-						5 },
-					{
-						SET_LAYER,
-						"SET_LAYER",
-						1 },
-					{
-						ATTACH_PARTICLE,
-						"ATTACH_PARTICLE",
-						3 },
-					{
-						DISABLE_MOVING,
-						"DISABLE_MOVING",
-						0 },
-					{
-						DESTROY_OBJECT,
-						"DESTROY_OBJECT",
-						0 },
-					{
-						SHOW_MESSAGE,
-						"SHOW_MESSAGE",
-						2 },
-					{
-						SHOW_SPLASH,
-						"SHOW_SPLASH",
-						1 },
-					{
-						LOAD_MAP,
-						"LOAD_MAP",
-						1 },
-					{
-						CREATE_OBJECT,
-						"CREATE_OBJECT",
-						4 } };
+					{ SCRIPT_TYPE, "SCRIPT_TYPE", 1 },
+					{ SELECT_PLATFORM, "SELECT_PLATFORM", 1 },
+					{ SET_STATE, "SET_STATE", 1 },
+					{ SET_MOVING_DIR, "SET_MOVING_DIR", 5 },
+					{ SET_LAYER, "SET_LAYER", 1 },
+					{ ATTACH_PARTICLE, "ATTACH_PARTICLE", 3 },
+					{ DISABLE_MOVING, "DISABLE_MOVING", 0 },
+					{ DESTROY_OBJECT, "DESTROY_OBJECT", 0 },
+					{ SHOW_MESSAGE, "SHOW_MESSAGE", 2 },
+					{ SHOW_SPLASH, "SHOW_SPLASH", 1 },
+					{ LOAD_MAP, "LOAD_MAP", 1 },
+					{ CREATE_OBJECT, "CREATE_OBJECT", 4 } };
 
 //---------------------
 
@@ -158,14 +122,14 @@ bool Interpreter::interpret(Script* script) {
 				}
 			}
 				break;
-
+				
 				/**
 				 * Warstwa
 				 */
 			case SET_LAYER:
 				selected->layer = Convert::stringTo<usint>(func.args[0]);
 				break;
-
+				
 				/**
 				 * Oznaczenie platform, wyszukiwanie platformy
 				 * z listy platform!
@@ -188,40 +152,40 @@ bool Interpreter::interpret(Script* script) {
 				}
 			}
 				break;
-
+				
 				/**
 				 * Uswiawienie stanu platformy!
 				 */
 			case SET_STATE:
 				selected->setState(Convert::stringTo<usint>(func.args[0]));
 				break;
-
+				
 				/**
 				 * Wyłączenie ruchu!
 				 */
 			case DISABLE_MOVING:
 				selected->disableMoving();
 				break;
-
+				
 				/**
 				 * Zniszczenie obiektu!
 				 */
 			case DESTROY_OBJECT:
 				selected->destroyed = true;
 				break;
-
+				
 				/**
 				 * Ustawienie kierunku ruchu!
 				 */
 			case SET_MOVING_DIR:
 				selected->setMovingDir(
 						Vector<float>(Convert::stringTo<float>(func.args[0]),
-										Convert::stringTo<float>(func.args[1])),
+								Convert::stringTo<float>(func.args[1])),
 						Vector<float>(Convert::stringTo<float>(func.args[2]),
-										Convert::stringTo<float>(func.args[3])),
+								Convert::stringTo<float>(func.args[3])),
 						Convert::stringTo<bool>(func.args[4]));
 				break;
-
+				
 				/**
 				 * 'Doczepienie' particle do obiektu!
 				 */
@@ -232,7 +196,7 @@ bool Interpreter::interpret(Script* script) {
 				switch (particle_type) {
 					case FIRE:
 						emitter = new FireEmitter(Rect<float>(0, 0, 36, 64),
-													25);
+								25);
 						break;
 						/**
 						 *
@@ -251,16 +215,16 @@ bool Interpreter::interpret(Script* script) {
 				}
 			}
 				break;
-
+				
 				/**
 				 * Pokazywanie wiadomości intro!
 				 */
 			case SHOW_MESSAGE:
 				map->getMessageRenderer()->addMessage(
 						MessageRenderer::Message(func.args[0], func.args[1],
-						NULL));
+								NULL));
 				break;
-
+				
 				/**
 				 * Wyświetlanie splash!
 				 */
@@ -271,13 +235,13 @@ bool Interpreter::interpret(Script* script) {
 				splash->pushTitle(func.args[0], strlen(func.args[0]) * 10);
 				splash->endTo(game);
 				break;
-
+				
 				/**
 				 * Tworzenie obiektu!
 				 */
 			case CREATE_OBJECT:
-				ObjectFactory::getIstance(map->getPhysics()).createObject(
-						(ObjectFactory::Types) Convert::stringTo<usint>(
+				ResourceFactory::getIstance(map->getPhysics()).createObject(
+						(ResourceFactory::Types) Convert::stringTo<usint>(
 								func.args[0]),
 						Convert::stringTo<float>(func.args[1]),
 						Convert::stringTo<float>(func.args[2]), 0, 0, NULL,

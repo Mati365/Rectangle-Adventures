@@ -9,7 +9,6 @@
 //#define _ARCHIVER_
 
 #ifndef _ARCHIVER_
-#include <GL/glew.h>
 #include <GL/glut.h>
 
 #include "Game/Engine/Graphics/Engine.hpp"
@@ -31,8 +30,7 @@ using namespace File;
 int main(int argc, char **argv) {
 #ifndef _ARCHIVER_
 	glutInit(&argc, argv);
-	glewInit();
-	//
+	
 	srand(time(NULL));
 	if (isFilesystemFake()) {
 		logEvent(Logger::LOG_ERROR, "Plik archiwum gry nie jest autentyczny!");
@@ -41,6 +39,7 @@ int main(int argc, char **argv) {
 	Engine::Window win(Vector<usint>(WINDOW_WIDTH, WINDOW_HEIGHT), "Gra");
 	win.init();
 #else
+	
 	/**
 	 * Example: ./archiver NAZWA_ARCHIWUM AUTOR plik1.txt plik2.txt
 	 */

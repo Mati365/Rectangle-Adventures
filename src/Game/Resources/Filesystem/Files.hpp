@@ -20,13 +20,13 @@ namespace File {
 			char* text;
 
 			Text(const char* _text) :
-					text(const_cast<char*>(_text)) {
+							text(const_cast<char*>(_text)) {
 			}
-
+			
 			Text() :
-					text(NULL) {
+							text(NULL) {
 			}
-
+			
 			virtual bool read(FILE* file) {
 				if (!file) {
 					return false;
@@ -43,12 +43,12 @@ namespace File {
 				delete[] _text;
 				return true;
 			}
-
+			
 			virtual size_t write(FILE* file) {
 				IO::writeString(file, text);
 				return getLength();
 			}
-
+			
 			virtual size_t getLength() {
 				if (!text) {
 					return 0;
@@ -62,12 +62,17 @@ namespace File {
 	 */
 	class ExternalFile: public FilePackage {
 #define BUFFER_SIZE 200
-
+			
 		protected:
 			FILE* file;
 			const char* path;
 
 		public:
+			ExternalFile() :
+							file(NULL),
+							path(NULL) {
+			}
+
 			ExternalFile(const char*);
 
 			virtual bool read(FILE*);
@@ -75,13 +80,21 @@ namespace File {
 
 			virtual size_t getLength();
 
+			size_t getFileLength() const {
+				return length;
+			}
+
+			FILE* getFile() const {
+				return file;
+			}
+
 			~ExternalFile() {
 				if (file) {
 					CLOSE_FILE(file);
 				}
 			}
 	};
-
+	
 	bool moveBytes(FILE*, FILE*, size_t, size_t, size_t);
 }
 

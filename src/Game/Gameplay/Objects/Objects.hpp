@@ -61,7 +61,7 @@ class Platform: public Body, public Cloneable {
 		virtual void drawObject(Window*);
 		virtual void catchCollision(pEngine*, usint, Body*) {
 		}
-
+		
 		/**
 		 * Odblokowanie poruszania się!
 		 */
@@ -84,21 +84,21 @@ class Platform: public Body, public Cloneable {
 		usint setOrientation() const {
 			return orientation;
 		}
-
+		
 		usint getFillType() const {
 			return fill_type;
 		}
 		Color* getColor() {
 			return &col;
 		}
-
+		
 		/**
 		 * Klonowanie obiektów!
 		 */
 		virtual Cloneable* getClone() const {
 			return new Platform(*this);
 		}
-
+		
 		virtual bool recover(Cloneable* _clone) {
 			Platform* obj = dynamic_cast<Platform*>(_clone);
 			if (!obj) {
@@ -107,7 +107,7 @@ class Platform: public Body, public Cloneable {
 			(*this) = *obj;
 			return true;
 		}
-
+		
 		~Platform() {
 			if (list) {
 				glDeleteLists(list, 1);
@@ -145,6 +145,7 @@ class IrregularPlatform: public Platform {
 		PlatformShape* getShape() const {
 			return shape;
 		}
+		
 		void setShape(PlatformShape*);
 
 		/**
@@ -153,7 +154,7 @@ class IrregularPlatform: public Platform {
 		virtual Cloneable* getClone() const {
 			return new IrregularPlatform(*this);
 		}
-
+		
 		/**
 		 * Zmiana rozmiaru tylko
 		 * do szerokości!
@@ -171,7 +172,7 @@ class IrregularPlatform: public Platform {
 		float getScale() const {
 			return scale;
 		}
-
+		
 		virtual ~IrregularPlatform() {
 			/**
 			 * Ten sam kształt dla kilku platform!
@@ -194,29 +195,27 @@ struct CharacterStatus: public Resource<usint> {
 		Vector<float> start_pos;
 
 		CharacterStatus(const char* _label) :
-				Resource<usint>(_label),
-				health(0),
-				shield_health(
-				MAX_LIVES),
-				score(0),
-				shield(true) {
+						Resource<usint>(_label),
+						health(0),
+						shield_health(MAX_LIVES),
+						score(0),
+						shield(true) {
 		}
-
+		
 		CharacterStatus(const char* _label, usint _health, bool _shield,
-		                usint _shield_health, usint _score, float _x = 0,
-		                float _y = 0) :
-				Resource<usint>(_label),
-				health(_health),
-				shield_health(_shield_health),
-				score(_score),
-				shield(_shield),
-				start_pos(_x, _y) {
+				usint _shield_health, usint _score, float _x = 0, float _y = 0) :
+						Resource<usint>(_label),
+						health(_health),
+						shield_health(_shield_health),
+						score(_score),
+						shield(_shield),
+						start_pos(_x, _y) {
 		}
-
+		
 		virtual bool load(FILE*);
 		virtual void unload() {
 		}
-
+		
 		CharacterStatus& operator+=(CharacterStatus& right) {
 			health += right.health;
 			shield = right.shield;
@@ -224,7 +223,7 @@ struct CharacterStatus: public Resource<usint> {
 			score += right.score;
 			return *this;
 		}
-
+		
 		CharacterStatus& operator-=(CharacterStatus& right) {
 			USINT_SUB(health, right.health);
 			USINT_SUB(shield_health, right.shield_health);
@@ -245,7 +244,7 @@ class AI {
 		Character* character;
 
 		AI(Character* _character) :
-				character(_character) {
+						character(_character) {
 		}
 		/**
 		 * Sterowanie automatem, botem,
@@ -267,7 +266,7 @@ class AI {
 /**
  * Generowanie 'krwii' ;)
  */
-void generateExplosion(usint, pEngine*, Body*, usint, const Color&);
+void generateExplosion(pEngine*, Body*, usint, const Color&, float, float);
 
 //
 
@@ -313,24 +312,28 @@ class Character: public IrregularPlatform {
 		bool isJumping() const {
 			return jumping;
 		}
-
-		void move(float, float);
-
+		
+		bool isDead() const {
+			return status.health == DEATH;
+		}
+		
 		void die(pEngine*, usint); // śmierć, rozprucie ;)
 		void hitMe(pEngine*); // uderz mnie ;_;
+				
+		void move(float, float);
 		void jump(float, bool);
 
 		void setAI(AI* _ai) {
 			ai = _ai;
 		}
-
+		
 		/**
 		 * Klonowanie obiektów!
 		 */
 		virtual Cloneable* getClone() const {
 			return new Character(*this);
 		}
-
+		
 		virtual bool recover(Cloneable* _clone) {
 			Character* obj = dynamic_cast<Character*>(_clone);
 			if (!obj) {
@@ -339,25 +342,25 @@ class Character: public IrregularPlatform {
 			(*this) = *obj;
 			return true;
 		}
-
+		
 		void setNick(const string& _nick) {
 			nick.setString(_nick, -1);
 		}
-
+		
 		void setStatus(const CharacterStatus& _status) {
 			status = _status;
 		}
-
+		
 		CharacterStatus* getStatus() {
 			return &status;
 		}
-
+		
 		virtual ~Character() {
 			if (ai) {
 				delete ai;
 			}
 		}
-
+		
 	private:
 		void drawHitAnimation();
 };
@@ -389,8 +392,8 @@ class Trigger: public Body {
 
 	public:
 		Trigger(Script* _script, float _x, float _y, float _w, float _h) :
-				Body(_x, _y, _w, _h, 1.f, 1.f, Body::HIDDEN),
-				script(_script) {
+						Body(_x, _y, _w, _h, 1.f, 1.f, Body::HIDDEN),
+						script(_script) {
 			type = Body::TRIGGER;
 			state = Body::HIDDEN;
 		}
@@ -405,7 +408,7 @@ class Trigger: public Body {
 				destroyed = true;
 			}
 		}
-
+		
 		~Trigger() {
 			if (script) {
 				delete script;
@@ -416,8 +419,13 @@ class Trigger: public Body {
 /**
  * Wzorzec singleton!
  */
-class ObjectFactory {
+using oglWrapper::Shader;
+
+class ResourceFactory {
 	public:
+		/**
+		 * Typy obiektów!
+		 */
 		enum Types {
 			SCORE, HEALTH, GHOST, OBJECT, GUN, GREEN_GUN, SCRIPT_BOX,
 			/**
@@ -426,17 +434,30 @@ class ObjectFactory {
 			SPIKES_UP, SPIKES_DOWN, SPIKES_LEFT, SPIKES_RIGHT
 		};
 
+		/**
+		 * Typy shaderów
+		 */
+		enum Shaders {
+			HIT_SHADER, WINDOW_SHADOW_SHADER
+		};
+
 	private:
 		deque<Platform*> created;
 		deque<Trigger*> triggers;
+
+		/**
+		 * PODSTAWOWE ZASOBY!!!
+		 */
+		map<usint, Shader*> shaders;
 		map<usint, PlatformShape*> textures;
+
 		/**
 		 * STATUSY!!!!
 		 */
 		CharacterStatus health_status, score_status, ghost_enemy_status;
 		pEngine* physics;
 
-		ObjectFactory();
+		ResourceFactory();
 
 	public:
 		/**
@@ -448,16 +469,20 @@ class ObjectFactory {
 		 * Deklaruje dynamicznie!
 		 */
 		Body* createObject(usint, float, float, float, float, PlatformShape*,
-		                   char*);
+				char*);
 
+		/**
+		 * Kasowanie obiektów mapy!
+		 */
 		void unloadObjects();
+
 		/**
 		 * Pobieranie instancji i inicjowanie!
 		 */
-		static ObjectFactory& getIstance(pEngine*);
+		static ResourceFactory& getIstance(pEngine*);
 
 	private:
-		void loadGameTexturePack();
+		void loadTexturesPack();
 };
 
 #endif /* OBJECTS_HPP_ */

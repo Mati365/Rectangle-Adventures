@@ -65,10 +65,10 @@ class Script {
 		Func* commands;
 
 		Script(size_t _length) :
-				length(_length) {
+						length(_length) {
 			commands = new Func[length];
 		}
-
+		
 		~Script() {
 			if (length != 0 && commands) {
 				delete[] commands;
@@ -83,7 +83,7 @@ class Interpreter {
 	private:
 		Interpreter() {
 		}
-
+		
 	public:
 		static Interpreter& getIstance() {
 			static Interpreter inter;

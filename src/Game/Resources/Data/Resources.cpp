@@ -6,9 +6,7 @@
  */
 #include "Resources.hpp"
 
-Package main_filesystem(
-FILESYSTEM_PACKAGE,
-						FILESYSTEM_AUTHOR);
+Package main_filesystem(FILESYSTEM_PACKAGE, FILESYSTEM_AUTHOR);
 ResourceManager<usint> main_resource_manager;
 
 /**

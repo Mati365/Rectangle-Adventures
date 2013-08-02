@@ -9,8 +9,8 @@
 //------------------------ AI Ślimaka
 
 SnailAI::SnailAI(Character* _character, float _speed) :
-		AI(_character),
-		speed(_speed) {
+				AI(_character),
+				speed(_speed) {
 }
 
 /**

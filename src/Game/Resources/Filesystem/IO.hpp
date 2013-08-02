@@ -49,7 +49,7 @@ class IO {
 			fwrite(str, sizeof(char), len, file);
 			return true;
 		}
-
+		
 		static bool writeString(const char* path, const char* str) {
 			FILE* file = fopen(path, "w");
 			if (!writeString(file, str)) {
@@ -76,7 +76,7 @@ class IO {
 			fread(&type, sizeof(T), 1, file);
 			return type;
 		}
-
+		
 		template<typename T>
 		static T read(const char* path) {
 			FILE* file = fopen(path, "rb");
@@ -88,7 +88,7 @@ class IO {
 			fclose(file);
 			return type;
 		}
-
+		
 		/**
 		 * Odczytywanie string!
 		 */
@@ -104,9 +104,9 @@ class IO {
 			//
 			return str;
 		}
-
+		
 		static const char* readString(const char* path) {
-			FILE* file = fopen(path, "rb");
+			FILE* file = fopen(path, "r");
 			if (!file) {
 				return NULL;
 			}
@@ -118,13 +118,29 @@ class IO {
 		/**
 		 *
 		 */
+		static char* getFileContent(const char* _path) {
+			FILE* file = fopen(_path, "rb");
+			//
+			char* content = getFileContent(file, 0);
+			if (content) {
+				fclose(file);
+			}
+			//
+			return content;
+		}
+		
 		static char* getFileContent(FILE* file, size_t len) {
+			if (!file) {
+				return NULL;
+			}
 			if (len == 0) {
 				len = getFileLength(file);
 			}
 			//
 			char* content = new char[len + 1];
+			memset(content, 0, len + 1);
 			fread(content, sizeof(char), len, file);
+			//
 			return content;
 		}
 		/**
@@ -133,6 +149,7 @@ class IO {
 		static bool fileExists(const char* path) {
 			FILE* file = fopen(path, "r");
 			bool exists = file;
+			//
 			fclose(file);
 			return exists;
 		}
@@ -144,6 +161,7 @@ class IO {
 			fseek(file, 0, SEEK_END);
 			size_t length = ftell(file);
 			fseek(file, pos, SEEK_SET);
+			//
 			return length;
 		}
 };

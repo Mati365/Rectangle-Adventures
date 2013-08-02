@@ -13,20 +13,20 @@
 using namespace Gameplay;
 
 MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
-		ParalaxRenderer(_hero, 1.f, true, _map),
-		msg(50, Color(0, 128, 255), Color(255, 255, 255), this),
-		hero(dynamic_cast<Character*>(_hero)),
-		hud_enabled(true) {
+				ParalaxRenderer(_hero, 0.95f, true, _map),
+				msg(45, Color(0, 128, 255), Color(255, 255, 255), this),
+				hero(dynamic_cast<Character*>(_hero)),
+				hud_enabled(true) {
 }
 
 /**
  * Dodawanie tła gry!
  */
 ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
-                                           Body* _body) {
+		Body* _body) {
 	if (map->physics) {
 		ParalaxRenderer* renderer = new ParalaxRenderer(_body, _ratio, false,
-		                                                _paralax);
+				_paralax);
 		paralax_background.push_front(renderer);
 		return renderer;
 	}
@@ -73,7 +73,7 @@ void MapRenderer::addWeather(usint _type) {
 		 */
 		case SNOWING: {
 			SnowEmitter* snow = new SnowEmitter(
-			        Rect<float>(0, 20, WINDOW_WIDTH, 0));
+					Rect<float>(0, 20, WINDOW_WIDTH, 0));
 			snow->setFocus(&cam.pos);
 			//
 			addStaticObject(snow);
@@ -94,9 +94,6 @@ void MapRenderer::drawObject(Window* _window) {
 	/**
 	 * glScissor - rzecz sporna dla GPU intel!
 	 */
-	glEnable (GL_SCISSOR_TEST);
-	glScissor(0, 0, cam.pos.w, cam.pos.h);
-	//
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}
@@ -110,8 +107,8 @@ void MapRenderer::drawObject(Window* _window) {
 }
 
 MapRenderer::~MapRenderer() {
-	for (usint i = 0; i < paralax_background.size(); ++i) {
-		delete paralax_background[i];
+	for (auto* paralax : paralax_background) {
+		delete paralax;
 	}
 }
 
