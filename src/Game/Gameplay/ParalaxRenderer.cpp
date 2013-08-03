@@ -30,27 +30,28 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	if (!map) {
 		return;
 	}
-	
 	/**
 	 * Odświeżanie fizyki
 	 */
 	pEngine* physics = map->physics;
 	if (draw_quad) {
 		physics->setActiveRange(
-				Rect<float>(cam.pos.x - 40, cam.pos.y - 40, WINDOW_WIDTH + 80,
-						WINDOW_HEIGHT + 80));
+				Rect<float>(cam.pos.x, cam.pos.y, WINDOW_WIDTH, WINDOW_HEIGHT));
 		physics->updateWorld();
 	}
+	
 	/**
 	 * Odświeżanie kamery
 	 */
 	cam.updateCam(_window);
-	
+
 	/**
 	 * Lista aktualnie widocznych elementów!
 	 */
 	deque<Body*>* list = physics->getVisibleBodies();
 	
+	cout << list->size() << endl;
+
 	glPushMatrix();
 	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
 	if (draw_quad) {

@@ -22,7 +22,7 @@ GLuint oglWrapper::createShader(const GLuint type, const GLchar* _text) {
 	}
 	GLuint shader_id = glCreateShader(type);
 	GLint len = strlen(_text);
-			
+	
 	// Tworzenie
 	glShaderSource(shader_id, 1, &_text, &len);
 	

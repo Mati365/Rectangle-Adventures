@@ -21,7 +21,9 @@ class Logger {
 		
 	public:
 		enum Type {
-			LOG_ERROR, LOG_WARNING, LOG_INFO
+			LOG_ERROR,
+			LOG_WARNING,
+			LOG_INFO
 		};
 
 	public:

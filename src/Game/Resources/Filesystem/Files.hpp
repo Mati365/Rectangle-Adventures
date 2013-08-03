@@ -72,7 +72,7 @@ namespace File {
 							file(NULL),
 							path(NULL) {
 			}
-
+			
 			ExternalFile(const char*);
 
 			virtual bool read(FILE*);
@@ -83,11 +83,11 @@ namespace File {
 			size_t getFileLength() const {
 				return length;
 			}
-
+			
 			FILE* getFile() const {
 				return file;
 			}
-
+			
 			~ExternalFile() {
 				if (file) {
 					CLOSE_FILE(file);

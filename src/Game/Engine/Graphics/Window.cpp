@@ -57,8 +57,9 @@ void Window::init() {
 		return;
 	}
 	/**
-	 * Wczytywanie ekranów gry
+	 * Wczytywanie rdzennych elementów gry
 	 */
+	loadShadersPack();
 	loadScreens();
 	//
 	if (!menu) {
@@ -141,11 +142,12 @@ void Window::init() {
 	}
 	//
 	unloadScreens();
+	unloadShadersPack();
 }
 
 bool Window::setupOpenGL() {
 	glewInit();
-
+	
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 	

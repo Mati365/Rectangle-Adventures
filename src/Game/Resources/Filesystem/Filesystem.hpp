@@ -127,7 +127,9 @@ namespace Filesystem {
 	class Package: public FilePackage {
 		public:
 			enum Operation {
-				ARCH_WRITE, ARCH_READ, ARCH_DELETE
+				ARCH_WRITE,
+				ARCH_READ,
+				ARCH_DELETE
 			};
 
 		protected:

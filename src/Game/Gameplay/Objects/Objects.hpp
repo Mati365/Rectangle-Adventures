@@ -33,7 +33,10 @@ using namespace Physics;
 class Platform: public Body, public Cloneable {
 	public:
 		enum Type {
-			DIAGONAL, SIMPLE, FILLED, NONE
+			DIAGONAL,
+			SIMPLE,
+			FILLED,
+			NONE
 		};
 
 	protected:
@@ -272,7 +275,6 @@ void generateExplosion(pEngine*, Body*, usint, const Color&, float, float);
 
 class Character: public IrregularPlatform {
 	protected:
-		glText nick;
 		bool jumping;
 		/**
 		 * Gracz/wrogowie modyfikują ciągle
@@ -343,10 +345,6 @@ class Character: public IrregularPlatform {
 			return true;
 		}
 		
-		void setNick(const string& _nick) {
-			nick.setString(_nick, -1);
-		}
-		
 		void setStatus(const CharacterStatus& _status) {
 			status = _status;
 		}
@@ -362,7 +360,7 @@ class Character: public IrregularPlatform {
 		}
 		
 	private:
-		void drawHitAnimation();
+		void updateHitAnim();
 };
 
 /**
@@ -427,18 +425,28 @@ class ResourceFactory {
 		 * Typy obiektów!
 		 */
 		enum Types {
-			SCORE, HEALTH, GHOST, OBJECT, GUN, GREEN_GUN, SCRIPT_BOX,
+			SCORE,
+			HEALTH,
+			GHOST,
+			OBJECT,
+			GUN,
+			GREEN_GUN,
+			SCRIPT_BOX,
 			/**
 			 * Kolce
 			 */
-			SPIKES_UP, SPIKES_DOWN, SPIKES_LEFT, SPIKES_RIGHT
+			SPIKES_UP,
+			SPIKES_DOWN,
+			SPIKES_LEFT,
+			SPIKES_RIGHT
 		};
 
 		/**
 		 * Typy shaderów
 		 */
 		enum Shaders {
-			HIT_SHADER, WINDOW_SHADOW_SHADER
+			HIT_SHADER,
+			WINDOW_SHADOW_SHADER
 		};
 
 	private:
@@ -448,7 +456,6 @@ class ResourceFactory {
 		/**
 		 * PODSTAWOWE ZASOBY!!!
 		 */
-		map<usint, Shader*> shaders;
 		map<usint, PlatformShape*> textures;
 
 		/**

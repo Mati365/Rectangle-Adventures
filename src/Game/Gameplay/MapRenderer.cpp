@@ -94,10 +94,14 @@ void MapRenderer::drawObject(Window* _window) {
 	/**
 	 * glScissor - rzecz sporna dla GPU intel!
 	 */
+	shaders[WINDOW_SHADOW_SHADER]->begin();
+	//
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}
 	ParalaxRenderer::drawObject(_window);
+	//
+	shaders[WINDOW_SHADOW_SHADER]->end();
 	/**
 	 * Elementy HUDu
 	 */

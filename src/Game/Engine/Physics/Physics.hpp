@@ -69,14 +69,22 @@ namespace Physics {
 			 * Flaga obiektu, czym on jest?
 			 */
 			enum Type {
-				HERO, ENEMY, PLATFORM, SCORE, BULLET, TRIGGER, SPIKES
+				HERO,
+				ENEMY,
+				PLATFORM,
+				SCORE,
+				BULLET,
+				TRIGGER,
+				SPIKES
 			};
 
 			/**
 			 * State, stan obiektu: czy podlega fizyce?
 			 */
 			enum State {
-				NONE = 0x01, STATIC = 0x02, HIDDEN = 0x04
+				NONE = 0x01,
+				STATIC = 0x02,
+				HIDDEN = 0x04
 			};
 
 			usint state;
@@ -209,7 +217,6 @@ namespace Physics {
 			 * Aktualizacja drzewa!
 			 */
 			void subdive();
-			void remove(Body*);
 
 			void insertGroup(deque<Body*>*);
 			void insert(Body*);
@@ -228,7 +235,11 @@ namespace Physics {
 	class pEngine {
 		public:
 			enum {
-				NONE, RIGHT, LEFT, UP, DOWN
+				NONE,
+				RIGHT,
+				LEFT,
+				UP,
+				DOWN
 			};
 
 		private:

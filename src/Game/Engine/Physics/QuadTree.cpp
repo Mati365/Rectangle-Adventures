@@ -62,30 +62,6 @@ void QuadTree::drawObject(Window*) {
 }
 
 /**
- * Rozdzielenie obiektów!
- */
-void QuadTree::remove(Body* body) {
-	if (!NW) {
-		for (usint i = 0; i < bodies.size(); ++i) {
-			if (body == bodies[i]) {
-				bodies.erase(bodies.begin() + i);
-				return;
-			}
-		}
-		return;
-	}
-	if (NW->rect.intersect(*body)) {
-		NW->remove(body);
-	} else if (NE->rect.intersect(*body)) {
-		NE->remove(body);
-	} else if (SE->rect.intersect(*body)) {
-		SE->remove(body);
-	} else if (SW->rect.intersect(*body)) {
-		SW->remove(body);
-	}
-}
-
-/**
  * Dodawanie elementu!
  */
 bool QuadTree::insertToSubQuad(Body* body) {
@@ -142,6 +118,13 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 	for (usint i = 0; i < bodies.size(); ++i) {
 		Body* body = bodies[i];
 		//
+		if (!IS_SET(body->state, Body::STATIC)
+				&& (body->y + body->h >= _bounds.y + _bounds.h
+						|| body->x + body->w >= _bounds.x + _bounds.w
+						|| body->x + body->w <= _bounds.x
+						|| body->y + body->h <= _bounds.y)) {
+			continue;
+		}
 		if (_bounds.intersect(
 				Rect<float>(body->x, body->y, body->w, body->h))) {
 			_bodies.push_back(body);

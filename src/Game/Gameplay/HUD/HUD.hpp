@@ -21,7 +21,9 @@ using namespace GUI;
 class IntroBackground {
 	public:
 		enum State {
-			PAUSE, RESUME, STOP
+			PAUSE,
+			RESUME,
+			STOP
 		};
 
 	protected:

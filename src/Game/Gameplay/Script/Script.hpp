@@ -25,7 +25,8 @@ struct Func {
  * Typy skryptu!
  */
 enum {
-	COLLISION, JUMP
+	COLLISION,
+	JUMP
 };
 
 /**

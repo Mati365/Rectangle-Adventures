@@ -17,7 +17,10 @@ using namespace Engine;
 class Event {
 	public:
 		enum {
-			MOUSE_CLICKED, MOUSE_PRESSED, MOUSE_RELEASED, KEY_PRESSED
+			MOUSE_CLICKED,
+			MOUSE_PRESSED,
+			MOUSE_RELEASED,
+			KEY_PRESSED
 		};
 
 		usint type;

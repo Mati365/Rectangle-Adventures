@@ -19,6 +19,7 @@
 using namespace Engine;
 using namespace Physics;
 using namespace Filesystem;
+using namespace oglWrapper;
 
 /////////////////////////// Główny system plików gry
 
@@ -27,6 +28,20 @@ using namespace Filesystem;
 
 extern Package main_filesystem;
 extern ResourceManager<usint> main_resource_manager;
+
+/**
+ * Efekty w grze muszą być wczytane
+ * przed pojawieniem się okna!
+ */
+enum Effect {
+	WINDOW_SHADOW_SHADER,
+	HIT_CHARACTER_SHADER
+};
+
+extern Shader* shaders[HIT_CHARACTER_SHADER + 1];
+
+void loadShadersPack();
+void unloadShadersPack();
 
 /**
  * Sprawdzenie autora pliku!!

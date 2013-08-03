@@ -57,7 +57,6 @@ void generateExplosion(pEngine* physics, Body* body, usint count,
 Character::Character(const string& _nick, float _x, float _y,
 		PlatformShape* _shape, usint _type) :
 				IrregularPlatform(_x, _y, true, _shape),
-				nick(Color(255, 255, 255), _nick, GLUT_BITMAP_HELVETICA_12, 12),
 				jumping(true),
 				status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
 				ai(NULL),
@@ -96,8 +95,6 @@ void Character::die(pEngine* physics, usint _dir) {
 	generateExplosion(physics, this, 30, oglWrapper::RED, 3, 6);
 	setShape(getShapePointer("cranium"));
 	fitToWidth(14);
-	//
-	nick.setString("Trup", -1);
 }
 
 /**
@@ -234,10 +231,7 @@ void Character::move(float x_speed, float y_speed) {
  * Animacja mrugania postaci po kontakcie
  * z wrogiem
  */
-void Character::drawHitAnimation() {
-	if (!hit) {
-		return;
-	}
+void Character::updateHitAnim() {
 	actual_anim_time++;
 	if (actual_anim_time >= anim_time) {
 		actual_anim_time = 0;
@@ -245,12 +239,6 @@ void Character::drawHitAnimation() {
 		if (actual_cycles > anim_cycles) {
 			actual_cycles = hit = false;
 			col = source_color;
-		} else {
-			if (actual_cycles % 2) {
-				col = source_color;
-			} else {
-				col = oglWrapper::RED;
-			}
 		}
 	}
 }
@@ -259,17 +247,19 @@ void Character::drawObject(Window*) {
 	if (ai) {
 		ai->drive();
 	}
-	drawHitAnimation();
-	IrregularPlatform::drawObject(NULL);
-	/**
-	 * Nieoptymalne rozwiązanie..
-	 * Za dużo push!
-	 */
-	if (!nick.getString()->empty()) {
-		glPushMatrix();
-		glTranslatef(x, y, 1);
-		nick.printText(w / 2 - nick.getScreenLength() / 2, -10);
-		glPopMatrix();
+	if (hit) {
+		updateHitAnim();
+		//
+		if (actual_cycles % 2 && hit) {
+			shaders[HIT_CHARACTER_SHADER]->begin();
+			//
+			IrregularPlatform::drawObject(NULL);
+			//
+			//shaders[HIT_CHARACTER_SHADER]->end();
+			shaders[WINDOW_SHADOW_SHADER]->begin();
+		}
+	} else {
+		IrregularPlatform::drawObject(NULL);
 	}
 }
 

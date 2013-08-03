@@ -47,11 +47,13 @@ namespace GUI {
 	class Control: public Body, public EventListener {
 		public:
 			enum Position {
-				VERTICAL, HORIZONTAL
+				VERTICAL,
+				HORIZONTAL
 			};
 
 			enum State {
-				NORMAL, CLICKED
+				NORMAL,
+				CLICKED
 			};
 
 		protected:

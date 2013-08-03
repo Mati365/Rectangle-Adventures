@@ -150,7 +150,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				 */
 			case HEALTH:
 				character->setType(Character::SCORE);
-				character->setNick("Zycie");
 				character->fitToWidth(16);
 				character->setStatus(health_status);
 				break;
@@ -160,7 +159,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				 */
 			case GHOST:
 				character->setType(Character::ENEMY);
-				character->setNick("Kupa");
 				character->fitToWidth(20);
 				character->setStatus(ghost_enemy_status);
 				character->setAI(new SnailAI(character, 1.2));

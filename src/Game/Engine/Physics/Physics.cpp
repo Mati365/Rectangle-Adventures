@@ -44,34 +44,34 @@ void pEngine::updateWorld() {
 			return;
 		}
 	}
-	
+
 	/**
 	 * Usuwanie wykasowanych obiektów!
 	 */
 	visible_bodies.clear();
-	
+
 	/**
 	 * Tworzenie quadtree!
 	 */
 	quadtree->clear();
 	quadtree->insertGroup(&list);
 	quadtree->getBodiesAt(active_range, visible_bodies);
-	
+
 	/**
 	 * Sprawdzenie kolizji!
 	 */
 	checkCollisions(visible_bodies);
-	
+
 	/**
 	 * Grawitacja!
 	 */
 	for (usint i = 0; i < visible_bodies.size(); ++i) {
 		Body* object = visible_bodies[i];
+		//
 		if (!object || IS_SET(object->state, Body::STATIC)
 				|| IS_SET(object->state, Body::HIDDEN)) {
 			continue;
 		}
-		
 		/**
 		 * Poruszanie się po platformie
 		 */
@@ -79,7 +79,7 @@ void pEngine::updateWorld() {
 		if (down_collision && down_collision->velocity.x != 0) {
 			object->x += down_collision->velocity.x;
 		}
-		
+
 		/**
 		 * Żywotność
 		 */
@@ -90,14 +90,14 @@ void pEngine::updateWorld() {
 				object->max_lifetime = 0;
 			}
 		}
-		
+
 		/**
 		 * Grawitacja
 		 */
 		if (object->velocity.y < 20.f) {
 			object->velocity.y += gravity_speed;
 		}
-		
+
 		/**
 		 * Siła tarcia
 		 */
@@ -115,14 +115,14 @@ void pEngine::updateWorld() {
 void pEngine::checkCollisions(deque<Body*>& _bodies) {
 	for (usint i = 0; i < _bodies.size(); ++i) {
 		Body* source = _bodies[i];
-		
+
 		// Czyszczenie
 		for (auto*& col : source->collisions) {
 			col = NULL;
 		}
-		
+
 		// Statyszne obiekty są omijane
-		if (IS_SET(_bodies[i]->state, Body::STATIC)) {
+		if (IS_SET(source->state, Body::STATIC)) {
 			continue;
 		}
 		for (usint j = 0; j < _bodies.size(); ++j) {
@@ -172,7 +172,7 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 				}
 				source->catchCollision(this, horizont_side, target);
 			}
-			
+
 			/**
 			 * Kolizje Lewo
 			 */
@@ -234,13 +234,13 @@ usint pEngine::checkHorizontalCollision(Body* _body, Body* _body2) {
 bool pEngine::moveAndCheck(float _x, float _y, Body* _body,
 		const Body* _body2) {
 	bool collision;
-	
+
 	_body->x += _x;
 	_body->y += _y;
 	collision = collide(_body, _body2);
 	_body->x -= _x;
 	_body->y -= _y;
-	
+
 	return collision;
 }
 

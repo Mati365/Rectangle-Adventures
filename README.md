@@ -12,7 +12,7 @@ Technologie jakie użyłem:
 - github
 
 Biblioteki jakie zastosowałem:
-- OpenGL 1.1 - shadery zbyt zmniejszały prędkość na GPU Intel GMA945(ver. OpenGL to 1.5), optymalizacje gry poprzez użycie list renderowania(glCallList) oraz transformacji kamer.
+- OpenGL 2.0 - użycie shaderów, optymalizacje gry poprzez użycie list renderowania(glCallList) oraz transformacji kamer.
 - SDL - odbieranie eventów i tworzenie okna, zbyt mizerna prędkość renderowania
 - glut - dla funkcji glutBitmapCharacter()
 - GLEW
@@ -23,7 +23,7 @@ Języki programowania to: C++0x oraz Java, zaimplementowane technologie:
 - Parallax Scrolling - poprzez użycie niezależnych kamer dla każdej warstwy
 - VFS(Virtual FileSystem) - wczytywanie/usuwanie/modyfikowanie plików(struktura: [ nagłówek ] [ dane ]  [ pointery ])
 - wrapper na funkcje OpenGL umożliwiający wyświetlanie prymitywów
-- QuadTree na potrzeby silnika Fizycznego
+- QuadTree na potrzeby silnika fizycznego i renderującego
 - Menedżer zasobów automatycznie usuwający obiekty po ich zniszczeniu.
 - Snapshot Manager - tworzący migawkę całej gry
 - Prosty język skryptowy umożliwiający interakcje z platformami

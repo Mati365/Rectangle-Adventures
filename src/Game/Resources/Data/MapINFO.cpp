@@ -38,8 +38,8 @@ bool readMob(FILE* file) {
 	
 	fscanf(file, "%hu %f %f %s\n", &type, &pos.x, &pos.y, shape);
 	//
-	ResourceFactory::getIstance(NULL).createObject((ResourceFactory::Types) type,
-			pos.x, pos.y, 0, 0, NULL, NULL);
+	ResourceFactory::getIstance(NULL).createObject(
+			(ResourceFactory::Types) type, pos.x, pos.y, 0, 0, NULL, NULL);
 	return true;
 }
 
@@ -176,8 +176,8 @@ bool MapINFO::load(FILE* map) {
 				shape);
 		//
 		ResourceFactory::getIstance(physics).createObject(
-				ResourceFactory::SCRIPT_BOX, rect.x, rect.y, rect.w, rect.h, NULL,
-				shape);
+				ResourceFactory::SCRIPT_BOX, rect.x, rect.y, rect.w, rect.h,
+				NULL, shape);
 	}
 	return true;
 }
