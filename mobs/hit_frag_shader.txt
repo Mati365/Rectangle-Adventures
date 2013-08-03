@@ -1,0 +1,6 @@
+void main() {
+	vec4 col = gl_Color;
+	//
+	gl_FragColor = vec4(1.f, 0.f, 0.f, col.a);
+}
+

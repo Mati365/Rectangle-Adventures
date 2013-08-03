@@ -1,0 +1,9 @@
+in vec4 gl_FragCoord;
+
+void main() {
+	vec3 vec = gl_FragCoord;
+	vec4 col = gl_Color;
+	// Odwrócenie przez ortho
+	float p = 1.f - sin(vec.x / 200);
+	gl_FragColor = vec4(col.r - p, col.g - p, col.b - p, col.a);
+}

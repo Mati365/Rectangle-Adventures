@@ -2,5 +2,5 @@ void main(void)
 {
 	vec4 v = vec4(gl_Vertex);
 
-	gl_Position = vec4(v.x, v.y, 1.f, 1.f);
+	gl_Position = vec3(v.x, v.y, 1.f);
 }

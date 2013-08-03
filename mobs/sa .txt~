@@ -1,0 +1,14 @@
+in vec4 gl_FragCoord;
+
+uniform float radius; // Promień kuli światła
+uniform vec2 pos; // Pozycja źródła światła
+
+void main() {
+	vec3 vec = gl_FragCoord;
+	vec4 col = gl_Color;
+	//
+	float prop = vec.y / 440.f;	
+	//
+	gl_FragColor = vec4(col.r * prop, col.g * prop, col.b * prop, col.a);
+}
+
