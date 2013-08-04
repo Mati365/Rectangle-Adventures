@@ -30,17 +30,26 @@ void QuadTree::subdive() {
 	if (NW) {
 		return;
 	}
-	NW = new QuadTree(this, Rect<float>(rect.x, rect.y, rect.w / 2, rect.h / 2),
+	NW = new QuadTree(
+			this,
+			Rect<float>(rect.x, rect.y, rect.w / 2, rect.h / 2),
 			level + 1);
-	NE = new QuadTree(this,
+	NE = new QuadTree(
+			this,
 			Rect<float>(rect.x + rect.w / 2, rect.y, rect.w / 2, rect.h / 2),
 			level + 1);
-	SW = new QuadTree(this,
+	SW = new QuadTree(
+			this,
 			Rect<float>(rect.x, rect.y + rect.h / 2, rect.w / 2, rect.h / 2),
 			level + 1);
-	SE = new QuadTree(this,
-			Rect<float>(rect.x + rect.w / 2, rect.y + rect.h / 2, rect.w / 2,
-					rect.h / 2), level + 1);
+	SE = new QuadTree(
+			this,
+			Rect<float>(
+					rect.x + rect.w / 2,
+					rect.y + rect.h / 2,
+					rect.w / 2,
+					rect.h / 2),
+			level + 1);
 }
 
 /**
@@ -50,7 +59,11 @@ void QuadTree::drawObject(Window*) {
 	if (!NW && bodies.empty()) {
 		return;
 	}
-	oglWrapper::drawRect(rect.x, rect.y, rect.w, rect.h,
+	oglWrapper::drawRect(
+			rect.x,
+			rect.y,
+			rect.w,
+			rect.h,
 			Color(level * 15, level * 15, level * 15, 255),
 			(MAX_LAYER - level) * 2);
 	if (NW) {

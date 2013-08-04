@@ -37,7 +37,10 @@ void translateKeyEvent(Uint8* keystate, Uint8 key, char translated,
 Window::Window(const Vector<usint>& _bounds, const string& _title) :
 				screen(NULL),
 				bounds(_bounds) {
-	screen = SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 32,
+	screen = SDL_SetVideoMode(
+			WINDOW_WIDTH,
+			WINDOW_HEIGHT,
+			32,
 			SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER);
 	if (!screen) {
 		return;
@@ -63,7 +66,8 @@ void Window::init() {
 	loadScreens();
 	//
 	if (!menu) {
-		logEvent(Logger::LOG_INFO,
+		logEvent(
+				Logger::LOG_INFO,
 				"Nastąpił problem podczas wczytywania menu.");
 		return;
 	}

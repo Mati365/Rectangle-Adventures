@@ -152,7 +152,10 @@ void Platform::drawBody() {
 				for (usint i = 0; i < h / 10; ++i) {
 					float proc = (float) i / (h / 10.f);
 					//
-					glColor4ub(col.r, col.g, col.b,
+					glColor4ub(
+							col.r,
+							col.g,
+							col.b,
 							col.a * 0.3f * (1.f - proc));
 					glVertex2f(x + w, y + i * 10);
 					glVertex2f(x, y + i * 10);

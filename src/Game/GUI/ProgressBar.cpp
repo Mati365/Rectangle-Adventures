@@ -37,16 +37,24 @@ void ProgressBar::drawObject(Window*) {
 	switch (position) {
 		case HORIZONTAL:
 			oglWrapper::drawFillRect(x + 3, y + h - 3 - size, w - 5, size, col);
-			oglWrapper::drawFillRect(x + w - 2 - w * 0.1, y + h - 3 - size,
-					w * 0.1, size, Color(0, 0, 0, 100));
+			oglWrapper::drawFillRect(
+					x + w - 2 - w * 0.1,
+					y + h - 3 - size,
+					w * 0.1,
+					size,
+					Color(0, 0, 0, 100));
 			break;
 			/**
 			 *
 			 */
 		case VERTICAL:
 			oglWrapper::drawFillRect(x + 2, y + 2, size + 1, h - 6, col);
-			oglWrapper::drawFillRect(x + 2, y + h - 4 - h * 0.1, size + 1,
-					h * 0.1, Color(0, 0, 0, 100));
+			oglWrapper::drawFillRect(
+					x + 2,
+					y + h - 4 - h * 0.1,
+					size + 1,
+					h * 0.1,
+					Color(0, 0, 0, 100));
 			break;
 	}
 }

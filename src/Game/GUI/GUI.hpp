@@ -159,8 +159,11 @@ namespace GUI {
 			Button(const Rect<float>& _bounds, const char* _text,
 					bool _border_enabled = true) :
 							Control(_bounds),
-							text(oglWrapper::WHITE, _text,
-									GLUT_BITMAP_HELVETICA_18, 18) {
+							text(
+									oglWrapper::WHITE,
+									_text,
+									GLUT_BITMAP_HELVETICA_18,
+									18) {
 				border_enabled = _border_enabled;
 			}
 			

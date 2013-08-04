@@ -38,8 +38,13 @@ void generateExplosion(pEngine* physics, Body* body, usint count,
 		//
 		float size = getIntRandom<int>(min_size, max_size);
 		//
-		Platform* platform = new Platform(body->x + cx, body->y + cy, size,
-				size, col, Body::NONE);
+		Platform* platform = new Platform(
+				body->x + cx,
+				body->y + cy,
+				size,
+				size,
+				col,
+				Body::NONE);
 		//
 		platform->setMaxLifetime(size * 140);
 		platform->setBorder(false, false, false, false);

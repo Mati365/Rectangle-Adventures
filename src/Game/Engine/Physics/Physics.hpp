@@ -60,132 +60,7 @@ namespace Physics {
 			}
 	};
 	
-	class pEngine;
-	class Body: public Rect<float>, public Renderer {
-		public:
-			Body* collisions[4];
-
-			/**
-			 * Flaga obiektu, czym on jest?
-			 */
-			enum Type {
-				HERO,
-				ENEMY,
-				PLATFORM,
-				SCORE,
-				BULLET,
-				TRIGGER,
-				SPIKES
-			};
-
-			/**
-			 * State, stan obiektu: czy podlega fizyce?
-			 */
-			enum State {
-				NONE = 0x01,
-				STATIC = 0x02,
-				HIDDEN = 0x04
-			};
-
-			usint state;
-
-			Vector<float> velocity;
-			float elasticity;
-			float weight;
-
-			/**
-			 * Flaga, typ obiektu
-			 */
-			usint type;
-			usint layer;
-			usint script_id;
-
-			/**
-			 * Orientacja
-			 */
-			usint orientation;
-
-			/**
-			 * Długość życia ciała
-			 */
-			usint max_lifetime;
-			usint lifetime;
-
-			Body() :
-							state(NONE),
-							elasticity(0),
-							weight(0),
-							type(PLATFORM),
-							layer(STATIC_LAYER),
-							script_id(0),
-							orientation(0),
-							max_lifetime(0),
-							lifetime(0) {
-				x = 0;
-				y = 0;
-				w = 0;
-				h = 0;
-			}
-			
-			Body(float _x, float _y, float _w, float _h,
-					float _elasticity = 1.f, float _weight = 1.f, usint _state =
-							NONE) :
-							state(_state),
-							elasticity(_elasticity),
-							weight(_weight),
-							type(PLATFORM),
-							layer(STATIC_LAYER),
-							script_id(0),
-							orientation(0),
-							max_lifetime(0),
-							lifetime(0) {
-				x = _x;
-				y = _y;
-				w = _w;
-				h = _h;
-			}
-			
-			/**
-			 * Długość życia do skasowania!
-			 * Particle
-			 */
-			void setMaxLifetime(usint _max_lifetime) {
-				max_lifetime = _max_lifetime;
-				lifetime = 0;
-				dynamically_allocated = true;
-			}
-			
-			/**
-			 * Wymiary!
-			 */
-			void setBounds(float _x, float _y, float _w, float _h) {
-				x = _x;
-				y = _y;
-				w = _w;
-				h = _h;
-			}
-			/**
-			 * Nadawanie type!
-			 */
-			void setType(usint _type) {
-				type = _type;
-			}
-			/**
-			 * Nadawanie stanu!
-			 */
-			void setState(usint _state) {
-				state = _state;
-			}
-			
-			virtual void catchCollision(pEngine*, usint, Body*) {
-			}
-			
-			virtual void drawObject(Window*) {
-			}
-			
-			virtual ~Body() {
-			}
-	};
+	class Body;
 	
 	/**
 	 * Todo:
@@ -325,6 +200,135 @@ namespace Physics {
 
 			usint checkVerticalCollision(Body*, Body*);
 			usint checkHorizontalCollision(Body*, Body*);
+	};
+	
+	/**
+	 * Obiekt podlegający fizyce
+	 */
+	class Body: public Rect<float>, public Renderer {
+		public:
+			Body* collisions[4];
+
+			/**
+			 * Flaga obiektu, czym on jest?
+			 */
+			enum Type {
+				HERO,
+				ENEMY,
+				PLATFORM,
+				SCORE,
+				BULLET,
+				TRIGGER,
+				SPIKES
+			};
+
+			/**
+			 * State, stan obiektu: czy podlega fizyce?
+			 */
+			enum State {
+				NONE = 0x01,
+				STATIC = 0x02,
+				HIDDEN = 0x04
+			};
+
+			usint state;
+
+			Vector<float> velocity;
+			float elasticity;
+			float weight;
+
+			/**
+			 * Flaga, typ obiektu
+			 */
+			usint type;
+			usint layer;
+			usint script_id;
+
+			/**
+			 * Orientacja
+			 */
+			usint orientation;
+
+			/**
+			 * Długość życia ciała
+			 */
+			usint max_lifetime;
+			usint lifetime;
+
+			Body() :
+							state(NONE),
+							elasticity(0),
+							weight(0),
+							type(PLATFORM),
+							layer(STATIC_LAYER),
+							script_id(0),
+							orientation(pEngine::UP),
+							max_lifetime(0),
+							lifetime(0) {
+				x = 0;
+				y = 0;
+				w = 0;
+				h = 0;
+			}
+			
+			Body(float _x, float _y, float _w, float _h,
+					float _elasticity = 1.f, float _weight = 1.f, usint _state =
+							NONE) :
+							state(_state),
+							elasticity(_elasticity),
+							weight(_weight),
+							type(PLATFORM),
+							layer(STATIC_LAYER),
+							script_id(0),
+							orientation(pEngine::UP),
+							max_lifetime(0),
+							lifetime(0) {
+				x = _x;
+				y = _y;
+				w = _w;
+				h = _h;
+			}
+			
+			/**
+			 * Długość życia do skasowania!
+			 * Particle
+			 */
+			void setMaxLifetime(usint _max_lifetime) {
+				max_lifetime = _max_lifetime;
+				lifetime = 0;
+				dynamically_allocated = true;
+			}
+			
+			/**
+			 * Wymiary!
+			 */
+			void setBounds(float _x, float _y, float _w, float _h) {
+				x = _x;
+				y = _y;
+				w = _w;
+				h = _h;
+			}
+			/**
+			 * Nadawanie type!
+			 */
+			void setType(usint _type) {
+				type = _type;
+			}
+			/**
+			 * Nadawanie stanu!
+			 */
+			void setState(usint _state) {
+				state = _state;
+			}
+			
+			virtual void catchCollision(pEngine*, usint, Body*) {
+			}
+			
+			virtual void drawObject(Window*) {
+			}
+			
+			virtual ~Body() {
+			}
 	};
 }
 

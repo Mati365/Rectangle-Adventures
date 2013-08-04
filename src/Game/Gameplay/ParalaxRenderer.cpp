@@ -44,14 +44,12 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	 * Odświeżanie kamery
 	 */
 	cam.updateCam(_window);
-
+	
 	/**
 	 * Lista aktualnie widocznych elementów!
 	 */
 	deque<Body*>* list = physics->getVisibleBodies();
 	
-	cout << list->size() << endl;
-
 	glPushMatrix();
 	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
 	if (draw_quad) {

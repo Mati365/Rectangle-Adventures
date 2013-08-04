@@ -9,6 +9,24 @@
 
 #include "../../Tools/Logger.hpp"
 
+/**
+ * Podstawowe obiekty w fabryce!!!
+ */
+ResourceFactory::FactoryType ResourceFactory::factory_types[] =
+		{
+			{ SPIKES, pEngine::RIGHT, 90, "kolce.txt", "spikes_right" },
+			{ SPIKES, pEngine::LEFT, -90, "kolce.txt", "spikes_left" },
+			{ SPIKES, pEngine::UP, 0, "kolce.txt", "spikes_up" },
+			{ SPIKES, pEngine::DOWN, 180, "kolce.txt", "spikes_down" },
+			//
+			{ SCORE, pEngine::NONE, 0, "punkt.txt", "score" },
+			{ HEALTH, pEngine::NONE, 0, "zycie.txt", "health" },
+			{ GHOST, pEngine::NONE, 0, "wrog.txt", "enemy" },
+			{ GUN, pEngine::NONE, 0, "bron.txt", "gun" } };
+
+/**
+ * Konstruktor prywatny!
+ */
 ResourceFactory::ResourceFactory() :
 				// Statusy!
 				health_status("health_status", 1, false, 0, 1),
@@ -20,24 +38,31 @@ ResourceFactory::ResourceFactory() :
 
 /**
  * Mapowanie podstawowych tekstur w grze!
+ *
+ * UWAGA! KOLEJNE KIERUNKI TEKSTUR SĄ FLAGAMI +100 od
+ * PIERWOTNEJ!!!
  */
+#define DIRECTION_TEXTURE_ADDITION 100
+
+// generowanie kolejnych id dla poszczególnych orientacji
+usint ResourceFactory::genTextureID(usint _type, usint _orientation) const {
+	return 5 * _type + DIRECTION_TEXTURE_ADDITION + _orientation;
+}
+
 void ResourceFactory::loadTexturesPack() {
 	// Gracz
 	readShape("gracz.txt", "player", 0);
 	readShape("czaszka.txt", "cranium", 0);
 	
-	// Kolce
-	putTexture(SPIKES_UP, readShape("kolce.txt", "spikes_up", 0));
-	putTexture(SPIKES_DOWN, readShape("kolce.txt", "spikes_down", 270));
-	putTexture(SPIKES_LEFT, readShape("kolce.txt", "spikes_left", -90));
-	putTexture(SPIKES_RIGHT, readShape("kolce.txt", "spikes_right", 90));
-	
-	// Tekstury wrogów
-	putTexture(SCORE, readShape("punkt.txt", "score", 0));
-	putTexture(HEALTH, readShape("zycie.txt", "health", 0));
-	putTexture(GHOST, readShape("wrog.txt", "enemy", 0));
-	putTexture(GUN, readShape("bron.txt", "gun", 0));
-	putTexture(GREEN_GUN, readShape("bron.txt", "gun2", 0));
+	// Tekstury mobów
+	for (FactoryType& factory_object : factory_types) {
+		putTexture(
+				genTextureID(factory_object.type, factory_object.orientation),
+				readShape(
+						factory_object.file_name,
+						factory_object.resource_label,
+						factory_object.rotation));
+	}
 	
 	// Pozostałe ksztalty
 	readShape("pocisk.txt", "bullet", 0);
@@ -66,11 +91,16 @@ ResourceFactory& ResourceFactory::getIstance(pEngine* _physics) {
  * Generowanie obiektów wraz ze skryptami
  */
 Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
-		float _h, PlatformShape* _shape, char* _script) {
+		float _h, PlatformShape* _shape, char* _script, usint _orientation) {
 	if (physics == NULL) {
 		logEvent(Logger::LOG_ERROR, "Fabryka zgłasza praw fizyki brak!");
 		return NULL;
 	}
+	
+	/**
+	 * Identyfikator teksturyt obikektu!
+	 */
+	usint _texture_id = genTextureID(_type, _orientation);
 	
 	/**
 	 * Obiekt skryptu dziedziczy tylko
@@ -82,7 +112,11 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 			return NULL;
 		}
 		Trigger* trigger = new Trigger(
-				Interpreter::getIstance().compile(_script), _x, _y, _w, _h);
+				Interpreter::getIstance().compile(_script),
+				_x,
+				_y,
+				_w,
+				_h);
 		triggers.push_back(trigger);
 		physics->insert(trigger);
 		//
@@ -95,54 +129,36 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	 */
 	Platform* _object = NULL;
 	if (_type == GUN) {
-		_object = new Gun(physics, _x, _y, 16, textures[_type],
+		_object = new Gun(
+				physics,
+				_x,
+				_y,
+				16,
+				textures[_texture_id],
 				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-						"bullet")), 240);
-		/**
-		 *
-		 */
-	} else if (_type == GREEN_GUN) {
-		_object = new Gun(physics, _x, _y, 16, textures[_type],
-				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-						"bullet_green")), 160);
+						"bullet")),
+				240);
 		/**
 		 *
 		 */
 	} else {
-		_object = new Character("", _x, _y,
-				_shape == NULL ? textures[_type] : _shape, Character::NONE);
+		_object = new Character(
+				"",
+				_x,
+				_y,
+				_shape == NULL ? textures[_texture_id] : _shape,
+				Character::NONE);
 		Character* character = dynamic_cast<Character*>(_object);
+		character->orientation = _orientation;
+		//
 		switch (_type) {
 			
 			/**
 			 * Kolce!
 			 */
-			case SPIKES_UP:
-			case SPIKES_DOWN:
-			case SPIKES_LEFT:
-			case SPIKES_RIGHT: {
+			case SPIKES:
 				character->setType(Character::SPIKES);
-				
-				/**
-				 * Orientacja odwrotna ze względu
-				 * na kąt padania gracza
-				 */
-				usint _orientation;
-				if (_type == SPIKES_UP)
-					_orientation = pEngine::DOWN;
-				else if (_type == SPIKES_DOWN)
-					_orientation = pEngine::UP;
-				else if (_type == SPIKES_LEFT)
-					_orientation = pEngine::RIGHT;
-				else
-					_orientation = pEngine::LEFT;
-				//
-				character->orientation = _orientation;
-				/**
-				 * Wymiary
-				 */
-				character->fitToWidth(24);
-			}
+				character->fitToWidth(23);
 				break;
 				
 				/**

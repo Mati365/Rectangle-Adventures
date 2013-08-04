@@ -33,13 +33,20 @@ MapINFO* loadMap(const char* path) {
 
 bool readMob(FILE* file) {
 	usint type;
+	usint orientation;
 	Vector<float> pos;
-	char shape[255];
 	
-	fscanf(file, "%hu %f %f %s\n", &type, &pos.x, &pos.y, shape);
+	fscanf(file, "%hu %f %f %hu\n", &type, &pos.x, &pos.y, &orientation);
 	//
 	ResourceFactory::getIstance(NULL).createObject(
-			(ResourceFactory::Types) type, pos.x, pos.y, 0, 0, NULL, NULL);
+			type,
+			pos.x,
+			pos.y,
+			0,
+			0,
+			NULL,
+			NULL,
+			orientation);
 	return true;
 }
 
@@ -101,6 +108,7 @@ bool MapINFO::load(FILE* map) {
 	
 	// Wczytywanie listy kształtów
 	fscanf(map, "%hu\n", &size);
+	
 	for (usint i = 0; i < size; ++i) {
 		fscanf(map, "%s\n", shape);
 		// Domyślny kąt to 0*
@@ -109,13 +117,33 @@ bool MapINFO::load(FILE* map) {
 	
 	// Wczytywanie parametrów graficznych platform..
 	fscanf(map, "%hu\n", &size);
+	
 	for (usint i = 0; i < size; ++i) {
-		fscanf(map,
+		fscanf(
+				map,
 				"%hu %d %d %d %d %hu %hu %f %f %f %f %hu %f %f %f %f %hu %hu %hu %hu %hu %hu %s\n",
-				&script_id, &border[0], &border[1], &border[2], &border[3],
-				&type, &repeat_movement, &max_distance.x, &max_distance.y,
-				&velocity.x, &velocity.y, &state, &rect.x, &rect.y, &rect.w,
-				&rect.h, &col.r, &col.g, &col.b, &col.a, &layer, &with_shape,
+				&script_id,
+				&border[0],
+				&border[1],
+				&border[2],
+				&border[3],
+				&type,
+				&repeat_movement,
+				&max_distance.x,
+				&max_distance.y,
+				&velocity.x,
+				&velocity.y,
+				&state,
+				&rect.x,
+				&rect.y,
+				&rect.w,
+				&rect.h,
+				&col.r,
+				&col.g,
+				&col.b,
+				&col.a,
+				&layer,
+				&with_shape,
 				shape);
 		//
 		Platform* platform = NULL;
@@ -124,7 +152,10 @@ bool MapINFO::load(FILE* map) {
 		 */
 		if (with_shape) {
 			platform =
-					new IrregularPlatform(rect.x, rect.y, state,
+					new IrregularPlatform(
+							rect.x,
+							rect.y,
+							state,
 							dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 									shape)));
 			dynamic_cast<IrregularPlatform*>(platform)->fitToWidth(rect.w);
@@ -144,6 +175,7 @@ bool MapINFO::load(FILE* map) {
 		//
 		objects.push_back(platform);
 	}
+	
 	// Obliczanie wymiarów!
 	calcBounds();
 	
@@ -155,8 +187,8 @@ bool MapINFO::load(FILE* map) {
 	for (auto iter = objects.begin(); iter != objects.end(); ++iter) {
 		physics->insert(*iter);
 	}
-	ResourceFactory::getIstance(physics);
 	
+	ResourceFactory::getIstance(physics);
 	Vector<float> pos;
 	/**
 	 * Wczytywanie mobów!
@@ -165,6 +197,7 @@ bool MapINFO::load(FILE* map) {
 	for (usint i = 0; i < size; ++i) {
 		readMob(map);
 	}
+	
 	/**
 	 * Wczytywanie skryptów!
 	 */
@@ -172,12 +205,24 @@ bool MapINFO::load(FILE* map) {
 	for (usint i = 0; i < size; ++i) {
 		memset(shape, 0, 256 * sizeof(char));
 		//
-		fscanf(map, "%f %f %f %f %[^\n]s\n", &rect.x, &rect.y, &rect.w, &rect.h,
+		fscanf(
+				map,
+				"%f %f %f %f %[^\n]s\n",
+				&rect.x,
+				&rect.y,
+				&rect.w,
+				&rect.h,
 				shape);
 		//
 		ResourceFactory::getIstance(physics).createObject(
-				ResourceFactory::SCRIPT_BOX, rect.x, rect.y, rect.w, rect.h,
-				NULL, shape);
+				ResourceFactory::SCRIPT_BOX,
+				rect.x,
+				rect.y,
+				rect.w,
+				rect.h,
+				NULL,
+				shape,
+				pEngine::NONE);
 	}
 	return true;
 }

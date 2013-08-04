@@ -12,9 +12,11 @@ using namespace GameScreen;
 
 Menu::Menu() :
 				Game("menu.txt"),
-				ver(oglWrapper::GRAY,
+				ver(
+						oglWrapper::GRAY,
 						"Wersja: 0.5 beta | Autor: Mateusz Baginski | email:cziken58@gmail.com",
-						GLUT_BITMAP_HELVETICA_12, 12) {
+						GLUT_BITMAP_HELVETICA_12,
+						12) {
 	lvl->enableHUD(false);
 	hero->getStatus()->health = 1;
 	//
@@ -29,13 +31,15 @@ void Menu::createMenuEntries() {
 	const char* _entries[] = { "Kontynuuj", "Nowa gra", "Koniec gry" };
 	for (usint i = 0; i < 3; ++i) {
 		entries.push_back(
-				new Button(Rect<float>(210 + 135 * i, 590, 100, 40),
+				new Button(
+						Rect<float>(210 + 135 * i, 590, 100, 40),
 						_entries[i]));
 	}
 	
 	// Dodawanie listy obiektów do świata!
 	for (auto iter = entries.begin(); iter != entries.end(); ++iter) {
-		(*iter)->putCallback(Event::MOUSE_RELEASED,
+		(*iter)->putCallback(
+				Event::MOUSE_RELEASED,
 				dynamic_cast<Callback*>(this));
 		lvl->getPhysics()->insert(*iter);
 	}

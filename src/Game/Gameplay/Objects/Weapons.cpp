@@ -53,7 +53,10 @@ void Gun::shot() {
 		return;
 	}
 	physics->insert(
-			new Bullet(x + w / 2 - BULLET_WIDTH / 2, y - h * 2, bullet_shape,
+			new Bullet(
+					x + w / 2 - BULLET_WIDTH / 2,
+					y - h * 2,
+					bullet_shape,
 					200));
 }
 

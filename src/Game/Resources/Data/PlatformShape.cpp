@@ -14,8 +14,9 @@ PlatformShape* readShape(const string& _path, const char* _resource_label,
 		float _angle) {
 	FILE* _file = main_filesystem.getExternalFile(_path.c_str(), NULL);
 	if (!_file) {
-		logEvent(Logger::LOG_ERROR,
-				("Podany plik " + _path + " nie istnieje!").c_str());
+		logEvent(
+				Logger::LOG_ERROR,
+				("Podana tekstura" + _path + " nie istnieje!").c_str());
 		return NULL;
 	}
 	PlatformShape* shape = readShape(_file, _resource_label, _angle);
@@ -27,7 +28,10 @@ PlatformShape* readShape(const string& _path, const char* _resource_label,
 PlatformShape* readShape(FILE* _file, const char* _resource_label,
 		float _angle) {
 	if (!_file) {
-		logEvent(Logger::LOG_ERROR, "Podany obiekt nie istnieje!");
+		logEvent(
+				Logger::LOG_ERROR,
+				("Podana tekstura " + (string )_resource_label
+						+ " nie istnieje!").c_str());
 		return NULL;
 	}
 	PlatformShape* shape = new PlatformShape(_file, _resource_label, _angle);
@@ -109,7 +113,12 @@ bool PlatformShape::load(FILE* _file) {
 			case 'C': {
 				Color col;
 				//---
-				fscanf(_file, "%hu %hu %hu %hu\n", &col.r, &col.g, &col.b,
+				fscanf(
+						_file,
+						"%hu %hu %hu %hu\n",
+						&col.r,
+						&col.g,
+						&col.b,
 						&col.a);
 				points[line] = {type, col};
 			}
@@ -155,7 +164,10 @@ bool PlatformShape::recompile() {
 		 */
 		switch (point->type) {
 			case 'C':
-				glColor4ub(point->col.r, point->col.g, point->col.b,
+				glColor4ub(
+						point->col.r,
+						point->col.g,
+						point->col.b,
 						point->col.a);
 				break;
 				

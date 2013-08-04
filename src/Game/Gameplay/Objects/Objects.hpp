@@ -430,24 +430,23 @@ class ResourceFactory {
 			GHOST,
 			OBJECT,
 			GUN,
-			GREEN_GUN,
 			SCRIPT_BOX,
-			/**
-			 * Kolce
-			 */
-			SPIKES_UP,
-			SPIKES_DOWN,
-			SPIKES_LEFT,
-			SPIKES_RIGHT
+			SPIKES
 		};
 
 		/**
-		 * Typy shaderów
+		 * Typy obiektów w fabryce
 		 */
-		enum Shaders {
-			HIT_SHADER,
-			WINDOW_SHADOW_SHADER
+		struct FactoryType {
+				usint type;
+				usint orientation;
+				float rotation;
+				// Dla zasobu
+				const char* file_name;
+				const char* resource_label;
 		};
+
+		static FactoryType factory_types[];
 
 	private:
 		deque<Platform*> created;
@@ -476,7 +475,7 @@ class ResourceFactory {
 		 * Deklaruje dynamicznie!
 		 */
 		Body* createObject(usint, float, float, float, float, PlatformShape*,
-				char*);
+				char*, usint);
 
 		/**
 		 * Kasowanie obiektów mapy!
@@ -490,6 +489,10 @@ class ResourceFactory {
 
 	private:
 		void loadTexturesPack();
+		/**
+		 *  Generowanie kolejnych id dla poszczególnych orientacji
+		 */
+		usint genTextureID(usint, usint) const;
 };
 
 #endif /* OBJECTS_HPP_ */

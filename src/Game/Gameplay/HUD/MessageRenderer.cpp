@@ -22,15 +22,27 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				border_color(255, 255, 255),
 				background_color(0, 0, 0),
 				// HUD
-				health(oglWrapper::WHITE, "Zdrowie:", GLUT_BITMAP_HELVETICA_18,
+				health(
+						oglWrapper::WHITE,
+						"Zdrowie:",
+						GLUT_BITMAP_HELVETICA_18,
 						18),
-				health_bar(Rect<float>(0, 0, 0, 0), oglWrapper::RED, MAX_LIVES,
+				health_bar(
+						Rect<float>(0, 0, 0, 0),
+						oglWrapper::RED,
+						MAX_LIVES,
 						Control::VERTICAL),
 				
-				score(oglWrapper::WHITE, "Punkty:", GLUT_BITMAP_HELVETICA_18,
+				score(
+						oglWrapper::WHITE,
+						"Punkty:",
+						GLUT_BITMAP_HELVETICA_18,
 						18),
-				score_bar(Rect<float>(0, 0, 0, 0), oglWrapper::PURPLE,
-						MAX_SCORE, Control::VERTICAL),
+				score_bar(
+						Rect<float>(0, 0, 0, 0),
+						oglWrapper::PURPLE,
+						MAX_SCORE,
+						Control::VERTICAL),
 				//
 				
 				background(_background),
@@ -52,7 +64,10 @@ void MessageRenderer::openCutscene(const Message& msg) {
 	if (cutscene_box) {
 		delete cutscene_box;
 	}
-	cutscene_box = new IrregularPlatform(-2000, -2000, Body::STATIC,
+	cutscene_box = new IrregularPlatform(
+			-2000,
+			-2000,
+			Body::STATIC,
 			msg.cutscene);
 	cutscene_box->fitToWidth(WINDOW_WIDTH);
 	//
@@ -90,8 +105,11 @@ void MessageRenderer::drawBorder(Window* _window) {
 	/**
 	 * Wypełnienie!
 	 */
-	oglWrapper::drawFillRect(SPACES, _window->getBounds()->y - height + SPACES,
-			_window->getBounds()->x - SPACES * 2, height - SPACES * 2,
+	oglWrapper::drawFillRect(
+			SPACES,
+			_window->getBounds()->y - height + SPACES,
+			_window->getBounds()->x - SPACES * 2,
+			height - SPACES * 2,
 			oglWrapper::BLACK);
 	
 	/**
@@ -118,8 +136,12 @@ void MessageRenderer::drawBorder(Window* _window) {
 	//
 	glPopAttrib();
 	if (closed) {
-		oglWrapper::drawFillRect(SPACES * 2, _window->getBounds()->y - height,
-				title.getScreenLength() + 20, 17, background_color);
+		oglWrapper::drawFillRect(
+				SPACES * 2,
+				_window->getBounds()->y - height,
+				title.getScreenLength() + 20,
+				17,
+				background_color);
 	}
 }
 
@@ -167,10 +189,16 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 		hero = background->getHero();
 	}
 	if (health_bar.w == 0) {
-		health_bar.setBounds(SPACES * 3 + health.getScreenLength(),
-				_window->getBounds()->y - 30, 112, 20);
-		score_bar.setBounds(_window->getBounds()->x - 112 - SPACES * 2,
-				_window->getBounds()->y - 30, 112, 20);
+		health_bar.setBounds(
+				SPACES * 3 + health.getScreenLength(),
+				_window->getBounds()->y - 30,
+				112,
+				20);
+		score_bar.setBounds(
+				_window->getBounds()->x - 112 - SPACES * 2,
+				_window->getBounds()->y - 30,
+				112,
+				20);
 	}
 	/**
 	 * Pasek życia!
@@ -184,7 +212,8 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	score_bar.setValue(hero->getStatus()->score);
 	score.printText(
 			_window->getBounds()->x - SPACES * 3 - score_bar.w
-					- score.getScreenLength(), _window->getBounds()->y - 15);
+					- score.getScreenLength(),
+			_window->getBounds()->y - 15);
 	score_bar.drawObject(NULL);
 }
 
@@ -197,9 +226,13 @@ void MessageRenderer::drawIntroMessage(Window* _window) {
 	 */
 	if (!title.isAnim() && !text.isAnim()) {
 		if (background->getState() == IntroBackground::PAUSE) {
-			glText t(oglWrapper::YELLOW, "Aby kontynuowac wcisnij [SPACJE]!",
-					GLUT_BITMAP_HELVETICA_18, 18);
-			t.printText(_window->getBounds()->x / 2 - t.getScreenLength() / 2,
+			glText t(
+					oglWrapper::YELLOW,
+					"Aby kontynuowac wcisnij [SPACJE]!",
+					GLUT_BITMAP_HELVETICA_18,
+					18);
+			t.printText(
+					_window->getBounds()->x / 2 - t.getScreenLength() / 2,
 					90);
 		} else {
 			popMessage();

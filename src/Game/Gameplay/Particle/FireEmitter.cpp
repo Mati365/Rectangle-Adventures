@@ -25,8 +25,13 @@ bool FireEmitter::drawParticle(usint _index, Window* _window) {
 				- 255 * particle.life_duration / particle.max_life_duration;
 		particle.col.a = particle.col.g;
 	}
-	oglWrapper::drawRect(particle.pos.x, particle.pos.y, particle.size,
-			particle.size, particle.col, 1);
+	oglWrapper::drawRect(
+			particle.pos.x,
+			particle.pos.y,
+			particle.size,
+			particle.size,
+			particle.col,
+			1);
 	
 	if (particle.life_duration > particle.max_life_duration || destroyed) {
 		particles.erase(particles.begin() + _index);
@@ -40,8 +45,11 @@ bool FireEmitter::drawParticle(usint _index, Window* _window) {
  */
 void FireEmitter::createNewParticle(Window* _window) {
 	for (usint i = 1; i < getIntRandom(6, 30); ++i) {
-		Particle part(Vector<float>(x, y), getIntRandom(10, 20),
-				getIntRandom(10, 80), Color(255, 255, 0));
+		Particle part(
+				Vector<float>(x, y),
+				getIntRandom(10, 20),
+				getIntRandom(10, 80),
+				Color(255, 255, 0));
 		
 		int rx = getIntRandom<int>(-w / 2, w / 2);
 		int ry = getIntRandom<int>(-w / 2, w / 2);

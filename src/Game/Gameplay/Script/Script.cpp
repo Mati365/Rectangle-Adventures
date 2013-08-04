@@ -179,9 +179,11 @@ bool Interpreter::interpret(Script* script) {
 				 */
 			case SET_MOVING_DIR:
 				selected->setMovingDir(
-						Vector<float>(Convert::stringTo<float>(func.args[0]),
+						Vector<float>(
+								Convert::stringTo<float>(func.args[0]),
 								Convert::stringTo<float>(func.args[1])),
-						Vector<float>(Convert::stringTo<float>(func.args[2]),
+						Vector<float>(
+								Convert::stringTo<float>(func.args[2]),
 								Convert::stringTo<float>(func.args[3])),
 						Convert::stringTo<bool>(func.args[4]));
 				break;
@@ -195,7 +197,8 @@ bool Interpreter::interpret(Script* script) {
 				//
 				switch (particle_type) {
 					case FIRE:
-						emitter = new FireEmitter(Rect<float>(0, 0, 36, 64),
+						emitter = new FireEmitter(
+								Rect<float>(0, 0, 36, 64),
 								25);
 						break;
 						/**
@@ -221,7 +224,9 @@ bool Interpreter::interpret(Script* script) {
 				 */
 			case SHOW_MESSAGE:
 				map->getMessageRenderer()->addMessage(
-						MessageRenderer::Message(func.args[0], func.args[1],
+						MessageRenderer::Message(
+								func.args[0],
+								func.args[1],
 								NULL));
 				break;
 				
@@ -244,8 +249,12 @@ bool Interpreter::interpret(Script* script) {
 						(ResourceFactory::Types) Convert::stringTo<usint>(
 								func.args[0]),
 						Convert::stringTo<float>(func.args[1]),
-						Convert::stringTo<float>(func.args[2]), 0, 0, NULL,
-						NULL)->script_id = Convert::stringTo<usint>(
+						Convert::stringTo<float>(func.args[2]),
+						0,
+						0,
+						NULL,
+						NULL,
+						pEngine::NONE)->script_id = Convert::stringTo<usint>(
 						func.args[3]);
 				break;
 				/**
