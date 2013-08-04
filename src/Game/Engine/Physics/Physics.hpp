@@ -196,6 +196,8 @@ namespace Physics {
 			~pEngine();
 
 		private:
+			// Czy warto sprawdzać dla niego kolizje
+			bool isBodyActive(Body*);
 			void checkCollisions(deque<Body*>&);
 
 			usint checkVerticalCollision(Body*, Body*);
@@ -218,17 +220,19 @@ namespace Physics {
 				PLATFORM,
 				SCORE,
 				BULLET,
-				TRIGGER,
-				SPIKES
+				TRIGGER, // event skrtpytu
+				SPIKES, // kolce
+				LADDER // drabina
 			};
 
 			/**
 			 * State, stan obiektu: czy podlega fizyce?
 			 */
 			enum State {
-				NONE = 0x01,
-				STATIC = 0x02,
-				HIDDEN = 0x04
+				NONE = 1 << 0,
+				STATIC = 1 << 1,
+				HIDDEN = 1 << 2,
+				BACKGROUND = 1 << 3 // tło nie oddziaływujące
 			};
 
 			usint state;

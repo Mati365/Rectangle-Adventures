@@ -30,6 +30,15 @@ void pEngine::setSleep(usint _sleep_time) {
 }
 
 /**
+ * Sprawdzenie aktywności obiektu!
+ */
+bool pEngine::isBodyActive(Body* object) {
+	return !(IS_SET(object->state, Body::STATIC)
+			|| IS_SET(object->state, Body::HIDDEN)
+			|| IS_SET(object->state, Body::BACKGROUND));
+}
+
+/**
  * Odświeżanie świata!
  */
 void pEngine::updateWorld() {
@@ -68,8 +77,7 @@ void pEngine::updateWorld() {
 	for (usint i = 0; i < visible_bodies.size(); ++i) {
 		Body* object = visible_bodies[i];
 		//
-		if (!object || IS_SET(object->state, Body::STATIC)
-				|| IS_SET(object->state, Body::HIDDEN)) {
+		if (!object || !isBodyActive(object)) {
 			continue;
 		}
 		/**
@@ -122,27 +130,24 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 		}
 		
 		// Statyszne obiekty są omijane
-		if (IS_SET(source->state, Body::STATIC)) {
+		if (!isBodyActive(source)) {
 			continue;
 		}
 		for (usint j = 0; j < _bodies.size(); ++j) {
 			Body* target = _bodies[j];
 			if (source->destroyed || j == i
+					|| IS_SET(source->state, Body::STATIC)
 					|| (source->layer != target->layer
-							&& !IS_SET(target->state, Body::STATIC)
-							&& !IS_SET(source->state, Body::STATIC))
-					|| (IS_SET(source->state, Body::STATIC)
-							&& IS_SET(target->state, Body::STATIC))){
-					continue;
-				}
+							&& !IS_SET(target->state, Body::STATIC))) {
+				continue;
+			}
 
 			/**
 			 * Kolizje Góra/ Dół
 			 */
 			usint horizont_side = checkHorizontalCollision(source, target);
 			if (horizont_side != NONE) {
-				if (!IS_SET(source->state, Body::HIDDEN)
-						&& !IS_SET(target->state, Body::HIDDEN)) {
+				if (!IS_SET(target->state, (Body::HIDDEN | Body::BACKGROUND))) {
 					if (horizont_side == DOWN) {
 						/**
 						 * Dół
@@ -178,8 +183,7 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 			 */
 			usint vertical_side = checkVerticalCollision(source, target);
 			if (vertical_side != NONE) {
-				if (!IS_SET(source->state, Body::HIDDEN)
-						&& !IS_SET(target->state, Body::HIDDEN)) {
+				if (!IS_SET(target->state, (Body::HIDDEN | Body::BACKGROUND))) {
 					source->velocity.x = -source->velocity.x / 2;
 					source->collisions[vertical_side - 1] = target;
 				}

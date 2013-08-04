@@ -422,7 +422,9 @@ using oglWrapper::Shader;
 class ResourceFactory {
 	public:
 		/**
-		 * Typy obiektów!
+		 * Typy obiektów generowanych
+		 * przez fabryke nie są tym
+		 * samym co w silniku fizycznym
 		 */
 		enum Types {
 			SCORE,
@@ -431,7 +433,8 @@ class ResourceFactory {
 			OBJECT,
 			GUN,
 			SCRIPT_BOX,
-			SPIKES
+			SPIKES,
+			LADDER
 		};
 
 		/**

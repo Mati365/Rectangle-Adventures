@@ -31,7 +31,7 @@ Func funcs[] = {
 					{ SHOW_MESSAGE, "SHOW_MESSAGE", 2 },
 					{ SHOW_SPLASH, "SHOW_SPLASH", 1 },
 					{ LOAD_MAP, "LOAD_MAP", 1 },
-					{ CREATE_OBJECT, "CREATE_OBJECT", 4 } };
+					{ CREATE_OBJECT, "CREATE_OBJECT", 5 } };
 
 //---------------------
 
@@ -254,8 +254,8 @@ bool Interpreter::interpret(Script* script) {
 						0,
 						NULL,
 						NULL,
-						pEngine::NONE)->script_id = Convert::stringTo<usint>(
-						func.args[3]);
+						Convert::stringTo<float>(func.args[4]))->script_id =
+						Convert::stringTo<usint>(func.args[3]);
 				break;
 				/**
 				 *

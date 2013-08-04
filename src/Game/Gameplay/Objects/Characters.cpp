@@ -117,9 +117,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	 */
 	if ((type == Body::HERO || type == Body::ENEMY)
 			&& dir == pEngine::DOWN&& !IS_SET(body->state, Body::HIDDEN)) {
-			/**
-			 * Wektor ruchu został odwrócony!
-			 */
+			// Zryte formatowanie
 			if
 (		velocity.y < -9 && status.health > 0) {
 			die(physics, dir);
@@ -147,6 +145,19 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 		return;
 	}
 	switch (enemy->type) {
+		case LADDER: {
+			float _max_speed = physics->getGravitySpeed() * 2;
+			if (velocity.y > _max_speed) {
+				velocity.y = _max_speed;
+			} else if (velocity.y < -_max_speed * 1.5f) {
+				velocity.y = -_max_speed * 1.5f;
+			}
+		}
+			break;
+
+			/**
+			 *
+			 */
 		case SCORE:
 			status += enemy->status;
 			if (status.health > MAX_LIVES) {
@@ -157,7 +168,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			//
 			body->destroyed = true;
 			break;
-			
+
 			/**
 			 *
 			 */
@@ -172,7 +183,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			}
 			velocity.invert();
 			break;
-			
+
 			/**
 			 *
 			 */
@@ -185,21 +196,18 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			//
 			body->destroyed = true;
 			break;
-			
+
 			/**
 			 *
 			 */
 		case SPIKES:
-			//if (body->orientation != dir) {
-			//break;
-			//}
 			if (status.health > 0) {
 				status.health -= 1;
 			}
 			hitMe(physics);
 			jump(13, true);
 			break;
-			
+
 			/**
 			 *
 			 */

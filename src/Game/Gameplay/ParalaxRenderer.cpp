@@ -67,11 +67,14 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	 */
 	for (usint i = 0; i < list->size(); ++i) {
 		Body* body = (*list)[i];
-		if (IS_SET(body->state, Body::HIDDEN)) {
+		if (IS_SET(body->state, Body::HIDDEN) || body == cam.focus) {
 			continue;
 		}
 		body->drawObject(_window);
 	}
-	
+	/**
+	 * Renderowanie focusa na końcu
+	 */
+	cam.focus->drawObject(NULL);
 	glPopMatrix();
 }

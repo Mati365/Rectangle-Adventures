@@ -22,7 +22,8 @@ ResourceFactory::FactoryType ResourceFactory::factory_types[] =
 			{ SCORE, pEngine::NONE, 0, "punkt.txt", "score" },
 			{ HEALTH, pEngine::NONE, 0, "zycie.txt", "health" },
 			{ GHOST, pEngine::NONE, 0, "wrog.txt", "enemy" },
-			{ GUN, pEngine::NONE, 0, "bron.txt", "gun" } };
+			{ GUN, pEngine::NONE, 0, "bron.txt", "gun" },
+			{ LADDER, pEngine::NONE, 0, "drabina.txt", "stairs" } };
 
 /**
  * Konstruktor prywatny!
@@ -39,14 +40,14 @@ ResourceFactory::ResourceFactory() :
 /**
  * Mapowanie podstawowych tekstur w grze!
  *
- * UWAGA! KOLEJNE KIERUNKI TEKSTUR SĄ FLAGAMI +100 od
+ * UWAGA! KOLEJNE KIERUNKI TEKSTUR SĄ FLAGAMI +MAX_ILOŚĆ od
  * PIERWOTNEJ!!!
  */
-#define DIRECTION_TEXTURE_ADDITION 100
+#define MAX_TEXTURES_COUNT 300
 
 // generowanie kolejnych id dla poszczególnych orientacji
 usint ResourceFactory::genTextureID(usint _type, usint _orientation) const {
-	return 5 * _type + DIRECTION_TEXTURE_ADDITION + _orientation;
+	return 5 * _type + MAX_TEXTURES_COUNT + _orientation;
 }
 
 void ResourceFactory::loadTexturesPack() {
@@ -152,10 +153,18 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		character->orientation = _orientation;
 		//
 		switch (_type) {
-			
 			/**
-			 * Kolce!
+			 * Schody!
 			 */
+			case LADDER:
+				character->setType(Character::LADDER);
+				character->setState(Body::BACKGROUND);
+				character->fitToWidth(23);
+				break;
+
+				/**
+				 * Kolce!
+				 */
 			case SPIKES:
 				character->setType(Character::SPIKES);
 				character->fitToWidth(23);

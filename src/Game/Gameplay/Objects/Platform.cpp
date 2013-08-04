@@ -102,21 +102,24 @@ void Platform::drawBorder() {
 	} else {
 		glBegin(GL_LINES);
 		if (border[pEngine::UP - 1]) {
+			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x, y);
-			glColor4ub(col.r, col.g, col.b, 0.f);
 			glVertex2f(x + w, y);
-		}
-		if (border[pEngine::DOWN - 1]) {
+		} else if (border[pEngine::DOWN - 1]) {
+			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x, y + h);
-			glColor4ub(col.r, col.g, col.b, 0.f);
 			glVertex2f(x + w, y + h);
 		}
 		if (border[pEngine::LEFT - 1]) {
+			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x, y);
+			glColor4ub(col.r, col.g, col.b, 0.f);
 			glVertex2f(x, y + h);
 		}
 		if (border[pEngine::RIGHT - 1]) {
+			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x + w, y);
+			glColor4ub(col.r, col.g, col.b, 0.f);
 			glVertex2f(x + w, y + h);
 		}
 		glEnd();

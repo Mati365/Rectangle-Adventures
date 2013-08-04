@@ -31,14 +31,28 @@ MapINFO* loadMap(const char* path) {
 	return map;
 }
 
+/**
+ * Wczytywanie mob'a
+ */
 bool readMob(FILE* file) {
 	usint type;
 	usint orientation;
+	usint script_id;
+	usint state;
 	Vector<float> pos;
 	
-	fscanf(file, "%hu %f %f %hu\n", &type, &pos.x, &pos.y, &orientation);
 	//
-	ResourceFactory::getIstance(NULL).createObject(
+	fscanf(
+			file,
+			"%hu %f %f %hu %hu %hu\n",
+			&type,
+			&pos.x,
+			&pos.y,
+			&orientation,
+			&script_id,
+			&state);
+	//
+	Body* body = ResourceFactory::getIstance(NULL).createObject(
 			type,
 			pos.x,
 			pos.y,
@@ -47,6 +61,11 @@ bool readMob(FILE* file) {
 			NULL,
 			NULL,
 			orientation);
+	//
+	body->script_id = script_id;
+	if (!IS_SET(state, Body::NONE)) {
+		body->state = state;
+	}
 	return true;
 }
 
@@ -108,7 +127,6 @@ bool MapINFO::load(FILE* map) {
 	
 	// Wczytywanie listy kształtów
 	fscanf(map, "%hu\n", &size);
-	
 	for (usint i = 0; i < size; ++i) {
 		fscanf(map, "%s\n", shape);
 		// Domyślny kąt to 0*
@@ -117,7 +135,6 @@ bool MapINFO::load(FILE* map) {
 	
 	// Wczytywanie parametrów graficznych platform..
 	fscanf(map, "%hu\n", &size);
-	
 	for (usint i = 0; i < size; ++i) {
 		fscanf(
 				map,
@@ -147,6 +164,7 @@ bool MapINFO::load(FILE* map) {
 				shape);
 		//
 		Platform* platform = NULL;
+
 		/**
 		 * Wczytywanie kształtu
 		 */
