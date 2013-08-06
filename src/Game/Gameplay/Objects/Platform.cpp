@@ -148,7 +148,7 @@ void Platform::drawBody() {
 				for (usint i = 0; i < w / 10; ++i) {
 					glColor4ub(col.r, col.g, col.b, 0.f);
 					glVertex2f(x + i * 10, y + h);
-					glColor4ub(col.r, col.g, col.b, col.a * 0.4f);
+					glColor4ub(col.r, col.g, col.b, col.a * 0.3f);
 					glVertex2f(x + i * 10, y);
 				}
 			} else {
@@ -159,7 +159,7 @@ void Platform::drawBody() {
 							col.r,
 							col.g,
 							col.b,
-							col.a * 0.3f * (1.f - proc));
+							col.a * 0.2f * (1.f - proc));
 					glVertex2f(x + w, y + i * 10);
 					glVertex2f(x, y + i * 10);
 				}
@@ -176,14 +176,14 @@ void Platform::drawBody() {
 				for (usint i = 0; i < w / 10; ++i) {
 					glColor4ub(col.r, col.g, col.b, 0.f);
 					glVertex2f(x + i * 10, y + h);
-					glColor4ub(col.r, col.g, col.b, col.a * 0.4f);
+					glColor4ub(col.r, col.g, col.b, col.a * 0.3f);
 					glVertex2f(x + i * 10 + 10, y);
 				}
 			} else {
 				for (usint i = 0; i < h / 10; ++i) {
 					glColor4ub(col.r, col.g, col.b, 0.f);
 					glVertex2f(x + w, y + i * 10);
-					glColor4ub(col.r, col.g, col.b, col.a * 0.4f);
+					glColor4ub(col.r, col.g, col.b, col.a * 0.3f);
 					glVertex2f(x, y + i * 10 + 10);
 				}
 			}
@@ -242,10 +242,10 @@ IrregularPlatform::IrregularPlatform(float _x, float _y, usint _state,
 }
 
 void IrregularPlatform::setShape(PlatformShape* _shape) {
-	Vector<float> _bounds = _shape->getBounds();
+	Rect<float>& _bounds = _shape->getBounds();
 	//
-	w = _bounds.x;
-	h = _bounds.y;
+	w = _bounds.w;
+	h = _bounds.h;
 	shape = _shape;
 }
 

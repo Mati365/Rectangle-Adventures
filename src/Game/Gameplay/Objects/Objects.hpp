@@ -24,7 +24,7 @@ using namespace Engine;
 using namespace Physics;
 
 #define MAX_LIVES 3
-#define MAX_SCORE 500
+#define MAX_SCORE 1000
 #define DEATH -1
 
 /**
@@ -434,7 +434,12 @@ class ResourceFactory {
 			GUN,
 			SCRIPT_BOX,
 			SPIKES,
-			LADDER
+			LADDER,
+			/**
+			 * Dynamiczne obiekty nie są wczytywane
+			 * dlatego idą na koniec
+			 */
+			BULLET
 		};
 
 		/**
@@ -444,12 +449,27 @@ class ResourceFactory {
 				usint type;
 				usint orientation;
 				float rotation;
+				float width;
 				// Dla zasobu
 				const char* file_name;
 				const char* resource_label;
 		};
 
 		static FactoryType factory_types[];
+
+		/**
+		 * Wyszukiwanie typu obiektu
+		 */
+		static FactoryType* getFactoryType(usint _type, usint _orientation) {
+			for (usint i = 0; i < 12; ++i) {
+				FactoryType* obj = &factory_types[i];
+				//
+				if (obj->type == _type && obj->orientation == _orientation) {
+					return &factory_types[i];
+				}
+			}
+			return NULL;
+		}
 
 	private:
 		deque<Platform*> created;

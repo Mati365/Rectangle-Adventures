@@ -125,7 +125,7 @@ class PlatformShape: public Resource<usint> {
 
 	protected:
 		GLuint id;
-		Vector<float> bounds;
+		Rect<float> bounds;
 
 		// Kąt obrotu!
 		float angle;
@@ -153,7 +153,7 @@ class PlatformShape: public Resource<usint> {
 		 * Przeszukiwanie wierzchołków,
 		 * wyznaczanie skrajnych rogów
 		 */
-		Vector<float>& getBounds() {
+		Rect<float>& getBounds() {
 			return bounds;
 		}
 		
@@ -162,6 +162,12 @@ class PlatformShape: public Resource<usint> {
 		}
 		
 		~PlatformShape();
+
+	protected:
+		/**
+		 * Obliczanie wymiarów
+		 */
+		void updateBounds();
 };
 
 #endif /* RESOURCES_HPP_ */

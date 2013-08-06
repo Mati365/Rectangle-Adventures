@@ -14,16 +14,27 @@
  */
 ResourceFactory::FactoryType ResourceFactory::factory_types[] =
 		{
-			{ SPIKES, pEngine::RIGHT, 90, "kolce.txt", "spikes_right" },
-			{ SPIKES, pEngine::LEFT, -90, "kolce.txt", "spikes_left" },
-			{ SPIKES, pEngine::UP, 0, "kolce.txt", "spikes_up" },
-			{ SPIKES, pEngine::DOWN, 180, "kolce.txt", "spikes_down" },
+		// typ orientacja obrot szerokosc nazwa_pliku nazwa_zasobu
+			{ SPIKES, pEngine::RIGHT, 90.f, 20, "kolce.txt", "spikes_right" },
+			{ SPIKES, pEngine::LEFT, -90.f, 20, "kolce.txt", "spikes_left" },
+			{ SPIKES, pEngine::UP, 0.f, 23, "kolce.txt", "spikes_up" },
+			{ SPIKES, pEngine::DOWN, 180.f, 23, "kolce.txt", "spikes_down" },
 			//
-			{ SCORE, pEngine::NONE, 0, "punkt.txt", "score" },
-			{ HEALTH, pEngine::NONE, 0, "zycie.txt", "health" },
-			{ GHOST, pEngine::NONE, 0, "wrog.txt", "enemy" },
-			{ GUN, pEngine::NONE, 0, "bron.txt", "gun" },
-			{ LADDER, pEngine::NONE, 0, "drabina.txt", "stairs" } };
+			{ SCORE, pEngine::NONE, 0.f, 12, "punkt.txt", "score" },
+			{ HEALTH, pEngine::NONE, 0.f, 16, "zycie.txt", "health" },
+			{ GHOST, pEngine::NONE, 0.f, 20, "wrog.txt", "enemy" },
+			//
+			{ GUN, pEngine::RIGHT, 90.f, 12, "bron.txt", "gun_right" },
+			{ GUN, pEngine::LEFT, -90.f, 12, "bron.txt", "gun_left" },
+			{ GUN, pEngine::UP, 0.f, 16, "bron.txt", "gun_up" },
+			{ GUN, pEngine::DOWN, 180.f, 16, "bron.txt", "gun_down" },
+			//
+			{ LADDER, pEngine::NONE, 0.f, 23, "drabina.txt", "stairs" },
+			// Szerokość bez znaczenia!
+			{ BULLET, pEngine::RIGHT, 90.f, 0, "pocisk.txt", "bullet_right" },
+			{ BULLET, pEngine::LEFT, -90.f, 0, "pocisk.txt", "bullet_left" },
+			{ BULLET, pEngine::UP, 0.f, 0, "pocisk.txt", "bullet_up" },
+			{ BULLET, pEngine::DOWN, 180.f, 0, "pocisk.txt", "bullet_down" } };
 
 /**
  * Konstruktor prywatny!
@@ -64,11 +75,7 @@ void ResourceFactory::loadTexturesPack() {
 						factory_object.resource_label,
 						factory_object.rotation));
 	}
-	
-	// Pozostałe ksztalty
-	readShape("pocisk.txt", "bullet", 0);
-	readShape("pocisk_zielony.txt", "bullet_green", 0);
-	
+
 	//
 	logEvent(Logger::LOG_INFO, "Pomyślnie wczytano paczkę tekstur!");
 }
@@ -102,7 +109,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	 * Identyfikator teksturyt obikektu!
 	 */
 	usint _texture_id = genTextureID(_type, _orientation);
-	
+
 	/**
 	 * Obiekt skryptu dziedziczy tylko
 	 * od Body!
@@ -123,22 +130,33 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		//
 		return trigger;
 	}
-	
+
 	/**
 	 * Moby:
-	 * GREEN_GUN strzela szybciej niż GUN!
+	 * Działko
 	 */
+	/**
+	 * Przeszukiwanie bazy obiektów
+	 */
+	FactoryType* _factory_type = getFactoryType(_type, _orientation);
+	usint _width = _factory_type ? _factory_type->width : 0;
+
 	Platform* _object = NULL;
 	if (_type == GUN) {
 		_object = new Gun(
 				physics,
 				_x,
 				_y,
-				16,
 				textures[_texture_id],
-				dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-						"bullet")),
+				{ textures[genTextureID(BULLET, 1)], textures[genTextureID(
+							BULLET,
+							2)],
+					textures[genTextureID(BULLET, 3)], textures[genTextureID(
+							BULLET,
+							4)] },
 				240);
+		_object->orientation = _orientation;
+		dynamic_cast<Gun*>(_object)->fitToWidth(_width);
 		/**
 		 *
 		 */
@@ -150,8 +168,12 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				_shape == NULL ? textures[_texture_id] : _shape,
 				Character::NONE);
 		Character* character = dynamic_cast<Character*>(_object);
+		character->fitToWidth(_width);
+
 		character->orientation = _orientation;
-		//
+		/**
+		 * Typ obiektu w fabryce to nie typ obiektu w fizyce!
+		 */
 		switch (_type) {
 			/**
 			 * Schody!
@@ -159,7 +181,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 			case LADDER:
 				character->setType(Character::LADDER);
 				character->setState(Body::BACKGROUND);
-				character->fitToWidth(23);
 				break;
 
 				/**
@@ -167,15 +188,13 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				 */
 			case SPIKES:
 				character->setType(Character::SPIKES);
-				character->fitToWidth(23);
 				break;
-				
+
 				/**
 				 * Życie
 				 */
 			case HEALTH:
 				character->setType(Character::SCORE);
-				character->fitToWidth(16);
 				character->setStatus(health_status);
 				break;
 				
@@ -202,7 +221,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				 */
 			case SCORE:
 				character->setType(Character::SCORE);
-				character->fitToWidth(12);
 				character->setStatus(score_status);
 				break;
 				

@@ -63,7 +63,7 @@ bool readMob(FILE* file) {
 			orientation);
 	//
 	body->script_id = script_id;
-	if (!IS_SET(state, Body::NONE)) {
+	if (body->state == 1) { // NONE = 1
 		body->state = state;
 	}
 	return true;
@@ -181,10 +181,10 @@ bool MapINFO::load(FILE* map) {
 			platform = new Platform(rect.x, rect.y, rect.w, rect.h, col, state);
 			platform->setBorder(border[0], border[1], border[2], border[3]);
 		}
+		platform->setFillType(type);
 		//
 		platform->layer = layer;
 		platform->script_id = script_id;
-		platform->setFillType(type);
 		//
 		if (velocity.x != 0 || velocity.y != 0) {
 			platform->setMovingDir(velocity, max_distance, repeat_movement);
@@ -201,7 +201,7 @@ bool MapINFO::load(FILE* map) {
 	if (physics) {
 		delete physics;
 	}
-	physics = new pEngine(bounds, 0.4f);
+	physics = new pEngine(bounds, 0.3f);
 	for (auto iter = objects.begin(); iter != objects.end(); ++iter) {
 		physics->insert(*iter);
 	}

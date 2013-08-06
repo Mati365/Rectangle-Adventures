@@ -44,7 +44,6 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						MAX_SCORE,
 						Control::VERTICAL),
 				//
-				
 				background(_background),
 				hero(NULL),
 				cutscene_box(NULL) {
@@ -77,6 +76,9 @@ void MessageRenderer::openCutscene(const Message& msg) {
 	paralax->getCamera()->focus = cutscene_box;
 }
 
+/**
+ * Zamkynaknie cutsceny
+ */
 void MessageRenderer::closeCutscene() {
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
 	IrregularPlatform* platform =

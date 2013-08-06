@@ -48,7 +48,7 @@ PlatformShape* getShapePointer(const char* _label) {
 PlatformShape::PlatformShape(FILE* _file, const char* _label, float _angle) :
 				Resource<usint>(_label),
 				id(0),
-				bounds(0, 0),
+				bounds(0, 0, 0, 0),
 				angle(TO_RAD(_angle)),
 				//
 				points(NULL),
@@ -62,13 +62,36 @@ PlatformShape::PlatformShape(FILE* _file, const char* _label, float _angle) :
 }
 
 /**
+ * Odświeżanie wymiarów po np. obrocie
+ */
+void PlatformShape::updateBounds() {
+	bounds.w = bounds.h = 0;
+	//
+	for (usint i = 0; i < count; ++i) {
+		Vector<float>& vec = points[i].pos;
+		// Wymiary
+		if (bounds.w < vec.x) {
+			bounds.w = vec.x;
+		}
+		if (bounds.h < vec.y) {
+			bounds.h = vec.y;
+		}
+		if (bounds.x > vec.x) {
+			bounds.x = vec.x;
+		}
+		if (bounds.y > vec.y) {
+			bounds.y = vec.y;
+		}
+	}
+}
+
+/**
  * Wczytywanie kształtu!
  *
  * Wzór na obrót:
  * x' = x * cos(angle) - y * sin(angle)
  * y' = x * sin(angle) + y * cos(angle)
  */
-
 bool PlatformShape::load(FILE* _file) {
 	if (!_file) {
 		return false;
@@ -99,17 +122,9 @@ bool PlatformShape::load(FILE* _file) {
 				//---
 				fscanf(_file, "%f %f\n", &vec.x, &vec.y);
 				points[line] = {type, oglWrapper::WHITE, vec};
-
-				// Wymiary
-				if (bounds.x < vec.x) {
-					bounds.x = vec.x;
-				}
-				if (bounds.y < vec.y) {
-					bounds.y = vec.y;
-				}
 			}
-				break;
-				
+			break;
+
 			case 'C': {
 				Color col;
 				//---
@@ -135,6 +150,8 @@ bool PlatformShape::load(FILE* _file) {
 		}
 		line++;
 	}
+	updateBounds();
+	rotate(angle);
 	/**
 	 * Rekompilacja listy!
 	 */
@@ -176,14 +193,8 @@ bool PlatformShape::recompile() {
 				 */
 			case 'P': {
 				Vector<float>* pos = &point->pos;
-				// Obrót wokół środka!
-				glVertex2f(
-						(pos->x - bounds.x / 2) * cosf(angle)
-								- (pos->y - bounds.y / 2) * sinf(angle)
-								+ bounds.x / 2,
-						(pos->x - bounds.x / 2) * sinf(angle)
-								+ (pos->y - bounds.y / 2) * cosf(angle)
-								+ bounds.y / 2);
+				//
+				glVertex2f(pos->x, pos->y);
 			}
 				break;
 				
@@ -198,16 +209,47 @@ bool PlatformShape::recompile() {
 	}
 	glEnd();
 	glEndList();
-	//
 	return true;
 }
 
 /**
- *
+ * Rotacja wokół punktu
  */
 void PlatformShape::rotate(float _angle) {
-	angle = TO_RAD(_angle);
+	angle = _angle;
 	//
+	bounds.x = bounds.y = 0;
+	for (usint i = 0; i < count; ++i) {
+		Vector<float>* pos = &points[i].pos;
+		Vector<float> new_pos;
+		//
+		new_pos.x = (pos->x - bounds.w / 2) * cosf(angle)
+				- (pos->y - bounds.h / 2) * sinf(angle) + bounds.w / 2;
+		new_pos.y = (pos->x - bounds.w / 2) * sinf(angle)
+				+ (pos->y - bounds.h / 2) * cosf(angle) + bounds.h / 2;
+		//
+		(*pos) = new_pos;
+		//
+		if (bounds.x > pos->x) {
+			bounds.x = pos->x;
+		}
+		if (bounds.y > pos->y) {
+			bounds.y = pos->y;
+		}
+	}
+	/**
+	 * Po rotacji wyrównanie punktu do pozycji
+	 */
+	for (usint i = 0; i < count; ++i) {
+		Vector<float>* pos = &points[i].pos;
+		//
+		pos->x -= bounds.x < 0 ? bounds.x : -bounds.x;
+		pos->y -= bounds.y < 0 ? bounds.y : -bounds.y;
+	}
+	updateBounds();
+	/**
+	 * Rekompilacja listy
+	 */
 	recompile();
 }
 
@@ -215,7 +257,7 @@ void PlatformShape::unload() {
 	if (points) {
 		delete[] points;
 	}
-	bounds.x = bounds.y = 0;
+	bounds.x = bounds.y = bounds.w = bounds.h = 0;
 	glDeleteLists(id, 1);
 }
 

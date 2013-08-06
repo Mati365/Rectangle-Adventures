@@ -147,10 +147,16 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	switch (enemy->type) {
 		case LADDER: {
 			float _max_speed = physics->getGravitySpeed() * 2;
+			//
 			if (velocity.y > _max_speed) {
 				velocity.y = _max_speed;
-			} else if (velocity.y < -_max_speed * 1.5f) {
-				velocity.y = -_max_speed * 1.5f;
+			} else if (velocity.y < -_max_speed * 2.f) {
+				velocity.y = -_max_speed * 2.f;
+			}
+			if (velocity.x >= -0.5 && velocity.x <= 0.5
+					&& (velocity.y == _max_speed
+							|| velocity.y == -_max_speed * 2.f)) {
+				x = body->x;
 			}
 		}
 			break;
@@ -162,6 +168,9 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			status += enemy->status;
 			if (status.health > MAX_LIVES) {
 				status.health = MAX_LIVES;
+			}
+			if (status.score > MAX_SCORE) {
+				status.score = MAX_SCORE;
 			}
 			//
 			generateExplosion(physics, body, 6, oglWrapper::WHITE, 2, 3);
@@ -205,7 +214,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 				status.health -= 1;
 			}
 			hitMe(physics);
-			jump(13, true);
+			jump(8, true);
 			break;
 
 			/**

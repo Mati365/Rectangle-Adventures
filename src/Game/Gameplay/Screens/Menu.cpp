@@ -32,7 +32,7 @@ void Menu::createMenuEntries() {
 	for (usint i = 0; i < 3; ++i) {
 		entries.push_back(
 				new Button(
-						Rect<float>(210 + 135 * i, 590, 100, 40),
+						Rect<float>(210 + 135 * i, 350, 100, 40),
 						_entries[i]));
 	}
 	
@@ -101,7 +101,9 @@ void Menu::drawObject(Window* window) {
 	if (lvl) {
 		lvl->drawObject(window);
 	}
-	ver.printText(WINDOW_WIDTH - ver.getScreenLength() - 10, 22);
+	ver.printText(
+			WINDOW_WIDTH - ver.getScreenLength() - 10,
+			WINDOW_HEIGHT - 20);
 }
 
 /**

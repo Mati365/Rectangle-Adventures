@@ -123,12 +123,12 @@ void pEngine::updateWorld() {
 void pEngine::checkCollisions(deque<Body*>& _bodies) {
 	for (usint i = 0; i < _bodies.size(); ++i) {
 		Body* source = _bodies[i];
-		
+
 		// Czyszczenie
 		for (auto*& col : source->collisions) {
 			col = NULL;
 		}
-		
+
 		// Statyszne obiekty są omijane
 		if (!isBodyActive(source)) {
 			continue;
@@ -152,32 +152,28 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 						/**
 						 * Dół
 						 */
-						source->y = target->y - source->h - source->velocity.y
+						source->y = target->y - source->h - target->velocity.y
 								+ gravity_speed;
 						/**
 						 *
 						 */
-						if (abs(source->velocity.y) * 0.5f < gravity_speed) {
-							source->velocity.y = target->velocity.y;
+						if (abs(source->velocity.y) < 0) {
+							source->velocity.y = -target->velocity.y;
 						} else {
 							source->velocity.y = -source->velocity.y * 0.5f
-									+ target->velocity.y
-									- (target->velocity.y < 0 ?
-											gravity_speed : -gravity_speed);
+									+ target->velocity.y;
 						}
 					} else {
 						/**
 						 * Góra
 						 */
-						source->y = target->y + target->h - source->velocity.y
-								+ gravity_speed;
-						source->velocity.y = 0;
+						source->velocity.y = -source->velocity.y * 0.5f;
 					}
 					source->collisions[horizont_side - 1] = target;
 				}
 				source->catchCollision(this, horizont_side, target);
 			}
-			
+
 			/**
 			 * Kolizje Lewo
 			 */

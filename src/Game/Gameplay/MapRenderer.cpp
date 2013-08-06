@@ -49,7 +49,7 @@ void MapRenderer::catchEvent(const Event& _event) {
 				msg.catchEvent(_event);
 			} else if (hero) {
 				if (_event.key == 'w') {
-					hero->jump(9.f, false);
+					hero->jump(7.f, false);
 				} else if (_event.key == 'a') {
 					hero->move(-2.f, 0.f);
 				} else if (_event.key == 'd') {

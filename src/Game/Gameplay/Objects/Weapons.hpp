@@ -19,36 +19,33 @@ using namespace Physics;
  * Kule to tak naprawde przeciwnicy!
  */
 class Bullet: public Character {
-#define BULLET_WIDTH 4
+#define BULLET_WIDTH 8
+#define BULLET_HEIGHT 12
+
 	private:
 		/**
 		 * Wysokość lotu
 		 */
-		float max_flight_height;
-		float flight_height;
+		float max_flight_distance;
+		float flight_distance;
+
+		Vector<float> direction;
+		Vector<float> start_pos; // pozycja startowa bo grawitacja może znieść
 
 	public:
-		Bullet(float _x, float _y, PlatformShape* _shape,
-				usint _max_flight_height) :
-						Character("", _x, _y, _shape, Character::BULLET),
-						//
-						max_flight_height(_max_flight_height),
-						flight_height(0) {
-			dynamically_allocated = true;
-			//
-			fitToWidth(BULLET_WIDTH);
-		}
-		
+		Bullet(float, float, const Vector<float>&, PlatformShape*, usint,
+				usint);
+
 		virtual void catchCollision(pEngine*, usint, Body*);
 		virtual void drawObject(Window*);
 };
 
 /**
- * Emitery!
+ * Broń
  */
 class Gun: public IrregularPlatform {
 	protected:
-		PlatformShape* bullet_shape;
+		PlatformShape* bullet_shapes[4];
 
 		// Odstęp między wystrzałem
 		usint shot_delay;
@@ -58,8 +55,8 @@ class Gun: public IrregularPlatform {
 		pEngine* physics;
 
 	public:
-		Gun(pEngine*, float, float, float, PlatformShape*, PlatformShape*,
-				usint);
+		Gun(pEngine*, float, float, PlatformShape*,
+				initializer_list<PlatformShape*>, usint);
 
 		virtual void drawObject(Window*);
 
