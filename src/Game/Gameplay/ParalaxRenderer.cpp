@@ -36,7 +36,11 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	pEngine* physics = map->physics;
 	if (draw_quad) {
 		physics->setActiveRange(
-				Rect<float>(cam.pos.x, cam.pos.y, WINDOW_WIDTH, WINDOW_HEIGHT));
+				Rect<float>(
+						cam.pos.x + 50,
+						cam.pos.y + 50,
+						WINDOW_WIDTH - 50,
+						WINDOW_HEIGHT - 50));
 		physics->updateWorld();
 	}
 	

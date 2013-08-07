@@ -89,7 +89,7 @@ void MessageRenderer::closeCutscene() {
 	}
 	// Czyszczenie!
 	main_resource_manager.deleteResource(platform->getShape()->getID());
-	paralax->getPhysics()->remove(cutscene_box);
+	cutscene_box->destroyed = true;
 	
 	paralax->getCamera()->focus = paralax->getHero();
 	//

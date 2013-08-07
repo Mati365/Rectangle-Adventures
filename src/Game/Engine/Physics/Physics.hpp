@@ -21,7 +21,7 @@
 #define STATIC_LAYER 0
 #define MAX_LAYER 2
 
-#define MAX_QUADTREE_LEVEL 4
+#define MAX_QUADTREE_LEVEL 3
 
 namespace Physics {
 	using namespace std;
@@ -99,6 +99,7 @@ namespace Physics {
 			void insert(Body*);
 
 			void getBodiesAt(Rect<float>&, deque<Body*>&);
+			void update();
 
 			void clear();
 			virtual void drawObject(Window*);
@@ -106,7 +107,7 @@ namespace Physics {
 			~QuadTree();
 
 		private:
-			bool insertToSubQuad(Body*);
+			bool insertToSubQuad(Body*, bool);
 	};
 	
 	class pEngine {
@@ -134,7 +135,6 @@ namespace Physics {
 			 * Obiekty buforowe!
 			 */
 			deque<Body*> list;
-			deque<Body*> to_remove;
 
 			/**
 			 * Timer!
@@ -161,12 +161,8 @@ namespace Physics {
 				list.push_back(body);
 				quadtree->insert(body);
 			}
-			void remove(Body* body) {
-				to_remove.push_back(body);
-			}
-			
+
 			void clear() {
-				to_remove.clear();
 				list.clear();
 			}
 			

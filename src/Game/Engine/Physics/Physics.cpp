@@ -62,15 +62,16 @@ void pEngine::updateWorld() {
 	
 	/**
 	 * Tworzenie quadtree!
+	 * Optymalizacja!
 	 */
-	quadtree->clear();
-	quadtree->insertGroup(&list);
+	quadtree->update();
+	//quadtree->clear();
+	//quadtree->insertGroup(&list);
 	quadtree->getBodiesAt(active_range, visible_bodies);
 	
 	/**
 	 * Sprawdzenie kolizji!
 	 */
-	cout << visible_bodies.size() << endl;
 	checkCollisions(visible_bodies);
 	
 	/**
@@ -116,9 +117,6 @@ void pEngine::updateWorld() {
 		}
 		object->y += object->velocity.y;
 		object->x += object->velocity.x;
-		if (object->destroyed) {
-			remove(object);
-		}
 	}
 }
 

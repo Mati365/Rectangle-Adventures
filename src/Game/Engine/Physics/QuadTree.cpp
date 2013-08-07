@@ -5,6 +5,7 @@
  *      Author: mati
  */
 #include <map>
+#include <iostream>
 
 #include "Physics.hpp"
 
@@ -13,6 +14,9 @@ using namespace Physics;
 
 #define OBJECT_MARGIN 5
 
+/**
+ * Konstruktor
+ */
 QuadTree::QuadTree(QuadTree* _parent, const Rect<float>& _rect, usint _level) :
 				rect(_rect),
 				level(_level),
@@ -53,6 +57,37 @@ void QuadTree::subdive() {
 }
 
 /**
+ * Odświeżanie
+ */
+void QuadTree::update() {
+	for (auto iter = bodies.begin(); iter != bodies.end(); ++iter) {
+		if ((*iter)->destroyed) {
+			if ((*iter)->dynamically_allocated) {
+				delete *iter;
+			}
+			iter = bodies.erase(iter) - 1;
+		} else if (!IS_SET((*iter)->state, Body::STATIC)) {
+			Rect<float> _rect((*iter)->x, (*iter)->y, (*iter)->w, (*iter)->h);
+			//
+			if (!rect.contains(_rect)) {
+				if (parent) {
+					parent->insertToSubQuad(*iter, true);
+				} else {
+					insertToSubQuad(*iter, false);
+				}
+				iter = bodies.erase(iter) - 1;
+			}
+		}
+	}
+	if (NW) {
+		NW->update();
+		NE->update();
+		SW->update();
+		SE->update();
+	}
+}
+
+/**
  * Rysowanie siatki
  */
 void QuadTree::drawObject(Window*) {
@@ -77,8 +112,11 @@ void QuadTree::drawObject(Window*) {
 /**
  * Dodawanie elementu!
  */
-bool QuadTree::insertToSubQuad(Body* body) {
-	if (!rect.intersect(*body)) {
+bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
+	if (!rect.contains(*body)) {
+		if (recursive && parent) {
+			return parent->insertToSubQuad(body, true);
+		}
 		return false;
 	}
 	/**
@@ -95,13 +133,20 @@ bool QuadTree::insertToSubQuad(Body* body) {
 	/**
 	 * Umieszczanie do dzieci
 	 */
-	if (NW->insertToSubQuad(body) || NE->insertToSubQuad(body)
-			|| SE->insertToSubQuad(body) || SW->insertToSubQuad(body)) {
+	if (NW->insertToSubQuad(body, false) || NE->insertToSubQuad(body, false)
+			|| SE->insertToSubQuad(body, false)
+			|| SW->insertToSubQuad(body, false)) {
+		return true;
+	} else {
+		bodies.push_back(body);
 		return true;
 	}
 	return false;
 }
 
+/**
+ * Dodawanie całej grupy obiektów
+ */
 void QuadTree::insertGroup(deque<Body*>* bodies) {
 	for (auto iter = bodies->begin(); iter != bodies->end();) {
 		if ((*iter)->destroyed) {
@@ -112,37 +157,34 @@ void QuadTree::insertGroup(deque<Body*>* bodies) {
 				delete body;
 			}
 		} else {
-			insertToSubQuad(*iter++);
+			insertToSubQuad(*iter++, false);
 		}
 	}
 }
 
 void QuadTree::insert(Body* body) {
-	insertToSubQuad(body);
+	insertToSubQuad(body, false);
 }
 
 /**
  * Pobieranie elemntów z wycinka!
  */
 void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
-	if (!_bounds.intersect(rect)) {
+	if (!rect.intersect(_bounds)) {
 		return;
 	}
 	for (usint i = 0; i < bodies.size(); ++i) {
 		Body* body = bodies[i];
-		Rect<float> rect(body->x, body->y, body->w, body->h);
-
-		bool _intersect = _bounds.intersect(rect);
-		bool _contains = _bounds.contains(rect);
-		/**
-		 * Sprawdzenie czy obiekt buforowany
-		 */
-		if(!_contains && _intersect) {
-			ADD_FLAG(body->state, Body::BUFFERED);
-		} else {
-			UNFLAG(body->state, Body::BUFFERED);
+		//
+		if (!IS_SET(body->state, Body::STATIC)
+				&& (body->y + body->h >= _bounds.y + _bounds.h
+						|| body->x + body->w >= _bounds.x + _bounds.w
+						|| body->x + body->w <= _bounds.x
+						|| body->y + body->h <= _bounds.y)) {
+			continue;
 		}
-		if (_intersect || _contains) {
+		if (_bounds.intersect(
+				Rect<float>(body->x, body->y, body->w, body->h))) {
 			_bodies.push_back(body);
 		}
 	}

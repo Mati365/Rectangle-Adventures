@@ -88,6 +88,7 @@ void Window::init() {
 	/**
 	 * Shadery
 	 */
+	int frames = 0;
 
 	while (window_opened) {
 		int frame_start = SDL_GetTicks();
@@ -136,6 +137,8 @@ void Window::init() {
 		glFlush();
 		SDL_GL_SwapBuffers();
 		
+		frames++;
+
 		int frame_time = SDL_GetTicks() - frame_start;
 		if (frame_time <= FPS) {
 			frame_start = SDL_GetTicks() - FPS;
