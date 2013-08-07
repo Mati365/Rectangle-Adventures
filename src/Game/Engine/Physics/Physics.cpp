@@ -35,7 +35,8 @@ void pEngine::setSleep(usint _sleep_time) {
 bool pEngine::isBodyActive(Body* object) {
 	return !(IS_SET(object->state, Body::STATIC)
 			|| IS_SET(object->state, Body::HIDDEN)
-			|| IS_SET(object->state, Body::BACKGROUND));
+			|| IS_SET(object->state, Body::BACKGROUND)
+			|| IS_SET(object->state, Body::BUFFERED));
 }
 
 /**
@@ -69,6 +70,7 @@ void pEngine::updateWorld() {
 	/**
 	 * Sprawdzenie kolizji!
 	 */
+	cout << visible_bodies.size() << endl;
 	checkCollisions(visible_bodies);
 	
 	/**

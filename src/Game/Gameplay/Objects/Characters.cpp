@@ -277,7 +277,7 @@ void Character::drawObject(Window*) {
 			//
 			IrregularPlatform::drawObject(NULL);
 			//
-			//shaders[HIT_CHARACTER_SHADER]->end();
+			shaders[HIT_CHARACTER_SHADER]->end();
 			shaders[WINDOW_SHADOW_SHADER]->begin();
 		}
 	} else {

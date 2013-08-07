@@ -15,10 +15,13 @@
 
 #define IS_SET(source, flag) (source&flag)
 
+#define UNFLAG(source, flag) (source &= ~flag)
+#define ADD_FLAG(source, flag) (source |= flag)
+
 #define STATIC_LAYER 0
 #define MAX_LAYER 2
 
-#define MAX_QUADTREE_LEVEL 3
+#define MAX_QUADTREE_LEVEL 4
 
 namespace Physics {
 	using namespace std;
@@ -44,7 +47,7 @@ namespace Physics {
 			 */
 			inline bool contains(const Rect<T>& _child) {
 				return (_child.x >= x && _child.x + _child.w <= x + w
-						&& _child.y >= y && _child.y + _child.y <= h);
+						&& _child.y >= y && _child.y + _child.h <= y + h);
 			}
 			
 			/**
@@ -61,7 +64,6 @@ namespace Physics {
 	};
 	
 	class Body;
-	
 	/**
 	 * Todo:
 	 * + Przebudowa, sprawdzanie kolizji tylko
@@ -232,7 +234,12 @@ namespace Physics {
 				NONE = 1 << 0,
 				STATIC = 1 << 1,
 				HIDDEN = 1 << 2,
-				BACKGROUND = 1 << 3 // tło nie oddziaływujące
+				BACKGROUND = 1 << 3, // tło nie oddziaływujące
+				/**
+				 * Element pomiędzy widocznym ekranem
+				 * a widocznym musi nie podlegać fizyce
+				 */
+				BUFFERED = 1 << 4
 			};
 
 			usint state;

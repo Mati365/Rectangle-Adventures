@@ -23,7 +23,7 @@ bool Engine::window_opened = true;
 
 //
 
-void translateKeyEvent(Uint8* keystate, Uint8 key, char translated,
+void translateKeyEvent(Uint8* keystate, Uint16 key, char translated,
 		Event& event, Screen* renderer) {
 	if (keystate[key]) {
 		event.key = translated;
@@ -129,8 +129,7 @@ void Window::init() {
 		translateKeyEvent(keystate, SDLK_a, 'a', key, game);
 		translateKeyEvent(keystate, SDLK_d, 'd', key, game);
 		translateKeyEvent(keystate, SDLK_SPACE, '*', key, game);
-		translateKeyEvent(keystate, SDLK_e, 'e', key, game);
-		
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		active_screen->drawObject(this);

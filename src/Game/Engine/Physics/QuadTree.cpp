@@ -125,21 +125,24 @@ void QuadTree::insert(Body* body) {
  * Pobieranie elemntów z wycinka!
  */
 void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
-	if (!rect.intersect(_bounds)) {
+	if (!_bounds.intersect(rect)) {
 		return;
 	}
 	for (usint i = 0; i < bodies.size(); ++i) {
 		Body* body = bodies[i];
-		//
-		if (!IS_SET(body->state, Body::STATIC)
-				&& (body->y + body->h >= _bounds.y + _bounds.h
-						|| body->x + body->w >= _bounds.x + _bounds.w
-						|| body->x + body->w <= _bounds.x
-						|| body->y + body->h <= _bounds.y)) {
-			continue;
+		Rect<float> rect(body->x, body->y, body->w, body->h);
+
+		bool _intersect = _bounds.intersect(rect);
+		bool _contains = _bounds.contains(rect);
+		/**
+		 * Sprawdzenie czy obiekt buforowany
+		 */
+		if(!_contains && _intersect) {
+			ADD_FLAG(body->state, Body::BUFFERED);
+		} else {
+			UNFLAG(body->state, Body::BUFFERED);
 		}
-		if (_bounds.intersect(
-				Rect<float>(body->x, body->y, body->w, body->h))) {
+		if (_intersect || _contains) {
 			_bodies.push_back(body);
 		}
 	}
