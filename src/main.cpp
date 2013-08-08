@@ -39,7 +39,6 @@ int main(int argc, char **argv) {
 	Engine::Window win(Vector<usint>(WINDOW_WIDTH, WINDOW_HEIGHT), "Gra");
 	win.init();
 #else
-	
 	/**
 	 * Example: ./archiver NAZWA_ARCHIWUM AUTOR plik1.txt plik2.txt
 	 */

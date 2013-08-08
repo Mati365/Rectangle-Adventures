@@ -57,6 +57,7 @@ void MapRenderer::catchEvent(const Event& _event) {
 				}
 			}
 			break;
+
 			/**
 			 *
 			 */

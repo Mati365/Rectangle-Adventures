@@ -166,7 +166,7 @@ bool PlatformShape::recompile() {
 		return false;
 	}
 	glDeleteLists(id, 1);
-	
+
 	// Kompilacja!
 	glNewList(id, GL_COMPILE);
 	glLineWidth(2);
@@ -187,7 +187,7 @@ bool PlatformShape::recompile() {
 						point->col.b,
 						point->col.a);
 				break;
-				
+
 				/**
 				 *
 				 */
@@ -197,7 +197,7 @@ bool PlatformShape::recompile() {
 				glVertex2f(pos->x, pos->y);
 			}
 				break;
-				
+
 				/**
 				 *
 				 */

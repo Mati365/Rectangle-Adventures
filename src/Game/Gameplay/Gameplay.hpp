@@ -62,6 +62,7 @@ namespace Gameplay {
 			 */
 			deque<AllocKiller<Body> > static_objects;
 
+			// Kamera
 			Camera cam;
 			float ratio;
 
@@ -71,17 +72,22 @@ namespace Gameplay {
 		public:
 			ParalaxRenderer(Body*, float, bool, MapINFO*);
 
-			void addStaticObject(Body*);
-
 			virtual void drawObject(Window*);
+
+			void addStaticObject(Body*);
 
 			virtual Character* getHero() {
 				return NULL;
 			}
 			
+			MapINFO* getMap() {
+				return map;
+			}
+
 			pEngine* getPhysics() {
 				return map->physics;
 			}
+
 			Camera* getCamera() {
 				return &cam;
 			}
@@ -97,10 +103,15 @@ namespace Gameplay {
 			};
 
 		private:
+			// HUD
 			MessageRenderer msg;
+
 			Character* hero;
+
+			// Paralaxy za główną mapą
 			deque<ParalaxRenderer*> paralax_background;
 
+			// Hud w menu jest zablokowany
 			bool hud_enabled;
 
 		public:

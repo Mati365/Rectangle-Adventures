@@ -59,7 +59,10 @@ void QuadTree::subdive() {
 /**
  * Odświeżanie
  */
-void QuadTree::update() {
+void QuadTree::update(Rect<float>& _bounds) {
+	if (!rect.intersect(_bounds)) {
+		return;
+	}
 	for (auto iter = bodies.begin(); iter != bodies.end(); ++iter) {
 		if ((*iter)->destroyed) {
 			if ((*iter)->dynamically_allocated) {
@@ -80,10 +83,10 @@ void QuadTree::update() {
 		}
 	}
 	if (NW) {
-		NW->update();
-		NE->update();
-		SW->update();
-		SE->update();
+		NW->update(_bounds);
+		NE->update(_bounds);
+		SW->update(_bounds);
+		SE->update(_bounds);
 	}
 }
 

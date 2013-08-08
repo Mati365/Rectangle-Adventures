@@ -9,6 +9,7 @@
 
 #include "../../Gameplay/Screens/Screens.hpp"
 #include "../../Resources/Filesystem/Files.hpp"
+#include "../../Engine/Sound/Sounds.hpp"
 
 #include "../../Tools/Logger.hpp"
 
@@ -47,6 +48,7 @@ Window::Window(const Vector<usint>& _bounds, const string& _title) :
 	}
 	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_WM_SetCaption(_title.c_str(), _title.c_str());
+
 	//
 	if (screen->flags & SDL_OPENGL) {
 		logEvent(Logger::LOG_INFO, "OpenGL obsługiwany!");
@@ -63,6 +65,7 @@ void Window::init() {
 	 * Wczytywanie rdzennych elementów gry
 	 */
 	loadShadersPack();
+	loadSoundsPack();
 	loadScreens();
 	//
 	if (!menu) {
@@ -88,8 +91,6 @@ void Window::init() {
 	/**
 	 * Shadery
 	 */
-	int frames = 0;
-
 	while (window_opened) {
 		int frame_start = SDL_GetTicks();
 		//
@@ -137,8 +138,6 @@ void Window::init() {
 		glFlush();
 		SDL_GL_SwapBuffers();
 		
-		frames++;
-
 		int frame_time = SDL_GetTicks() - frame_start;
 		if (frame_time <= FPS) {
 			frame_start = SDL_GetTicks() - FPS;
@@ -148,6 +147,7 @@ void Window::init() {
 	}
 	//
 	unloadScreens();
+	unloadSoundsPack();
 	unloadShadersPack();
 }
 

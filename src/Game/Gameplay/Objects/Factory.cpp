@@ -62,6 +62,10 @@ usint ResourceFactory::genTextureID(usint _type, usint _orientation) const {
 }
 
 void ResourceFactory::loadTexturesPack() {
+	// Aleee lawa ma 2 kształty
+	readShape("plomien_1.txt", "flame_1", 0);
+	readShape("plomien_2.txt", "flame_2", 0);
+
 	// Gracz
 	readShape("gracz.txt", "player", 0);
 	readShape("czaszka.txt", "cranium", 0);
@@ -129,6 +133,15 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		physics->insert(trigger);
 		//
 		return trigger;
+	}
+
+	/**
+	 * Lawa
+	 */
+	if(_type == LAVA) {
+		Lava* lava = new Lava(_x, _y);
+		//
+		addBody(lava);
 	}
 
 	/**
@@ -235,11 +248,17 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				return NULL;
 		}
 	}
+	//
+	addBody(_object);
+	//
+	return _object;
+}
+
+void ResourceFactory::addBody(Body* _object) {
 	if (_object) {
 		created.push_back(_object);
 		physics->insert(_object);
 	}
-	return _object;
 }
 
 /**

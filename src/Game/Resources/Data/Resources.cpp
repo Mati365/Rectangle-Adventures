@@ -6,6 +6,8 @@
  */
 #include "Resources.hpp"
 
+#include "../../Engine/Sound/Sounds.hpp"
+
 Package main_filesystem(FILESYSTEM_PACKAGE, FILESYSTEM_AUTHOR);
 ResourceManager<usint> main_resource_manager;
 
@@ -15,6 +17,27 @@ ResourceManager<usint> main_resource_manager;
 bool isFilesystemFake() {
 	return (strcmp(main_filesystem.getHeader()->author, FILESYSTEM_AUTHOR) != 0);
 }
+
+////////////////////////// Dźwięki
+
+using namespace Sound;
+
+Mix_Chunk* sounds[JUMP_SOUND + 1];
+
+/**
+ * Wczytywanie paczki dźwięków!
+ */
+void loadSoundsPack() {
+	sounds[JUMP_SOUND] = wavPlayer::getInstance().loadSound("skok.wav");
+}
+
+void unloadSoundsPack() {
+	for (auto* obj : sounds) {
+		wavPlayer::getInstance().closeChunk(obj);
+	}
+}
+
+////////////////////////// Shadery
 
 Shader* shaders[HIT_CHARACTER_SHADER + 1];
 

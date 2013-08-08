@@ -254,6 +254,7 @@ void MapINFO::unload() {
 	}
 	
 	ResourceFactory::getIstance(NULL).unloadObjects();
+
 	// Usuwanie kształtów! Woolne!
 	for (usint i = 0; i < resources.size(); ++i) {
 		main_resource_manager.deleteResource(i);

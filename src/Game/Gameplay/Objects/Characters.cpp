@@ -9,7 +9,10 @@
 #include "../Particle/Particle.hpp"
 #include "../Gameplay.hpp"
 
+#include "../../Engine/Sound/Sounds.hpp"
+
 using namespace Gameplay;
+using namespace Sound;
 
 //------------------------
 
@@ -235,6 +238,10 @@ void Character::jump(float _y_speed, bool _force) {
 	if (!isDead() && (!jumping || _force)) {
 		jumping = true;
 		velocity.y = -_y_speed;
+		//
+		if (!_force) {
+			wavPlayer::getInstance().playChunk(sounds[JUMP_SOUND]);
+		}
 	}
 }
 

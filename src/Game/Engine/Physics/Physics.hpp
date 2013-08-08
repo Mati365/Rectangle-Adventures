@@ -63,7 +63,6 @@ namespace Physics {
 			}
 	};
 	
-	class Body;
 	/**
 	 * Todo:
 	 * + Przebudowa, sprawdzanie kolizji tylko
@@ -72,6 +71,7 @@ namespace Physics {
 	 * ich spowrotem!
 	 * + Dodawanie tylko do jednego quad'u!
 	 */
+	class Body;
 	class QuadTree: public Renderer {
 		private:
 			Rect<float> rect;
@@ -99,7 +99,7 @@ namespace Physics {
 			void insert(Body*);
 
 			void getBodiesAt(Rect<float>&, deque<Body*>&);
-			void update();
+			void update(Rect<float>&);
 
 			void clear();
 			virtual void drawObject(Window*);
@@ -216,8 +216,8 @@ namespace Physics {
 				HERO,
 				ENEMY,
 				PLATFORM,
-				SCORE,
-				BULLET,
+				SCORE, // punkty
+				BULLET, // pocisk
 				TRIGGER, // event skrtpytu
 				SPIKES, // kolce
 				LADDER // drabina

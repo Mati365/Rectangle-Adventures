@@ -8,6 +8,7 @@
 #ifndef RESOURCES_HPP_
 #define RESOURCES_HPP_
 #include <GL/gl.h>
+#include <SDL/SDL_mixer.h>
 
 #include "../../Engine/Graphics/Engine.hpp"
 #include "../../Engine/Physics/Physics.hpp"
@@ -30,6 +31,18 @@ extern Package main_filesystem;
 extern ResourceManager<usint> main_resource_manager;
 
 /**
+ * Dźwięki w grze
+ */
+enum Sounds {
+	JUMP_SOUND
+};
+
+extern Mix_Chunk* sounds[];
+
+void loadSoundsPack();
+void unloadSoundsPack();
+
+/**
  * Efekty w grze muszą być wczytane
  * przed pojawieniem się okna!
  */
@@ -38,7 +51,7 @@ enum Effect {
 	HIT_CHARACTER_SHADER
 };
 
-extern Shader* shaders[HIT_CHARACTER_SHADER + 1];
+extern Shader* shaders[];
 
 void loadShadersPack();
 void unloadShadersPack();

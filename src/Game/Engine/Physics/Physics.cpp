@@ -62,9 +62,10 @@ void pEngine::updateWorld() {
 	
 	/**
 	 * Tworzenie quadtree!
-	 * Optymalizacja!
+	 * Optymalizacja:
+	 * - Odświeżanie tylko widocznych!
 	 */
-	quadtree->update();
+	quadtree->update(active_range);
 	//quadtree->clear();
 	//quadtree->insertGroup(&list);
 	quadtree->getBodiesAt(active_range, visible_bodies);

@@ -139,7 +139,7 @@ class IO {
 			//
 			char* content = new char[len + 1];
 			memset(content, 0, len + 1);
-			fread(content, sizeof(char), len, file);
+			fread(content, len, 1, file);
 			//
 			return content;
 		}

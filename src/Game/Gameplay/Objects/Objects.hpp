@@ -415,6 +415,30 @@ class Trigger: public Body {
 };
 
 /**
+ * Lawa nie jest obiektem, nie podlega
+ * fizyce ale jeśli gracz w nią wpadnie
+ * to ginie
+ */
+class Lava: public Body {
+	private:
+		/**
+		 * Płomień działa jak parallax
+		 * są ich 2
+		 */
+		Vector<float> pos[2];
+		PlatformShape* flame_shapes[2];
+
+	public:
+		Lava(float, float);
+
+		virtual void drawObject(Window*);
+
+	protected:
+		// Odświeżanie
+		void update();
+};
+
+/**
  * Wzorzec singleton!
  */
 using oglWrapper::Shader;
@@ -431,10 +455,11 @@ class ResourceFactory {
 			HEALTH,
 			GHOST,
 			OBJECT,
-			GUN,
-			SCRIPT_BOX,
-			SPIKES,
-			LADDER,
+			GUN, // broń
+			SCRIPT_BOX, // skrypt
+			SPIKES, // kolce
+			LADDER, // drabina
+			LAVA, // lawa
 			/**
 			 * Dynamiczne obiekty nie są wczytywane
 			 * dlatego idą na koniec
@@ -472,7 +497,7 @@ class ResourceFactory {
 		}
 
 	private:
-		deque<Platform*> created;
+		deque<Body*> created;
 		deque<Trigger*> triggers;
 
 		/**
@@ -516,6 +541,8 @@ class ResourceFactory {
 		 *  Generowanie kolejnych id dla poszczególnych orientacji
 		 */
 		usint genTextureID(usint, usint) const;
+
+		void addBody(Body*);
 };
 
 #endif /* OBJECTS_HPP_ */
