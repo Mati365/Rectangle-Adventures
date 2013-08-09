@@ -44,10 +44,12 @@ Mix_Chunk* wavPlayer::loadSound(const char* label) {
 /**
  * Odtwarzanie pliku wav
  */
-void wavPlayer::playChunk(Mix_Chunk* sound) {
+void wavPlayer::playChunk(Mix_Chunk* sound, float volume) {
 	int channel = Mix_PlayChannel(-1, sound, 0);
 	if (channel == -1) {
 		fprintf(stderr, "Nie mogę odtworzyć dźwięku: %s\n", Mix_GetError());
+	} else {
+		Mix_Volume(channel, volume);
 	}
 }
 

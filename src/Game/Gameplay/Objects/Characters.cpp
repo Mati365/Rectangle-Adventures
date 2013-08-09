@@ -9,10 +9,7 @@
 #include "../Particle/Particle.hpp"
 #include "../Gameplay.hpp"
 
-#include "../../Engine/Sound/Sounds.hpp"
-
 using namespace Gameplay;
-using namespace Sound;
 
 //------------------------
 
@@ -65,7 +62,7 @@ void generateExplosion(pEngine* physics, Body* body, usint count,
 Character::Character(const string& _nick, float _x, float _y,
 		PlatformShape* _shape, usint _type) :
 				IrregularPlatform(_x, _y, true, _shape),
-				jumping(true),
+				action(JUMPING),
 				status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
 				ai(NULL),
 				//
@@ -86,6 +83,10 @@ void Character::hitMe(pEngine* physics) {
 	hit = true;
 	//
 	generateExplosion(physics, this, 5, oglWrapper::RED, 3, 6);
+	//
+	wavPlayer::getInstance().playChunk(
+			sounds[SPIKES_SOUND].chunk,
+			sounds[SPIKES_SOUND].volume);
 }
 
 /**
@@ -103,6 +104,10 @@ void Character::die(pEngine* physics, usint _dir) {
 	generateExplosion(physics, this, 30, oglWrapper::RED, 3, 6);
 	setShape(getShapePointer("cranium"));
 	fitToWidth(14);
+	//
+	wavPlayer::getInstance().playChunk(
+			sounds[SCORE_SOUND].chunk,
+			sounds[SCORE_SOUND].volume);
 }
 
 /**
@@ -126,7 +131,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			die(physics, dir);
 			return;
 		}
-		jumping = false;
+		UNFLAG(action, JUMPING);
 	}
 	if (type != HERO) {
 		return;
@@ -141,6 +146,11 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	}
 	
 	/**
+	 * Kasowanie flag
+	 */
+	UNFLAG(action, CLIMBING);
+
+	/**
 	 * Akcje gracza
 	 */
 	Character* enemy = dynamic_cast<Character*>(body);
@@ -148,6 +158,9 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 		return;
 	}
 	switch (enemy->type) {
+		/**
+		 *
+		 */
 		case LADDER: {
 			float _max_speed = physics->getGravitySpeed() * 2;
 			//
@@ -161,6 +174,8 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 							|| velocity.y == -_max_speed * 2.f)) {
 				x = body->x;
 			}
+			//
+			ADD_FLAG(action, CLIMBING);
 		}
 			break;
 
@@ -179,6 +194,12 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			generateExplosion(physics, body, 6, oglWrapper::WHITE, 2, 3);
 			//
 			body->destroyed = true;
+			//
+			if (enemy->status.health > 0 || enemy->status.score) {
+				wavPlayer::getInstance().playChunk(
+						sounds[SCORE_SOUND].chunk,
+						sounds[SCORE_SOUND].volume);
+			}
 			break;
 
 			/**
@@ -235,12 +256,14 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
  * Skok z określoną prędkością!
  */
 void Character::jump(float _y_speed, bool _force) {
-	if (!isDead() && (!jumping || _force)) {
-		jumping = true;
+	if (!isDead() && (!IS_SET(action, JUMPING) || _force)) {
+		ADD_FLAG(action, JUMPING);
 		velocity.y = -_y_speed;
 		//
-		if (!_force) {
-			wavPlayer::getInstance().playChunk(sounds[JUMP_SOUND]);
+		if (!_force && !IS_SET(action, CLIMBING)) {
+			wavPlayer::getInstance().playChunk(
+					sounds[JUMP_SOUND].chunk,
+					sounds[JUMP_SOUND].volume);
 		}
 	}
 }

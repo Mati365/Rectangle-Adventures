@@ -68,7 +68,7 @@ Gun::Gun(pEngine* _physics, float _x, float _y, PlatformShape* _gun_shape,
 				IrregularPlatform(_x, _y, State::NONE, _gun_shape),
 				//
 				shot_delay(_shot_delay),
-				actual_delay(0),
+				actual_delay(getIntRandom<int>(0, shot_delay)),
 				physics(_physics) {
 	uninitialized_copy(
 			_bullet_shapes.begin(),
@@ -98,6 +98,7 @@ void Gun::shot() {
 							200,
 							orientation));
 			break;
+
 			/**
 			 *
 			 */
@@ -111,6 +112,7 @@ void Gun::shot() {
 							200,
 							orientation));
 			break;
+
 			/**
 			 *
 			 */
@@ -124,6 +126,7 @@ void Gun::shot() {
 							200,
 							orientation));
 			break;
+
 			/**
 			 *
 			 */
@@ -138,6 +141,10 @@ void Gun::shot() {
 							orientation));
 			break;
 	}
+	//
+	wavPlayer::getInstance().playChunk(
+			sounds[GUN_SHOT_SOUND].chunk,
+			sounds[GUN_SHOT_SOUND].volume);
 }
 
 void Gun::drawObject(Window*) {

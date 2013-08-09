@@ -8,8 +8,6 @@
 #include <GL/glew.h>
 
 #include "../../Gameplay/Screens/Screens.hpp"
-#include "../../Resources/Filesystem/Files.hpp"
-#include "../../Engine/Sound/Sounds.hpp"
 
 #include "../../Tools/Logger.hpp"
 

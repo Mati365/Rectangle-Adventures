@@ -99,7 +99,10 @@ void MapRenderer::drawObject(Window* _window) {
 	 * glScissor - rzecz sporna dla GPU intel!
 	 */
 	shaders[WINDOW_SHADOW_SHADER]->begin();
-	//
+	shaders[WINDOW_SHADOW_SHADER]->setUniform2f(
+			"center",
+			hero->x + hero->w / 2 - cam.pos.x,
+			hero->y + hero->h / 2 - cam.pos.y);
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}

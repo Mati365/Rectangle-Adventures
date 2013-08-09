@@ -157,6 +157,7 @@ namespace oglWrapper {
 			 */
 			void setUniform1f(const char*, float);
 			void setUniform4fv(const char*, float*, size_t);
+			void setUniform2f(const char*, float, float);
 
 			~Shader();
 

@@ -34,10 +34,20 @@ extern ResourceManager<usint> main_resource_manager;
  * Dźwięki w grze
  */
 enum Sounds {
-	JUMP_SOUND
+	JUMP_SOUND,
+	GUN_SHOT_SOUND,
+	MENU_CHOOSE_SOUND,
+	SCORE_SOUND,
+	SPIKES_SOUND,
+	DIE_SOUND
 };
 
-extern Mix_Chunk* sounds[];
+struct _Sound {
+		Mix_Chunk* chunk;
+		float volume;
+};
+
+extern _Sound sounds[];
 
 void loadSoundsPack();
 void unloadSoundsPack();

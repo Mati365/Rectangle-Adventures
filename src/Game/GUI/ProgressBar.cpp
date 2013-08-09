@@ -35,6 +35,9 @@ void ProgressBar::drawObject(Window*) {
 		size = max_value;
 	}
 	switch (position) {
+		/**
+		 *
+		 */
 		case HORIZONTAL:
 			oglWrapper::drawFillRect(x + 3, y + h - 3 - size, w - 5, size, col);
 			oglWrapper::drawFillRect(
@@ -44,6 +47,7 @@ void ProgressBar::drawObject(Window*) {
 					size,
 					Color(0, 0, 0, 100));
 			break;
+
 			/**
 			 *
 			 */

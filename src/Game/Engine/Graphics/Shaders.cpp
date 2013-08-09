@@ -91,6 +91,10 @@ void Shader::setUniform4fv(const char* name, float* values, size_t count) {
 	glUniform4fv(glGetUniformLocation(program_object, name), count, values);
 }
 
+void Shader::setUniform2f(const char* name, float arg1, float arg2) {
+	glUniform2f(glGetUniformLocation(program_object, name), arg1, arg2);
+}
+
 /**
  * Linkowanie shaderu!
  */

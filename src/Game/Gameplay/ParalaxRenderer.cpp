@@ -13,7 +13,8 @@ ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, bool _draw_quad,
 				map(_map),
 				cam(_target),
 				ratio(_ratio),
-				draw_quad(_draw_quad) {
+				draw_quad(_draw_quad),
+				rotate(true) {
 }
 
 /**
@@ -55,9 +56,14 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	deque<Body*>* list = physics->getVisibleBodies();
 	
 	glPushMatrix();
+	if (rotate) {
+		glRotatef(sin(cam.focus->x / WINDOW_WIDTH / 2) * -14.f, 0.f, 0.f, 1.f);
+	}
 	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
+
+	//
 	if (draw_quad) {
-		//physics->getQuadTree()->drawObject(NULL);
+		physics->getQuadTree()->drawObject(NULL);
 	}
 	
 	/**

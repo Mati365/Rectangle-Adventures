@@ -68,6 +68,7 @@ namespace Gameplay {
 
 			// Rysowanie fioletowej szachownicy
 			bool draw_quad;
+			bool rotate;
 
 		public:
 			ParalaxRenderer(Body*, float, bool, MapINFO*);
@@ -80,6 +81,10 @@ namespace Gameplay {
 				return NULL;
 			}
 			
+			void enableRotate(bool _rotate) {
+				rotate = _rotate;
+			}
+
 			MapINFO* getMap() {
 				return map;
 			}

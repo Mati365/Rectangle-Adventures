@@ -36,7 +36,7 @@ namespace Sound {
 			/**
 			 * Odtwarzanie pliku wav
 			 */
-			void playChunk(Mix_Chunk*);
+			void playChunk(Mix_Chunk*, float);
 
 			/**
 			 * Zamykanie pliku

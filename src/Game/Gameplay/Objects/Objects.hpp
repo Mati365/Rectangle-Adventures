@@ -12,6 +12,7 @@
 #include "../../Engine/Graphics/Engine.hpp"
 #include "../../Engine/Graphics/Fonts.hpp"
 #include "../../Engine/Physics/Physics.hpp"
+#include "../../Engine/Sound/Sounds.hpp"
 
 #include "../../Tools/Tools.hpp"
 
@@ -22,6 +23,7 @@
 
 using namespace Engine;
 using namespace Physics;
+using namespace Sound;
 
 #define MAX_LIVES 3
 #define MAX_SCORE 1000
@@ -275,7 +277,17 @@ void generateExplosion(pEngine*, Body*, usint, const Color&, float, float);
 
 class Character: public IrregularPlatform {
 	protected:
-		bool jumping;
+		/**
+		 * Akcja gracza - co teraz
+		 * wykonuje
+		 */
+		enum Action {
+			JUMPING = 1 << 0,
+			CLIMBING = 1 << 1
+		};
+
+		usint action;
+
 		/**
 		 * Gracz/wrogowie modyfikują ciągle
 		 * swój status, dlatego musi być
@@ -312,13 +324,17 @@ class Character: public IrregularPlatform {
 		 * normalna
 		 */
 		bool isJumping() const {
-			return jumping;
+			return IS_SET(action, JUMPING);
 		}
 		
 		bool isDead() const {
 			return status.health == DEATH;
 		}
 		
+		usint getAction() const {
+			return action;
+		}
+
 		void die(pEngine*, usint); // śmierć, rozprucie ;)
 		void hitMe(pEngine*); // uderz mnie ;_;
 				

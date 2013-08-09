@@ -18,6 +18,7 @@ Menu::Menu() :
 						GLUT_BITMAP_HELVETICA_12,
 						12) {
 	lvl->enableHUD(false);
+	lvl->enableRotate(false);
 	hero->getStatus()->health = 1;
 	//
 	createMenuEntries();
@@ -59,6 +60,8 @@ void Menu::getCallback(Control* const & control) {
 					/**
 					 * Kontynuacja gry
 					 */
+					//
+					SDL_Delay(200);
 					break;
 					
 				case 1:
@@ -70,6 +73,12 @@ void Menu::getCallback(Control* const & control) {
 							211); // dla picu ;0
 					active_screen = splash;
 					splash->endTo(game);
+					//
+					wavPlayer::getInstance().playChunk(
+							sounds[MENU_CHOOSE_SOUND].chunk,
+							sounds[MENU_CHOOSE_SOUND].volume);
+					//
+					SDL_Delay(200);
 					break;
 					
 				case 2:
