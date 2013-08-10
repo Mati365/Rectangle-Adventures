@@ -76,12 +76,7 @@ void Window::init() {
 	splash->pushTitle("cziken58 prezentuje..", 320);
 	splash->pushTitle("Przygody Prostokata", 490);
 	splash->endTo(menu);
-	/**
-	 * Nie wszystkie ekrany są interaktywne :
-	 * - Nie chcą mieć myszki
-	 */
-	Game* interactive_screen = NULL;
-	
+
 	//
 	SDL_Event event;
 	Event key(Event::KEY_PRESSED);
@@ -92,19 +87,10 @@ void Window::init() {
 	while (window_opened) {
 		int frame_start = SDL_GetTicks();
 		//
-		if (active_screen != interactive_screen) {
-			interactive_screen = dynamic_cast<Game*>(active_screen);
-		}
 		/**
 		 *
 		 */
 		SDL_GetMouseState(&mouse.pos.x, &mouse.pos.y);
-		if (interactive_screen) {
-			Camera* cam = interactive_screen->getMapRenderer()->getCamera();
-			//
-			mouse.pos.x += cam->pos.x;
-			mouse.pos.y += cam->pos.y;
-		}
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 				case SDL_MOUSEBUTTONUP:

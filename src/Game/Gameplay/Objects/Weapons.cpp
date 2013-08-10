@@ -67,8 +67,7 @@ Gun::Gun(pEngine* _physics, float _x, float _y, PlatformShape* _gun_shape,
 		initializer_list<PlatformShape*> _bullet_shapes, usint _shot_delay) :
 				IrregularPlatform(_x, _y, State::NONE, _gun_shape),
 				//
-				shot_delay(_shot_delay),
-				actual_delay(getIntRandom<int>(0, shot_delay)),
+				shot_delay(_shot_delay, getIntRandom<int>(0, _shot_delay)),
 				physics(_physics) {
 	uninitialized_copy(
 			_bullet_shapes.begin(),
@@ -148,9 +147,9 @@ void Gun::shot() {
 }
 
 void Gun::drawObject(Window*) {
-	actual_delay++;
-	if (actual_delay >= shot_delay) {
-		actual_delay = 0;
+	shot_delay.tick();
+	if (!shot_delay.active) {
+		shot_delay.reset();
 		//
 		shot();
 	}

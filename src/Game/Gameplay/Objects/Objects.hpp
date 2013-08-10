@@ -276,16 +276,17 @@ void generateExplosion(pEngine*, Body*, usint, const Color&, float, float);
 //
 
 class Character: public IrregularPlatform {
-	protected:
-		/**
-		 * Akcja gracza - co teraz
-		 * wykonuje
-		 */
+	public:
 		enum Action {
 			JUMPING = 1 << 0,
-			CLIMBING = 1 << 1
+			CLIMBING = 1 << 1,
+			BLOODING = 1 << 2
 		};
 
+	protected:
+		/**
+		 * Akcja gracza - jego aktualny stan
+		 */
 		usint action;
 
 		/**
@@ -295,18 +296,17 @@ class Character: public IrregularPlatform {
 		 */
 		CharacterStatus status;
 		AI* ai;
+
 		/**
-		 * Animacja: mruganie czerwień/biel
-		 * postaci
+		 * Długość wyświetlenia pojedynczej
+		 * klatki zaczerwienienia gracza
 		 */
-		Color source_color;
+		_Timer blood_anim_visible_time;
 
-		usint actual_anim_time;
-		usint anim_time;
-
-		usint actual_cycles;
-		usint anim_cycles;
-		bool hit;
+		/**
+		 * Ilość klatek zaczerwienienia
+		 */
+		_Timer blood_anim_cycles;
 
 	public:
 		/**
@@ -320,9 +320,14 @@ class Character: public IrregularPlatform {
 		virtual void catchCollision(pEngine*, usint, Body*);
 
 		/**
-		 * Uderzenie, postać staje się naprzemian
-		 * normalna
+		 * Czy postać aktualnie jest czerwona
+		 * od krwii
 		 */
+		bool isDrawingBlood() const {
+			return blood_anim_cycles.cycles_count % 2
+					&& IS_SET(action, BLOODING);
+		}
+
 		bool isJumping() const {
 			return IS_SET(action, JUMPING);
 		}
@@ -335,6 +340,10 @@ class Character: public IrregularPlatform {
 			return action;
 		}
 
+		/**
+		 * Akcje dotyczące poruszania się i
+		 * zachowania gracza
+		 */
 		void die(pEngine*, usint); // śmierć, rozprucie ;)
 		void hitMe(pEngine*); // uderz mnie ;_;
 				

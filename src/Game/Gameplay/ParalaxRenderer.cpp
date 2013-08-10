@@ -57,7 +57,7 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	
 	glPushMatrix();
 	if (rotate) {
-		glRotatef(sin(cam.focus->x / WINDOW_WIDTH / 2) * -14.f, 0.f, 0.f, 1.f);
+		glRotatef(sin(cam.focus->x / WINDOW_WIDTH * 2) * -8.f, 0.f, 0.f, 1.f);
 	}
 	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
 

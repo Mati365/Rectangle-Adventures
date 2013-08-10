@@ -5,14 +5,10 @@
  *      Author: mati
  */
 #include <map>
-#include <iostream>
 
 #include "Physics.hpp"
 
-using namespace std;
 using namespace Physics;
-
-#define OBJECT_MARGIN 5
 
 /**
  * Konstruktor

@@ -75,6 +75,9 @@ namespace Gameplay {
 
 			virtual void drawObject(Window*);
 
+			/**
+			 * Element statyczny np. element interface'u
+			 */
 			void addStaticObject(Body*);
 
 			virtual Character* getHero() {
@@ -102,6 +105,8 @@ namespace Gameplay {
 	 * Główny renderer mapy!
 	 */
 	class MapRenderer: public ParalaxRenderer, public EventListener {
+#define SHADOW_RADIUS 250
+
 		public:
 			enum Weather {
 				SNOWING
@@ -119,8 +124,17 @@ namespace Gameplay {
 			// Hud w menu jest zablokowany
 			bool hud_enabled;
 
+			// Główny shader renderu
+			usint main_shader_id;
+
+			// Promień cienia wokół kamery
+			float shadow_radius;
+
 		public:
 			MapRenderer(Body*, MapINFO*);
+
+			virtual void catchEvent(const Event&);
+			virtual void drawObject(Window*);
 
 			ParalaxRenderer* addToParalax(MapINFO*, float, Body*);
 
@@ -129,12 +143,14 @@ namespace Gameplay {
 				hud_enabled = _hud_enabled;
 			}
 			
+			// Ustawienie głównego shaderu
+			void setMainShader(usint _main_shader_id) {
+				main_shader_id = _main_shader_id;
+			}
+
 			// Pogoda :-)
 			void addWeather(usint);
 			void setHero(Character*);
-
-			virtual void catchEvent(const Event&);
-			virtual void drawObject(Window*);
 
 			// Metoda przesłonięta!
 			virtual Character* getHero() {

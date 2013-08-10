@@ -8,6 +8,16 @@
 
 using namespace GUI;
 
+Button::Button(const Rect<float>& _bounds, const char* _text,
+		bool _border_enabled, Callback* _callback) :
+				Control(_bounds),
+				text(oglWrapper::WHITE, _text, GLUT_BITMAP_HELVETICA_18, 18) {
+	border_enabled = _border_enabled;
+	if (_callback) {
+		putCallback(Event::MOUSE_RELEASED, _callback);
+	}
+}
+
 void Button::drawObject(Window*) {
 	/**
 	 * Nie wymaga optymalizacji!

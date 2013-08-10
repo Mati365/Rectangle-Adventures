@@ -27,6 +27,50 @@ T getIntRandom(T min, T max) {
 }
 
 /**
+ * Prosty timer
+ */
+struct _Timer {
+		usint max_cycles_count;
+		usint cycles_count;
+
+		bool active;
+
+		_Timer() :
+						max_cycles_count(0),
+						cycles_count(0),
+						active(true) {
+		}
+
+		_Timer(usint _max_cycles_count, usint _cycles_count = 0) :
+						max_cycles_count(_max_cycles_count),
+						cycles_count(_cycles_count),
+						active(true) {
+		}
+		/**
+		 * Okrążenie timeru
+		 */
+		void tick() {
+			if (!active) {
+				return;
+			}
+			cycles_count++;
+			if (max_cycles_count <= cycles_count) {
+				active = false;
+			} else {
+				active = true;
+			}
+		}
+
+		/**
+		 * Resetowanie timeru
+		 */
+		void reset() {
+			active = true;
+			cycles_count = 0;
+		}
+};
+
+/**
  * Prosta implementacja scoped_ptr()
  * z biblioteki boost w razie jej
  * niedostępności na innych platformach

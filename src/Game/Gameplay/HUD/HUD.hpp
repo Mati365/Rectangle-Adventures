@@ -54,8 +54,14 @@ class IntroBackground {
  * Pomiędzy wiadomościami możliwe jest
  * wczytywanie cutscenek!
  */
-class MessageRenderer: public Renderer, public EventListener {
+class MessageRenderer: public Renderer, public EventListener, public Callback {
 	public:
+		enum Screen {
+			INTRO_SCREEN,
+			DEATH_SCREEN,
+			HUD_SCREEN
+		};
+
 		class Message {
 			public:
 				string title;
@@ -73,7 +79,11 @@ class MessageRenderer: public Renderer, public EventListener {
 		};
 	private:
 		float height;
-		bool closed;
+
+		/**
+		 * Typy powiadomień
+		 */
+		usint screen;
 
 		/**
 		 * Kolejka wiadomości
@@ -85,6 +95,7 @@ class MessageRenderer: public Renderer, public EventListener {
 
 		Color border_color;
 		Color background_color;
+
 		/**
 		 * HUD!
 		 */
@@ -95,10 +106,18 @@ class MessageRenderer: public Renderer, public EventListener {
 		ProgressBar score_bar;
 
 		/**
+		 * Ekran smierci
+		 */
+		glText game_over;
+		Button* retry_game;
+		Button* return_to_menu;
+
+		/**
 		 * Wiadomości w intro od i do..
 		 */
 		IntroBackground* background;
 		Character* hero;
+
 		/**
 		 * Miejsce na cutscene
 		 */
@@ -107,32 +126,46 @@ class MessageRenderer: public Renderer, public EventListener {
 	public:
 		MessageRenderer(float, const Color&, const Color&, IntroBackground*);
 
+		virtual void drawObject(Window*);
+		virtual void catchEvent(const Event&);
+
+		/**
+		 * Callback od przycisków!
+		 */
+		void getCallback(Control* const &);
+
 		bool popMessage();
 		void addMessage(const Message&);
 
-		virtual void drawObject(Window*);
-		virtual void catchEvent(const Event&);
+		/**
+		 * Ekran śmierci
+		 */
+		void enableDeathScreen() {
+			screen = DEATH_SCREEN;
+		}
 
 		/**
 		 * Jeśli zamknięte - pokazywane jest
 		 * intro.
 		 */
-		bool isClosed() const {
-			return closed;
+		usint getScreen() const {
+			return screen;
 		}
-		
+
 		bool hasMessages() const {
 			return !msgs.empty();
 		}
-		
+
 		float getHeight() const {
 			return height;
 		}
-		
+
 		~MessageRenderer() {
 			if (cutscene_box) {
 				delete cutscene_box;
 			}
+			delete retry_game;
+			delete return_to_menu;
 		}
 	private:
 		/**
@@ -143,6 +176,7 @@ class MessageRenderer: public Renderer, public EventListener {
 
 		void drawPlayerHUD(Window*);
 		void drawIntroMessage(Window*);
+		void drawDeathScreen(Window*);
 
 		void drawBorder(Window*);
 };

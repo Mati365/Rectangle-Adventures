@@ -55,12 +55,15 @@ void Menu::getCallback(Control* const & control) {
 		 * Obsługa menu!
 		 */
 		if (entries[i] == control) {
+			wavPlayer::getInstance().playChunk(
+					sounds[MENU_CHOOSE_SOUND].chunk,
+					sounds[MENU_CHOOSE_SOUND].volume);
+			//
 			switch (i) {
 				case 0:
 					/**
 					 * Kontynuacja gry
 					 */
-					//
 					SDL_Delay(200);
 					break;
 					
@@ -73,10 +76,6 @@ void Menu::getCallback(Control* const & control) {
 							211); // dla picu ;0
 					active_screen = splash;
 					splash->endTo(game);
-					//
-					wavPlayer::getInstance().playChunk(
-							sounds[MENU_CHOOSE_SOUND].chunk,
-							sounds[MENU_CHOOSE_SOUND].volume);
 					//
 					SDL_Delay(200);
 					break;
@@ -98,9 +97,14 @@ void Menu::getCallback(Control* const & control) {
  * Odbieranie eventów z okna!
  */
 void Menu::catchEvent(const Event& event) {
+	Rect<float>& rect = lvl->getCamera()->pos;
+	mouse.pos += Vector<int>(rect.x, rect.y);
+
 	for (auto iter = entries.begin(); iter != entries.end(); ++iter) {
 		(*iter)->catchEvent(event);
 	}
+
+	mouse.pos -= Vector<int>(rect.x, rect.y);
 }
 
 /**

@@ -12,11 +12,16 @@
 
 using namespace Gameplay;
 
+/**
+ * Główny renderer mapy
+ */
 MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 				ParalaxRenderer(_hero, 0.95f, true, _map),
 				msg(45, Color(0, 128, 255), Color(255, 255, 255), this),
 				hero(dynamic_cast<Character*>(_hero)),
-				hud_enabled(true) {
+				hud_enabled(true),
+				main_shader_id(WINDOW_SHADOW_SHADER),
+				shadow_radius(250) {
 }
 
 /**
@@ -43,11 +48,16 @@ void MapRenderer::catchEvent(const Event& _event) {
 	if (!hero) {
 		return;
 	}
+	if (!IS_SET(msg.getScreen(), MessageRenderer::HUD_SCREEN)) {
+		msg.catchEvent(_event);
+		return;
+	}
 	switch (_event.type) {
+		/**
+		 *
+		 */
 		case Event::KEY_PRESSED:
-			if (state == IntroBackground::PAUSE) {
-				msg.catchEvent(_event);
-			} else if (hero) {
+			if (hero) {
 				if (_event.key == 'w') {
 					hero->jump(7.f, false);
 				} else if (_event.key == 'a') {
@@ -96,19 +106,60 @@ void MapRenderer::setHero(Character* _hero) {
 
 void MapRenderer::drawObject(Window* _window) {
 	/**
-	 * glScissor - rzecz sporna dla GPU intel!
+	 * Sprawdzenie stanu gracza oraz dopasowanie do niego
+	 * shaderu
 	 */
-	shaders[WINDOW_SHADOW_SHADER]->begin();
-	shaders[WINDOW_SHADOW_SHADER]->setUniform2f(
+	if (hero->isDead()) {
+		switch (main_shader_id) {
+			/**
+			 *
+			 */
+			case WINDOW_DEATH_SHADER:
+				shadow_radius += 0.7f;
+				if (shadow_radius >= 250) {
+					shadow_radius = 250;
+				}
+				break;
+
+				/**
+				 *
+				 */
+			case WINDOW_SHADOW_SHADER:
+				if (!IS_SET(hero->getAction(), Character::BLOODING)) {
+					shadow_radius -= 0.7f;
+					if (shadow_radius <= 50) {
+						if (hud_enabled
+								&& msg.getScreen()
+										!= MessageRenderer::DEATH_SCREEN) {
+							msg.enableDeathScreen();
+						}
+						main_shader_id = WINDOW_DEATH_SHADER;
+					}
+				}
+				break;
+		}
+	} else if (hero->isDrawingBlood()) {
+		main_shader_id = WINDOW_DEATH_SHADER;
+	} else {
+		main_shader_id = WINDOW_SHADOW_SHADER;
+	}
+	/**
+	 * Rysowanie
+	 */
+	shaders[main_shader_id]->begin();
+	shaders[main_shader_id]->setUniform2f(
 			"center",
 			hero->x + hero->w / 2 - cam.pos.x,
 			hero->y + hero->h / 2 - cam.pos.y);
+	shaders[main_shader_id]->setUniform1f("radius", shadow_radius);
+
+	//
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}
 	ParalaxRenderer::drawObject(_window);
 	//
-	shaders[WINDOW_SHADOW_SHADER]->end();
+	shaders[main_shader_id]->end();
 	/**
 	 * Elementy HUDu
 	 */

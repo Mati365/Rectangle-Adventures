@@ -4,6 +4,8 @@
  *  Created on: 23-03-2013
  *      Author: mati
  */
+#include <GL/glew.h>
+
 #include "Objects.hpp"
 
 #include "../Particle/Particle.hpp"
@@ -66,13 +68,8 @@ Character::Character(const string& _nick, float _x, float _y,
 				status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
 				ai(NULL),
 				//
-				source_color(col),
-				actual_anim_time(0),
-				anim_time(9),
-				actual_cycles(0),
-				anim_cycles(8),
-				//
-				hit(false) {
+				blood_anim_visible_time(9),
+				blood_anim_cycles(8) {
 	type = _type;
 }
 
@@ -80,7 +77,7 @@ Character::Character(const string& _nick, float _x, float _y,
  * Uderzenie - zmniejszenie życia
  */
 void Character::hitMe(pEngine* physics) {
-	hit = true;
+	ADD_FLAG(action, BLOODING);
 	//
 	generateExplosion(physics, this, 5, oglWrapper::RED, 3, 6);
 	//
@@ -284,13 +281,14 @@ void Character::move(float x_speed, float y_speed) {
  * z wrogiem
  */
 void Character::updateHitAnim() {
-	actual_anim_time++;
-	if (actual_anim_time >= anim_time) {
-		actual_anim_time = 0;
-		actual_cycles++;
-		if (actual_cycles > anim_cycles) {
-			actual_cycles = hit = false;
-			col = source_color;
+	blood_anim_visible_time.tick();
+	if (!blood_anim_visible_time.active) {
+		blood_anim_visible_time.reset();
+		blood_anim_cycles.tick();
+		if (!blood_anim_cycles.active) {
+			UNFLAG(action, BLOODING);
+			//
+			blood_anim_cycles.reset();
 		}
 	}
 }
@@ -299,16 +297,26 @@ void Character::drawObject(Window*) {
 	if (ai) {
 		ai->drive();
 	}
-	if (hit) {
+	if (IS_SET(action, BLOODING)) {
 		updateHitAnim();
 		//
-		if (actual_cycles % 2 && hit) {
+		if (isDrawingBlood()) {
+			/**
+			 * Pobieranie ostatniego shaderu
+			 */
+			GLint last_program;
+			glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
+
 			shaders[HIT_CHARACTER_SHADER]->begin();
 			//
 			IrregularPlatform::drawObject(NULL);
 			//
 			shaders[HIT_CHARACTER_SHADER]->end();
-			shaders[WINDOW_SHADOW_SHADER]->begin();
+
+			/**
+			 * Powrót do ostatniego shaderu
+			 */
+			glUseProgram(last_program);
 		}
 	} else {
 		IrregularPlatform::drawObject(NULL);

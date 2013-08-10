@@ -48,8 +48,7 @@ class Gun: public IrregularPlatform {
 		PlatformShape* bullet_shapes[4];
 
 		// Odstęp między wystrzałem
-		usint shot_delay;
-		usint actual_delay;
+		_Timer shot_delay;
 
 		// Fizyka
 		pEngine* physics;

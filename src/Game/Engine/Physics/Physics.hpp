@@ -42,6 +42,9 @@ namespace Physics {
 							h(_h) {
 			}
 			
+			operator Vector<T>() const {
+				return Vector<T>(x, y);
+			}
 			/**
 			 * Czy zawiera obiekt
 			 */
@@ -56,10 +59,6 @@ namespace Physics {
 			inline bool intersect(const Rect<T>& _body) {
 				return (_body.x + _body.w >= x && _body.x <= x + w
 						&& _body.y + _body.h >= y && _body.y <= y + h);
-			}
-			
-			operator Vector<float>() {
-				return Vector<float>(x, y);
 			}
 	};
 	

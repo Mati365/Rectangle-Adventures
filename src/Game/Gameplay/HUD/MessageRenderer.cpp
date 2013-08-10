@@ -7,16 +7,24 @@
 #include "HUD.hpp"
 #include "../Gameplay.hpp"
 
+#include "../Screens/Screens.hpp"
+
 #include "../../GUI/GUI.hpp"
 #include "../../Tools/Logger.hpp"
 
+using namespace GameScreen;
 using namespace Gameplay;
 using namespace GUI;
 
+/**
+ * Konstruktor inicjalizacja kontrolek
+ */
 MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 		const Color& _contents_color, IntroBackground* _background) :
 				height(_height),
-				closed(false),
+				//
+				screen(HUD_SCREEN),
+				//
 				text(_contents_color, "", GLUT_BITMAP_HELVETICA_18, 18),
 				title(_title_color, "", GLUT_BITMAP_HELVETICA_18, 18),
 				border_color(255, 255, 255),
@@ -32,7 +40,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						oglWrapper::RED,
 						MAX_LIVES,
 						Control::VERTICAL),
-				
+
 				score(
 						oglWrapper::WHITE,
 						"Punkty:",
@@ -44,9 +52,30 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						MAX_SCORE,
 						Control::VERTICAL),
 				//
+				game_over(
+						oglWrapper::WHITE,
+						"Game over",
+						GLUT_BITMAP_HELVETICA_18,
+						18),
+
+				//
 				background(_background),
 				hero(NULL),
 				cutscene_box(NULL) {
+	retry_game = new Button(
+			Rect<float>(
+					WINDOW_WIDTH / 2 - 10 - 100,
+					WINDOW_HEIGHT - 45,
+					100,
+					35),
+			"Od nowa",
+			this);
+	retry_game->putCallback(Event::MOUSE_RELEASED, this);
+
+	return_to_menu = new Button(
+			Rect<float>(WINDOW_WIDTH / 2 + 10, WINDOW_HEIGHT - 45, 100, 35),
+			"Do menu");
+	return_to_menu->putCallback(Event::MOUSE_RELEASED, this);
 }
 
 /**
@@ -71,7 +100,7 @@ void MessageRenderer::openCutscene(const Message& msg) {
 	cutscene_box->fitToWidth(WINDOW_WIDTH);
 	//
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
-	
+
 	paralax->getPhysics()->insert(cutscene_box);
 	paralax->getCamera()->focus = cutscene_box;
 }
@@ -90,7 +119,7 @@ void MessageRenderer::closeCutscene() {
 	// Czyszczenie!
 	main_resource_manager.deleteResource(platform->getShape()->getID());
 	cutscene_box->destroyed = true;
-	
+
 	paralax->getCamera()->focus = paralax->getHero();
 	//
 	logEvent(Logger::LOG_INFO, "Zwolniono zasoby cutsceny!");
@@ -103,6 +132,9 @@ void MessageRenderer::addMessage(const Message& msg) {
 	msgs.push_front(msg);
 }
 
+/**
+ * Rysowanie obramowania HUDu
+ */
 void MessageRenderer::drawBorder(Window* _window) {
 	/**
 	 * Wypełnienie!
@@ -113,7 +145,7 @@ void MessageRenderer::drawBorder(Window* _window) {
 			_window->getBounds()->x - SPACES * 2,
 			height - SPACES * 2,
 			oglWrapper::BLACK);
-	
+
 	/**
 	 * Obramowanie!
 	 */
@@ -125,7 +157,7 @@ void MessageRenderer::drawBorder(Window* _window) {
 	 */
 	float x = SPACES, y = _window->getBounds()->y - height + SPACES, w =
 			_window->getBounds()->x - SPACES * 2, h = height - SPACES * 2;
-	glLineWidth(closed ? 3 : 2);
+	glLineWidth(screen != HUD_SCREEN ? 3 : 2);
 	//
 	glBegin(GL_LINE_LOOP);
 	glColor4ub(border_color.r, border_color.g, border_color.b, 150.f);
@@ -137,7 +169,7 @@ void MessageRenderer::drawBorder(Window* _window) {
 	glEnd();
 	//
 	glPopAttrib();
-	if (closed) {
+	if (screen != HUD_SCREEN) {
 		oglWrapper::drawFillRect(
 				SPACES * 2,
 				_window->getBounds()->y - height,
@@ -147,6 +179,9 @@ void MessageRenderer::drawBorder(Window* _window) {
 	}
 }
 
+/**
+ * DLA intro!
+ */
 bool MessageRenderer::popMessage() {
 	/**
 	 * Zamykanie intro!
@@ -154,7 +189,7 @@ bool MessageRenderer::popMessage() {
 	closeCutscene();
 	if (msgs.empty()) {
 		background->setState(IntroBackground::RESUME);
-		closed = false;
+		screen = HUD_SCREEN;
 		return false;
 	}
 	/**
@@ -165,11 +200,12 @@ bool MessageRenderer::popMessage() {
 	msgs.pop_back();
 	//
 	openCutscene(pop);
-	
+
 	title.setString(pop.title, 0);
 	text.setString(pop.text, 0);
 	text.setHidden(true);
-	closed = true;
+	//
+	screen = INTRO_SCREEN;
 	//
 	background->setState(IntroBackground::PAUSE);
 	return true;
@@ -179,11 +215,27 @@ bool MessageRenderer::popMessage() {
  * Eventy klawiszy!
  */
 void MessageRenderer::catchEvent(const Event& _event) {
-	if (_event.type == Event::KEY_PRESSED) {
-		if (!text.isHidden() && !text.isAnim() && _event.key == '*') {
-			popMessage();
-		}
+	switch (screen) {
+		/**
+		 *
+		 */
+		case INTRO_SCREEN:
+			if (_event.type == Event::KEY_PRESSED) {
+				if (!text.isHidden() && !text.isAnim() && _event.key == '*') {
+					popMessage();
+				}
+			}
+			break;
+
+			/**
+			 *
+			 */
+		case DEATH_SCREEN:
+			retry_game->catchEvent(_event);
+			return_to_menu->catchEvent(_event);
+			break;
 	}
+
 }
 
 void MessageRenderer::drawPlayerHUD(Window* _window) {
@@ -250,15 +302,61 @@ void MessageRenderer::drawIntroMessage(Window* _window) {
 	text.printText(SPACES * 2 + 2, _window->getBounds()->y - 23 + 10);
 }
 
-void MessageRenderer::drawObject(Window* _window) {
-	if (msgs.size() > 0 && !closed) {
-		popMessage();
+/**
+ * Ekran śmierci
+ */
+void MessageRenderer::drawDeathScreen(Window*) {
+	game_over.printText(WINDOW_WIDTH / 2 - game_over.getScreenLength() / 2, 80);
+	//
+	retry_game->drawObject(NULL);
+	return_to_menu->drawObject(NULL);
+}
+
+/**
+ * Odbieranie callbacku z przycisków w menu!
+ */
+void MessageRenderer::getCallback(Control* const & control) {
+	logEvent(Logger::LOG_INFO, "Otrzymano event w ekranie śmierci!");
+	//
+	if (control == return_to_menu) {
+		delete menu;
+		menu = new Menu();
+		//
+		active_screen = menu;
 	}
-	drawBorder(_window);
-	if (closed) {
-		drawIntroMessage(_window);
-	} else {
-		drawPlayerHUD(_window);
+}
+
+void MessageRenderer::drawObject(Window* _window) {
+	if (msgs.size() > 0 && screen != INTRO_SCREEN) {
+		popMessage();
+		//
+		screen = INTRO_SCREEN;
+	}
+	if (screen != DEATH_SCREEN) {
+		drawBorder(_window);
+	}
+	//
+	switch (screen) {
+		/**
+		 *
+		 */
+		case INTRO_SCREEN:
+			drawIntroMessage(_window);
+			break;
+
+			/**
+			 *
+			 */
+		case HUD_SCREEN:
+			drawPlayerHUD(_window);
+			break;
+
+			/**
+			 *
+			 */
+		case DEATH_SCREEN:
+			drawDeathScreen(_window);
+			break;
 	}
 }
 
