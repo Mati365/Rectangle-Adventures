@@ -120,29 +120,31 @@ namespace GameScreen {
 	 * Splash - początkowy czarny ekran
 	 * z tekstem o autorze.
 	 */
-	class SplashInfo {
-		public:
-			char* text;
-			usint timer;
-			usint visible_time;
-
-			SplashInfo(const char* _text, usint _visible_time) :
-							text(Convert::getDynamicValue(_text)),
-							timer(0),
-							visible_time(_visible_time) {
-			}
-			
-			~SplashInfo() {
-				if (text) {
-					delete[] text;
-				}
-			}
-	};
-	
 	class Splash: public Screen {
+		public:
+			class SplashInfo {
+				public:
+#define LOGO_WIDTH 228
+					/**
+					 * Tytuł
+					 */
+					char* text;
+					_Timer timer;
+
+					/**
+					 * Logo podczas pierwszego włącznia
+					 */
+					IrregularPlatform* logo;
+
+					SplashInfo(const char*, usint, PlatformShape* = NULL);
+
+					~SplashInfo();
+			};
+
 		protected:
 			deque<SplashInfo*> texts;
 			glText title;
+
 			// Powrót po splashu!
 			Screen* return_to;
 
@@ -168,8 +170,9 @@ namespace GameScreen {
 				return_to = _return_to;
 			}
 			
-			void pushTitle(const char* _title, usint _visible_time) {
-				texts.push_front(new SplashInfo(_title, _visible_time));
+			void pushTitle(const char* _title, usint _visible_time,
+					PlatformShape* _logo = NULL) {
+				texts.push_front(new SplashInfo(_title, _visible_time, _logo));
 			}
 			
 			~Splash();

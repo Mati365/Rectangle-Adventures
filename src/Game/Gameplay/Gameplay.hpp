@@ -70,6 +70,9 @@ namespace Gameplay {
 			bool draw_quad;
 			bool rotate;
 
+			// Timer potrząsania
+			_Timer shake_timer;
+
 		public:
 			ParalaxRenderer(Body*, float, bool, MapINFO*);
 
@@ -79,6 +82,9 @@ namespace Gameplay {
 			 * Element statyczny np. element interface'u
 			 */
 			void addStaticObject(Body*);
+
+			// Potrząsanie ekranem
+			void shake();
 
 			virtual Character* getHero() {
 				return NULL;
@@ -109,7 +115,8 @@ namespace Gameplay {
 
 		public:
 			enum Weather {
-				SNOWING
+				SNOWING,
+				SHAKE
 			};
 
 		private:
@@ -148,7 +155,7 @@ namespace Gameplay {
 				main_shader_id = _main_shader_id;
 			}
 
-			// Pogoda :-)
+			// Pogoda
 			void addWeather(usint);
 			void setHero(Character*);
 

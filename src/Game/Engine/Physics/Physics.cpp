@@ -6,11 +6,36 @@
  */
 #include <cmath>
 #include <algorithm>
-#include <iostream>
 
 #include "Physics.hpp"
 
 using namespace Physics;
+
+//---------------------------
+
+/**
+ * Odwrócenie kierunku
+ */
+usint Physics::invertDir(usint _dir) {
+	switch (_dir) {
+		case pEngine::DOWN:
+			return pEngine::UP;
+
+			//
+		case pEngine::UP:
+			return pEngine::DOWN;
+
+			//
+		case pEngine::LEFT:
+			return pEngine::RIGHT;
+
+			//
+		case pEngine::RIGHT:
+			return pEngine::LEFT;
+	}
+	return pEngine::NONE;
+}
+//---------------------------
 
 pEngine::pEngine(const Rect<float>& _bounds, float _gravity_speed) :
 				bounds(_bounds),

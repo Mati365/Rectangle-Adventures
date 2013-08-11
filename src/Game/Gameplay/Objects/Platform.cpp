@@ -231,7 +231,7 @@ void Platform::drawObject(Window*) {
 //---------------------------------------
 
 IrregularPlatform::IrregularPlatform(float _x, float _y, usint _state,
-		PlatformShape* _shape) :
+		PlatformShape* _shape, float _width) :
 				Platform(_x, _y, 0, 0, oglWrapper::WHITE, _state),
 				scale(1) {
 	if (!_shape) {
@@ -239,6 +239,9 @@ IrregularPlatform::IrregularPlatform(float _x, float _y, usint _state,
 		return;
 	}
 	setShape(_shape);
+	if (_width != -1) {
+		fitToWidth(_width);
+	}
 }
 
 void IrregularPlatform::setShape(PlatformShape* _shape) {

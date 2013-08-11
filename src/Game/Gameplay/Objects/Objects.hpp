@@ -140,7 +140,7 @@ class IrregularPlatform: public Platform {
 		float scale;
 
 	public:
-		IrregularPlatform(float, float, usint, PlatformShape*);
+		IrregularPlatform(float, float, usint, PlatformShape*, float = -1.f);
 
 		virtual void drawObject(Window*);
 
@@ -349,6 +349,11 @@ class Character: public IrregularPlatform {
 				
 		void move(float, float);
 		void jump(float, bool);
+
+		/**
+		 * Unik od przeciwnika
+		 */
+		void dodge(usint);
 
 		void setAI(AI* _ai) {
 			ai = _ai;

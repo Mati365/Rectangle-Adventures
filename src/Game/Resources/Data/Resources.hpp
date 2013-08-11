@@ -39,6 +39,8 @@ enum Sounds {
 	MENU_CHOOSE_SOUND,
 	SCORE_SOUND,
 	SPIKES_SOUND,
+	EARTH_QUAKE_SOUND_1, // trzęsienie ziemi
+	EARTH_QUAKE_SOUND_2, // trzęsienie ziemi
 	DIE_SOUND
 };
 
@@ -51,6 +53,9 @@ extern _Sound sounds[];
 
 void loadSoundsPack();
 void unloadSoundsPack();
+
+// Odtwarzanie dźwięku z ID
+void playResourceSound(usint);
 
 /**
  * Efekty w grze muszą być wczytane
@@ -86,9 +91,10 @@ MapINFO* loadMap(const char*);
  * Wczytywanie kształtu!
  */
 PlatformShape* readShape(const string&, const char*, float);
-PlatformShape* readShape(FILE*, const char*, float);
+PlatformShape* registerShape(FILE*, const char*, float);
 
 PlatformShape* getShapePointer(const char*);
+PlatformShape* getShapeFromFilesystem(const char*, float);
 
 /**
  * Wczytywanie Mob'a
@@ -100,6 +106,11 @@ class Platform;
 class Character;
 class MapINFO: public Resource<usint> {
 	public:
+		struct Parallax {
+				MapINFO* map;
+				float ratio;
+		};
+
 		pEngine* physics;
 
 		/**
@@ -158,6 +169,12 @@ class PlatformShape: public Resource<usint> {
 		Point* points;
 		usint count;
 
+		// Kolor domyślny
+		Color main_col;
+
+		// Szerokość lini
+		usint line_width;
+
 	public:
 		PlatformShape(FILE*, const char*, float);
 
@@ -174,6 +191,13 @@ class PlatformShape: public Resource<usint> {
 		void rotate(float);
 
 		/**
+		 * Ustawienie grubości linii
+		 */
+		void setLineWidth(usint _line_width) {
+			line_width = _line_width;
+		}
+
+		/**
 		 * Przeszukiwanie wierzchołków,
 		 * wyznaczanie skrajnych rogów
 		 */
@@ -185,6 +209,10 @@ class PlatformShape: public Resource<usint> {
 			return id;
 		}
 		
+		Color* getMainColor() {
+			return &main_col;
+		}
+
 		~PlatformShape();
 
 	protected:

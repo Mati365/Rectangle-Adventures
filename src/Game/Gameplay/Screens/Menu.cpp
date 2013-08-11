@@ -55,9 +55,7 @@ void Menu::getCallback(Control* const & control) {
 		 * Obsługa menu!
 		 */
 		if (entries[i] == control) {
-			wavPlayer::getInstance().playChunk(
-					sounds[MENU_CHOOSE_SOUND].chunk,
-					sounds[MENU_CHOOSE_SOUND].volume);
+			playResourceSound(MENU_CHOOSE_SOUND);
 			//
 			switch (i) {
 				case 0:

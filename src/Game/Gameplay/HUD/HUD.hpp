@@ -99,10 +99,11 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		/**
 		 * HUD!
 		 */
-		glText health;
+
+		IrregularPlatform health;
 		ProgressBar health_bar;
 
-		glText score;
+		IrregularPlatform score;
 		ProgressBar score_bar;
 
 		/**

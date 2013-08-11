@@ -22,7 +22,7 @@ ResourceFactory::FactoryType ResourceFactory::factory_types[] =
 			//
 			{ SCORE, pEngine::NONE, 0.f, 12, "punkt.txt", "score" },
 			{ HEALTH, pEngine::NONE, 0.f, 16, "zycie.txt", "health" },
-			{ GHOST, pEngine::NONE, 0.f, 20, "wrog.txt", "enemy" },
+			{ GHOST, pEngine::NONE, 0.f, 6, "wrog.txt", "enemy" },
 			//
 			{ GUN, pEngine::RIGHT, 90.f, 12, "bron.txt", "gun_right" },
 			{ GUN, pEngine::LEFT, -90.f, 12, "bron.txt", "gun_left" },
@@ -138,7 +138,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	/**
 	 * Lawa
 	 */
-	if(_type == LAVA) {
+	if (_type == LAVA) {
 		Lava* lava = new Lava(_x, _y);
 		//
 		addBody(lava);
@@ -167,7 +167,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 					textures[genTextureID(BULLET, 3)], textures[genTextureID(
 							BULLET,
 							4)] },
-				240);
+				340);
 		_object->orientation = _orientation;
 		dynamic_cast<Gun*>(_object)->fitToWidth(_width);
 		/**

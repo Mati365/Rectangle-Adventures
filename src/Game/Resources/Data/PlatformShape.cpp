@@ -10,28 +10,28 @@
 
 //---------------------------------------
 
+/**
+ * Wczytywanie do menedżera zasobów
+ */
+
 PlatformShape* readShape(const string& _path, const char* _resource_label,
 		float _angle) {
 	FILE* _file = main_filesystem.getExternalFile(_path.c_str(), NULL);
 	if (!_file) {
-		logEvent(
-				Logger::LOG_ERROR,
-				("Podana tekstura" + _path + " nie istnieje!").c_str());
 		return NULL;
 	}
-	PlatformShape* shape = readShape(_file, _resource_label, _angle);
+	PlatformShape* shape = registerShape(_file, _resource_label, _angle);
 	//
 	main_filesystem.closeExternalFile();
 	return shape;
 }
 
-PlatformShape* readShape(FILE* _file, const char* _resource_label,
+/**
+ * Wczytywanie do menedżera zasobów
+ */
+PlatformShape* registerShape(FILE* _file, const char* _resource_label,
 		float _angle) {
 	if (!_file) {
-		logEvent(
-				Logger::LOG_ERROR,
-				("Podana tekstura " + (string )_resource_label
-						+ " nie istnieje!").c_str());
 		return NULL;
 	}
 	PlatformShape* shape = new PlatformShape(_file, _resource_label, _angle);
@@ -39,8 +39,23 @@ PlatformShape* readShape(FILE* _file, const char* _resource_label,
 	return shape;
 }
 
+/**
+ * Pobieranie wskaźnika z menedżera zasobów
+ */
 PlatformShape* getShapePointer(const char* _label) {
 	return dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(_label));
+}
+
+/**
+ * Pobieranie bezpośrednio z systemu plików bez udziału
+ * menedżera zasobów
+ */
+PlatformShape* getShapeFromFilesystem(const char* _path, float _angle) {
+	FILE* _file = main_filesystem.getExternalFile(_path, NULL);
+	if (!_file) {
+		return NULL;
+	}
+	return new PlatformShape(_file, _path, _angle);
 }
 
 //---------------------------------------
@@ -52,7 +67,10 @@ PlatformShape::PlatformShape(FILE* _file, const char* _label, float _angle) :
 				angle(TO_RAD(_angle)),
 				//
 				points(NULL),
-				count(0) {
+				count(0),
+				//
+				main_col(oglWrapper::WHITE),
+				line_width(2) {
 	id = glGenLists(1);
 	if (!id) {
 		logEvent(Logger::LOG_ERROR, "Nie mogę zarejestrować tekstury!");
@@ -169,8 +187,10 @@ bool PlatformShape::recompile() {
 
 	// Kompilacja!
 	glNewList(id, GL_COMPILE);
-	glLineWidth(2);
+	glLineWidth(line_width);
 	glBegin(GL_LINE_STRIP);
+	glColor4ub(main_col.r, main_col.g, main_col.b, main_col.a);
+
 	for (usint i = 0; i < count; ++i) {
 		Point* point = &points[i];
 		/**
@@ -186,6 +206,8 @@ bool PlatformShape::recompile() {
 						point->col.g,
 						point->col.b,
 						point->col.a);
+				// Wyliczanie średniego koloru
+				main_col = point->col;
 				break;
 
 				/**
@@ -207,6 +229,7 @@ bool PlatformShape::recompile() {
 				break;
 		}
 	}
+
 	glEnd();
 	glEndList();
 	return true;
@@ -219,6 +242,7 @@ void PlatformShape::rotate(float _angle) {
 	angle = _angle;
 	//
 	bounds.x = bounds.y = 0;
+
 	for (usint i = 0; i < count; ++i) {
 		Vector<float>* pos = &points[i].pos;
 		Vector<float> new_pos;
@@ -237,6 +261,7 @@ void PlatformShape::rotate(float _angle) {
 			bounds.y = pos->y;
 		}
 	}
+
 	/**
 	 * Po rotacji wyrównanie punktu do pozycji
 	 */
@@ -247,6 +272,7 @@ void PlatformShape::rotate(float _angle) {
 		pos->y -= bounds.y < 0 ? bounds.y : -bounds.y;
 	}
 	updateBounds();
+
 	/**
 	 * Rekompilacja listy
 	 */

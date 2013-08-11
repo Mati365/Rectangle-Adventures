@@ -33,7 +33,7 @@ ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
 		ParalaxRenderer* renderer = new ParalaxRenderer(
 				_body,
 				_ratio,
-				false,
+				true,
 				_paralax);
 		paralax_background.push_front(renderer);
 		return renderer;
@@ -59,7 +59,7 @@ void MapRenderer::catchEvent(const Event& _event) {
 		case Event::KEY_PRESSED:
 			if (hero) {
 				if (_event.key == 'w') {
-					hero->jump(7.f, false);
+					hero->jump(5.f, false);
 				} else if (_event.key == 'a') {
 					hero->move(-2.f, 0.f);
 				} else if (_event.key == 'd') {
@@ -92,6 +92,13 @@ void MapRenderer::addWeather(usint _type) {
 			//
 			addStaticObject(snow);
 		}
+			break;
+
+			/**
+			 * Erupcja wulkanu
+			 */
+		case SHAKE:
+			shake();
 			break;
 	}
 }

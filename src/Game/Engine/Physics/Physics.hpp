@@ -63,6 +63,11 @@ namespace Physics {
 	};
 	
 	/**
+	 * Odwrócenie kierunku
+	 */
+	usint invertDir(usint);
+
+	/**
 	 * Todo:
 	 * + Przebudowa, sprawdzanie kolizji tylko
 	 * na widocznym skrawku ekranu!

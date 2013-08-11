@@ -1,7 +1,7 @@
 in vec4 gl_FragCoord;
 
 uniform vec2 center; // środek okna
-const float radius = 250; // promień
+uniform float radius; // promień
 const float light = 0.2f; // oświetlenie
 
 void main() {
@@ -13,5 +13,6 @@ void main() {
 	float distance = sqrt(point.x * point.x + point.y * point.y);
 
 	float p = 1.f - distance / radius + light;
-	gl_FragColor = vec4(col.r * p, col.g * p, col.b * p, col.a);
+	gl_FragColor = vec4(0, col.g * p, col.b * p, col.a);
+	//gl_FragColor = vec4(col.r * p, 0, 0, col.a);
 }

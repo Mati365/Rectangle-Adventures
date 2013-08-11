@@ -68,7 +68,7 @@ Character::Character(const string& _nick, float _x, float _y,
 				status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
 				ai(NULL),
 				//
-				blood_anim_visible_time(9),
+				blood_anim_visible_time(13),
 				blood_anim_cycles(8) {
 	type = _type;
 }
@@ -81,9 +81,7 @@ void Character::hitMe(pEngine* physics) {
 	//
 	generateExplosion(physics, this, 5, oglWrapper::RED, 3, 6);
 	//
-	wavPlayer::getInstance().playChunk(
-			sounds[SPIKES_SOUND].chunk,
-			sounds[SPIKES_SOUND].volume);
+	playResourceSound(SPIKES_SOUND);
 }
 
 /**
@@ -102,9 +100,7 @@ void Character::die(pEngine* physics, usint _dir) {
 	setShape(getShapePointer("cranium"));
 	fitToWidth(14);
 	//
-	wavPlayer::getInstance().playChunk(
-			sounds[SCORE_SOUND].chunk,
-			sounds[SCORE_SOUND].volume);
+	playResourceSound(DIE_SOUND);
 }
 
 /**
@@ -117,14 +113,14 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (ai) {
 		ai->getCollision(physics, dir, body);
 	}
+
 	/**
 	 * Ginąć może nie tylko gracz
 	 */
-	if ((type == Body::HERO || type == Body::ENEMY)
-			&& dir == pEngine::DOWN&& !IS_SET(body->state, Body::HIDDEN)) {
-			// Zryte formatowanie
-			if
-(		velocity.y < -9 && status.health > 0) {
+	if (dir == pEngine::DOWN && !IS_SET(body->state, Body::HIDDEN)
+			&& (type == Body::HERO || type == Body::ENEMY)) {
+		// Zryte formatowanie
+		if (velocity.y < -9 && status.health > 0) {
 			die(physics, dir);
 			return;
 		}
@@ -188,14 +184,18 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 				status.score = MAX_SCORE;
 			}
 			//
-			generateExplosion(physics, body, 6, oglWrapper::WHITE, 2, 3);
+			generateExplosion(
+					physics,
+					body,
+					6,
+					*dynamic_cast<IrregularPlatform*>(body)->getShape()->getMainColor(),
+					2,
+					3);
 			//
 			body->destroyed = true;
 			//
 			if (enemy->status.health > 0 || enemy->status.score) {
-				wavPlayer::getInstance().playChunk(
-						sounds[SCORE_SOUND].chunk,
-						sounds[SCORE_SOUND].volume);
+				playResourceSound(SCORE_SOUND);
 			}
 			break;
 
@@ -211,7 +211,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 				status -= enemy->status;
 				hitMe(physics);
 			}
-			velocity.invert();
+			dodge(dir);
 			break;
 
 			/**
@@ -222,7 +222,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 				status.health -= 1;
 			}
 			hitMe(physics);
-			velocity.invert();
+			dodge(dir);
 			//
 			body->destroyed = true;
 			break;
@@ -231,11 +231,14 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			 *
 			 */
 		case SPIKES:
+			if (body->orientation != invertDir(dir)) {
+				break;
+			}
 			if (status.health > 0) {
 				status.health -= 1;
 			}
 			hitMe(physics);
-			jump(8, true);
+			dodge(dir);
 			break;
 
 			/**
@@ -250,6 +253,37 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 }
 
 /**
+ * Unik
+ */
+void Character::dodge(usint _dir) {
+	float _speed = 8;
+	//
+	switch (_dir) {
+		case pEngine::RIGHT:
+			velocity.x = -_speed;
+			break;
+
+			//
+		case pEngine::LEFT:
+			velocity.x = _speed;
+			break;
+
+			//
+		case pEngine::UP:
+			velocity.y = -_speed;
+			break;
+
+			//
+		case pEngine::DOWN:
+			velocity.y = _speed;
+			break;
+	}
+	//
+	x += velocity.x;
+	y += velocity.y;
+}
+
+/**
  * Skok z określoną prędkością!
  */
 void Character::jump(float _y_speed, bool _force) {
@@ -258,18 +292,19 @@ void Character::jump(float _y_speed, bool _force) {
 		velocity.y = -_y_speed;
 		//
 		if (!_force && !IS_SET(action, CLIMBING)) {
-			wavPlayer::getInstance().playChunk(
-					sounds[JUMP_SOUND].chunk,
-					sounds[JUMP_SOUND].volume);
+			playResourceSound(JUMP_SOUND);
 		}
 	}
 }
 
+/**
+ * Poruszanie się
+ */
 void Character::move(float x_speed, float y_speed) {
 	if ((x_speed > 0 && velocity.x < 0) || (x_speed < 0 && velocity.x > 0)) {
 		velocity.x = 0;
 	}
-	if (velocity.x >= 4.f || velocity.x <= -4.f || isDead()) {
+	if (isDead() || velocity.x >= 4.f || velocity.x <= -4.f) {
 		return;
 	}
 	velocity.x += x_speed;

@@ -1,7 +1,7 @@
 in vec4 gl_FragCoord;
 
 uniform vec2 center; // środek okna
-const float radius = 250; // promień
+uniform float radius; // promień
 const float light = 0.2f; // oświetlenie
 
 void main() {

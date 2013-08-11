@@ -33,6 +33,8 @@ void loadSoundsPack() {
 	sounds[MENU_CHOOSE_SOUND] = {wavPlayer::getInstance().loadSound("wybor_menu.wav"), MIX_MAX_VOLUME / 2};
 	sounds[SCORE_SOUND] = {wavPlayer::getInstance().loadSound("punkt.wav"), MIX_MAX_VOLUME / 4};
 	sounds[SPIKES_SOUND] = {wavPlayer::getInstance().loadSound("igly.wav"), MIX_MAX_VOLUME};
+	sounds[EARTH_QUAKE_SOUND_1] = {wavPlayer::getInstance().loadSound("trzesienie_ziemi.wav"), MIX_MAX_VOLUME};
+	sounds[EARTH_QUAKE_SOUND_2] = {wavPlayer::getInstance().loadSound("trzesienie_ziemi_2.wav"), MIX_MAX_VOLUME};
 	sounds[DIE_SOUND] = {wavPlayer::getInstance().loadSound("smierc.wav"), MIX_MAX_VOLUME};
 }
 
@@ -45,6 +47,13 @@ void unloadSoundsPack() {
 ////////////////////////// Shadery
 
 Shader* shaders[HIT_CHARACTER_SHADER + 1];
+
+/**
+ * Odtwarzanie dźwięku po identyfikatorze
+ */
+void playResourceSound(usint _id) {
+	wavPlayer::getInstance().playChunk(sounds[_id].chunk, sounds[_id].volume);
+}
 
 /**
  * Wczytywanie paczki shaderów!

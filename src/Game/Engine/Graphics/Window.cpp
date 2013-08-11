@@ -73,8 +73,17 @@ void Window::init() {
 		return;
 	}
 	active_screen = game;
-	splash->pushTitle("cziken58 prezentuje..", 320);
-	splash->pushTitle("Przygody Prostokata", 490);
+	splash->pushTitle(
+			"..cziken58 prezentuje..",
+			520,
+			getShapeFromFilesystem("iluzja_trojkat.txt", 6.f));
+	splash->pushTitle(
+			"...gre nie wczytujaca ani jednego sprite...",
+			690,
+			getShapeFromFilesystem("pudlo.txt", -6.f));
+	splash->pushTitle(
+				"Rect Adventures",
+				490);
 	splash->endTo(menu);
 
 	//

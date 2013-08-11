@@ -120,7 +120,7 @@ bool MapINFO::load(FILE* map) {
 	usint script_id;
 	
 	char shape[256];
-	int border[4];
+	usint border[4];
 	
 	// Wczytywanie pozycji początkowej gracza
 	fscanf(map, "%f %f %f\n", &hero_bounds.x, &hero_bounds.y, &hero_bounds.w);
@@ -138,7 +138,7 @@ bool MapINFO::load(FILE* map) {
 	for (usint i = 0; i < size; ++i) {
 		fscanf(
 				map,
-				"%hu %d %d %d %d %hu %hu %f %f %f %f %hu %f %f %f %f %hu %hu %hu %hu %hu %hu %s\n",
+				"%hu %hu %hu %hu %hu %hu %hu %f %f %f %f %hu %f %f %f %f %hu %hu %hu %hu %hu %hu %s\n",
 				&script_id,
 				&border[0],
 				&border[1],

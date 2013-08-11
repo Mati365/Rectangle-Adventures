@@ -22,19 +22,20 @@ using namespace GUI;
 MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 		const Color& _contents_color, IntroBackground* _background) :
 				height(_height),
-				//
 				screen(HUD_SCREEN),
 				//
 				text(_contents_color, "", GLUT_BITMAP_HELVETICA_18, 18),
 				title(_title_color, "", GLUT_BITMAP_HELVETICA_18, 18),
 				border_color(255, 255, 255),
 				background_color(0, 0, 0),
+
 				// HUD
 				health(
-						oglWrapper::WHITE,
-						"Zdrowie:",
-						GLUT_BITMAP_HELVETICA_18,
-						18),
+						12,
+						WINDOW_HEIGHT - 27,
+						Body::NONE,
+						getShapePointer("health"),
+						16),
 				health_bar(
 						Rect<float>(0, 0, 0, 0),
 						oglWrapper::RED,
@@ -42,15 +43,17 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						Control::VERTICAL),
 
 				score(
-						oglWrapper::WHITE,
-						"Punkty:",
-						GLUT_BITMAP_HELVETICA_18,
-						18),
+						WINDOW_WIDTH - 150,
+						WINDOW_HEIGHT - 30,
+						Body::NONE,
+						getShapePointer("score"),
+						16),
 				score_bar(
 						Rect<float>(0, 0, 0, 0),
-						oglWrapper::PURPLE,
+						oglWrapper::GREEN,
 						MAX_SCORE,
 						Control::VERTICAL),
+
 				//
 				game_over(
 						oglWrapper::WHITE,
@@ -106,7 +109,7 @@ void MessageRenderer::openCutscene(const Message& msg) {
 }
 
 /**
- * Zamkynaknie cutsceny
+ * Zamykanie cutsceny
  */
 void MessageRenderer::closeCutscene() {
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
@@ -244,7 +247,7 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	}
 	if (health_bar.w == 0) {
 		health_bar.setBounds(
-				SPACES * 3 + health.getScreenLength(),
+				SPACES * 3 + health.w + SPACES * 2,
 				_window->getBounds()->y - 30,
 				112,
 				20);
@@ -258,16 +261,15 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	 * Pasek życia!
 	 */
 	health_bar.setValue(hero->getStatus()->health);
-	health.printText(SPACES * 2, _window->getBounds()->y - 15);
+
+	health.drawObject(NULL);
 	health_bar.drawObject(NULL);
 	/**
 	 * Punkty!
 	 */
 	score_bar.setValue(hero->getStatus()->score);
-	score.printText(
-			_window->getBounds()->x - SPACES * 3 - score_bar.w
-					- score.getScreenLength(),
-			_window->getBounds()->y - 15);
+
+	score.drawObject(NULL);
 	score_bar.drawObject(NULL);
 }
 

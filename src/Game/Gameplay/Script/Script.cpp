@@ -28,6 +28,7 @@ Func funcs[] = {
 					{ ATTACH_PARTICLE, "ATTACH_PARTICLE", 3 },
 					{ DISABLE_MOVING, "DISABLE_MOVING", 0 },
 					{ DESTROY_OBJECT, "DESTROY_OBJECT", 0 },
+					{ ADD_WEATHER, "ADD_WEATHER", 1 },
 					{ SHOW_MESSAGE, "SHOW_MESSAGE", 2 },
 					{ SHOW_SPLASH, "SHOW_SPLASH", 1 },
 					{ LOAD_MAP, "LOAD_MAP", 1 },
@@ -174,6 +175,26 @@ bool Interpreter::interpret(Script* script) {
 				selected->destroyed = true;
 				break;
 				
+				/**
+				 * Dodanie pogody!
+				 */
+			case ADD_WEATHER: {
+				switch (Convert::stringTo<usint>(func.args[0])) {
+					/**
+					 *
+					 */
+					case SHAKE:
+						map->addWeather(MapRenderer::SHAKE);
+						break;
+
+						/**
+						 *
+						 */
+					default:
+						break;
+				}
+			}
+				break;
 				/**
 				 * Ustawienie kierunku ruchu!
 				 */

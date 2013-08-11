@@ -37,6 +37,14 @@ enum {
 };
 
 /**
+ * Typy pogody
+ */
+enum {
+	// 0 - spadajace kwadraty
+	SHAKE = 1
+};
+
+/**
  * Deklaracje!!
  */
 enum {
@@ -48,6 +56,7 @@ enum {
 	ATTACH_PARTICLE,
 	DISABLE_MOVING,
 	DESTROY_OBJECT,
+	ADD_WEATHER,
 	SHOW_MESSAGE,
 	SHOW_SPLASH,
 	LOAD_MAP,

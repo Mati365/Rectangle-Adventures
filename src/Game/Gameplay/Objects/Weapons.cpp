@@ -108,7 +108,7 @@ void Gun::shot() {
 							y + h * 2,
 							Vector<float>(0, 1),
 							shape,
-							200,
+							100,
 							orientation));
 			break;
 
@@ -141,9 +141,7 @@ void Gun::shot() {
 			break;
 	}
 	//
-	wavPlayer::getInstance().playChunk(
-			sounds[GUN_SHOT_SOUND].chunk,
-			sounds[GUN_SHOT_SOUND].volume);
+	playResourceSound(GUN_SHOT_SOUND);
 }
 
 void Gun::drawObject(Window*) {

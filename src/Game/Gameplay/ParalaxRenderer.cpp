@@ -14,7 +14,9 @@ ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, bool _draw_quad,
 				cam(_target),
 				ratio(_ratio),
 				draw_quad(_draw_quad),
-				rotate(true) {
+				rotate(true),
+				shake_timer(170) {
+	shake_timer.active = false;
 }
 
 /**
@@ -22,6 +24,17 @@ ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, bool _draw_quad,
  */
 void ParalaxRenderer::addStaticObject(Body* _renderer) {
 	static_objects.push_back(AllocKiller<Body>(_renderer));
+}
+
+/**
+ * Potrząsanie ekranem
+ */
+void ParalaxRenderer::shake() {
+	shake_timer.reset();
+	//
+	playResourceSound(
+			getIntRandom<int>(0, 2) == 1 ?
+					EARTH_QUAKE_SOUND_1 : EARTH_QUAKE_SOUND_2);
 }
 
 /**
@@ -38,10 +51,10 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	if (draw_quad) {
 		physics->setActiveRange(
 				Rect<float>(
-						cam.pos.x + 50,
-						cam.pos.y + 50,
-						WINDOW_WIDTH - 50,
-						WINDOW_HEIGHT - 50));
+						cam.pos.x * ratio,
+						cam.pos.y * ratio,
+						WINDOW_WIDTH,
+						WINDOW_HEIGHT));
 		physics->updateWorld();
 	}
 	
@@ -56,16 +69,30 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	deque<Body*>* list = physics->getVisibleBodies();
 	
 	glPushMatrix();
+	/**
+	 * Transformacja kamery
+	 */
 	if (rotate) {
 		glRotatef(sin(cam.focus->x / WINDOW_WIDTH * 2) * -8.f, 0.f, 0.f, 1.f);
 	}
-	glTranslatef(-cam.pos.x * ratio, -cam.pos.y * ratio, 0);
+	float _x = -cam.pos.x * ratio, _y = -cam.pos.y * ratio;
+	if (shake_timer.active) {
+		shake_timer.tick();
+		//
+		float prop = (float) shake_timer.cycles_count
+				/ (float) shake_timer.max_cycles_count;
+		_x -= (float) getIntRandom<int>(3, 10) * sin(prop * 45);
+		_y += (float) getIntRandom<int>(3, 10) * sin(prop * 85);
+	}
+	glTranslatef(_x, _y, 0);
 
-	//
+	/**
+	 * Rysowanie quadtree
+	 */
 	if (draw_quad) {
 		physics->getQuadTree()->drawObject(NULL);
 	}
-	
+
 	/**
 	 * Obiekty poza ekranem wycinamy!
 	 */
