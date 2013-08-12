@@ -45,6 +45,19 @@ namespace Physics {
 			operator Vector<T>() const {
 				return Vector<T>(x, y);
 			}
+
+			inline void getFromVec(const Vector<float>& _vec) {
+				w = h = 0;
+				x = _vec.x;
+				y = _vec.y;
+			}
+
+			inline Rect<T>& operator+=(const Vector<T>& _vec) {
+				x += _vec.x;
+				y += _vec.y;
+				//
+				return *this;
+			}
 			/**
 			 * Czy zawiera obiekt
 			 */
@@ -224,7 +237,8 @@ namespace Physics {
 				BULLET, // pocisk
 				TRIGGER, // event skrtpytu
 				SPIKES, // kolce
-				LADDER // drabina
+				LADDER, // drabina
+				LIANE // liana
 			};
 
 			/**

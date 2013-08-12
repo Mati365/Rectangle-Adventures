@@ -30,6 +30,7 @@ ResourceFactory::FactoryType ResourceFactory::factory_types[] =
 			{ GUN, pEngine::DOWN, 180.f, 16, "bron.txt", "gun_down" },
 			//
 			{ LADDER, pEngine::NONE, 0.f, 23, "drabina.txt", "stairs" },
+			{ LIANE, pEngine::NONE, 0.f, 16, "liana.txt", "liane" },
 			// Szerokość bez znaczenia!
 			{ BULLET, pEngine::RIGHT, 90.f, 0, "pocisk.txt", "bullet_right" },
 			{ BULLET, pEngine::LEFT, -90.f, 0, "pocisk.txt", "bullet_left" },
@@ -62,10 +63,6 @@ usint ResourceFactory::genTextureID(usint _type, usint _orientation) const {
 }
 
 void ResourceFactory::loadTexturesPack() {
-	// Aleee lawa ma 2 kształty
-	readShape("plomien_1.txt", "flame_1", 0);
-	readShape("plomien_2.txt", "flame_2", 0);
-
 	// Gracz
 	readShape("gracz.txt", "player", 0);
 	readShape("czaszka.txt", "cranium", 0);
@@ -185,7 +182,8 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 
 		character->orientation = _orientation;
 		/**
-		 * Typ obiektu w fabryce to nie typ obiektu w fizyce!
+		 * Typ obiektu w fabryce to nie typ obiektu
+		 * w fizyce!
 		 */
 		switch (_type) {
 			/**
@@ -193,6 +191,14 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 			 */
 			case LADDER:
 				character->setType(Character::LADDER);
+				character->setState(Body::BACKGROUND);
+				break;
+
+				/**
+				 * Liana!
+				 */
+			case LIANE:
+				character->setType(Character::LIANE);
 				character->setState(Body::BACKGROUND);
 				break;
 

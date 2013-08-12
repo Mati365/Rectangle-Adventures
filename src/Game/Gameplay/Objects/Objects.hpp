@@ -199,6 +199,15 @@ struct CharacterStatus: public Resource<usint> {
 		bool shield;
 		Vector<float> start_pos;
 
+		CharacterStatus() :
+						Resource<usint>("status"),
+						health(0),
+						shield_health(0),
+						score(0),
+						shield(false),
+						start_pos(0, 0) {
+		}
+
 		CharacterStatus(const char* _label) :
 						Resource<usint>(_label),
 						health(0),
@@ -283,6 +292,21 @@ class Character: public IrregularPlatform {
 			BLOODING = 1 << 2
 		};
 
+		/**
+		 * Punkt przywrócenia gracza po śmierci
+		 */
+		struct _Checkpoint {
+				/**
+				 * Jeśli mapa jest zbyt zmodyfikowana
+				 * musi zostać wczytana 2 raz i gra
+				 * rozpoczyna się od nowa!
+				 */
+				bool reload_map;
+
+				// Ostatni status gracza
+				CharacterStatus last_status;
+		};
+
 	protected:
 		/**
 		 * Akcja gracza - jego aktualny stan
@@ -307,6 +331,11 @@ class Character: public IrregularPlatform {
 		 * Ilość klatek zaczerwienienia
 		 */
 		_Timer blood_anim_cycles;
+
+		/**
+		 * Zamiast stosu lepiej dać ostatni
+		 */
+		_Checkpoint last_checkpoint;
 
 	public:
 		/**
@@ -338,6 +367,17 @@ class Character: public IrregularPlatform {
 		
 		usint getAction() const {
 			return action;
+		}
+
+		/**
+		 * Przepisywanie informacji do
+		 * checkpointa
+		 */
+		void addCheckpoint(bool);
+		void recoverFromCheckpoint(pEngine*);
+
+		bool isCheckpointAvailable() const {
+			return !last_checkpoint.reload_map;
 		}
 
 		/**
@@ -412,7 +452,7 @@ class SnailAI: public AI {
 };
 
 /**
- *
+ * Obiekt generujący skrypt
  */
 class Trigger: public Body {
 	private:
@@ -489,6 +529,7 @@ class ResourceFactory {
 			SCRIPT_BOX, // skrypt
 			SPIKES, // kolce
 			LADDER, // drabina
+			LIANE, // liana
 			LAVA, // lawa
 			/**
 			 * Dynamiczne obiekty nie są wczytywane
@@ -516,7 +557,7 @@ class ResourceFactory {
 		 * Wyszukiwanie typu obiektu
 		 */
 		static FactoryType* getFactoryType(usint _type, usint _orientation) {
-			for (usint i = 0; i < 12; ++i) {
+			for (usint i = 0; i < 13; ++i) {
 				FactoryType* obj = &factory_types[i];
 				//
 				if (obj->type == _type && obj->orientation == _orientation) {

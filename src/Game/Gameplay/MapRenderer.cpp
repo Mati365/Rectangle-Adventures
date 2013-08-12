@@ -12,6 +12,8 @@
 
 using namespace Gameplay;
 
+#define DEFAULT_SHADOW_RADIUS 250
+
 /**
  * Główny renderer mapy
  */
@@ -21,7 +23,7 @@ MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 				hero(dynamic_cast<Character*>(_hero)),
 				hud_enabled(true),
 				main_shader_id(WINDOW_SHADOW_SHADER),
-				shadow_radius(250) {
+				shadow_radius(DEFAULT_SHADOW_RADIUS) {
 }
 
 /**
@@ -123,8 +125,8 @@ void MapRenderer::drawObject(Window* _window) {
 			 */
 			case WINDOW_DEATH_SHADER:
 				shadow_radius += 0.7f;
-				if (shadow_radius >= 250) {
-					shadow_radius = 250;
+				if (shadow_radius >= DEFAULT_SHADOW_RADIUS) {
+					shadow_radius = DEFAULT_SHADOW_RADIUS;
 				}
 				break;
 
@@ -138,7 +140,22 @@ void MapRenderer::drawObject(Window* _window) {
 						if (hud_enabled
 								&& msg.getScreen()
 										!= MessageRenderer::DEATH_SCREEN) {
-							msg.enableDeathScreen();
+							/**
+							 * A co jeśli jest może checkpoint?
+							 */
+							if (hero->isCheckpointAvailable()) {
+								hero->recoverFromCheckpoint(map->physics);
+								//
+								main_shader_id = WINDOW_SHADOW_SHADER;
+								shadow_radius = DEFAULT_SHADOW_RADIUS;
+								//
+								break;
+							} else {
+								/**
+								 * Nie ma checkpointu ;(
+								 */
+								msg.enableDeathScreen();
+							}
 						}
 						main_shader_id = WINDOW_DEATH_SHADER;
 					}

@@ -32,6 +32,7 @@ Func funcs[] = {
 					{ SHOW_MESSAGE, "SHOW_MESSAGE", 2 },
 					{ SHOW_SPLASH, "SHOW_SPLASH", 1 },
 					{ LOAD_MAP, "LOAD_MAP", 1 },
+					{ ADD_CHECKPOINT, "ADD_CHECKPOINT", 1 },
 					{ CREATE_OBJECT, "CREATE_OBJECT", 5 } };
 
 //---------------------
@@ -195,6 +196,15 @@ bool Interpreter::interpret(Script* script) {
 				}
 			}
 				break;
+
+				/**
+				 * Dodawanie checkpointu!
+				 */
+			case ADD_CHECKPOINT:
+				map->getHero()->addCheckpoint(
+						Convert::stringTo<bool>(func.args[0]));
+				break;
+
 				/**
 				 * Ustawienie kierunku ruchu!
 				 */
@@ -278,6 +288,7 @@ bool Interpreter::interpret(Script* script) {
 						Convert::stringTo<float>(func.args[4]))->script_id =
 						Convert::stringTo<usint>(func.args[3]);
 				break;
+
 				/**
 				 *
 				 */

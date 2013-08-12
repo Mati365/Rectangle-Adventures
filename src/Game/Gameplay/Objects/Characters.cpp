@@ -71,6 +71,8 @@ Character::Character(const string& _nick, float _x, float _y,
 				blood_anim_visible_time(13),
 				blood_anim_cycles(8) {
 	type = _type;
+	//
+	addCheckpoint(true);
 }
 
 /**
@@ -97,10 +99,54 @@ void Character::die(pEngine* physics, usint _dir) {
 	status.health = DEATH;
 	//
 	generateExplosion(physics, this, 30, oglWrapper::RED, 3, 6);
+
+	/**
+	 * Zmiana kształtu na trup
+	 */
+	float _last_w = w;
+
 	setShape(getShapePointer("cranium"));
-	fitToWidth(14);
-	//
+	fitToWidth(_last_w * 0.6);
+
+	/**
+	 * Dźwięk śmierci ;_;
+	 */
 	playResourceSound(DIE_SOUND);
+}
+
+/**
+ * Dodawanie checkpointu
+ */
+void Character::addCheckpoint(bool _reload_map) {
+	status.start_pos = (Vector<float> ) *this;
+	//
+	last_checkpoint.last_status = status;
+	last_checkpoint.reload_map = _reload_map;
+	//
+	last_checkpoint.last_status.health = MAX_LIVES;
+}
+
+/**
+ * Odzyskanie z ostatniego checkpoint'a
+ */
+void Character::recoverFromCheckpoint(pEngine* physics) {
+	status = last_checkpoint.last_status;
+
+	// Resetowanie wyglądu
+	float _last_w = w;
+
+	setShape(getShapePointer("player"));
+	fitToWidth(_last_w / 0.6);
+
+	// Resetowanie pozycji
+	velocity.x = velocity.y = 0;
+	x = status.start_pos.x;
+	y = status.start_pos.y;
+
+	// Odjąć trza życia i punktów
+	status.score = status.score - 40 > 0 ? status.score - 40 : 0;
+	status.health -= 1;
+	hitMe(physics);
 }
 
 /**
@@ -152,20 +198,25 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	}
 	switch (enemy->type) {
 		/**
-		 *
+		 * Na lianie tylo w dół!
 		 */
+		case LIANE:
 		case LADDER: {
 			float _max_speed = physics->getGravitySpeed() * 2;
 			//
 			if (velocity.y > _max_speed) {
 				velocity.y = _max_speed;
-			} else if (velocity.y < -_max_speed * 2.f) {
-				velocity.y = -_max_speed * 2.f;
+			} else if (velocity.y < 0) {
+				if (enemy->type == LADDER && velocity.y < -_max_speed * 2.f) {
+					velocity.y = -_max_speed * 2.f;
+				} else if (enemy->type == LIANE) {
+					velocity.y = physics->getGravitySpeed() / 2;
+				}
 			}
 			if (velocity.x >= -0.5 && velocity.x <= 0.5
 					&& (velocity.y == _max_speed
 							|| velocity.y == -_max_speed * 2.f)) {
-				x = body->x;
+				x = body->x + body->w / 2 - w / 2;
 			}
 			//
 			ADD_FLAG(action, CLIMBING);
