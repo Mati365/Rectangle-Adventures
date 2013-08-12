@@ -90,7 +90,7 @@ void QuadTree::update(Rect<float>& _bounds) {
  * Rysowanie siatki
  */
 void QuadTree::drawObject(Window*) {
-	if (!NW && bodies.empty()) {
+	if (!NW || bodies.empty()) {
 		return;
 	}
 	oglWrapper::drawRect(

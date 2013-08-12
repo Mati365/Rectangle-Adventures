@@ -174,6 +174,7 @@ class IrregularPlatform: public Platform {
 			h *= scale;
 			w *= scale;
 		}
+
 		float getScale() const {
 			return scale;
 		}
@@ -280,7 +281,8 @@ class AI {
 /**
  * Generowanie 'krwii' ;)
  */
-void generateExplosion(pEngine*, Body*, usint, const Color&, float, float);
+void generateExplosion(pEngine*, const Rect<float>&, usint, const Color&, float,
+		float, const Vector<float>&, float = -1, usint = Body::NONE);
 
 //
 

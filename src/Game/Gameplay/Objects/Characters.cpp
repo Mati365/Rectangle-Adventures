@@ -26,34 +26,43 @@ bool CharacterStatus::load(FILE* _file) {
 /**
  * Generowanie krwii
  */
-void generateExplosion(pEngine* physics, Body* body, usint count,
-		const Color& col, float min_size, float max_size) {
-	float cx, cy, angle;
+void generateExplosion(pEngine* physics, const Rect<float>& body, usint count,
+		const Color& col, float min_size, float max_size,
+		const Vector<float>& velocity, float life_time, usint state) {
+	float angle;
+
 	/**
 	 * Generowanie cząsteczek krwii w postaci eksplozji
+	 * Różny promień
 	 */
 	for (usint i = 0; i < count; ++i) {
 		angle = TO_RAD(getIntRandom<int>(0.f, 360.f));
 		//
-		cx = body->w / 2 * cosf(angle);
-		cy = body->h / 2 * sinf(angle);
+		Vector<float> r(
+				getIntRandom<int>(0, body.w / 2),
+				getIntRandom<int>(0, body.h / 2));
+
+		r.x *= cosf(angle);
+		r.y *= sinf(angle);
 		//
 		float size = getIntRandom<int>(min_size, max_size);
 		//
 		Platform* platform = new Platform(
-				body->x + cx,
-				body->y + cy,
+				body.x + r.x,
+				body.y + r.y,
 				size,
 				size,
 				col,
-				Body::NONE);
+				state);
 		//
-		platform->setMaxLifetime(size * 140);
+		platform->setMaxLifetime(life_time == -1 ? size * 140 : life_time);
 		platform->setBorder(false, false, false, false);
 		platform->setFillType(Platform::FILLED);
 		//
 		platform->layer = STATIC_LAYER + 1;
-		platform->velocity = Vector<float>(cosf(angle) * 8, sinf(angle) * 12);
+		platform->velocity = Vector<float>(
+				cosf(angle) * velocity.x,
+				sinf(angle) * velocity.y);
 		//
 		physics->insert(platform);
 	}
@@ -81,7 +90,14 @@ Character::Character(const string& _nick, float _x, float _y,
 void Character::hitMe(pEngine* physics) {
 	ADD_FLAG(action, BLOODING);
 	//
-	generateExplosion(physics, this, 5, oglWrapper::RED, 3, 6);
+	generateExplosion(
+			physics,
+			static_cast<Rect<float> >(*this),
+			5,
+			oglWrapper::RED,
+			3,
+			6,
+			Vector<float>(8, 12));
 	//
 	playResourceSound(SPIKES_SOUND);
 }
@@ -98,7 +114,14 @@ void Character::die(pEngine* physics, usint _dir) {
 	 */
 	status.health = DEATH;
 	//
-	generateExplosion(physics, this, 30, oglWrapper::RED, 3, 6);
+	generateExplosion(
+			physics,
+			static_cast<Rect<float> >(*this),
+			30,
+			oglWrapper::RED,
+			3,
+			6,
+			Vector<float>(8, 12));
 
 	/**
 	 * Zmiana kształtu na trup
@@ -237,11 +260,12 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			//
 			generateExplosion(
 					physics,
-					body,
+					*dynamic_cast<Rect<float>*>(body),
 					6,
 					*dynamic_cast<IrregularPlatform*>(body)->getShape()->getMainColor(),
 					2,
-					3);
+					3,
+					Vector<float>(8, 12));
 			//
 			body->destroyed = true;
 			//

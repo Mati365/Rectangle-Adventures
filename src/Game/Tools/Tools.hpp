@@ -38,13 +38,13 @@ struct _Timer {
 		_Timer() :
 						max_cycles_count(0),
 						cycles_count(0),
-						active(true) {
+						active(false) {
 		}
 
 		_Timer(usint _max_cycles_count, usint _cycles_count = 0) :
 						max_cycles_count(_max_cycles_count),
 						cycles_count(_cycles_count),
-						active(true) {
+						active(max_cycles_count != 0) {
 		}
 		/**
 		 * Okrążenie timeru

@@ -102,6 +102,26 @@ void MapRenderer::addWeather(usint _type) {
 		case SHAKE:
 			shake();
 			break;
+
+			/**
+			 * Sztuczne ognie
+			 */
+		case FIREWORKS: {
+			FireworksEmitter* fireworks = new FireworksEmitter(
+					Rect<float>(
+							cam.pos.x,
+							cam.pos.y,
+							WINDOW_WIDTH,
+							WINDOW_HEIGHT - 100),
+					50,
+					map->physics);
+			//
+			addStaticObject(fireworks);
+		}
+			break;
+
+		default:
+			break;
 	}
 }
 

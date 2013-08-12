@@ -277,8 +277,7 @@ namespace Physics {
 			/**
 			 * Długość życia ciała
 			 */
-			usint max_lifetime;
-			usint lifetime;
+			_Timer life_timer;
 
 			Body() :
 							state(NONE),
@@ -288,8 +287,7 @@ namespace Physics {
 							layer(STATIC_LAYER),
 							script_id(0),
 							orientation(pEngine::UP),
-							max_lifetime(0),
-							lifetime(0) {
+							life_timer(0) {
 				x = 0;
 				y = 0;
 				w = 0;
@@ -306,8 +304,7 @@ namespace Physics {
 							layer(STATIC_LAYER),
 							script_id(0),
 							orientation(pEngine::UP),
-							max_lifetime(0),
-							lifetime(0) {
+							life_timer(0) {
 				x = _x;
 				y = _y;
 				w = _w;
@@ -319,8 +316,9 @@ namespace Physics {
 			 * Particle
 			 */
 			void setMaxLifetime(usint _max_lifetime) {
-				max_lifetime = _max_lifetime;
-				lifetime = 0;
+				life_timer.max_cycles_count = _max_lifetime;
+				life_timer.reset();
+				//
 				dynamically_allocated = true;
 			}
 			

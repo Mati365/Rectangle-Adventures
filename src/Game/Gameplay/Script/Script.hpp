@@ -41,7 +41,8 @@ enum {
  */
 enum {
 	// 0 - spadajace kwadraty
-	SHAKE = 1
+	SHAKE = 1,
+	FIREWORKS = 2 // fajerwerki
 };
 
 /**

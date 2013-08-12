@@ -191,6 +191,13 @@ bool Interpreter::interpret(Script* script) {
 						/**
 						 *
 						 */
+					case FIREWORKS:
+						map->addWeather(MapRenderer::FIREWORKS);
+						break;
+
+						/**
+						 *
+						 */
 					default:
 						break;
 				}

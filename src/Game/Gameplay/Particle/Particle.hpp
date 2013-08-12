@@ -145,4 +145,22 @@ class JetEmitter: public ParticleEmitter {
 		virtual void createNewParticle(Window*);
 };
 
+/**
+ * Emiter fajerwerków!
+ */
+class FireworksEmitter: public ParticleEmitter {
+	private:
+		pEngine* physics;
+
+	public:
+		FireworksEmitter(const Rect<float>&, usint, pEngine*);
+
+	protected:
+		virtual void updateSystem() {
+		}
+
+		virtual bool drawParticle(usint, Window*);
+		virtual void createNewParticle(Window*);
+};
+
 #endif /* PARTICLE_HPP_ */

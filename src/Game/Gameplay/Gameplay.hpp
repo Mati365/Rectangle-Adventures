@@ -52,6 +52,9 @@ namespace Gameplay {
 			}
 	};
 	
+	/**
+	 * Renderer paralaxy
+	 */
 	class ParalaxRenderer: public Renderer, public IntroBackground {
 		protected:
 			MapINFO* map;
@@ -116,7 +119,8 @@ namespace Gameplay {
 		public:
 			enum Weather {
 				SNOWING,
-				SHAKE
+				SHAKE,
+				FIREWORKS
 			};
 
 		private:

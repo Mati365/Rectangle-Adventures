@@ -6,6 +6,7 @@
  */
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 #include "Physics.hpp"
 
@@ -91,8 +92,6 @@ void pEngine::updateWorld() {
 	 * - Odświeżanie tylko widocznych!
 	 */
 	quadtree->update(active_range);
-	//quadtree->clear();
-	//quadtree->insertGroup(&list);
 	quadtree->getBodiesAt(active_range, visible_bodies);
 	
 	/**
@@ -105,6 +104,24 @@ void pEngine::updateWorld() {
 	 */
 	for (usint i = 0; i < visible_bodies.size(); ++i) {
 		Body* object = visible_bodies[i];
+
+		/**
+		 * Żywotność
+		 */
+		if (object->life_timer.active) {
+			object->life_timer.tick();
+			if (!object->life_timer.active) {
+				object->destroyed = true;
+			}
+		}
+
+		if (IS_SET(object->state, Body::BACKGROUND)
+				&& (object->velocity.x != 0 || object->velocity.y != 0)) {
+			object->y += object->velocity.y;
+			object->x += object->velocity.x;
+			//
+			continue;
+		}
 		//
 		if (!object || !isBodyActive(object)) {
 			continue;
@@ -115,17 +132,6 @@ void pEngine::updateWorld() {
 		Body* down_collision = object->collisions[DOWN - 1];
 		if (down_collision && down_collision->velocity.x != 0) {
 			object->x += down_collision->velocity.x;
-		}
-		
-		/**
-		 * Żywotność
-		 */
-		if (object->max_lifetime != 0) {
-			object->lifetime++;
-			if (object->lifetime >= object->max_lifetime) {
-				object->destroyed = true;
-				object->max_lifetime = 0;
-			}
 		}
 		
 		/**
