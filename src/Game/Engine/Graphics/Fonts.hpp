@@ -13,7 +13,7 @@
 
 #include "Engine.hpp"
 
-#define NEWLINE_CHARACTER '$'
+#define NEWLINE_CHARACTER '/'
 
 using namespace std;
 

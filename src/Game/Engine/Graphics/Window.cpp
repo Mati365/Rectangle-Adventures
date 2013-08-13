@@ -81,9 +81,7 @@ void Window::init() {
 			"...gre nie wczytujaca ani jednego sprite...",
 			690,
 			getShapeFromFilesystem("pudlo.txt", -6.f));
-	splash->pushTitle(
-				"Rect Adventures",
-				490);
+	splash->pushTitle("Rect Adventures", 490);
 	splash->endTo(menu);
 
 	//
@@ -165,6 +163,7 @@ bool Window::setupOpenGL() {
 		logEvent(Logger::LOG_ERROR, "Brak obsługi shaderów!");
 		return false;
 	}
+
 	return true;
 }
 

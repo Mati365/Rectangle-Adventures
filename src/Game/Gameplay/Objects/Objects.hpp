@@ -48,6 +48,9 @@ class Platform: public Body, public Cloneable {
 		 */
 		Vector<float> distance;
 		Vector<float> max_distance;
+		/**
+		 * Powtarzalność ruchów
+		 */
 		bool repeat_movement;
 
 		usint fill_type;
@@ -286,6 +289,9 @@ void generateExplosion(pEngine*, const Rect<float>&, usint, const Color&, float,
 
 //
 
+/**
+ * Klasa GRACZA
+ */
 class Character: public IrregularPlatform {
 	public:
 		enum Action {
@@ -307,6 +313,23 @@ class Character: public IrregularPlatform {
 
 				// Ostatni status gracza
 				CharacterStatus last_status;
+		};
+
+		/**
+		 * Animowany tekst np. po zdobyciu
+		 * punktu unoszący się do góry
+		 */
+		struct _Tooltip {
+				_Timer life_timer;
+				glText text;
+				Vector<float> pos;
+
+				_Tooltip(const char* _text, const Vector<float>& _pos,
+						const Color& _col) :
+								life_timer(strlen(_text) * 11),
+								text(_col, _text, GLUT_BITMAP_HELVETICA_18, 18),
+								pos(_pos) {
+				}
 		};
 
 	protected:
@@ -339,6 +362,11 @@ class Character: public IrregularPlatform {
 		 */
 		_Checkpoint last_checkpoint;
 
+		/**
+		 * Chmurki latające
+		 */
+		deque<_Tooltip> tooltips;
+
 	public:
 		/**
 		 * Kolor platformy to kolor nicku,
@@ -369,6 +397,10 @@ class Character: public IrregularPlatform {
 		
 		usint getAction() const {
 			return action;
+		}
+
+		inline void addTooltip(const char* _text, const Color& _col) {
+			tooltips.push_back(_Tooltip(_text, Vector<float>(x, y), _col));
 		}
 
 		/**
@@ -432,7 +464,15 @@ class Character: public IrregularPlatform {
 		}
 		
 	private:
+		/**
+		 * Odświeżanie..
+		 */
 		void updateHitAnim();
+
+		/**
+		 * Rysowanie elementów opcjonalnych..
+		 */
+		void drawTooltips();
 };
 
 /**
@@ -467,6 +507,7 @@ class Trigger: public Body {
 			type = Body::TRIGGER;
 			state = Body::HIDDEN;
 		}
+
 		/**
 		 * Generowanie zdarzenia!
 		 */
@@ -537,6 +578,7 @@ class ResourceFactory {
 			 * Dynamiczne obiekty nie są wczytywane
 			 * dlatego idą na koniec
 			 */
+			KILL_ZONE,
 			BULLET
 		};
 
@@ -559,7 +601,7 @@ class ResourceFactory {
 		 * Wyszukiwanie typu obiektu
 		 */
 		static FactoryType* getFactoryType(usint _type, usint _orientation) {
-			for (usint i = 0; i < 13; ++i) {
+			for (usint i = 0; i < 14; ++i) {
 				FactoryType* obj = &factory_types[i];
 				//
 				if (obj->type == _type && obj->orientation == _orientation) {

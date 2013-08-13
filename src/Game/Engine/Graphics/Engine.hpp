@@ -146,6 +146,14 @@ namespace oglWrapper {
 			GLuint getFragmentShader() const {
 				return fragment_shader;
 			}
+
+			static GLint getLastShader() {
+				GLint last_program;
+				glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
+				//
+				return last_program;
+			}
+
 			/**
 			 * Wywołuwanie shaderu!
 			 */

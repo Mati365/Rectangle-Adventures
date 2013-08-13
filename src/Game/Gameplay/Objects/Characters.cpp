@@ -77,7 +77,7 @@ Character::Character(const string& _nick, float _x, float _y,
 				status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
 				ai(NULL),
 				//
-				blood_anim_visible_time(13),
+				blood_anim_visible_time(11),
 				blood_anim_cycles(8) {
 	type = _type;
 	//
@@ -141,12 +141,26 @@ void Character::die(pEngine* physics, usint _dir) {
  * Dodawanie checkpointu
  */
 void Character::addCheckpoint(bool _reload_map) {
+	// Mobom nie potrzeba checkpointów
+	if (type != HERO) {
+		return;
+	}
+
 	status.start_pos = (Vector<float> ) *this;
 	//
 	last_checkpoint.last_status = status;
 	last_checkpoint.reload_map = _reload_map;
 	//
 	last_checkpoint.last_status.health = MAX_LIVES;
+
+	/**
+	 * Tooltip musi być xD
+	 */
+	if (_reload_map) {
+		addTooltip("-respawn", oglWrapper::RED);
+	} else {
+		addTooltip("+respwan", oglWrapper::PURPLE);
+	}
 }
 
 /**
@@ -219,7 +233,9 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (!enemy) {
 		return;
 	}
+
 	switch (enemy->type) {
+
 		/**
 		 * Na lianie tylo w dół!
 		 */
@@ -249,7 +265,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			/**
 			 *
 			 */
-		case SCORE:
+		case SCORE: {
 			status += enemy->status;
 			if (status.health > MAX_LIVES) {
 				status.health = MAX_LIVES;
@@ -257,12 +273,14 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			if (status.score > MAX_SCORE) {
 				status.score = MAX_SCORE;
 			}
+			Color col =
+					*dynamic_cast<IrregularPlatform*>(body)->getShape()->getMainColor();
 			//
 			generateExplosion(
 					physics,
 					*dynamic_cast<Rect<float>*>(body),
 					6,
-					*dynamic_cast<IrregularPlatform*>(body)->getShape()->getMainColor(),
+					col,
 					2,
 					3,
 					Vector<float>(8, 12));
@@ -272,6 +290,8 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			if (enemy->status.health > 0 || enemy->status.score) {
 				playResourceSound(SCORE_SOUND);
 			}
+			addTooltip(enemy->status.health > 0 ? "+1hp" : "+1exp", col);
+		}
 			break;
 
 			/**
@@ -296,10 +316,12 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			if (status.health > 0) {
 				status.health -= 1;
 			}
+			body->destroyed = true;
+			//
 			hitMe(physics);
 			dodge(dir);
 			//
-			body->destroyed = true;
+			addTooltip("Ouch!", oglWrapper::WHITE);
 			break;
 
 			/**
@@ -314,6 +336,8 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			}
 			hitMe(physics);
 			dodge(dir);
+			//
+			addTooltip("Ouch!", oglWrapper::WHITE);
 			break;
 
 			/**
@@ -392,9 +416,11 @@ void Character::move(float x_speed, float y_speed) {
  */
 void Character::updateHitAnim() {
 	blood_anim_visible_time.tick();
+
 	if (!blood_anim_visible_time.active) {
 		blood_anim_visible_time.reset();
 		blood_anim_cycles.tick();
+
 		if (!blood_anim_cycles.active) {
 			UNFLAG(action, BLOODING);
 			//
@@ -403,6 +429,63 @@ void Character::updateHitAnim() {
 	}
 }
 
+/**
+ * Rysowanie tooltipów
+ */
+#define TOOLTIP_SPEED -1
+
+void Character::drawTooltips() {
+	if (tooltips.empty()) {
+		return;
+	}
+
+	/**
+	 * Wyłączanie starego
+	 * shaderu
+	 */
+	GLint last_program = Shader::getLastShader();
+	glUseProgram(0);
+
+	/**
+	 * Gridy lub interatory zbyt
+	 * zmniejszą prędkość
+	 */
+	for (usint i = 0; i < tooltips.size();) {
+		_Tooltip& object = tooltips[i];
+
+		// I przy okazji to odświeżanie
+		object.pos.y += TOOLTIP_SPEED;
+
+		if (object.life_timer.active) {
+			object.life_timer.tick();
+			//
+			object.text.getColor()->a =
+					255.f
+							* (1.f
+									- (float) object.life_timer.cycles_count
+											/ (float) object.life_timer.max_cycles_count);
+		} else {
+			tooltips.erase(tooltips.begin() + i);
+			continue;
+		}
+
+		// Rysowanie
+		object.text.printText(
+				object.pos.x - object.text.getScreenLength() / 2,
+				object.pos.y);
+
+		++i;
+	}
+
+	/**
+	 * Przywracanie starego shaderu
+	 */
+	glUseProgram(last_program);
+}
+
+/**
+ * Malowanie całego gracza
+ */
 void Character::drawObject(Window*) {
 	if (ai) {
 		ai->drive();
@@ -414,8 +497,7 @@ void Character::drawObject(Window*) {
 			/**
 			 * Pobieranie ostatniego shaderu
 			 */
-			GLint last_program;
-			glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
+			GLint last_program = Shader::getLastShader();
 
 			shaders[HIT_CHARACTER_SHADER]->begin();
 			//
@@ -431,5 +513,6 @@ void Character::drawObject(Window*) {
 	} else {
 		IrregularPlatform::drawObject(NULL);
 	}
+	drawTooltips();
 }
 

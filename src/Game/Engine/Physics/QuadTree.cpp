@@ -118,6 +118,7 @@ bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
 		}
 		return false;
 	}
+
 	/**
 	 * Jeśli 1 lub więcej quadów ma ten sam element to
 	 * wrzuca do rodzica!
@@ -129,6 +130,7 @@ bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
 	if (!NW) {
 		subdive();
 	}
+
 	/**
 	 * Umieszczanie do dzieci
 	 */

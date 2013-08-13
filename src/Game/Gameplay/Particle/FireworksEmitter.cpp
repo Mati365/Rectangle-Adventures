@@ -24,7 +24,7 @@ bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
 	oglWrapper::drawRect(
 			particle.pos.x,
 			particle.pos.y,
-			particle.size,
+			particle.size / 4,
 			particle.size,
 			particle.col,
 			2);
@@ -42,7 +42,7 @@ bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
 				particle.size / 6,
 				particle.size / 3,
 				Vector<float>(getIntRandom<int>(1, 3), getIntRandom<int>(1, 3)),
-				25,
+				35,
 				Body::BACKGROUND);
 		//
 		particles.erase(particles.begin() + _index);
@@ -57,7 +57,7 @@ bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
 void FireworksEmitter::createNewParticle(Window* _window) {
 	Particle part(
 			Vector<float>(x + getIntRandom<usint>(0, w), y + 111),
-			getIntRandom<usint>(10, 20),
+			getIntRandom<usint>(5, 15),
 			getIntRandom<usint>(20, 50),
 			Color(
 					getIntRandom<usint>(28, 255),

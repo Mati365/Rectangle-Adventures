@@ -74,6 +74,9 @@ namespace GUI {
 							border_enabled(true) {
 			}
 			
+			virtual void drawObject(Window*) = 0;
+			virtual void catchEvent(const Event&);
+
 			/**
 			 * Nadawanie callbacku!
 			 */
@@ -86,9 +89,6 @@ namespace GUI {
 				border_enabled = _border_enabled;
 			}
 			
-			virtual void drawObject(Window*) = 0;
-			virtual void catchEvent(const Event&);
-
 			virtual ~Control() {
 			}
 	};
@@ -104,6 +104,9 @@ namespace GUI {
 							Control(_bounds) {
 			}
 			
+			virtual void drawObject(Window*);
+			virtual void catchEvent(const Event&);
+
 			Control* operator[](usint index) const {
 				return objects[index];
 			}
@@ -114,9 +117,6 @@ namespace GUI {
 				objects.push_back(control);
 			}
 			
-			virtual void drawObject(Window*);
-			virtual void catchEvent(const Event&);
-
 			deque<Control*>* getObjects() {
 				return &objects;
 			}
@@ -135,16 +135,15 @@ namespace GUI {
 
 		public:
 			ProgressBar(const Rect<float>&, const Color&, usint, usint);
+			virtual void drawObject(Window*);
+			virtual ~ProgressBar() {
+			}
 
 			usint getValue() const {
 				return value;
 			}
 			void setValue(usint _value) {
 				value = _value;
-			}
-			
-			virtual void drawObject(Window*);
-			virtual ~ProgressBar() {
 			}
 	};
 	

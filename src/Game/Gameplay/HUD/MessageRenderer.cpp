@@ -30,31 +30,28 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				background_color(0, 0, 0),
 
 				// HUD
-				health(
-						12,
-						WINDOW_HEIGHT - 27,
-						Body::NONE,
-						getShapePointer("health"),
-						16),
+				health(12, 17, Body::NONE, getShapePointer("health"), 16),
 				health_bar(
-						Rect<float>(0, 0, 0, 0),
+						Rect<float>(
+								SPACES * 3 + health.w + SPACES * 2,
+								16,
+								62,
+								16),
 						oglWrapper::RED,
 						MAX_LIVES,
 						Control::VERTICAL),
 
-				score(
-						WINDOW_WIDTH - 150,
-						WINDOW_HEIGHT - 30,
-						Body::NONE,
-						getShapePointer("score"),
-						16),
+				score(13, 54, Body::NONE, getShapePointer("score"), 14),
 				score_bar(
-						Rect<float>(0, 0, 0, 0),
+						Rect<float>(
+								SPACES * 3 + health.w + SPACES * 2,
+								54,
+								62,
+								16),
 						oglWrapper::GREEN,
 						MAX_SCORE,
 						Control::VERTICAL),
 
-				//
 				game_over(
 						oglWrapper::WHITE,
 						"Game over",
@@ -245,18 +242,7 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	if (!hero) {
 		hero = background->getHero();
 	}
-	if (health_bar.w == 0) {
-		health_bar.setBounds(
-				SPACES * 3 + health.w + SPACES * 2,
-				_window->getBounds()->y - 30,
-				112,
-				20);
-		score_bar.setBounds(
-				_window->getBounds()->x - 112 - SPACES * 2,
-				_window->getBounds()->y - 30,
-				112,
-				20);
-	}
+
 	/**
 	 * Pasek życia!
 	 */
@@ -264,6 +250,7 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 
 	health.drawObject(NULL);
 	health_bar.drawObject(NULL);
+
 	/**
 	 * Punkty!
 	 */
@@ -334,15 +321,13 @@ void MessageRenderer::drawObject(Window* _window) {
 		//
 		screen = INTRO_SCREEN;
 	}
-	if (screen != DEATH_SCREEN) {
-		drawBorder(_window);
-	}
 	//
 	switch (screen) {
 		/**
 		 *
 		 */
 		case INTRO_SCREEN:
+			drawBorder(_window);
 			drawIntroMessage(_window);
 			break;
 
