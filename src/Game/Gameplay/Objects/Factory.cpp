@@ -152,7 +152,10 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	usint _width = _factory_type ? _factory_type->width : 0;
 
 	Platform* _object = NULL;
-	if (_type == GUN) {
+
+	if (_type == KILLZONE) {
+		_object = new Platform(_x, _y, _w, _h, oglWrapper::WHITE, Body::HIDDEN);
+	} else if (_type == GUN) {
 		_object = new Gun(
 				physics,
 				_x,

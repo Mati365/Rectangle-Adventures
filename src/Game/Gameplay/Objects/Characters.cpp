@@ -105,7 +105,7 @@ void Character::hitMe(pEngine* physics) {
 /**
  * Eksplozja
  */
-void Character::die(pEngine* physics, usint _dir) {
+void Character::die(pEngine* physics) {
 	if (isDead()) {
 		return;
 	}
@@ -113,7 +113,10 @@ void Character::die(pEngine* physics, usint _dir) {
 	 * TRRUP
 	 */
 	status.health = DEATH;
-	//
+
+	/**
+	 * Generowanie eksplozji
+	 */
 	generateExplosion(
 			physics,
 			static_cast<Rect<float> >(*this),
@@ -204,7 +207,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			&& (type == Body::HERO || type == Body::ENEMY)) {
 		// Zryte formatowanie
 		if (velocity.y < -9 && status.health > 0) {
-			die(physics, dir);
+			die(physics);
 			return;
 		}
 		UNFLAG(action, JUMPING);
@@ -212,7 +215,6 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (type != HERO) {
 		return;
 	}
-	
 	/**
 	 * Skrypty
 	 */
@@ -235,10 +237,16 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	}
 
 	switch (enemy->type) {
-
 		/**
-		 * Na lianie tylo w dół!
+		 * Strefa śmierci ;_;
 		 */
+		case KILLZONE:
+			status.health = 0;
+			break;
+
+			/**
+			 * Na lianie tylo w dół!
+			 */
 		case LIANE:
 		case LADDER: {
 			float _max_speed = physics->getGravitySpeed() * 2;
@@ -347,7 +355,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			break;
 	}
 	if (status.health == 0) {
-		die(physics, dir);
+		die(physics);
 	}
 }
 
@@ -493,7 +501,7 @@ void Character::drawObject(Window*) {
 	if (IS_SET(action, BLOODING)) {
 		updateHitAnim();
 		//
-		if (isDrawingBlood()) {
+		if (isBlooding()) {
 			/**
 			 * Pobieranie ostatniego shaderu
 			 */

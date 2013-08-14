@@ -64,11 +64,6 @@ void loadShadersPack() {
 			main_filesystem.getExternalFileContent("shadow_frag_shader.txt"),
 			NULL);
 	
-	shaders[WINDOW_DEATH_SHADER] = new Shader(
-			NULL,
-			main_filesystem.getExternalFileContent("death_frag_shader.txt"),
-			NULL);
-
 	shaders[HIT_CHARACTER_SHADER] = new Shader(
 			NULL,
 			main_filesystem.getExternalFileContent("hit_frag_shader.txt"),

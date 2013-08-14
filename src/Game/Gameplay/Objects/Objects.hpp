@@ -382,7 +382,7 @@ class Character: public IrregularPlatform {
 		 * Czy postać aktualnie jest czerwona
 		 * od krwii
 		 */
-		bool isDrawingBlood() const {
+		bool isBlooding() const {
 			return blood_anim_cycles.cycles_count % 2
 					&& IS_SET(action, BLOODING);
 		}
@@ -418,7 +418,7 @@ class Character: public IrregularPlatform {
 		 * Akcje dotyczące poruszania się i
 		 * zachowania gracza
 		 */
-		void die(pEngine*, usint); // śmierć, rozprucie ;)
+		void die(pEngine*); // śmierć, rozprucie ;)
 		void hitMe(pEngine*); // uderz mnie ;_;
 				
 		void move(float, float);
@@ -578,8 +578,11 @@ class ResourceFactory {
 			 * Dynamiczne obiekty nie są wczytywane
 			 * dlatego idą na koniec
 			 */
-			KILL_ZONE,
-			BULLET
+			BULLET,
+			/**
+			 * Obiekty niewidoczne
+			 */
+			KILLZONE
 		};
 
 		/**

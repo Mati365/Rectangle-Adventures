@@ -63,7 +63,6 @@ void playResourceSound(usint);
  */
 enum Effect {
 	WINDOW_SHADOW_SHADER,
-	WINDOW_DEATH_SHADER,
 	HIT_CHARACTER_SHADER
 };
 

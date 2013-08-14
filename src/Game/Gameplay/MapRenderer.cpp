@@ -24,6 +24,7 @@ MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 				hud_enabled(true),
 				main_shader_id(WINDOW_SHADOW_SHADER),
 				shadow_radius(DEFAULT_SHADOW_RADIUS) {
+	resetColorSaturation();
 }
 
 /**
@@ -139,53 +140,47 @@ void MapRenderer::drawObject(Window* _window) {
 	 * shaderu
 	 */
 	if (hero->isDead()) {
-		switch (main_shader_id) {
+		if (col_saturation[0] == 0.f) {
 			/**
-			 *
+			 * WINDOW_DEATH_SHADER
 			 */
-			case WINDOW_DEATH_SHADER:
-				shadow_radius += 0.7f;
-				if (shadow_radius >= DEFAULT_SHADOW_RADIUS) {
-					shadow_radius = DEFAULT_SHADOW_RADIUS;
-				}
-				break;
-
-				/**
-				 *
-				 */
-			case WINDOW_SHADOW_SHADER:
-				if (!IS_SET(hero->getAction(), Character::BLOODING)) {
-					shadow_radius -= 0.7f;
-					if (shadow_radius <= 50) {
-						if (hud_enabled
-								&& msg.getScreen()
-										!= MessageRenderer::DEATH_SCREEN) {
+			shadow_radius += 0.7f;
+			if (shadow_radius >= DEFAULT_SHADOW_RADIUS) {
+				shadow_radius = DEFAULT_SHADOW_RADIUS;
+			}
+			col_saturation[1] = (float) shadow_radius
+					/ (float) DEFAULT_SHADOW_RADIUS;
+		} else {
+			/**
+			 * WINDOW_SHADOW_SHADER
+			 */
+			if (!IS_SET(hero->getAction(), Character::BLOODING)) {
+				shadow_radius -= 0.7f;
+				if (shadow_radius <= 50) {
+					if (hud_enabled
+							&& msg.getScreen()
+									!= MessageRenderer::DEATH_SCREEN) {
+						/**
+						 * A co jeśli jest może checkpoint?
+						 */
+						if (hero->isCheckpointAvailable()) {
+							hero->recoverFromCheckpoint(map->physics);
+							//
+							resetColorSaturation();
+							shadow_radius = DEFAULT_SHADOW_RADIUS;
+						} else {
 							/**
-							 * A co jeśli jest może checkpoint?
+							 * Nie ma checkpointu ;(
 							 */
-							if (hero->isCheckpointAvailable()) {
-								hero->recoverFromCheckpoint(map->physics);
-								//
-								main_shader_id = WINDOW_SHADOW_SHADER;
-								shadow_radius = DEFAULT_SHADOW_RADIUS;
-								//
-								break;
-							} else {
-								/**
-								 * Nie ma checkpointu ;(
-								 */
-								msg.enableDeathScreen();
-							}
+							msg.enableDeathScreen();
 						}
-						main_shader_id = WINDOW_DEATH_SHADER;
 					}
+					col_saturation[0] = 0.f;
 				}
-				break;
+			}
 		}
-	} else if (hero->isDrawingBlood()) {
-		main_shader_id = WINDOW_DEATH_SHADER;
 	} else {
-		main_shader_id = WINDOW_SHADOW_SHADER;
+		resetColorSaturation();
 	}
 	/**
 	 * Rysowanie
@@ -195,6 +190,11 @@ void MapRenderer::drawObject(Window* _window) {
 			"center",
 			hero->x + hero->w / 2 - cam.pos.x,
 			hero->y + hero->h / 2 - cam.pos.y);
+	shaders[main_shader_id]->setUniform3f(
+			"active_colors",
+			col_saturation[0],
+			col_saturation[1],
+			col_saturation[2]);
 	shaders[main_shader_id]->setUniform1f("radius", shadow_radius);
 
 	//
@@ -203,6 +203,7 @@ void MapRenderer::drawObject(Window* _window) {
 	}
 	ParalaxRenderer::drawObject(_window);
 	//
+
 	shaders[main_shader_id]->end();
 	/**
 	 * Elementy HUDu

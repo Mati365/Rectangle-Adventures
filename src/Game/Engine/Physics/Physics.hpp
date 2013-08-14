@@ -238,7 +238,8 @@ namespace Physics {
 				TRIGGER, // event skrtpytu
 				SPIKES, // kolce
 				LADDER, // drabina
-				LIANE // liana
+				LIANE, // liana
+				KILLZONE // strefa śmierci gracza
 			};
 
 			/**

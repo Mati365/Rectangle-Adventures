@@ -87,8 +87,23 @@ void Shader::setUniform1f(const char* name, float value) {
 	}
 }
 
-void Shader::setUniform4fv(const char* name, float* values, size_t count) {
-	glUniform4fv(glGetUniformLocation(program_object, name), count, values);
+void Shader::setUniform3f(const char* name, float args1, float args2,
+		float args3) {
+	glUniform3f(
+			glGetUniformLocation(program_object, name),
+			args1,
+			args2,
+			args3);
+}
+
+void Shader::setUniform4f(const char* name, float args1, float args2,
+		float args3, float args4) {
+	glUniform4f(
+			glGetUniformLocation(program_object, name),
+			args1,
+			args2,
+			args3,
+			args4);
 }
 
 void Shader::setUniform2f(const char* name, float arg1, float arg2) {

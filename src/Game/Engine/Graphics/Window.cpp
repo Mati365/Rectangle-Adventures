@@ -72,7 +72,7 @@ void Window::init() {
 				"Nastąpił problem podczas wczytywania menu.");
 		return;
 	}
-	active_screen = game;
+	active_screen = splash;
 	splash->pushTitle(
 			"..cziken58 prezentuje..",
 			520,

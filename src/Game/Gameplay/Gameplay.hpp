@@ -141,6 +141,9 @@ namespace Gameplay {
 			// Promień cienia wokół kamery
 			float shadow_radius;
 
+			// Nasycenie w shaderze
+			float col_saturation[3];
+
 		public:
 			MapRenderer(Body*, MapINFO*);
 
@@ -173,6 +176,12 @@ namespace Gameplay {
 			}
 			
 			~MapRenderer();
+
+		private:
+			// Resetowanie saturacji barw
+			inline void resetColorSaturation() {
+				col_saturation[0] = col_saturation[1] = col_saturation[2] = 1.f;
+			}
 	};
 }
 
