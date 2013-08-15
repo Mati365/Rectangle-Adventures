@@ -233,6 +233,7 @@ void Platform::drawObject(Window*) {
 IrregularPlatform::IrregularPlatform(float _x, float _y, usint _state,
 		PlatformShape* _shape, float _width) :
 				Platform(_x, _y, 0, 0, oglWrapper::WHITE, _state),
+				shape(NULL),
 				scale(1) {
 	if (!_shape) {
 		logEvent(Logger::LOG_ERROR, "Nie mogę załadować pustej tekstury!");
@@ -255,8 +256,20 @@ void IrregularPlatform::setShape(PlatformShape* _shape) {
 /**
  * Dostosuj proporcje do szerokości!
  */
+void IrregularPlatform::setScale(float _scale) {
+	if (!shape) {
+		return;
+	}
+	scale = _scale;
+	w = shape->getBounds().w * scale;
+	h = shape->getBounds().h * scale;
+}
+
 void IrregularPlatform::fitToWidth(float _w) {
-	setScale(_w / w);
+	if (!shape) {
+		return;
+	}
+	setScale(_w / shape->getBounds().w);
 }
 
 /**
@@ -275,4 +288,6 @@ void IrregularPlatform::drawObject(Window*) {
 		glCallList(shape->getID());
 	}
 	glPopMatrix();
+	//
+	//oglWrapper::drawRect(x, y, w, h, oglWrapper::GREEN, 2.f);
 }

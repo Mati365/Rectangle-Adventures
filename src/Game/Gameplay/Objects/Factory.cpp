@@ -10,43 +10,179 @@
 #include "../../Tools/Logger.hpp"
 
 /**
- * Podstawowe obiekty w fabryce!!!
+ * Generowanie statusów
  */
-ResourceFactory::FactoryType ResourceFactory::factory_types[] =
+
+map<usint, ResourceFactory::_FactoryStatus> ResourceFactory::factory_status;
+
+void ResourceFactory::generateChracterStatus(usint _hard_level) {
+	factory_status.clear();
+
+	// PUNKT
+	factory_status[SCORE] = {
+		Character::SCORE, Body::BACKGROUND, NULL, true,
+		CharacterStatus(0, false, 0, 1)
+	};
+
+	// ŻYCIE
+	factory_status[HEALTH] = {
+		Character::SCORE, Body::BACKGROUND, NULL, true,
+		CharacterStatus(1, false, 0, 0)
+	};
+
+	// WRÓG
+	factory_status[GHOST] = {
+		Character::ENEMY, Body::NONE, new SnailAI(NULL, 2.f), true,
+		CharacterStatus(1, false, 0, 0)
+	};
+
+	// KOLCE
+	factory_status[SPIKES] = {
+		Character::SPIKES, Body::NONE, NULL, true,
+		CharacterStatus(-1, false, 0, 0)
+	};
+
+	// DRABINA
+	factory_status[LADDER] = {
+		Character::LADDER, Body::BACKGROUND, NULL, false
+	};
+
+	// LIANA
+	factory_status[LIANE] = {
+		Character::LIANE, Body::BACKGROUND, NULL, false
+	};
+}
+
+/**
+ * Podstawowe tekstury fabryki
+ */
+ResourceFactory::_FactoryType ResourceFactory::factory_types[] =
 		{
-		// typ orientacja obrot szerokosc nazwa_pliku nazwa_zasobu
-			{ SPIKES, pEngine::RIGHT, 90.f, 20, "kolce.txt", "spikes_right" },
-			{ SPIKES, pEngine::LEFT, -90.f, 20, "kolce.txt", "spikes_left" },
-			{ SPIKES, pEngine::UP, 0.f, 23, "kolce.txt", "spikes_up" },
-			{ SPIKES, pEngine::DOWN, 180.f, 23, "kolce.txt", "spikes_down" },
-			//
-			{ SCORE, pEngine::NONE, 0.f, 12, "punkt.txt", "score" },
-			{ HEALTH, pEngine::NONE, 0.f, 16, "zycie.txt", "health" },
-			{ GHOST, pEngine::NONE, 0.f, 6, "wrog.txt", "enemy" },
-			//
+		// KOLCE
+			{
+				SPIKES,
+				pEngine::RIGHT,
+				90.f,
+				20,
+				"kolce.txt",
+				"spikes_right",
+				factory_status[SPIKES] },
+			{
+				SPIKES,
+				pEngine::LEFT,
+				-90.f,
+				20,
+				"kolce.txt",
+				"spikes_left",
+				factory_status[SPIKES] },
+			{
+				SPIKES,
+				pEngine::UP,
+				0.f,
+				23,
+				"kolce.txt",
+				"spikes_up",
+				factory_status[SPIKES] },
+			{
+				SPIKES,
+				pEngine::DOWN,
+				180.f,
+				23,
+				"kolce.txt",
+				"spikes_down",
+				factory_status[SPIKES] },
+
+			// PUNKTY
+			{
+				SCORE,
+				pEngine::NONE,
+				0.f,
+				12,
+				"punkt.txt",
+				"score",
+				factory_status[SCORE] },
+			{
+				HEALTH,
+				pEngine::NONE,
+				0.f,
+				16,
+				"zycie.txt",
+				"health",
+				factory_status[HEALTH] },
+			{
+				GHOST,
+				pEngine::NONE,
+				0.f,
+				12,
+				"wrog.txt",
+				"enemy",
+				factory_status[GHOST] },
+
+			// BRONIE
 			{ GUN, pEngine::RIGHT, 90.f, 12, "bron.txt", "gun_right" },
 			{ GUN, pEngine::LEFT, -90.f, 12, "bron.txt", "gun_left" },
 			{ GUN, pEngine::UP, 0.f, 16, "bron.txt", "gun_up" },
 			{ GUN, pEngine::DOWN, 180.f, 16, "bron.txt", "gun_down" },
-			//
-			{ LADDER, pEngine::NONE, 0.f, 23, "drabina.txt", "stairs" },
-			{ LIANE, pEngine::NONE, 0.f, 16, "liana.txt", "liane" },
-			// Szerokość bez znaczenia!
-			{ BULLET, pEngine::RIGHT, 90.f, 0, "pocisk.txt", "bullet_right" },
-			{ BULLET, pEngine::LEFT, -90.f, 0, "pocisk.txt", "bullet_left" },
-			{ BULLET, pEngine::UP, 0.f, 0, "pocisk.txt", "bullet_up" },
-			{ BULLET, pEngine::DOWN, 180.f, 0, "pocisk.txt", "bullet_down" } };
+
+			// DRABINKI
+			{
+				LADDER,
+				pEngine::NONE,
+				0.f,
+				23,
+				"drabina.txt",
+				"stairs",
+				factory_status[LADDER] },
+			{
+				LIANE,
+				pEngine::NONE,
+				0.f,
+				16,
+				"liana.txt",
+				"liane",
+				factory_status[LIANE] },
+
+			// POCISKI
+			{
+				BULLET,
+				pEngine::RIGHT,
+				90.f,
+				0,
+				"pocisk.txt",
+				"bullet_right",
+				factory_status[BULLET] },
+			{
+				BULLET,
+				pEngine::LEFT,
+				-90.f,
+				0,
+				"pocisk.txt",
+				"bullet_left",
+				factory_status[BULLET] },
+			{
+				BULLET,
+				pEngine::UP,
+				0.f,
+				0,
+				"pocisk.txt",
+				"bullet_up",
+				factory_status[BULLET] },
+			{
+				BULLET,
+				pEngine::DOWN,
+				180.f,
+				0,
+				"pocisk.txt",
+				"bullet_down",
+				factory_status[BULLET] } };
 
 /**
  * Konstruktor prywatny!
  */
 ResourceFactory::ResourceFactory() :
-				// Statusy!
-				health_status("health_status", 1, false, 0, 1),
-				score_status("score_status", 0, false, 0, 15),
-				ghost_enemy_status("health_status", 1, false, 0, 50),
 				//
 				physics(NULL) {
+	generateChracterStatus(EASY);
 }
 
 /**
@@ -68,7 +204,7 @@ void ResourceFactory::loadTexturesPack() {
 	readShape("czaszka.txt", "cranium", 0);
 	
 	// Tekstury mobów
-	for (FactoryType& factory_object : factory_types) {
+	for (_FactoryType& factory_object : factory_types) {
 		putTexture(
 				genTextureID(factory_object.type, factory_object.orientation),
 				readShape(
@@ -142,20 +278,21 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	}
 
 	/**
-	 * Moby:
-	 * Działko
-	 */
-	/**
 	 * Przeszukiwanie bazy obiektów
 	 */
-	FactoryType* _factory_type = getFactoryType(_type, _orientation);
+	_FactoryType* _factory_type = getFactoryType(_type, _orientation);
 	usint _width = _factory_type ? _factory_type->width : 0;
-
 	Platform* _object = NULL;
 
 	if (_type == KILLZONE) {
+		/**
+		 * STREFA ŚMIERCI
+		 */
 		_object = new Platform(_x, _y, _w, _h, oglWrapper::WHITE, Body::HIDDEN);
 	} else if (_type == GUN) {
+		/**
+		 * BROŃ
+		 */
 		_object = new Gun(
 				physics,
 				_x,
@@ -170,10 +307,10 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				340);
 		_object->orientation = _orientation;
 		dynamic_cast<Gun*>(_object)->fitToWidth(_width);
-		/**
-		 *
-		 */
 	} else {
+		/**
+		 * INNE OBIEKTY
+		 */
 		_object = new Character(
 				"",
 				_x,
@@ -185,79 +322,27 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 
 		character->orientation = _orientation;
 		/**
-		 * Typ obiektu w fabryce to nie typ obiektu
-		 * w fizyce!
+		 * Generowanie obiektów
 		 */
-		switch (_type) {
+		if (_type == OBJECT) {
+			character->setType(Character::PLATFORM);
+			character->fitToWidth(_w);
+		} else {
 			/**
-			 * Schody!
+			 * Pobieranie statusu
 			 */
-			case LADDER:
-				character->setType(Character::LADDER);
-				character->setState(Body::BACKGROUND);
-				break;
+			_FactoryStatus _status = factory_status[_type];
 
-				/**
-				 * Liana!
-				 */
-			case LIANE:
-				character->setType(Character::LIANE);
-				character->setState(Body::BACKGROUND);
-				break;
-
-				/**
-				 * Kolce!
-				 */
-			case SPIKES:
-				character->setType(Character::SPIKES);
-				break;
-
-				/**
-				 * Życie
-				 */
-			case HEALTH:
-				character->setType(Character::SCORE);
-				character->setStatus(health_status);
-				break;
-				
-				/**
-				 * Potwór
-				 */
-			case GHOST:
-				character->setType(Character::ENEMY);
-				character->fitToWidth(20);
-				character->setStatus(ghost_enemy_status);
-				character->setAI(new SnailAI(character, 1.2));
-				break;
-				
-				/**
-				 * Platforma
-				 */
-			case OBJECT:
-				character->setType(Character::PLATFORM);
-				character->fitToWidth(_w);
-				break;
-				
-				/**
-				 * Punkt
-				 */
-			case SCORE:
-				character->setType(Character::SCORE);
-				character->setStatus(score_status);
-				break;
-				
-				/**
-				 *
-				 */
-			default:
-				delete _object;
-				//
-				logEvent(Logger::LOG_WARNING, "Nieznany typ moba!");
-				//
-				return NULL;
+			character->setType(_status.character_type);
+			character->setState(_status.state);
+			if (_status.ai) {
+				character->setAI(_status.ai);
+			}
+			if (_status.is_score) {
+				character->setStatus(_status.character_status);
+			}
 		}
 	}
-	//
 	addBody(_object);
 	//
 	return _object;

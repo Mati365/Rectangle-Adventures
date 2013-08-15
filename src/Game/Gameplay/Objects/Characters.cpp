@@ -74,7 +74,7 @@ Character::Character(const string& _nick, float _x, float _y,
 		PlatformShape* _shape, usint _type) :
 				IrregularPlatform(_x, _y, true, _shape),
 				action(JUMPING),
-				status(NULL, MAX_LIVES, false, 0, 0, _x, _y),
+				status(MAX_LIVES, false, 0, 0, _x, _y),
 				ai(NULL),
 				//
 				blood_anim_visible_time(11),
@@ -321,9 +321,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			 *
 			 */
 		case BULLET:
-			if (status.health > 0) {
-				status.health -= 1;
-			}
+			status -= enemy->status;
 			body->destroyed = true;
 			//
 			hitMe(physics);
@@ -339,9 +337,8 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			if (body->orientation != invertDir(dir)) {
 				break;
 			}
-			if (status.health > 0) {
-				status.health -= 1;
-			}
+			status -= enemy->status;
+			//
 			hitMe(physics);
 			dodge(dir);
 			//

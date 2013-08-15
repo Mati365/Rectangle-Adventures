@@ -172,11 +172,7 @@ class IrregularPlatform: public Platform {
 		/**
 		 * Skalowanie całego obiektu!
 		 */
-		void setScale(float _scale) {
-			scale = _scale;
-			h *= scale;
-			w *= scale;
-		}
+		void setScale(float);
 
 		float getScale() const {
 			return scale;
@@ -204,25 +200,17 @@ struct CharacterStatus: public Resource<usint> {
 		Vector<float> start_pos;
 
 		CharacterStatus() :
-						Resource<usint>("status"),
+						Resource<usint>(NULL),
 						health(0),
 						shield_health(0),
 						score(0),
 						shield(false),
 						start_pos(0, 0) {
 		}
-
-		CharacterStatus(const char* _label) :
-						Resource<usint>(_label),
-						health(0),
-						shield_health(MAX_LIVES),
-						score(0),
-						shield(true) {
-		}
 		
-		CharacterStatus(const char* _label, usint _health, bool _shield,
-				usint _shield_health, usint _score, float _x = 0, float _y = 0) :
-						Resource<usint>(_label),
+		CharacterStatus(usint _health, bool _shield, usint _shield_health,
+				usint _score, float _x = 0, float _y = 0) :
+						Resource<usint>(NULL),
 						health(_health),
 						shield_health(_shield_health),
 						score(_score),
@@ -586,26 +574,56 @@ class ResourceFactory {
 		};
 
 		/**
-		 * Typy obiektów w fabryce
+		 * Poziom trudności
 		 */
-		struct FactoryType {
+		enum HardLevel {
+			EASY,
+			NORMAL,
+			HARD
+		};
+
+		/**
+		 * Statusy obiektów
+		 */
+		struct _FactoryStatus {
+				// Info dla silnika
+				usint character_type;
+				usint state;
+
+				// Informacje o postaci
+				AI* ai;
+				bool is_score;
+				CharacterStatus character_status;
+		};
+
+		/**
+		 * Tekstury obiektów w fabryce
+		 */
+		struct _FactoryType {
+				// Podstawowe info
 				usint type;
 				usint orientation;
 				float rotation;
 				float width;
+
 				// Dla zasobu
 				const char* file_name;
 				const char* resource_label;
+
+				_FactoryStatus status;
 		};
 
-		static FactoryType factory_types[];
+		static _FactoryType factory_types[];
+		static map<usint, _FactoryStatus> factory_status;
+
+		void generateChracterStatus(usint);
 
 		/**
 		 * Wyszukiwanie typu obiektu
 		 */
-		static FactoryType* getFactoryType(usint _type, usint _orientation) {
+		static _FactoryType* getFactoryType(usint _type, usint _orientation) {
 			for (usint i = 0; i < 14; ++i) {
-				FactoryType* obj = &factory_types[i];
+				_FactoryType* obj = &factory_types[i];
 				//
 				if (obj->type == _type && obj->orientation == _orientation) {
 					return &factory_types[i];
@@ -626,7 +644,6 @@ class ResourceFactory {
 		/**
 		 * STATUSY!!!!
 		 */
-		CharacterStatus health_status, score_status, ghost_enemy_status;
 		pEngine* physics;
 
 		ResourceFactory();

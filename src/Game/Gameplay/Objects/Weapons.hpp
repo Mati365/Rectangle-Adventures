@@ -33,8 +33,8 @@ class Bullet: public Character {
 		Vector<float> start_pos; // pozycja startowa bo grawitacja może znieść
 
 	public:
-		Bullet(float, float, const Vector<float>&, PlatformShape*, usint,
-				usint);
+		Bullet(float, float, const Vector<float>&, PlatformShape*, usint, usint,
+				const CharacterStatus&);
 
 		virtual void catchCollision(pEngine*, usint, Body*);
 		virtual void drawObject(Window*);

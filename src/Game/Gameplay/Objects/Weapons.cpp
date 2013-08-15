@@ -7,7 +7,8 @@
 #include "Weapons.hpp"
 
 Bullet::Bullet(float _x, float _y, const Vector<float>& _direction,
-		PlatformShape* _shape, usint _max_flight_distance, usint _orientation) :
+		PlatformShape* _shape, usint _max_flight_distance, usint _orientation,
+		const CharacterStatus& _status) :
 				Character("", _x, _y, _shape, Character::BULLET),
 				//
 				max_flight_distance(_max_flight_distance),
@@ -15,6 +16,7 @@ Bullet::Bullet(float _x, float _y, const Vector<float>& _direction,
 				//
 				direction(_direction),
 				start_pos(_x, _y) {
+	status = _status;
 	dynamically_allocated = true;
 	orientation = _orientation;
 	//
@@ -86,6 +88,9 @@ void Gun::shot() {
 	 * Podział ze względu na orientację!
 	 */
 	PlatformShape* shape = bullet_shapes[orientation - 1];
+	const CharacterStatus& bullet_status =
+			ResourceFactory::factory_status[BULLET].character_status;
+
 	switch (orientation) {
 		case pEngine::UP:
 			physics->insert(
@@ -95,7 +100,8 @@ void Gun::shot() {
 							Vector<float>(0, -1),
 							shape,
 							200,
-							orientation));
+							orientation,
+							bullet_status));
 			break;
 
 			/**
@@ -109,7 +115,8 @@ void Gun::shot() {
 							Vector<float>(0, 1),
 							shape,
 							100,
-							orientation));
+							orientation,
+							bullet_status));
 			break;
 
 			/**
@@ -123,7 +130,8 @@ void Gun::shot() {
 							Vector<float>(-1, 0),
 							shape,
 							200,
-							orientation));
+							orientation,
+							bullet_status));
 			break;
 
 			/**
@@ -137,7 +145,8 @@ void Gun::shot() {
 							Vector<float>(1, 0),
 							shape,
 							200,
-							orientation));
+							orientation,
+							bullet_status));
 			break;
 	}
 	//
