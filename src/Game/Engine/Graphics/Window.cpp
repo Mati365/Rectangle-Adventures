@@ -17,6 +17,7 @@ using namespace GameScreen;
 using namespace GUI;
 
 #define FPS 9
+//#define BENCHMARK
 
 bool Engine::window_opened = true;
 
@@ -91,8 +92,16 @@ void Window::init() {
 	/**
 	 * Shadery
 	 */
+#ifdef BENCHMARK
+	int frame_start = SDL_GetTicks();
+	int frames = 0;
+	//
+	glText frame_count(oglWrapper::WHITE, "");
+#endif
 	while (window_opened) {
+#ifndef BENCHMARK
 		int frame_start = SDL_GetTicks();
+#endif
 		//
 		/**
 		 *
@@ -126,15 +135,30 @@ void Window::init() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		active_screen->drawObject(this);
+#ifdef BENCHMARK
+		frame_count.printText(WINDOW_WIDTH - 50, 20);
+#endif
 		glFlush();
 		SDL_GL_SwapBuffers();
 		
+#ifndef BENCHMARK
 		int frame_time = SDL_GetTicks() - frame_start;
 		if (frame_time <= FPS) {
 			frame_start = SDL_GetTicks() - FPS;
 			//
 			SDL_Delay(FPS - frame_time);
 		}
+#else
+		frames++;
+		//
+		int frame_time = SDL_GetTicks() - frame_start;
+		if (frame_time >= 1000) {
+			frame_start = SDL_GetTicks();
+			//
+			frame_count.setString("FPS: " + Convert::toString<int>(frames), -1);
+			frames = 0;
+		}
+#endif
 	}
 	//
 	unloadScreens();

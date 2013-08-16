@@ -24,9 +24,16 @@ using namespace oglWrapper;
 
 /////////////////////////// Główny system plików gry
 
+/**
+ * Ścieżki
+ */
 #define FILESYSTEM_PACKAGE "filesystem.vfs"
 #define FILESYSTEM_AUTHOR  "mateusz"
+#define SAVE_FILE_PATH "save.bin"
 
+/**
+ * Menedżery zasobów
+ */
 extern Package main_filesystem;
 extern ResourceManager<usint> main_resource_manager;
 
@@ -219,6 +226,88 @@ class PlatformShape: public Resource<usint> {
 		 * Obliczanie wymiarów
 		 */
 		void updateBounds();
+};
+
+/**
+ * Zapis gry / wczytywane z systemu plików
+ */
+class Save: public PackagePointer {
+	public:
+		size_t game_time; // czas gry w sekundach
+
+		usint points; // ilość zebranych punktów w całej grze
+		usint reincarnations; // ilość reinkarnacji
+
+		usint level_index; // Na którym lvl został
+
+		Save() :
+						game_time(0),
+						points(0),
+						reincarnations(0),
+						level_index(0) {
+		}
+
+		virtual bool read(FILE*);
+		virtual size_t write(FILE*);
+
+		// Czyszczenie save
+		void clear() {
+			game_time = points = reincarnations = level_index = 0;
+		}
+
+		virtual size_t getLength() {
+			return sizeof(long long) + sizeof(usint) * 3;
+		}
+};
+
+/**
+ * Menedżer zapisów
+ * + Wzorzec singleton
+ */
+extern void exportSave(); // zapis save do systemu plików
+extern void importSave(); // odczyt save z gry
+
+class SaveManager {
+	private:
+		Save* save;
+		char* file_name;
+
+		/**
+		 * Nazwa save musi być
+		 */
+		SaveManager(const char* _file_name) :
+						file_name(Convert::getDynamicValue(_file_name)) {
+			save = new Save;
+			// Wczytywanie save
+
+		}
+
+		/**
+		 * Destrukcja..
+		 */
+		~SaveManager() {
+			if (file_name) {
+				delete[] file_name;
+			}
+			delete save;
+		}
+
+	public:
+		static SaveManager& getInstance() {
+			static SaveManager _save_manager(SAVE_FILE_PATH);
+			//
+			return _save_manager;
+		}
+
+		/**
+		 * Zapis save do systemu plików
+		 */
+		bool writeToFilesystem(Package*);
+		bool readFromFilesystem(Package*);
+
+		Save* getSave() {
+			return save;
+		}
 };
 
 #endif /* RESOURCES_HPP_ */

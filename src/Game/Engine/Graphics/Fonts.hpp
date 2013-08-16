@@ -36,7 +36,8 @@ class glText {
 		usint actual_text_pos;
 
 	public:
-		glText(const Color&, const string&, void*, usint);
+		glText(const Color&, const string&, void* = GLUT_BITMAP_TIMES_ROMAN_10,
+				usint = 10);
 
 		void setColor(const Color& _col) {
 			col = _col;
