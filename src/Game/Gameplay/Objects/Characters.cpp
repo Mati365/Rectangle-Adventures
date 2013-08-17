@@ -7,6 +7,7 @@
 #include <GL/glew.h>
 
 #include "Objects.hpp"
+#include "Weapons.hpp"
 
 #include "../Particle/Particle.hpp"
 #include "../Gameplay.hpp"
@@ -184,8 +185,11 @@ void Character::recoverFromCheckpoint(pEngine* physics) {
 	y = status.start_pos.y;
 
 	// Odjąć trza życia i punktów
-	status.score = status.score - 40 > 0 ? status.score - 40 : 0;
+	status.score =
+			status.score - MAX_SCORE * 0.1 > 0 ?
+					status.score - MAX_SCORE * 0.1 : 0;
 	status.health -= 1;
+
 	hitMe(physics);
 }
 
@@ -321,13 +325,11 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			 *
 			 */
 		case BULLET:
-			status -= enemy->status;
+			status += enemy->status;
 			body->destroyed = true;
 			//
 			hitMe(physics);
 			dodge(dir);
-			//
-			addTooltip("Ouch!", oglWrapper::WHITE);
 			break;
 
 			/**
@@ -337,12 +339,10 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			if (body->orientation != invertDir(dir)) {
 				break;
 			}
-			status -= enemy->status;
+			status += enemy->status;
 			//
 			hitMe(physics);
 			dodge(dir);
-			//
-			addTooltip("Ouch!", oglWrapper::WHITE);
 			break;
 
 			/**
@@ -385,6 +385,8 @@ void Character::dodge(usint _dir) {
 	//
 	x += velocity.x;
 	y += velocity.y;
+	//
+	addTooltip("Ouch!", oglWrapper::WHITE);
 }
 
 /**

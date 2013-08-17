@@ -17,12 +17,16 @@ FireEmitter::FireEmitter(const Rect<float>& _pos, usint _delay) :
 bool FireEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 	
-	particle.life_duration++;
+	particle.life.tick();
 	particle.pos += particle.velocity;
-	particle.size *= (1 - particle.life_duration / particle.max_life_duration);
+
+	float prop = (float) particle.life.cycles_count
+			/ (float) particle.life.max_cycles_count;
+
+	particle.size *= (1 - prop);
+
 	if (particle.col.g > 10) {
-		particle.col.g = 255
-				- 255 * particle.life_duration / particle.max_life_duration;
+		particle.col.g = 255 - 255 * prop;
 		particle.col.a = particle.col.g;
 	}
 	oglWrapper::drawRect(
@@ -33,7 +37,7 @@ bool FireEmitter::drawParticle(usint _index, Window* _window) {
 			particle.col,
 			1);
 	
-	if (particle.life_duration > particle.max_life_duration || destroyed) {
+	if (!particle.life.active || destroyed) {
 		particles.erase(particles.begin() + _index);
 		return false;
 	}
@@ -69,7 +73,8 @@ void FireEmitter::createNewParticle(Window* _window) {
 		}
 		
 		part.velocity.y = v_y;
-		part.max_life_duration = h / (v_y < 0 ? -v_y : v_y) * (1 - proc) + 1;
+		part.life.max_cycles_count = h / (v_y < 0 ? -v_y : v_y) * (1 - proc)
+				+ 1;
 		
 		particles.push_back(part);
 	}

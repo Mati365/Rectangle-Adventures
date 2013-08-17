@@ -48,6 +48,7 @@ namespace Filesystem {
 			virtual ~FilePackage() {
 			}
 	};
+
 	/**
 	 * Nagłówek pliku!
 	 * Flagi nie potrzebne!
@@ -78,6 +79,7 @@ namespace Filesystem {
 				}
 			}
 	};
+
 	/**
 	 * Sekcja konteneru offsetów!
 	 * Wskaźnik na miejsce w sekcji danych.
@@ -103,7 +105,8 @@ namespace Filesystem {
 				return IO::stringLength(label) + sizeof(int);
 			}
 	};
-	/**		Platform* platform = NULL;
+
+	/**
 	 * Stos wskaźników w archiwum!
 	 */
 	class PointerStack: public FilePackage {
@@ -121,6 +124,7 @@ namespace Filesystem {
 
 			virtual size_t getLength();
 	};
+
 	/**
 	 *  Zarządzanie plikiem archiwum!
 	 */

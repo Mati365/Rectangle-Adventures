@@ -33,11 +33,17 @@ void ResourceFactory::generateChracterStatus(usint _hard_level) {
 	// WRÓG
 	factory_status[GHOST] = {
 		Character::ENEMY, Body::NONE, new SnailAI(NULL, 2.f), true,
-		CharacterStatus(1, false, 0, 0)
+		CharacterStatus(-1, false, 0, 0)
 	};
 
 	// KOLCE
 	factory_status[SPIKES] = {
+		Character::SPIKES, Body::NONE, NULL, true,
+		CharacterStatus(-1, false, 0, 0)
+	};
+
+	// POCISK
+	factory_status[BULLET] = {
 		Character::SPIKES, Body::NONE, NULL, true,
 		CharacterStatus(-1, false, 0, 0)
 	};

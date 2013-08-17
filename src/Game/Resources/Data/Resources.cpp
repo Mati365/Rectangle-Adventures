@@ -40,6 +40,9 @@ void loadSoundsPack() {
 
 void unloadSoundsPack() {
 	for (auto& obj : sounds) {
+		if (!obj.chunk) {
+			continue;
+		}
 		wavPlayer::getInstance().closeChunk(obj.chunk);
 	}
 }
@@ -68,7 +71,6 @@ void loadShadersPack() {
 			NULL,
 			main_filesystem.getExternalFileContent("hit_frag_shader.txt"),
 			NULL);
-	//
 	logEvent(Logger::LOG_INFO, "Pomyślnie wczytano paczkę shaderów!");
 }
 

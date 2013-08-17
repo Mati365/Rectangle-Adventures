@@ -89,7 +89,7 @@ void Gun::shot() {
 	 */
 	PlatformShape* shape = bullet_shapes[orientation - 1];
 	const CharacterStatus& bullet_status =
-			ResourceFactory::factory_status[BULLET].character_status;
+			ResourceFactory::factory_status[ResourceFactory::BULLET].character_status;
 
 	switch (orientation) {
 		case pEngine::UP:

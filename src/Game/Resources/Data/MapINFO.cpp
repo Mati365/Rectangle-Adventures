@@ -26,6 +26,7 @@ MapINFO* loadMap(const char* path) {
 	MapINFO* map = new MapINFO(path);
 	if (!loadMap(path, map)) {
 		delete map;
+		//
 		return NULL;
 	}
 	return map;
@@ -115,7 +116,7 @@ bool MapINFO::load(FILE* map) {
 	/**
 	 * Kształt
 	 */
-	usint type;
+	usint fill_type;
 	usint with_shape;
 	usint script_id;
 	
@@ -144,7 +145,7 @@ bool MapINFO::load(FILE* map) {
 				&border[1],
 				&border[2],
 				&border[3],
-				&type,
+				&fill_type,
 				&repeat_movement,
 				&max_distance.x,
 				&max_distance.y,
@@ -181,7 +182,7 @@ bool MapINFO::load(FILE* map) {
 			platform = new Platform(rect.x, rect.y, rect.w, rect.h, col, state);
 			platform->setBorder(border[0], border[1], border[2], border[3]);
 		}
-		platform->setFillType(type);
+		platform->setFillType(fill_type);
 		//
 		platform->layer = layer;
 		platform->script_id = script_id;
@@ -246,6 +247,9 @@ bool MapINFO::load(FILE* map) {
 }
 
 void MapINFO::unload() {
+	if (physics) {
+		delete physics;
+	}
 	/**
 	 * Szybsze niż AllocKiller
 	 */
@@ -257,11 +261,9 @@ void MapINFO::unload() {
 
 	// Usuwanie kształtów! Woolne!
 	for (usint i = 0; i < resources.size(); ++i) {
-		main_resource_manager.deleteResource(i);
+		if (!main_resource_manager.deleteResource(resources[i])) {
+			logEvent(Logger::LOG_WARNING, "Nie znaleziono obiektu!");
+		}
 	}
-	if (physics) {
-		delete physics;
-	}
-	//
 	logEvent(Logger::LOG_INFO, "Pomyślnie usunięto mapę!");
 }

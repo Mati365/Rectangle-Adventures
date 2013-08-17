@@ -22,8 +22,7 @@ class Particle {
 		Vector<float> pos;
 		Vector<float> velocity;
 
-		usint life_duration;
-		usint max_life_duration;
+		_Timer life;
 
 		float angle;
 		float size;
@@ -31,11 +30,10 @@ class Particle {
 		Color col;
 		Color source_col;
 
-		Particle(const Vector<float>& _pos, float _size,
-				usint _max_life_duration, const Color& _col) :
+		Particle(const Vector<float>& _pos, float _size, usint _life_duration,
+				const Color& _col) :
 						pos(_pos),
-						life_duration(0),
-						max_life_duration(_max_life_duration),
+						life(_life_duration),
 						angle(0),
 						size(_size),
 						col(_col),

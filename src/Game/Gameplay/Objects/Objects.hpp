@@ -26,7 +26,7 @@ using namespace Physics;
 using namespace Sound;
 
 #define MAX_LIVES 3
-#define MAX_SCORE 1000
+#define MAX_SCORE 50
 #define DEATH -1
 
 /**
@@ -121,6 +121,7 @@ class Platform: public Body, public Cloneable {
 				glDeleteLists(list, 1);
 			}
 		}
+
 	protected:
 		bool updatePlatform();
 		/**
@@ -208,8 +209,8 @@ struct CharacterStatus: public Resource<usint> {
 						start_pos(0, 0) {
 		}
 		
-		CharacterStatus(usint _health, bool _shield, usint _shield_health,
-				usint _score, float _x = 0, float _y = 0) :
+		CharacterStatus(int _health, bool _shield, int _shield_health,
+				int _score, float _x = 0, float _y = 0) :
 						Resource<usint>(NULL),
 						health(_health),
 						shield_health(_shield_health),

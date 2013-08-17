@@ -16,10 +16,11 @@ JetEmitter::JetEmitter(const Rect<float>& _pos, usint _delay, const Color& _col)
 bool JetEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 	
-	particle.life_duration++;
-	
+	particle.life.tick();
+
 	particle.pos += particle.velocity;
 	particle.size *= 0.98f;
+
 	if (particle.size <= 0.02f) {
 		destroyed = true;
 	}
@@ -34,7 +35,7 @@ bool JetEmitter::drawParticle(usint _index, Window* _window) {
 			particle.col,
 			2);
 	
-	if (particle.life_duration > particle.max_life_duration || destroyed) {
+	if (!particle.life.active || destroyed) {
 		particles.erase(particles.begin() + _index);
 		return false;
 	}

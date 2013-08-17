@@ -18,15 +18,13 @@ SnowEmitter::SnowEmitter(const Rect<float>& _pos) :
 bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 	
-	particle.life_duration++;
+	particle.life.tick();
 	particle.pos += particle.velocity;
-	if (particle.max_life_duration == 0) {
-		particles.erase(particles.begin() + _index);
-		return false;
-	}
+
 	if (particle.col.a > 30) {
 		particle.col.a = 255
-				- 255 * particle.life_duration / particle.max_life_duration;
+				- 255 * particle.life.cycles_count
+						/ particle.life.max_cycles_count;
 	}
 	/**
 	 * Optymalizacja!
@@ -43,8 +41,7 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	glVertex2f(x, y + w);
 	glEnd();
 	
-	if (particle.life_duration > particle.max_life_duration
-			|| particle.col.a < 30) {
+	if (!particle.life.active || particle.col.a < 30) {
 		particles.erase(particles.begin() + _index);
 		return false;
 	}

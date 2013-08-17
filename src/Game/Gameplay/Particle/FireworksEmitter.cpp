@@ -18,7 +18,7 @@ FireworksEmitter::FireworksEmitter(const Rect<float>& _pos, usint _delay,
 bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 
-	particle.life_duration++;
+	particle.life.tick();
 	particle.pos -= particle.velocity;
 
 	oglWrapper::drawRect(
@@ -29,7 +29,7 @@ bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
 			particle.col,
 			2);
 
-	if (particle.life_duration > particle.max_life_duration || destroyed) {
+	if (!particle.life.active || destroyed) {
 		generateExplosion(
 				physics,
 				Rect<float>(
@@ -42,7 +42,7 @@ bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
 				particle.size / 6,
 				particle.size / 3,
 				Vector<float>(getIntRandom<int>(1, 3), getIntRandom<int>(1, 3)),
-				35,
+				45,
 				Body::BACKGROUND);
 		//
 		particles.erase(particles.begin() + _index);
@@ -56,15 +56,16 @@ bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
  */
 void FireworksEmitter::createNewParticle(Window* _window) {
 	Particle part(
-			Vector<float>(x + getIntRandom<usint>(0, w), y + 111),
-			getIntRandom<usint>(5, 15),
-			getIntRandom<usint>(20, 50),
+			Vector<float>(x + getIntRandom<usint>(0, w), y + h),
+			getIntRandom<usint>(10, 20),
+			10,
 			Color(
-					getIntRandom<usint>(28, 255),
-					getIntRandom<usint>(28, 255),
+					getIntRandom<usint>(228, 255),
+					getIntRandom<usint>(18, 255),
 					getIntRandom<usint>(28, 255)));
 
-	part.velocity.y = (float) getIntRandom<int>(3, 10) / 5;
+	part.velocity.y = (float) getIntRandom<int>(5, 10) / 2;
+	part.life.max_cycles_count = 60;
 
 	particles.push_back(part);
 }

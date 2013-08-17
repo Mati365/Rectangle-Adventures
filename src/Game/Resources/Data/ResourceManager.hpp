@@ -35,6 +35,7 @@ class Resource {
 		
 		virtual bool load(FILE*) = 0;
 		virtual void unload() = 0;
+
 		/**
 		 * Nadawanie ID podczas
 		 * dodawanie obiektu!
@@ -42,6 +43,7 @@ class Resource {
 		void setResourceID(ID _id) {
 			resource_id = _id;
 		}
+
 		ID getResourceID() const {
 			return resource_id;
 		}
@@ -74,10 +76,9 @@ class ResourceManager {
 				logEvent(Logger::LOG_ERROR, "Błąd podczas dodawania zasobu!");
 				return 0;
 			}
-			AllocKiller<Resource<ID> > alloc(_res);
 			_res->setResourceID(resources.size());
 			
-			resources.push_back(alloc);
+			resources.push_back(AllocKiller<Resource<ID> >(_res));
 			return resources.size() - 1;
 		}
 		/**
@@ -105,6 +106,7 @@ class ResourceManager {
 			}
 			return NULL;
 		}
+
 		/**
 		 * Pobieranie elementów
 		 */
@@ -118,17 +120,26 @@ class ResourceManager {
 			}
 			return resources[reinterpret_cast<usint>(_id)];
 		}
+
 		/**
 		 * Informacje nt. zasobów
 		 */
 		usint getSize() const {
 			return resources.size();
 		}
+
 		/**
-		 *
+		 * Kasowanie zasobu - wolne
 		 */
-		void deleteResource(ID id) {
-			resources.erase(resources.begin() + id);
+		bool deleteResource(ID _id) {
+			for (auto iter = resources.begin(); iter != resources.end();
+					++iter) {
+				if((*iter)->getResourceID() == _id) {
+					resources.erase(iter);
+					return true;
+				}
+			}
+			return false;
 		}
 };
 

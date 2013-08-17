@@ -30,10 +30,10 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				background_color(0, 0, 0),
 
 				// HUD
-				health(12, 17, Body::NONE, getShapePointer("health"), 16),
+				heart(12, 17, Body::NONE, getShapePointer("health"), 16),
 				health_bar(
 						Rect<float>(
-								SPACES * 3 + health.w + SPACES * 2,
+								SPACES * 3 + heart.w + SPACES * 2,
 								16,
 								62,
 								16),
@@ -41,10 +41,12 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						MAX_LIVES,
 						Control::VERTICAL),
 
+				heart_anim(30),
+
 				score(13, 54, Body::NONE, getShapePointer("score"), 14),
 				score_bar(
 						Rect<float>(
-								SPACES * 3 + health.w + SPACES * 2,
+								SPACES * 3 + heart.w + SPACES * 2,
 								54,
 								62,
 								16),
@@ -246,9 +248,24 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	/**
 	 * Pasek życia!
 	 */
+	heart_anim.tick();
+	if (!heart_anim.active) {
+		if (heart.w == 16) {
+			heart.fitToWidth(14);
+		} else if (heart.w == 14) {
+			heart.fitToWidth(12);
+		} else if (heart.w == 12) {
+			heart.fitToWidth(16);
+		}
+		//
+		heart_anim.reset();
+	}
+	heart.x = 20 - heart.w / 2;
+	heart.y = 24 - heart.h / 2;
+
 	health_bar.setValue(hero->getStatus()->health);
 
-	health.drawObject(NULL);
+	heart.drawObject(NULL);
 	health_bar.drawObject(NULL);
 
 	/**

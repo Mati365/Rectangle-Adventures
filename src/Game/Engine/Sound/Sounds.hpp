@@ -49,9 +49,13 @@ namespace Sound {
 				return player;
 			}
 
-			~wavPlayer() {
+			/**
+			 * Zamykanie odtwarzacza
+			 */
+			void closeMixAudio() {
 				Mix_CloseAudio();
 			}
+
 		protected:
 			/**
 			 * Otwieranie mix

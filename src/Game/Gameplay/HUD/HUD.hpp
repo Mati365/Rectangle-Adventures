@@ -100,8 +100,11 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		 * HUD!
 		 */
 
-		IrregularPlatform health;
+		IrregularPlatform heart;
 		ProgressBar health_bar;
+
+		// animacja skurczu serca
+		_Timer heart_anim;
 
 		IrregularPlatform score;
 		ProgressBar score_bar;

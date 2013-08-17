@@ -12,7 +12,7 @@
 
 using namespace Gameplay;
 
-#define DEFAULT_SHADOW_RADIUS 250
+#define DEFAULT_SHADOW_RADIUS 200
 
 /**
  * Główny renderer mapy
@@ -113,7 +113,7 @@ void MapRenderer::addWeather(usint _type) {
 							cam.pos.x,
 							cam.pos.y,
 							WINDOW_WIDTH,
-							WINDOW_HEIGHT - 100),
+							WINDOW_HEIGHT),
 					50,
 					map->physics);
 			//
@@ -121,6 +121,9 @@ void MapRenderer::addWeather(usint _type) {
 		}
 			break;
 
+			/**
+			 *
+			 */
 		default:
 			break;
 	}
@@ -215,7 +218,9 @@ void MapRenderer::drawObject(Window* _window) {
 
 MapRenderer::~MapRenderer() {
 	for (auto* paralax : paralax_background) {
-		delete paralax;
+		if(paralax) {
+			delete paralax;
+		}
 	}
 }
 

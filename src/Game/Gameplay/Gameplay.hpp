@@ -57,7 +57,9 @@ namespace Gameplay {
 	 */
 	class ParalaxRenderer: public Renderer, public IntroBackground {
 		protected:
-			MapINFO* map;
+			MapINFO* map; // mapa główna renderowana
+			MapINFO* buffer_map; // mapa zastępcza podczas ładowania
+
 			/**
 			 * Statycznych obiektów jest mniej
 			 * AllocKiller nie powinien zmniejszyć
@@ -97,8 +99,19 @@ namespace Gameplay {
 				rotate = _rotate;
 			}
 
+			void setBufferMap(MapINFO* buffer) {
+				buffer_map = buffer;
+			}
+
 			MapINFO* getMap() {
 				return map;
+			}
+
+			/**
+			 * Mapa buforowana
+			 */
+			MapINFO* getBufferMap() {
+				return buffer_map;
 			}
 
 			pEngine* getPhysics() {
@@ -108,14 +121,18 @@ namespace Gameplay {
 			Camera* getCamera() {
 				return &cam;
 			}
+
+			~ParalaxRenderer() {
+				if(map) {
+					delete map;
+				}
+			}
 	};
 	
 	/**
 	 * Główny renderer mapy!
 	 */
 	class MapRenderer: public ParalaxRenderer, public EventListener {
-#define SHADOW_RADIUS 250
-
 		public:
 			enum Weather {
 				SNOWING,

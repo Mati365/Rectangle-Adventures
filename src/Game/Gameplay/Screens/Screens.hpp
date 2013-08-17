@@ -35,7 +35,6 @@ namespace GameScreen {
 			}
 	};
 	
-	/////////////////////
 	/**
 	 * Aktywne ekrany
 	 */
@@ -56,8 +55,9 @@ namespace GameScreen {
 	void loadScreens();
 	void unloadScreens();
 	
-	/////////////////////
-	
+	/**
+	 * Ekran gry
+	 */
 	class Game: public Screen {
 		protected:
 			MapRenderer* lvl;

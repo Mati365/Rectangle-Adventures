@@ -160,9 +160,10 @@ void Window::init() {
 		}
 #endif
 	}
+	wavPlayer::getInstance().closeMixAudio();
 	//
-	unloadScreens();
 	unloadSoundsPack();
+	unloadScreens();
 	unloadShadersPack();
 }
 
