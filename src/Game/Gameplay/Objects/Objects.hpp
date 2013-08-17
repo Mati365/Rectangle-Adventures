@@ -35,9 +35,10 @@ using namespace Sound;
 class Platform: public Body, public Cloneable {
 	public:
 		enum Type {
-			DIAGONAL,
-			SIMPLE,
-			FILLED,
+			DIAGONAL, // ukośne linie
+			SIMPLE, // proste linie
+			FILLED, // zamalowana
+			ICY, // oblodzona + SIMPLE
 			NONE
 		};
 
@@ -69,7 +70,7 @@ class Platform: public Body, public Cloneable {
 		virtual void drawObject(Window*);
 		virtual void catchCollision(pEngine*, usint, Body*) {
 		}
-		
+
 		/**
 		 * Odblokowanie poruszania się!
 		 */
@@ -92,21 +93,21 @@ class Platform: public Body, public Cloneable {
 		usint setOrientation() const {
 			return orientation;
 		}
-		
+
 		usint getFillType() const {
 			return fill_type;
 		}
 		Color* getColor() {
 			return &col;
 		}
-		
+
 		/**
 		 * Klonowanie obiektów!
 		 */
 		virtual Cloneable* getClone() const {
 			return new Platform(*this);
 		}
-		
+
 		virtual bool recover(Cloneable* _clone) {
 			Platform* obj = dynamic_cast<Platform*>(_clone);
 			if (!obj) {
@@ -115,7 +116,7 @@ class Platform: public Body, public Cloneable {
 			(*this) = *obj;
 			return true;
 		}
-		
+
 		~Platform() {
 			if (list) {
 				glDeleteLists(list, 1);
@@ -253,12 +254,14 @@ class AI {
 		AI(Character* _character) :
 						character(_character) {
 		}
+
 		/**
 		 * Sterowanie automatem, botem,
 		 * potrzebny zatem wskaźnik do
 		 * silnika fizycznego!
 		 */
 		virtual void drive() = 0;
+
 		/**
 		 * Wykrywanie kolizji, reakcja!
 		 */

@@ -41,28 +41,27 @@ bool SaveManager::readFromFilesystem(Package* _filesystem) {
 
 /////////////////////////////////////////////
 
-/**
- * Odczyt sejwa
- */
+/** Odczyt sejwa */
 bool Save::read(FILE* _file) {
-	game_time = IO::read<size_t>(_file);
-
-	points = IO::read<usint>(_file);
-	reincarnations = IO::read<usint>(_file);
-	level_index = IO::read<usint>(_file);
+	for (auto& stat : stats) {
+		stat = IO::read<size_t>(_file);
+	}
 	//
 	return true;
 }
 
-/**
- * Zapis sejwa
- */
+/** Zapis sejwa */
 size_t Save::write(FILE* _file) {
-	IO::write<size_t>(_file, game_time);
-
-	IO::write<usint>(_file, points);
-	IO::write<usint>(_file, reincarnations);
-	IO::write<usint>(_file, level_index);
+	for (auto& stat : stats) {
+		IO::write<usint>(_file, stat);
+	}
 	//
 	return getLength();
+}
+
+/** Czyszczenie save */
+void Save::clear() {
+	for (auto& stat : stats) {
+		stat = 0;
+	}
 }

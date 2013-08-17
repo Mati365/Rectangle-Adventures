@@ -233,30 +233,27 @@ class PlatformShape: public Resource<usint> {
  */
 class Save: public PackagePointer {
 	public:
-		size_t game_time; // czas gry w sekundach
+		enum Stats {
+			GAME_TIME,
+			POINTS,
+			REINCARNATIONS,
+			LAST_LEVEL_INDEX
+		};
 
-		usint points; // ilość zebranych punktów w całej grze
-		usint reincarnations; // ilość reinkarnacji
+		usint stats[LAST_LEVEL_INDEX + 1]; // Na którym lvl został
 
-		usint level_index; // Na którym lvl został
-
-		Save() :
-						game_time(0),
-						points(0),
-						reincarnations(0),
-						level_index(0) {
+		Save() {
+			clear();
 		}
 
 		virtual bool read(FILE*);
 		virtual size_t write(FILE*);
 
 		// Czyszczenie save
-		void clear() {
-			game_time = points = reincarnations = level_index = 0;
-		}
+		void clear();
 
 		virtual size_t getLength() {
-			return sizeof(long long) + sizeof(usint) * 3;
+			return sizeof(usint) * (LAST_LEVEL_INDEX + 1);
 		}
 };
 

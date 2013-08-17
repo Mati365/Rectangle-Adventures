@@ -19,7 +19,6 @@ Platform::Platform(float _x, float _y, float _w, float _h, const Color& _col,
 				fill_type(SIMPLE),
 				list(glGenLists(1)) {
 	state = _state;
-	elasticity = 0.45f;
 	type = PLATFORM;
 	//
 	for (auto& obj : border) {
@@ -73,6 +72,11 @@ void Platform::setMovingDir(const Vector<float>& _velocity,
  */
 void Platform::setFillType(usint _fill_type) {
 	fill_type = _fill_type;
+
+	// Tarcie dla lodowej
+	if (fill_type == ICY) {
+		roughness = 0.94f;
+	}
 }
 
 /**
@@ -124,6 +128,22 @@ void Platform::drawBorder() {
 		}
 		glEnd();
 	}
+	/**
+	 * Śnieg pokrywający platformę
+	 * w zależności od jej typu
+	 */
+	if (fill_type == ICY) {
+		glLineWidth(5);
+		glBegin(GL_LINE_STRIP);
+		glColor4ub(255, 255, 255, 55);
+		glVertex2f(x - 2, y + h * 0.4f);
+		glColor4ub(255, 255, 255, 255);
+		glVertex2f(x - 2, y - 2);
+		glVertex2f(x + w + 2, y - 2);
+		glColor4ub(255, 255, 255, 55);
+		glVertex2f(x + w + 2, y + h * 0.4f);
+		glEnd();
+	}
 }
 
 /**
@@ -143,6 +163,7 @@ void Platform::drawBody() {
 		 *  Proste!
 		 */
 		case SIMPLE:
+		case ICY:
 			glBegin(GL_LINES);
 			if (w > h) {
 				for (usint i = 0; i < w / 10; ++i) {
@@ -288,6 +309,5 @@ void IrregularPlatform::drawObject(Window*) {
 		glCallList(shape->getID());
 	}
 	glPopMatrix();
-	//
-	//oglWrapper::drawRect(x, y, w, h, oglWrapper::BLUE, 2.f);
+	//oglWrapper::drawRect(x, y, w, h, oglWrapper::GREEN, 2.f);
 }

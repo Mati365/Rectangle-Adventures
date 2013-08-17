@@ -6,7 +6,6 @@
  */
 #include <cmath>
 #include <algorithm>
-#include <iostream>
 
 #include "Physics.hpp"
 
@@ -36,6 +35,7 @@ usint Physics::invertDir(usint _dir) {
 	}
 	return pEngine::NONE;
 }
+
 //---------------------------
 
 pEngine::pEngine(const Rect<float>& _bounds, float _gravity_speed) :
@@ -142,10 +142,14 @@ void pEngine::updateWorld() {
 		}
 		
 		/**
-		 * Siła tarcia
+		 * Siła tarcia / w locie też chamuje
 		 */
 		if (abs(object->velocity.x) > 0) {
-			object->velocity.x *= 0.85f;
+			if (down_collision) {
+				object->velocity.x *= down_collision->roughness;
+			} else {
+				object->velocity.x *= DEFAULT_ROUGHNESS;
+			}
 		}
 		object->y += object->velocity.y;
 		object->x += object->velocity.x;

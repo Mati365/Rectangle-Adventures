@@ -360,7 +360,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
  * Unik
  */
 void Character::dodge(usint _dir) {
-	float _speed = 8;
+	float _speed = velocity.y * 0.5f;
 	//
 	switch (_dir) {
 		case pEngine::RIGHT:

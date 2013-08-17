@@ -223,6 +223,8 @@ namespace Physics {
 	 * Obiekt podlegający fizyce
 	 */
 	class Body: public Rect<float>, public Renderer {
+#define DEFAULT_ROUGHNESS 0.85f
+
 		public:
 			Body* collisions[4];
 
@@ -260,7 +262,7 @@ namespace Physics {
 			usint state;
 
 			Vector<float> velocity;
-			float elasticity;
+			float roughness; // chropowatość
 			float weight;
 
 			/**
@@ -282,7 +284,7 @@ namespace Physics {
 
 			Body() :
 							state(NONE),
-							elasticity(0),
+							roughness(DEFAULT_ROUGHNESS),
 							weight(0),
 							type(PLATFORM),
 							layer(STATIC_LAYER),
@@ -295,11 +297,10 @@ namespace Physics {
 				h = 0;
 			}
 			
-			Body(float _x, float _y, float _w, float _h,
-					float _elasticity = 1.f, float _weight = 1.f, usint _state =
-							NONE) :
+			Body(float _x, float _y, float _w, float _h, float _roughness =
+					DEFAULT_ROUGHNESS, float _weight = 1.f, usint _state = NONE) :
 							state(_state),
-							elasticity(_elasticity),
+							roughness(_roughness),
 							weight(_weight),
 							type(PLATFORM),
 							layer(STATIC_LAYER),
