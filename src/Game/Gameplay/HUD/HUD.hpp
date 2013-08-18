@@ -55,6 +55,9 @@ class IntroBackground {
  * wczytywanie cutscenek!
  */
 class MessageRenderer: public Renderer, public EventListener, public Callback {
+#define SCORE_ICON_WIDTH 14
+#define HEART_ICON_WIDTH 16
+
 	public:
 		enum Screen {
 			INTRO_SCREEN,
@@ -99,6 +102,8 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		/**
 		 * HUD!
 		 */
+		// temperatura
+		usint hud_temperature;
 
 		IrregularPlatform heart;
 		ProgressBar health_bar;
@@ -172,6 +177,11 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 			delete return_to_menu;
 		}
 	private:
+		/**
+		 * Odświeżanie
+		 */
+		void updateHUDControls();
+
 		/**
 		 * Otwieranie przerywnika pomiędzy scenami!
 		 */

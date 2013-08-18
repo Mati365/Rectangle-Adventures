@@ -74,10 +74,13 @@ Character::Character(const string& _nick, float _x, float _y,
 				IrregularPlatform(_x, _y, true, _shape),
 				action(JUMPING),
 				status(MAX_LIVES, false, 0, 0, _x, _y),
-				ai(NULL),
-				//
+				// Timery
 				blood_anim_visible_time(11),
-				blood_anim_cycles(8) {
+				blood_anim_cycles(8),
+				levitation_timer(
+						DEFAULT_LEVITATION_DURATION,
+						getIntRandom<int>(0, DEFAULT_LEVITATION_DURATION)),
+				start_pos(_x, _y) {
 	type = _type;
 	//
 	addCheckpoint(true);
@@ -198,9 +201,6 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (isDead()) {
 		return;
 	}
-	if (ai) {
-		ai->getCollision(physics, dir, body);
-	}
 
 	/**
 	 * Ginąć może nie tylko gracz
@@ -217,6 +217,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (type != HERO) {
 		return;
 	}
+
 	/**
 	 * Skrypty
 	 */
@@ -239,6 +240,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	}
 
 	switch (enemy->type) {
+
 		/**
 		 * Strefa śmierci ;_;
 		 */
@@ -351,6 +353,53 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	}
 	if (status.health == 0) {
 		die(physics);
+	}
+}
+
+/**
+ * No to obiekt odświeżamy..
+ */
+void Character::updateMe() {
+	switch (type) {
+		/**
+		 *
+		 */
+		case SCORE: {
+			levitation_timer.tick();
+			if (!levitation_timer.active) {
+				levitation_timer.reset();
+			}
+
+			/**
+			 * Lewitacja to 1/3 wysokości obiektu
+			 * Obiekt musi być BACKGROUND
+			 * Sinus być chropowaty
+			 */
+			if (levitation_timer.cycles_count
+					>= levitation_timer.max_cycles_count / 2) {
+				// Opdanie
+				y =
+						start_pos.y + h / 1.5f
+								- h
+										* ((float) levitation_timer.cycles_count
+												/ (float) levitation_timer.max_cycles_count);
+			} else {
+				// Wznoszenie się
+				y =
+						start_pos.y + h / 1.5f
+								- h
+										* (1.f
+												- (float) levitation_timer.cycles_count
+														/ (float) levitation_timer.max_cycles_count);
+			}
+		}
+			break;
+
+			/**
+			 *
+			 */
+		default:
+			break;
 	}
 }
 
@@ -492,9 +541,8 @@ void Character::drawTooltips() {
  * Malowanie całego gracza
  */
 void Character::drawObject(Window*) {
-	if (ai) {
-		ai->drive();
-	}
+	updateMe(); // Odświeżanie obiektu
+	//
 	glLineWidth(1.f);
 	if (IS_SET(action, BLOODING)) {
 		updateHitAnim();

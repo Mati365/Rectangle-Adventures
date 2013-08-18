@@ -297,8 +297,24 @@ void IrregularPlatform::fitToWidth(float _w) {
  * Narysuj!
  */
 void IrregularPlatform::drawObject(Window*) {
+	/**
+	 * Odświeżanie kształtu - mógła zostać podmieniona
+	 * temperatura!
+	 *
+	 if (shape) {
+	 Rect<float>& _new_bounds = shape->getBounds();
+	 if ((w != _new_bounds.w * scale || h != _new_bounds.h * scale)) {
+	 w = _new_bounds.w * scale;
+	 h = _new_bounds.h * scale;
+	 }
+	 }
+	 */
+
+	// Odświeżanie
 	updatePlatform();
-	//
+	/**
+	 * Rysowanie
+	 */
 	glPushMatrix();
 	glTranslatef(x, y, 1);
 	if (scale != 1.f) {

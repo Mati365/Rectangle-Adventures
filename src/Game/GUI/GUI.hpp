@@ -142,8 +142,13 @@ namespace GUI {
 			usint getValue() const {
 				return value;
 			}
+
 			void setValue(usint _value) {
 				value = _value;
+			}
+
+			void setColor(const Color& _col) {
+				col = _col;
 			}
 	};
 	

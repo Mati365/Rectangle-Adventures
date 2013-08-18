@@ -25,9 +25,14 @@ using namespace Engine;
 using namespace Physics;
 using namespace Sound;
 
+/**
+ * Konfiguracja gameplay!
+ */
 #define MAX_LIVES 3
 #define MAX_SCORE 50
 #define DEATH -1
+
+#define DEFAULT_LEVITATION_DURATION 120
 
 /**
  * Platforma, po której porusza się gracz
@@ -336,7 +341,6 @@ class Character: public IrregularPlatform {
 		 * statyczny!
 		 */
 		CharacterStatus status;
-		AI* ai;
 
 		/**
 		 * Długość wyświetlenia pojedynczej
@@ -348,6 +352,13 @@ class Character: public IrregularPlatform {
 		 * Ilość klatek zaczerwienienia
 		 */
 		_Timer blood_anim_cycles;
+
+		/**
+		 * Lewitacja obiektu - przeznaczone
+		 * dla punktu
+		 */
+		_Timer levitation_timer;
+		Vector<float> start_pos;
 
 		/**
 		 * Zamiast stosu lepiej dać ostatni
@@ -416,15 +427,13 @@ class Character: public IrregularPlatform {
 		void move(float, float);
 		void jump(float, bool);
 
-		/**
-		 * Unik od przeciwnika
-		 */
-		void dodge(usint);
+		void dodge(usint); // taktyczny unik
 
-		void setAI(AI* _ai) {
-			ai = _ai;
-		}
-		
+		/**
+		 * Odświeżanie gracza
+		 */
+		void updateMe();
+
 		/**
 		 * Klonowanie obiektów!
 		 */
@@ -450,9 +459,6 @@ class Character: public IrregularPlatform {
 		}
 		
 		virtual ~Character() {
-			if (ai) {
-				delete ai;
-			}
 		}
 		
 	private:
@@ -465,24 +471,6 @@ class Character: public IrregularPlatform {
 		 * Rysowanie elementów opcjonalnych..
 		 */
 		void drawTooltips();
-};
-
-/**
- * AI Ślimaka - poruszanie się w lewo i prawo
- * w poziomie
- */
-class SnailAI: public AI {
-	protected:
-		float speed;
-
-	public:
-		SnailAI(Character*, float);
-
-		/**
-		 * Metody AI!
-		 */
-		virtual void drive();
-		virtual void getCollision(pEngine*, usint, Body*);
 };
 
 /**
@@ -560,8 +548,6 @@ class ResourceFactory {
 			HOT
 		};
 
-		usint texture_temperature;
-
 		/**
 		 * Typy obiektów generowanych
 		 * przez fabryke nie są tym
@@ -607,7 +593,6 @@ class ResourceFactory {
 				usint state;
 
 				// Informacje o postaci
-				AI* ai;
 				bool is_score;
 				CharacterStatus character_status;
 		};
@@ -667,9 +652,10 @@ class ResourceFactory {
 		 */
 		map<usint, PlatformShape*> textures;
 
-		/**
-		 * STATUSY!!!!
-		 */
+		// Temperatura tekstur
+		usint texture_temperature;
+
+		// Fizyka
 		pEngine* physics;
 
 		ResourceFactory();
@@ -697,9 +683,21 @@ class ResourceFactory {
 		void unloadObjects();
 
 		/**
+		 * Pobieranie tekstury!
+		 */
+		PlatformShape* getTexture(usint, usint);
+
+		/**
+		 * Temperatura
+		 */
+		usint getTextureTemperature() const {
+			return texture_temperature;
+		}
+
+		/**
 		 * Pobieranie instancji i inicjowanie!
 		 */
-		static ResourceFactory& getIstance(pEngine*);
+		static ResourceFactory& getInstance(pEngine*);
 
 	private:
 		void loadMainTexturesPack();

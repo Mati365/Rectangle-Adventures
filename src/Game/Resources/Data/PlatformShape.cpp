@@ -251,7 +251,6 @@ void PlatformShape::rotate(float _angle) {
 				- (pos->y - bounds.h / 2) * sinf(angle) + bounds.w / 2;
 		new_pos.y = (pos->x - bounds.w / 2) * sinf(angle)
 				+ (pos->y - bounds.h / 2) * cosf(angle) + bounds.h / 2;
-		//
 		(*pos) = new_pos;
 		//
 		if (bounds.x > pos->x) {

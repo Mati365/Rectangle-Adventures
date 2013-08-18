@@ -12,7 +12,6 @@
 /**
  * Generowanie statusów
  */
-
 map<usint, ResourceFactory::_FactoryStatus> ResourceFactory::factory_status;
 
 void ResourceFactory::generateChracterStatus(usint _hard_level) {
@@ -20,42 +19,42 @@ void ResourceFactory::generateChracterStatus(usint _hard_level) {
 
 	// PUNKT
 	factory_status[SCORE] = {
-		Character::SCORE, Body::BACKGROUND, NULL, true,
+		Character::SCORE, Body::BACKGROUND, true,
 		CharacterStatus(0, false, 0, 1)
 	};
 
 	// ŻYCIE
 	factory_status[HEALTH] = {
-		Character::SCORE, Body::BACKGROUND, NULL, true,
+		Character::SCORE, Body::BACKGROUND, true,
 		CharacterStatus(1, false, 0, 0)
 	};
 
 	// WRÓG
 	factory_status[GHOST] = {
-		Character::ENEMY, Body::NONE, new SnailAI(NULL, 2.f), true,
+		Character::ENEMY, Body::NONE, true,
 		CharacterStatus(-1, false, 0, 0)
 	};
 
 	// KOLCE
 	factory_status[SPIKES] = {
-		Character::SPIKES, Body::NONE, NULL, true,
+		Character::SPIKES, Body::NONE, true,
 		CharacterStatus(-1, false, 0, 0)
 	};
 
 	// POCISK
 	factory_status[BULLET] = {
-		Character::SPIKES, Body::NONE, NULL, true,
+		Character::SPIKES, Body::NONE, true,
 		CharacterStatus(-1, false, 0, 0)
 	};
 
 	// DRABINA
 	factory_status[LADDER] = {
-		Character::LADDER, Body::BACKGROUND, NULL, false
+		Character::LADDER, Body::BACKGROUND, false
 	};
 
 	// LIANA
 	factory_status[LIANE] = {
-		Character::LIANE, Body::BACKGROUND, NULL, false
+		Character::LIANE, Body::BACKGROUND, false
 	};
 }
 
@@ -92,7 +91,7 @@ ResourceFactory::_TextureConfig ResourceFactory::factory_types[] =
 				false },
 
 			// PUNKTY
-			{ SCORE, pEngine::NONE, 0.f, 12, "punkt.txt", "score", false },
+			{ SCORE, pEngine::NONE, 0.f, 12, "punkt.txt", "score", true },
 			{ HEALTH, pEngine::NONE, 0.f, 16, "zycie.txt", "health", false },
 			{ GHOST, pEngine::NONE, 0.f, 12, "wrog.txt", "enemy", false },
 
@@ -174,6 +173,7 @@ void ResourceFactory::loadMainTexturesPack() {
 
 void ResourceFactory::loadMobsTexturesPack(const char* _addition,
 		bool _temperature_changed) {
+
 	// Tekstury mobów
 	for (_TextureConfig& factory_object : factory_types) {
 		if (_temperature_changed && !factory_object.temperature_enabled) {
@@ -183,6 +183,10 @@ void ResourceFactory::loadMobsTexturesPack(const char* _addition,
 				factory_object.type,
 				factory_object.orientation);
 		factory_object.resource_id = _resource_id;
+
+		// Usuwanie starej tekstury
+		textures.erase(_resource_id);
+
 		//
 		putTexture(
 				_resource_id,
@@ -191,6 +195,13 @@ void ResourceFactory::loadMobsTexturesPack(const char* _addition,
 						factory_object.resource_label,
 						factory_object.rotation));
 	}
+}
+
+/**
+ * Pobieranie tekstur!
+ */
+PlatformShape* ResourceFactory::getTexture(usint _id, usint _orientation) {
+	return textures[genTextureID(_id, _orientation)];
 }
 
 /**
@@ -237,7 +248,7 @@ void ResourceFactory::putTexture(usint id, PlatformShape* shape) {
 	textures[id] = shape;
 }
 
-ResourceFactory& ResourceFactory::getIstance(pEngine* _physics) {
+ResourceFactory& ResourceFactory::getInstance(pEngine* _physics) {
 	static ResourceFactory factory;
 	if (_physics) {
 		if (!factory.physics) {
@@ -351,9 +362,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 
 			character->setType(_status.character_type);
 			character->setState(_status.state);
-			if (_status.ai) {
-				character->setAI(_status.ai);
-			}
 			if (_status.is_score) {
 				character->setStatus(_status.character_status);
 			}

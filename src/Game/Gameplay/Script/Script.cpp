@@ -283,7 +283,7 @@ bool Interpreter::interpret(Script* script) {
 				 * Tworzenie obiektu!
 				 */
 			case CREATE_OBJECT:
-				ResourceFactory::getIstance(map->getPhysics()).createObject(
+				ResourceFactory::getInstance(map->getPhysics()).createObject(
 						(ResourceFactory::Types) Convert::stringTo<usint>(
 								func.args[0]),
 						Convert::stringTo<float>(func.args[1]),

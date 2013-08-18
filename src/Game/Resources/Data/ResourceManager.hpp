@@ -68,6 +68,7 @@ class ResourceManager {
 		map<ID, AllocKiller<Resource<ID> > > resources;
 
 	public:
+
 		/**
 		 * Zwracanie identyfikatoru
 		 */
@@ -85,6 +86,7 @@ class ResourceManager {
 							AllocKiller<Resource<ID>>(_res)));
 			return resources.size() - 1;
 		}
+
 		/**
 		 * Zwracanie identyfikatora
 		 */
@@ -95,6 +97,7 @@ class ResourceManager {
 			}
 			return 0;
 		}
+
 		/**
 		 * Zwracanie całego obiektu po label'u!
 		 */

@@ -30,8 +30,8 @@ T getIntRandom(T min, T max) {
  * Prosty timer
  */
 struct _Timer {
-		usint max_cycles_count;
-		usint cycles_count;
+		int max_cycles_count;
+		int cycles_count;
 
 		bool active;
 
@@ -41,7 +41,7 @@ struct _Timer {
 						active(false) {
 		}
 
-		_Timer(usint _max_cycles_count, usint _cycles_count = 0) :
+		_Timer(int _max_cycles_count, int _cycles_count = 0) :
 						max_cycles_count(_max_cycles_count),
 						cycles_count(_cycles_count),
 						active(max_cycles_count != 0) {

@@ -53,7 +53,7 @@ bool readMob(FILE* file) {
 			&script_id,
 			&state);
 	//
-	Body* body = ResourceFactory::getIstance(NULL).createObject(
+	Body* body = ResourceFactory::getInstance(NULL).createObject(
 			type,
 			pos.x,
 			pos.y,
@@ -207,7 +207,7 @@ bool MapINFO::load(FILE* map) {
 		physics->insert(*iter);
 	}
 	
-	ResourceFactory::getIstance(physics);
+	ResourceFactory::getInstance(physics);
 	Vector<float> pos;
 	/**
 	 * Wczytywanie mobów!
@@ -233,7 +233,7 @@ bool MapINFO::load(FILE* map) {
 				&rect.h,
 				shape);
 		//
-		ResourceFactory::getIstance(physics).createObject(
+		ResourceFactory::getInstance(physics).createObject(
 				ResourceFactory::SCRIPT_BOX,
 				rect.x,
 				rect.y,
@@ -257,7 +257,7 @@ void MapINFO::unload() {
 		delete objects[i];
 	}
 	
-	ResourceFactory::getIstance(NULL).unloadObjects();
+	ResourceFactory::getInstance(NULL).unloadObjects();
 
 	// Usuwanie kształtów! Woolne!
 	for (usint i = 0; i < resources.size(); ++i) {

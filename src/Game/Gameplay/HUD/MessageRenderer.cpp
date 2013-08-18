@@ -30,10 +30,11 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				background_color(0, 0, 0),
 
 				// HUD
-				heart(12, 17, Body::NONE, getShapePointer("health"), 16),
+				hud_temperature(432), // temperatura do ustawienia
+				heart(12, 17, Body::NONE, NULL, HEART_ICON_WIDTH),
 				health_bar(
 						Rect<float>(
-								SPACES * 3 + heart.w + SPACES * 2,
+								SPACES * 3 + HEART_ICON_WIDTH + SPACES * 2,
 								16,
 								62,
 								16),
@@ -43,10 +44,10 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 
 				heart_anim(30),
 
-				score(13, 54, Body::NONE, getShapePointer("score"), 14),
+				score(13, 54, Body::NONE, NULL, SCORE_ICON_WIDTH),
 				score_bar(
 						Rect<float>(
-								SPACES * 3 + heart.w + SPACES * 2,
+								SPACES * 3 + SCORE_ICON_WIDTH + SPACES * 2,
 								54,
 								62,
 								16),
@@ -240,29 +241,56 @@ void MessageRenderer::catchEvent(const Event& _event) {
 
 }
 
-void MessageRenderer::drawPlayerHUD(Window* _window) {
-	if (!hero) {
-		hero = background->getHero();
+/**
+ * Odświeżanie kontrolek HUDa
+ */
+void MessageRenderer::updateHUDControls() {
+
+	/**
+	 * Sprawdzenie temperatury HUDa
+	 */
+	usint _actual_temperature =
+			ResourceFactory::getInstance(NULL).getTextureTemperature();
+	if (hud_temperature != _actual_temperature) {
+		hud_temperature = _actual_temperature;
+
+		// Serce
+		heart.setShape(
+				ResourceFactory::getInstance(NULL).getTexture(
+						ResourceFactory::HEALTH,
+						pEngine::NONE));
+		heart.fitToWidth(HEART_ICON_WIDTH);
+		health_bar.setColor(*heart.getShape()->getMainColor());
+
+		// Punkt
+		score.setShape(
+				ResourceFactory::getInstance(NULL).getTexture(
+						ResourceFactory::SCORE,
+						pEngine::NONE));
+		score.fitToWidth(
+				hud_temperature == ResourceFactory::ICY ?
+						SCORE_ICON_WIDTH / 1.5f : SCORE_ICON_WIDTH);
+		score_bar.setColor(*score.getShape()->getMainColor());
 	}
 
 	/**
-	 * Pasek życia!
+	 * Pukanie serca!
 	 */
 	heart_anim.tick();
 	if (!heart_anim.active) {
-		if (heart.w == 16) {
-			heart.fitToWidth(14);
-		} else if (heart.w == 14) {
-			heart.fitToWidth(12);
-		} else if (heart.w == 12) {
-			heart.fitToWidth(16);
+		if (heart.w == HEART_ICON_WIDTH) {
+			heart.fitToWidth((float) HEART_ICON_WIDTH / 1.25f);
+		} else if (heart.w == (float) HEART_ICON_WIDTH / 1.25f) {
+			heart.fitToWidth((float) HEART_ICON_WIDTH / 1.4f);
+		} else if (heart.w == (float) HEART_ICON_WIDTH / 1.4f) {
+			heart.fitToWidth(HEART_ICON_WIDTH);
 		}
 		//
 		heart_anim.reset();
 	}
+	// Centrowanie
 	heart.x = 20 - heart.w / 2;
 	heart.y = 24 - heart.h / 2;
-
 	health_bar.setValue(hero->getStatus()->health);
 
 	heart.drawObject(NULL);
@@ -272,7 +300,18 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	 * Punkty!
 	 */
 	score_bar.setValue(hero->getStatus()->score);
+	score.x = 20 - score.w / 2;
+}
 
+/**
+ * Rysowanie HUDa
+ */
+void MessageRenderer::drawPlayerHUD(Window* _window) {
+	if (!hero) {
+		hero = background->getHero();
+	}
+	updateHUDControls();
+	//
 	score.drawObject(NULL);
 	score_bar.drawObject(NULL);
 }
