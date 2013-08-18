@@ -9,7 +9,7 @@
 #include "../../Tools/Tools.hpp"
 
 SnowEmitter::SnowEmitter(const Rect<float>& _pos) :
-				ParticleEmitter(_pos, 120) {
+				ParticleEmitter(_pos, 50) {
 }
 
 /**
@@ -21,10 +21,11 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	particle.life.tick();
 	particle.pos += particle.velocity;
 
-	if (particle.col.a > 30) {
-		particle.col.a = 255
+	if (particle.col.r > 30) {
+		particle.col.r = 255
 				- 255 * particle.life.cycles_count
 						/ particle.life.max_cycles_count;
+		particle.col.g = particle.col.b = particle.col.r;
 	}
 	/**
 	 * Optymalizacja!
@@ -33,7 +34,7 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	 */
 	float x = particle.pos.x, y = particle.pos.y, w = particle.size;
 	
-	glColor4ub(particle.col.r, particle.col.g, particle.col.b, particle.col.a);
+	glColor3ub(particle.col.r, particle.col.g, particle.col.b);
 	glBegin(GL_LINE_LOOP);
 	glVertex2f(x, y);
 	glVertex2f(x + w, y);
@@ -52,15 +53,25 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
  * Tworzenie cząsteczki..
  */
 void SnowEmitter::createNewParticle(Window* _window) {
-	for (usint i = 0; i < getIntRandom(2, (int) (30 * (40.f / (float) delay)));
+	for (usint i = 0; i < getIntRandom(2, (int) (50 * (50.f / (float) delay)));
 			++i) {
+		float angle = getIntRandom<int>(20, 80);
+		float speed = 1.f;
+
+		Vector<float> wind(
+				cos(TO_RAD(angle)) * speed,
+				sin(TO_RAD(angle)) * speed);
+
 		Particle part(
 				Vector<float>(x, y),
-				getIntRandom(10, 20),
+				getIntRandom(6, 14),
 				getIntRandom(50, 200),
-				oglWrapper::GRAY);
+				oglWrapper::WHITE);
 		
-		part.velocity.y = getIntRandom(150, 350) / 150;
+		part.velocity = wind;
+		part.angle = angle;
+
+		part.velocity.y += getIntRandom(150, 350) / 150;
 		part.pos.x = x + getIntRandom(-100, (int) w + 100);
 		
 		particles.push_back(part);

@@ -62,7 +62,7 @@ void ResourceFactory::generateChracterStatus(usint _hard_level) {
 /**
  * Podstawowe tekstury fabryki
  */
-ResourceFactory::_FactoryType ResourceFactory::factory_types[] =
+ResourceFactory::_TextureConfig ResourceFactory::factory_types[] =
 		{
 		// KOLCE
 			{
@@ -72,7 +72,7 @@ ResourceFactory::_FactoryType ResourceFactory::factory_types[] =
 				20,
 				"kolce.txt",
 				"spikes_right",
-				factory_status[SPIKES] },
+				false },
 			{
 				SPIKES,
 				pEngine::LEFT,
@@ -80,15 +80,8 @@ ResourceFactory::_FactoryType ResourceFactory::factory_types[] =
 				20,
 				"kolce.txt",
 				"spikes_left",
-				factory_status[SPIKES] },
-			{
-				SPIKES,
-				pEngine::UP,
-				0.f,
-				23,
-				"kolce.txt",
-				"spikes_up",
-				factory_status[SPIKES] },
+				false },
+			{ SPIKES, pEngine::UP, 0.f, 23, "kolce.txt", "spikes_up", false },
 			{
 				SPIKES,
 				pEngine::DOWN,
@@ -96,57 +89,22 @@ ResourceFactory::_FactoryType ResourceFactory::factory_types[] =
 				23,
 				"kolce.txt",
 				"spikes_down",
-				factory_status[SPIKES] },
+				false },
 
 			// PUNKTY
-			{
-				SCORE,
-				pEngine::NONE,
-				0.f,
-				12,
-				"punkt.txt",
-				"score",
-				factory_status[SCORE] },
-			{
-				HEALTH,
-				pEngine::NONE,
-				0.f,
-				16,
-				"zycie.txt",
-				"health",
-				factory_status[HEALTH] },
-			{
-				GHOST,
-				pEngine::NONE,
-				0.f,
-				12,
-				"wrog.txt",
-				"enemy",
-				factory_status[GHOST] },
+			{ SCORE, pEngine::NONE, 0.f, 12, "punkt.txt", "score", false },
+			{ HEALTH, pEngine::NONE, 0.f, 16, "zycie.txt", "health", false },
+			{ GHOST, pEngine::NONE, 0.f, 12, "wrog.txt", "enemy", false },
 
 			// BRONIE
-			{ GUN, pEngine::RIGHT, 90.f, 12, "bron.txt", "gun_right" },
-			{ GUN, pEngine::LEFT, -90.f, 12, "bron.txt", "gun_left" },
-			{ GUN, pEngine::UP, 0.f, 16, "bron.txt", "gun_up" },
-			{ GUN, pEngine::DOWN, 180.f, 16, "bron.txt", "gun_down" },
+			{ GUN, pEngine::RIGHT, 90.f, 12, "bron.txt", "gun_right", false },
+			{ GUN, pEngine::LEFT, -90.f, 12, "bron.txt", "gun_left", false },
+			{ GUN, pEngine::UP, 0.f, 16, "bron.txt", "gun_up", false },
+			{ GUN, pEngine::DOWN, 180.f, 16, "bron.txt", "gun_down", false },
 
 			// DRABINKI
-			{
-				LADDER,
-				pEngine::NONE,
-				0.f,
-				23,
-				"drabina.txt",
-				"stairs",
-				factory_status[LADDER] },
-			{
-				LIANE,
-				pEngine::NONE,
-				0.f,
-				16,
-				"liana.txt",
-				"liane",
-				factory_status[LIANE] },
+			{ LADDER, pEngine::NONE, 0.f, 23, "drabina.txt", "stairs", false },
+			{ LIANE, pEngine::NONE, 0.f, 16, "liana.txt", "liane", true },
 
 			// POCISKI
 			{
@@ -156,7 +114,7 @@ ResourceFactory::_FactoryType ResourceFactory::factory_types[] =
 				0,
 				"pocisk.txt",
 				"bullet_right",
-				factory_status[BULLET] },
+				false },
 			{
 				BULLET,
 				pEngine::LEFT,
@@ -164,15 +122,8 @@ ResourceFactory::_FactoryType ResourceFactory::factory_types[] =
 				0,
 				"pocisk.txt",
 				"bullet_left",
-				factory_status[BULLET] },
-			{
-				BULLET,
-				pEngine::UP,
-				0.f,
-				0,
-				"pocisk.txt",
-				"bullet_up",
-				factory_status[BULLET] },
+				false },
+			{ BULLET, pEngine::UP, 0.f, 0, "pocisk.txt", "bullet_up", false },
 			{
 				BULLET,
 				pEngine::DOWN,
@@ -180,13 +131,14 @@ ResourceFactory::_FactoryType ResourceFactory::factory_types[] =
 				0,
 				"pocisk.txt",
 				"bullet_down",
-				factory_status[BULLET] } };
+				false } };
 
 /**
  * Konstruktor prywatny!
  */
 ResourceFactory::ResourceFactory() :
 				//
+				texture_temperature(NORMAL),
 				physics(NULL) {
 	generateChracterStatus(EASY);
 }
@@ -204,25 +156,83 @@ usint ResourceFactory::genTextureID(usint _type, usint _orientation) const {
 	return 5 * _type + MAX_TEXTURES_COUNT + _orientation;
 }
 
-void ResourceFactory::loadTexturesPack() {
+/**
+ * Wczytywanie tekstur!
+ */
+void ResourceFactory::loadMainTexturesPack() {
 	// Gracz
-	readShape("gracz.txt", "player", 0);
+	readShape("gracz_mikolaj.txt", "player", 0);
 	readShape("czaszka.txt", "cranium", 0);
 	
-	// Tekstury mobów
-	for (_FactoryType& factory_object : factory_types) {
-		putTexture(
-				genTextureID(factory_object.type, factory_object.orientation),
-				readShape(
-						factory_object.file_name,
-						factory_object.resource_label,
-						factory_object.rotation));
-	}
+	// Moby
+	loadMobsTexturesPack("", false);
+	changeTemperatureOfTextures(ICY);
 
 	//
 	logEvent(Logger::LOG_INFO, "Pomyślnie wczytano paczkę tekstur!");
 }
 
+void ResourceFactory::loadMobsTexturesPack(const char* _addition,
+		bool _temperature_changed) {
+	// Tekstury mobów
+	for (_TextureConfig& factory_object : factory_types) {
+		if (_temperature_changed && !factory_object.temperature_enabled) {
+			continue;
+		}
+		usint _resource_id = genTextureID(
+				factory_object.type,
+				factory_object.orientation);
+		factory_object.resource_id = _resource_id;
+		//
+		putTexture(
+				_resource_id,
+				readShape(
+						((string) factory_object.file_name + _addition).c_str(),
+						factory_object.resource_label,
+						factory_object.rotation));
+	}
+}
+
+/**
+ * Zmiana temperatur tekstur!
+ */
+void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
+	texture_temperature = _texure_temperature;
+
+	// Dodatek do wczytywanej mapy
+	const char* addition;
+	switch (texture_temperature) {
+		//
+		case ICY:
+			addition = "_zima";
+			break;
+
+			//
+		case NEUTRAL:
+			addition = NULL;
+			break;
+
+			//
+		case HOT:
+			addition = "_lato";
+			break;
+
+	}
+
+	// Usuwanie starych tekstur
+	for (_TextureConfig& factory_object : factory_types) {
+		if (factory_object.temperature_enabled) {
+			main_resource_manager.deleteResource(factory_object.resource_id);
+		}
+	}
+
+	// Wczytywanie na nowo
+	loadMobsTexturesPack(addition, true);
+}
+
+/**
+ * Dokładanie tekstur!
+ */
 void ResourceFactory::putTexture(usint id, PlatformShape* shape) {
 	textures[id] = shape;
 }
@@ -231,7 +241,7 @@ ResourceFactory& ResourceFactory::getIstance(pEngine* _physics) {
 	static ResourceFactory factory;
 	if (_physics) {
 		if (!factory.physics) {
-			factory.loadTexturesPack();
+			factory.loadMainTexturesPack();
 		}
 		factory.physics = _physics;
 	}
@@ -247,7 +257,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		logEvent(Logger::LOG_ERROR, "Fabryka zgłasza praw fizyki brak!");
 		return NULL;
 	}
-	
+
 	/**
 	 * Identyfikator teksturyt obikektu!
 	 */
@@ -286,7 +296,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	/**
 	 * Przeszukiwanie bazy obiektów
 	 */
-	_FactoryType* _factory_type = getFactoryType(_type, _orientation);
+	_TextureConfig* _factory_type = getFactoryType(_type, _orientation);
 	usint _width = _factory_type ? _factory_type->width : 0;
 	Platform* _object = NULL;
 
@@ -335,7 +345,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 			character->fitToWidth(_w);
 		} else {
 			/**
-			 * Pobieranie statusu
+			 * Pobieranie statusu BUG!
 			 */
 			_FactoryStatus _status = factory_status[_type];
 
@@ -350,7 +360,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		}
 	}
 	addBody(_object);
-	//
+//
 	return _object;
 }
 
@@ -371,7 +381,7 @@ void ResourceFactory::unloadObjects() {
 		}
 	}
 	triggers.clear();
-	//
+//
 	for (auto* object : created) {
 		if (object) {
 			delete object;

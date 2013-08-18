@@ -14,8 +14,6 @@
 
 using namespace Gameplay;
 
-//------------------------
-
 /**
  * todo:
  * + Wczytywanie statusu!
@@ -497,6 +495,7 @@ void Character::drawObject(Window*) {
 	if (ai) {
 		ai->drive();
 	}
+	glLineWidth(1.f);
 	if (IS_SET(action, BLOODING)) {
 		updateHitAnim();
 		//

@@ -71,6 +71,7 @@ class ParticleEmitter: public Body {
 		void setPosInBody(const Vector<float>& _pos) {
 			pos_in_body = _pos;
 		}
+
 		void setFocus(Rect<float>* _focus) {
 			focus = _focus;
 		}

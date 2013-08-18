@@ -551,6 +551,18 @@ using oglWrapper::Shader;
 class ResourceFactory {
 	public:
 		/**
+		 * Kolory tekstur dla różnych leveli
+		 * np. dla zimy będą chłodne
+		 */
+		enum TextureTemperature {
+			ICY,
+			NEUTRAL,
+			HOT
+		};
+
+		usint texture_temperature;
+
+		/**
 		 * Typy obiektów generowanych
 		 * przez fabryke nie są tym
 		 * samym co w silniku fizycznym
@@ -603,7 +615,7 @@ class ResourceFactory {
 		/**
 		 * Tekstury obiektów w fabryce
 		 */
-		struct _FactoryType {
+		struct _TextureConfig {
 				// Podstawowe info
 				usint type;
 				usint orientation;
@@ -614,10 +626,17 @@ class ResourceFactory {
 				const char* file_name;
 				const char* resource_label;
 
-				_FactoryStatus status;
+				/**
+				 * Nie wszystkie tekstury muszą
+				 * mieć zmienną temperaturę
+				 */
+				bool temperature_enabled;
+
+				// Identyfikator
+				usint resource_id;
 		};
 
-		static _FactoryType factory_types[];
+		static _TextureConfig factory_types[];
 		static map<usint, _FactoryStatus> factory_status;
 
 		void generateChracterStatus(usint);
@@ -625,9 +644,12 @@ class ResourceFactory {
 		/**
 		 * Wyszukiwanie typu obiektu
 		 */
-		static _FactoryType* getFactoryType(usint _type, usint _orientation) {
-			for (usint i = 0; i < 14; ++i) {
-				_FactoryType* obj = &factory_types[i];
+		static _TextureConfig* getFactoryType(usint _type, usint _orientation) {
+			/**
+			 * Różne typy są w różnych orientacjach
+			 */
+			for (usint i = 0; i < 16; ++i) {
+				_TextureConfig* obj = &factory_types[i];
 				//
 				if (obj->type == _type && obj->orientation == _orientation) {
 					return &factory_types[i];
@@ -654,7 +676,12 @@ class ResourceFactory {
 
 	public:
 		/**
-		 *
+		 * Zmiana wystroju tekstur
+		 */
+		void changeTemperatureOfTextures(usint);
+
+		/**
+		 * Dodawanie tekstury
 		 */
 		void putTexture(usint, PlatformShape*);
 
@@ -675,7 +702,9 @@ class ResourceFactory {
 		static ResourceFactory& getIstance(pEngine*);
 
 	private:
-		void loadTexturesPack();
+		void loadMainTexturesPack();
+		void loadMobsTexturesPack(const char*, bool);
+
 		/**
 		 *  Generowanie kolejnych id dla poszczególnych orientacji
 		 */

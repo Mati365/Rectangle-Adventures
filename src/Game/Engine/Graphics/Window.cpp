@@ -176,7 +176,7 @@ bool Window::setupOpenGL() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
-	glClearColor(0, 0, 0, 0);
+	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();

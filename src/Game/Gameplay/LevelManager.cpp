@@ -11,23 +11,31 @@
  * + Kasowanie ostatniej mapy ze ekranu game
  */
 MapINFO* LevelManager::loadNextMap() {
-	if (maps.empty()) {
+	if (maps.empty() || !game) {
+		logEvent(
+				Logger::LOG_ERROR,
+				"Nie mogę wczytać nastepnej mapy! Koniec gry.");
 		return NULL;
 	}
+
 	// Czyszczenie ostatniej mapy
 	MapINFO* last_map = game->getMapRenderer()->getMap();
-	if (last_map)
+	if (last_map) {
 		delete last_map;
+	}
 
 	// Wczytywanie nowej
 	const char* path = maps.front();
 	maps.pop_front();
 
-	if(strlen(path) == 0) {
+	if (strlen(path) == 0) {
 		return NULL;
 	}
 
+	MapINFO* buffer = loadMap(path);
+	game->getMapRenderer()->setBufferMap(buffer);
+
 	// Obiekt dynamicznie alokowany
-	return loadMap(path);
+	return buffer;
 }
 

@@ -65,7 +65,7 @@ class ResourceManager {
 		/**
 		 * 1 argument - group ID
 		 */
-		deque<AllocKiller<Resource<ID> > > resources;
+		map<ID, AllocKiller<Resource<ID> > > resources;
 
 	public:
 		/**
@@ -77,8 +77,12 @@ class ResourceManager {
 				return 0;
 			}
 			_res->setResourceID(resources.size());
-			
-			resources.push_back(AllocKiller<Resource<ID> >(_res));
+
+			// Dodawanie do mapy
+			resources.insert(
+					pair<ID, AllocKiller<Resource<ID> >>(
+							resources.size(),
+							AllocKiller<Resource<ID>>(_res)));
 			return resources.size() - 1;
 		}
 		/**
@@ -100,8 +104,8 @@ class ResourceManager {
 			}
 			for (auto iter = resources.begin(); iter != resources.end();
 					++iter) {
-				if (strcmp(_str, (*iter)->getLabel()) == 0) {
-					return (*iter);
+				if (strcmp(_str, (*iter).second->getLabel()) == 0) {
+					return (*iter).second;
 				}
 			}
 			return NULL;
@@ -132,14 +136,8 @@ class ResourceManager {
 		 * Kasowanie zasobu - wolne
 		 */
 		bool deleteResource(ID _id) {
-			for (auto iter = resources.begin(); iter != resources.end();
-					++iter) {
-				if((*iter)->getResourceID() == _id) {
-					resources.erase(iter);
-					return true;
-				}
-			}
-			return false;
+			resources.erase(_id);
+			return true;
 		}
 };
 
