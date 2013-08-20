@@ -134,6 +134,9 @@ void ResourceFactory::loadMainTexturesPack() {
 	// Gracz
 	readShape("czaszka.txt", "cranium", 0);
 
+	// Ikonki
+	readShape("hud_od_nowa.txt", "retry_shape", 0.f);
+
 	// Moby
 	loadMobsTexturesPack("");
 
@@ -201,7 +204,7 @@ bool ResourceFactory::texturePackRealloc() {
 	usint reallocated = 0;
 
 	for (auto* obj : created) {
-		if (obj->type == Body::PLATFORM) {
+		if (obj->factory_type == OBJECT || obj->factory_type == KILLZONE) {
 			continue;
 		}
 
@@ -230,6 +233,20 @@ bool ResourceFactory::texturePackRealloc() {
 		}
 		receiver->setShape(new_shape);
 		receiver->fitToWidth(tex_conf->width);
+
+		/**
+		 * Oprócz samej tekstury działka
+		 * muszą zostać przeładowane tekstury
+		 * broni na nim
+		 */
+		if (obj->factory_type == GUN) {
+			Gun* gun = dynamic_cast<Gun*>(obj);
+			gun->setBulletsShape( {
+									textures[genTextureID(BULLET, 1)],
+									textures[genTextureID(BULLET, 2)],
+									textures[genTextureID(BULLET, 3)],
+									textures[genTextureID(BULLET, 4)] });
+		}
 
 		// Liczenie
 		reallocated++;

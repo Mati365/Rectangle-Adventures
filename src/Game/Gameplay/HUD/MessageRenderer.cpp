@@ -56,6 +56,16 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						MAX_SCORE,
 						Control::VERTICAL),
 
+				retry_icon(
+						Rect<float>(
+								WINDOW_WIDTH - 100 - SPACES * 2,
+								16,
+								32,
+								score_bar.y + score_bar.h),
+						"Od nowa",
+						NULL,
+						this),
+
 				game_over(
 						oglWrapper::WHITE,
 						"Game over",
@@ -73,6 +83,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 					100,
 					35),
 			"Od nowa",
+			NULL,
 			this);
 	retry_game->putCallback(Event::MOUSE_RELEASED, this);
 
@@ -344,6 +355,11 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	//
 	score.drawObject(NULL);
 	score_bar.drawObject(NULL);
+
+	if (!retry_icon.getIcon()) {
+		retry_icon.setIcon(getShapePointer("retry_shape"));
+	}
+	retry_icon.drawObject(NULL);
 }
 
 /**

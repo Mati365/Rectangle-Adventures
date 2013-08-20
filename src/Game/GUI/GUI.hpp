@@ -13,6 +13,8 @@
 #include "../Engine/Graphics/Engine.hpp"
 #include "../Engine/Graphics/Fonts.hpp"
 
+#include "../Gameplay/Objects/Objects.hpp"
+
 /**
  * Brak obsługi focusa! Ma to być tylko prosty
  * system!!
@@ -157,13 +159,30 @@ namespace GUI {
 	 */
 	class Button: public Control {
 		protected:
+			/** Tekst */
 			glText text;
 
+			/** Ikonka */
+			IrregularPlatform* icon;
+
 		public:
-			Button(const Rect<float>&, const char*, bool = true, Callback* =
-					NULL);
+			Button(const Rect<float>&, const char*, PlatformShape* = NULL,
+					bool = true, Callback* = NULL);
 
 			virtual void drawObject(Window*);
+
+			/** Pobieranie ikony */
+			IrregularPlatform* getIcon() {
+				return icon;
+			}
+
+			void setIcon(PlatformShape*);
+
+			~Button() {
+				if (icon) {
+					delete icon;
+				}
+			}
 	};
 }
 

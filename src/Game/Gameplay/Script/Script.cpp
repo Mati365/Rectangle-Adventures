@@ -29,7 +29,7 @@ Func funcs[] = {
 					{ ATTACH_PARTICLE, "ATTACH_PARTICLE", 3 },
 					{ DISABLE_MOVING, "DISABLE_MOVING", 0 },
 					{ DESTROY_OBJECT, "DESTROY_OBJECT", 0 },
-					{ ADD_WEATHER, "ADD_WEATHER", 1 },
+					{ ADD_WEATHER, "ADD_WEATHER", 2 },
 					{ SHOW_MESSAGE, "SHOW_MESSAGE", 2 },
 					{ SHOW_SPLASH, "SHOW_SPLASH", 1 },
 					{ NEXT_LEVEL, "NEXT_LEVEL", 0 },
@@ -206,9 +206,18 @@ bool Interpreter::interpret(Script* script) {
 						/**
 						 *
 						 */
+					case SNOW:
+						map->addWeather(MapRenderer::SNOWING);
+						break;
+
+						/**
+						 *
+						 */
 					default:
 						break;
 				}
+				ResourceFactory::getInstance(NULL).changeTemperatureOfTextures(
+						Convert::stringTo<usint>(func.args[1]));
 			}
 				break;
 

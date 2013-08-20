@@ -11,6 +11,7 @@
 
 #define ARG_COUNT 8 // Maksymalna ilość argumentów!
 #define SPACE_CHARACTER '%' // Znak spacji w skryptach
+
 /**
  * Deklaracja funkcji
  */
@@ -21,33 +22,26 @@ struct Func {
 		char args[ARG_COUNT][255]; //argumenty
 };
 
-/**
- * Typy skryptu!
- */
+/** Typy skryptu! */
 enum {
 	COLLISION,
 	JUMP
 };
 
-/**
- * Typy particle
- */
+/** Typy particle */
 enum {
 	FIRE
 };
 
-/**
- * Typy pogody
- */
+/** Typy pogody */
 enum {
 	// 0 - spadajace kwadraty
 	SHAKE = 1,
-	FIREWORKS = 2 // fajerwerki
+	FIREWORKS = 2, // fajerwerki
+	SNOW = 3 // śnieg
 };
 
-/**
- * Deklaracje!!
- */
+/** Deklaracje!! */
 enum {
 	SCRIPT_TYPE,
 	SELECT_PLATFORM,

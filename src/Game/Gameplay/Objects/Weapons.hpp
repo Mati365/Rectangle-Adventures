@@ -47,10 +47,10 @@ class Gun: public IrregularPlatform {
 	protected:
 		PlatformShape* bullet_shapes[4];
 
-		// Odstęp między wystrzałem
+		/** Odstęp między wystrzałem */
 		_Timer shot_delay;
 
-		// Fizyka
+		/** Fizyka */
 		pEngine* physics;
 
 	public:
@@ -59,8 +59,16 @@ class Gun: public IrregularPlatform {
 
 		virtual void drawObject(Window*);
 
+		/** Ustawienie tekstur */
+		void setBulletsShape(initializer_list<PlatformShape*> _bullet_shapes) {
+			uninitialized_copy(
+					_bullet_shapes.begin(),
+					_bullet_shapes.end(),
+					bullet_shapes);
+		}
+
 	private:
-		// Wystrzał
+		/** Wystrzał */
 		void shot();
 };
 

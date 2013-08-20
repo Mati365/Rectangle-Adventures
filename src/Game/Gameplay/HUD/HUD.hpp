@@ -83,14 +83,10 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 	private:
 		float height;
 
-		/**
-		 * Typy powiadomień
-		 */
+		/** Typy powiadomień */
 		usint screen;
 
-		/**
-		 * Kolejka wiadomości
-		 */
+		/** Kolejka wiadomości */
 		deque<Message> msgs;
 
 		glText text;
@@ -102,17 +98,21 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		/**
 		 * HUD!
 		 */
-		// temperatura
+
+		/** temperatura */
 		usint hud_temperature;
 
 		IrregularPlatform heart;
 		ProgressBar health_bar;
 
-		// animacja skurczu serca
+		/** animacja skurczu serca */
 		_Timer heart_anim;
 
 		IrregularPlatform score;
 		ProgressBar score_bar;
+
+		/** reload gry */
+		Button retry_icon;
 
 		/**
 		 * Ekran smierci
@@ -121,15 +121,11 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		Button* retry_game;
 		Button* return_to_menu;
 
-		/**
-		 * Wiadomości w intro od i do..
-		 */
+		/** Wiadomości w intro od i do.. */
 		IntroBackground* background;
 		Character* hero;
 
-		/**
-		 * Miejsce na cutscene
-		 */
+		/** Miejsce na cutscene */
 		IrregularPlatform* cutscene_box;
 
 	public:

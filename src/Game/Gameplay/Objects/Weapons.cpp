@@ -79,14 +79,11 @@ void Bullet::catchCollision(pEngine* _physics, usint _dir, Body* body) {
 
 Gun::Gun(pEngine* _physics, float _x, float _y, PlatformShape* _gun_shape,
 		initializer_list<PlatformShape*> _bullet_shapes, usint _shot_delay) :
-				IrregularPlatform(_x, _y, State::NONE, _gun_shape),
+				IrregularPlatform(_x, _y, Body::NONE, _gun_shape),
 				//
 				shot_delay(_shot_delay, getIntRandom<int>(0, _shot_delay)),
 				physics(_physics) {
-	uninitialized_copy(
-			_bullet_shapes.begin(),
-			_bullet_shapes.end(),
-			bullet_shapes);
+	setBulletsShape(_bullet_shapes);
 }
 
 /**
