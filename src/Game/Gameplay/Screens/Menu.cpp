@@ -19,6 +19,8 @@ Menu::Menu() :
 						12) {
 	lvl->enableHUD(false);
 	lvl->enableRotate(false);
+
+	Character* hero = getHero();
 	hero->getStatus()->health = 1;
 	//
 	createMenuEntries();

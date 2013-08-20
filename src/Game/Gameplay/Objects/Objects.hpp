@@ -44,26 +44,34 @@ class Platform: public Body, public Cloneable {
 			SIMPLE, // proste linie
 			FILLED, // zamalowana
 			ICY, // oblodzona + SIMPLE
+			METAL, // coś a'la donkey kong
 			NONE
 		};
 
 	protected:
 		Color col;
+
 		/**
 		 * Dla ruchomych elementów..
 		 */
 		Vector<float> distance;
 		Vector<float> max_distance;
+
 		/**
 		 * Powtarzalność ruchów
 		 */
 		bool repeat_movement;
 
+		/**
+		 * Typ rysowania platformy
+		 */
 		usint fill_type;
+
 		/**
 		 * Dla przyśpieszenia renderingu!
 		 */
 		usint list;
+
 		/**
 		 * Obramowanie platformy
 		 */
@@ -198,7 +206,7 @@ class IrregularPlatform: public Platform {
  * Klasa magazynująca dane o obiektcie
  *  nie będzie renderowana!
  */
-struct CharacterStatus: public Resource<usint> {
+struct CharacterStatus: public Resource {
 		int health;
 		int shield_health;
 		int score;
@@ -207,7 +215,7 @@ struct CharacterStatus: public Resource<usint> {
 		Vector<float> start_pos;
 
 		CharacterStatus() :
-						Resource<usint>(NULL),
+						Resource(NULL),
 						health(0),
 						shield_health(0),
 						score(0),
@@ -217,7 +225,7 @@ struct CharacterStatus: public Resource<usint> {
 		
 		CharacterStatus(int _health, bool _shield, int _shield_health,
 				int _score, float _x = 0, float _y = 0) :
-						Resource<usint>(NULL),
+						Resource(NULL),
 						health(_health),
 						shield_health(_shield_health),
 						score(_score),
@@ -602,7 +610,7 @@ class ResourceFactory {
 		 */
 		struct _TextureConfig {
 				// Podstawowe info
-				usint type;
+				usint factory_type;
 				usint orientation;
 				float rotation;
 				float width;
@@ -633,10 +641,11 @@ class ResourceFactory {
 			/**
 			 * Różne typy są w różnych orientacjach
 			 */
-			for (usint i = 0; i < 16; ++i) {
+			for (usint i = 0; i < 18; ++i) {
 				_TextureConfig* obj = &factory_types[i];
 				//
-				if (obj->type == _type && obj->orientation == _orientation) {
+				if (obj->factory_type == _type
+						&& obj->orientation == _orientation) {
 					return &factory_types[i];
 				}
 			}
@@ -678,6 +687,13 @@ class ResourceFactory {
 				char*, usint);
 
 		/**
+		 * Reallokacja tekstur po
+		 * zmianie paczki tekstur - w platformach
+		 * są jeszcze ich stare wskaźniki
+		 */
+		bool texturePackRealloc();
+
+		/**
 		 * Kasowanie obiektów mapy!
 		 */
 		void unloadObjects();
@@ -701,7 +717,7 @@ class ResourceFactory {
 
 	private:
 		void loadMainTexturesPack();
-		void loadMobsTexturesPack(const char*, bool);
+		void loadMobsTexturesPack(const char*);
 
 		/**
 		 *  Generowanie kolejnych id dla poszczególnych orientacji

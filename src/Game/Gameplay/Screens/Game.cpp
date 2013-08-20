@@ -14,19 +14,14 @@ using namespace GameScreen;
 Game::Game(const char* map_path) {
 	MapINFO* map = loadMap(map_path);
 	
-	lvl = new MapRenderer(NULL, map);
-	//
-	hero = new Character(
-			"Ufolud",
-			map->hero_bounds.x,
-			map->hero_bounds.y,
-			getShapePointer("player"),
-			Body::HERO);
-	hero->fitToWidth(map->hero_bounds.w);
-	//
-	lvl->addWeather(MapRenderer::SNOWING);
-	lvl->getPhysics()->insert(hero);
-	lvl->setHero(hero);
+	lvl = new MapRenderer(
+			new Character(
+					"Ufolud",
+					map->hero_bounds.x,
+					map->hero_bounds.y,
+					NULL,
+					Body::HERO),
+			map);
 }
 
 void Game::catchEvent(const Event& event) {

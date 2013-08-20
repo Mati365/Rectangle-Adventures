@@ -8,6 +8,7 @@
 #ifndef RESOURCEMANAGER_HPP_
 #define RESOURCEMANAGER_HPP_
 #include <stdio.h>
+#include <iostream>
 
 #include "../../Tools/Tools.hpp"
 #include "../../Tools/Logger.hpp"
@@ -21,11 +22,10 @@
  * będą lądować plansze, 'modele'
  * i skrypty
  */
-template<class ID>
 class Resource {
 	protected:
 		char* label;
-		ID resource_id;
+		usint resource_id;
 
 	public:
 		Resource(const char* _label) :
@@ -40,11 +40,11 @@ class Resource {
 		 * Nadawanie ID podczas
 		 * dodawanie obiektu!
 		 */
-		void setResourceID(ID _id) {
+		void setResourceID(usint _id) {
 			resource_id = _id;
 		}
 
-		ID getResourceID() const {
+		usint getResourceID() const {
 			return resource_id;
 		}
 		
@@ -59,41 +59,36 @@ class Resource {
 		}
 };
 
-template<class ID>
 class ResourceManager {
 	private:
 		/**
 		 * 1 argument - group ID
 		 */
-		map<ID, AllocKiller<Resource<ID> > > resources;
+		deque<Resource*> resources;
+		usint counter;
 
 	public:
+		ResourceManager() :
+						counter(1) {
+		}
 
 		/**
 		 * Zwracanie identyfikatoru
 		 */
-		ID addResource(Resource<ID>* _res) {
-			if (!_res) {
-				logEvent(Logger::LOG_ERROR, "Błąd podczas dodawania zasobu!");
-				return 0;
-			}
-			_res->setResourceID(resources.size());
+		usint addResource(Resource* _res) {
+			resources.push_back(_res);
+			_res->setResourceID(counter++);
 
-			// Dodawanie do mapy
-			resources.insert(
-					pair<ID, AllocKiller<Resource<ID> >>(
-							resources.size(),
-							AllocKiller<Resource<ID>>(_res)));
-			return resources.size() - 1;
+			return counter;
 		}
 
 		/**
 		 * Zwracanie identyfikatora
 		 */
-		ID getID(const char* _str) {
-			Resource<ID*> id = getByLabel(_str);
-			if (id) {
-				return id->getResourceID();
+		usint getID(const char* _str) {
+			Resource* res = getByLabel(_str);
+			if (res) {
+				return res->getResourceID();
 			}
 			return 0;
 		}
@@ -101,14 +96,10 @@ class ResourceManager {
 		/**
 		 * Zwracanie całego obiektu po label'u!
 		 */
-		Resource<ID>* getByLabel(const char* _str) {
-			if (strlen(_str) == 0) {
-				return 0;
-			}
-			for (auto iter = resources.begin(); iter != resources.end();
-					++iter) {
-				if (strcmp(_str, (*iter).second->getLabel()) == 0) {
-					return (*iter).second;
+		Resource* getByLabel(const char* _str) {
+			for (auto& res : resources) {
+				if (strcmp(res->getLabel(), _str) == 0) {
+					return res;
 				}
 			}
 			return NULL;
@@ -117,30 +108,32 @@ class ResourceManager {
 		/**
 		 * Pobieranie elementów
 		 */
-		Resource<ID>* operator[](ID _id) {
+		Resource* operator[](usint _id) {
 			return getByID(_id);
 		}
-		
-		Resource<ID>* getByID(ID _id) {
-			if (_id >= resources.size()) {
-				return NULL;
-			}
-			return resources[reinterpret_cast<usint>(_id)];
-		}
 
-		/**
-		 * Informacje nt. zasobów
-		 */
-		usint getSize() const {
-			return resources.size();
+		Resource* getByID(usint _id) {
+			for (auto& res : resources) {
+				if (res->getResourceID() == _id) {
+					return res;
+				}
+			}
+			return NULL;
 		}
 
 		/**
 		 * Kasowanie zasobu - wolne
 		 */
-		bool deleteResource(ID _id) {
-			resources.erase(_id);
-			return true;
+		bool deleteResource(usint _id) {
+			for (auto iter = resources.begin(); iter != resources.end();
+					++iter) {
+				if ((*iter)->getResourceID() == _id) {
+					delete (*iter);
+					resources.erase(iter);
+					return true;
+				}
+			}
+			return false;
 		}
 };
 

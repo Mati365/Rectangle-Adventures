@@ -60,6 +60,10 @@ void QuadTree::update(Rect<float>& _bounds) {
 		return;
 	}
 	for (auto iter = bodies.begin(); iter != bodies.end(); ++iter) {
+		if (!(*iter)) {
+			iter = bodies.erase(iter) - 1;
+			continue;
+		}
 		if ((*iter)->destroyed) {
 			if ((*iter)->dynamically_allocated) {
 				delete *iter;
@@ -180,8 +184,7 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 		if (!IS_SET(body->state, Body::STATIC)
 				&& (body->y + body->h >= _bounds.y + _bounds.h
 						|| body->x + body->w >= _bounds.x + _bounds.w
-						|| body->x + body->w <= _bounds.x
-						|| body->y + body->h <= _bounds.y)) {
+						|| body->x <= _bounds.x || body->y <= _bounds.y)) {
 			continue;
 		}
 		if (_bounds.intersect(

@@ -6,6 +6,18 @@
  */
 #include "LevelManager.hpp"
 
+string levels[2] { "mapa.txt", "mapa2.txt" };
+
+/**
+ * Konstruktor
+ */
+LevelManager::LevelManager(string* levels, usint count) :
+				actual_map(-1) {
+	for (usint i = 0; i < count; ++i) {
+		maps.push_back(levels[i].c_str());
+	}
+}
+
 /**
  * Wczytywanie następnej planszy
  * + Kasowanie ostatniej mapy ze ekranu game
@@ -18,24 +30,31 @@ MapINFO* LevelManager::loadNextMap() {
 		return NULL;
 	}
 
-	// Czyszczenie ostatniej mapy
-	MapINFO* last_map = game->getMapRenderer()->getMap();
-	if (last_map) {
-		delete last_map;
-	}
-
-	// Wczytywanie nowej
-	const char* path = maps.front();
+	// Wczytywanie nowej mapy
+	MapINFO* buffer = reloadMap();
 	maps.pop_front();
-
-	if (strlen(path) == 0) {
-		return NULL;
-	}
-
-	MapINFO* buffer = loadMap(path);
-	game->getMapRenderer()->setBufferMap(buffer);
 
 	// Obiekt dynamicznie alokowany
 	return buffer;
 }
 
+/**
+ * Wczytywanie całej mapy od nowa
+ */
+MapINFO* LevelManager::reloadMap() {
+	const char* path = maps.front();
+
+	if (strlen(path) == 0) {
+		return NULL;
+	}
+	/*
+	 MapINFO* _last_buffer = game->getMapRenderer()->getBufferMap();
+	 if (_last_buffer) {
+	 delete _last_buffer;
+	 }
+	 */
+	MapINFO* buffer = loadMap(path);
+	game->getMapRenderer()->setBufferMap(buffer);
+
+	return buffer;
+}

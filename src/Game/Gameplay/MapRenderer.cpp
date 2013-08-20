@@ -18,12 +18,15 @@ using namespace Gameplay;
  * Główny renderer mapy
  */
 MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
-				ParalaxRenderer(_hero, 0.95f, true, _map),
+				ParalaxRenderer(_hero, 0.95f, true),
 				msg(45, Color(0, 128, 255), Color(255, 255, 255), this),
-				hero(dynamic_cast<Character*>(_hero)),
 				hud_enabled(true),
 				main_shader_id(WINDOW_SHADOW_SHADER),
-				shadow_radius(DEFAULT_SHADOW_RADIUS) {
+				shadow_radius(DEFAULT_SHADOW_RADIUS),
+				buffer_map(NULL) {
+	setHero(dynamic_cast<Character*>(_hero));
+	setMap(_map);
+
 	resetColorSaturation();
 }
 
@@ -130,6 +133,54 @@ void MapRenderer::addWeather(usint _type) {
 }
 
 /**
+ * Wczytywanie mapy
+ */
+/**
+ * Podmienienie mapy buforowej ze zwykłą
+ */
+void MapRenderer::swapBufferMap() {
+	setMap(buffer_map);
+	//buffer_map = NULL;
+}
+
+void MapRenderer::setMap(MapINFO* _map) {
+	static_objects.clear();
+	shake_timer.reset();
+
+	/**
+	 * Ustawienia
+	 */
+	addWeather(_map->map_weather);
+	if (hero) {
+		if (hero->getShape()) {
+			main_resource_manager.deleteResource(
+					hero->getShape()->getResourceID());
+		}
+		hero->setShape(_map->hero_shape);
+		hero->fitToWidth(_map->hero_bounds.w);
+
+		hero->x = _map->hero_bounds.x;
+		hero->y = _map->hero_bounds.y;
+
+		hero->getStatus()->health = MAX_LIVES;
+		hero->getStatus()->score = 0;
+
+		//
+		_map->physics->insert(hero);
+	}
+	ResourceFactory::getInstance(_map->physics).changeTemperatureOfTextures(
+			_map->map_temperature);
+
+	/**
+	 * Kończenie
+	 */
+	if (map) {
+		//delete map;
+	}
+	map = _map;
+}
+
+/**
  * Ustawienie focusa kamery i bohatera
  */
 void MapRenderer::setHero(Character* _hero) {
@@ -137,54 +188,29 @@ void MapRenderer::setHero(Character* _hero) {
 	cam.focus = hero;
 }
 
-void MapRenderer::drawObject(Window* _window) {
-	/**
-	 * Sprawdzenie stanu gracza oraz dopasowanie do niego
-	 * shaderu
-	 */
-	if (hero->isDead()) {
-		if (col_saturation[0] == 0.f) {
-			/**
-			 * WINDOW_DEATH_SHADER
-			 */
-			shadow_radius += 0.7f;
-			if (shadow_radius >= DEFAULT_SHADOW_RADIUS) {
-				shadow_radius = DEFAULT_SHADOW_RADIUS;
-			}
-			col_saturation[1] = (float) shadow_radius
-					/ (float) DEFAULT_SHADOW_RADIUS;
+/**
+ * Pokazywanie game over
+ */
+void MapRenderer::showGameOver() {
+	if (hud_enabled && msg.getScreen() != MessageRenderer::DEATH_SCREEN) {
+		/**
+		 * A co jeśli jest może checkpoint?
+		 */
+		if (hero->isCheckpointAvailable()) {
+			hero->recoverFromCheckpoint(map->physics);
+			//
+			resetColorSaturation();
+			shadow_radius = DEFAULT_SHADOW_RADIUS;
 		} else {
 			/**
-			 * WINDOW_SHADOW_SHADER
+			 * Nie ma checkpointu ;(
 			 */
-			if (!IS_SET(hero->getAction(), Character::BLOODING)) {
-				shadow_radius -= 0.7f;
-				if (shadow_radius <= 50) {
-					if (hud_enabled
-							&& msg.getScreen()
-									!= MessageRenderer::DEATH_SCREEN) {
-						/**
-						 * A co jeśli jest może checkpoint?
-						 */
-						if (hero->isCheckpointAvailable()) {
-							hero->recoverFromCheckpoint(map->physics);
-							//
-							resetColorSaturation();
-							shadow_radius = DEFAULT_SHADOW_RADIUS;
-						} else {
-							/**
-							 * Nie ma checkpointu ;(
-							 */
-							msg.enableDeathScreen();
-						}
-					}
-					col_saturation[0] = 0.f;
-				}
-			}
+			msg.setScreen(MessageRenderer::DEATH_SCREEN);
 		}
-	} else {
-		resetColorSaturation();
 	}
+}
+
+void MapRenderer::drawObject(Window* _window) {
 	/**
 	 * Rysowanie
 	 */
@@ -200,14 +226,58 @@ void MapRenderer::drawObject(Window* _window) {
 			col_saturation[2]);
 	shaders[main_shader_id]->setUniform1f("radius", shadow_radius);
 
-	//
+//
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}
 	ParalaxRenderer::drawObject(_window);
-	//
+//
 
 	shaders[main_shader_id]->end();
+	/**
+	 * Sprawdzenie stanu gracza oraz dopasowanie do niego
+	 * shaderu
+	 * Ten sam efekt dla konca gry jak i tez wczytywania
+	 */
+	if (buffer_map && msg.getActiveScreen() == MessageRenderer::DEATH_SCREEN) {
+		msg.setScreen(MessageRenderer::HUD_SCREEN);
+		resetColorSaturation();
+	}
+	if (hero->isDead() || buffer_map) {
+		if (col_saturation[0] == 0.f) {
+			/**
+			 * WINDOW_DEATH_SHADER
+			 */
+			shadow_radius += 0.7f;
+			if (shadow_radius >= DEFAULT_SHADOW_RADIUS) {
+				shadow_radius = DEFAULT_SHADOW_RADIUS;
+				if (!hero->isDead()) {
+					buffer_map = NULL;
+				}
+			}
+			if (hero->isDead()) {
+				col_saturation[1] = (float) shadow_radius
+						/ (float) DEFAULT_SHADOW_RADIUS;
+			}
+		} else {
+			/**
+			 * WINDOW_SHADOW_SHADER
+			 */
+			if (!IS_SET(hero->getAction(), Character::BLOODING) || buffer_map) {
+				shadow_radius -= 0.7f;
+				if (shadow_radius <= 50) {
+					if (buffer_map) {
+						swapBufferMap();
+					} else {
+						showGameOver();
+					}
+					col_saturation[0] = 0.f;
+				}
+			}
+		}
+	} else {
+		resetColorSaturation();
+	}
 	/**
 	 * Elementy HUDu
 	 */
@@ -218,9 +288,12 @@ void MapRenderer::drawObject(Window* _window) {
 
 MapRenderer::~MapRenderer() {
 	for (auto* paralax : paralax_background) {
-		if(paralax) {
+		if (paralax) {
 			delete paralax;
 		}
+	}
+	if (hero) {
+		delete hero;
 	}
 }
 

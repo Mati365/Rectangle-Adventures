@@ -149,8 +149,12 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		/**
 		 * Ekran śmierci
 		 */
-		void enableDeathScreen() {
-			screen = DEATH_SCREEN;
+		void setScreen(usint _screen) {
+			screen = _screen;
+		}
+
+		usint getActiveScreen() const {
+			return screen;
 		}
 
 		/**

@@ -269,6 +269,8 @@ namespace Physics {
 			 * Flaga, typ obiektu
 			 */
 			usint type;
+			usint factory_type; // typ w fabryce
+
 			usint layer;
 			usint script_id;
 
@@ -287,6 +289,7 @@ namespace Physics {
 							roughness(DEFAULT_ROUGHNESS),
 							weight(0),
 							type(PLATFORM),
+							factory_type(0),
 							layer(STATIC_LAYER),
 							script_id(0),
 							orientation(pEngine::UP),
@@ -303,6 +306,7 @@ namespace Physics {
 							roughness(_roughness),
 							weight(_weight),
 							type(PLATFORM),
+							factory_type(0),
 							layer(STATIC_LAYER),
 							script_id(0),
 							orientation(pEngine::UP),

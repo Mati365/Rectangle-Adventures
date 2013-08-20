@@ -35,7 +35,7 @@ using namespace oglWrapper;
  * Menedżery zasobów
  */
 extern Package main_filesystem;
-extern ResourceManager<usint> main_resource_manager;
+extern ResourceManager main_resource_manager;
 
 /**
  * Dźwięki w grze
@@ -110,7 +110,7 @@ bool readMob(FILE*);
 ///////////////////////////
 class Platform;
 class Character;
-class MapINFO: public Resource<usint> {
+class MapINFO: public Resource {
 	public:
 		struct Parallax {
 				MapINFO* map;
@@ -123,7 +123,7 @@ class MapINFO: public Resource<usint> {
 		 * Platform jest dużo, AllocKiller
 		 * zwolnił by to niemiłosiernie
 		 */
-		deque<Platform*> objects;
+		deque<Platform*> platforms;
 		deque<usint> resources;
 
 		/**
@@ -132,6 +132,17 @@ class MapINFO: public Resource<usint> {
 		 */
 		Rect<float> hero_bounds;
 		Rect<float> bounds;
+
+		/**
+		 *  Kształt gracza
+		 */
+		PlatformShape* hero_shape;
+
+		/**
+		 * Ustawienia mapy
+		 */
+		usint map_weather;
+		usint map_temperature;
 
 		MapINFO(const char*);
 
@@ -150,6 +161,11 @@ class MapINFO: public Resource<usint> {
 		}
 		
 	private:
+		void readHeader(FILE*);
+		void readShapes(FILE*);
+		void readPlatforms(FILE*);
+		void readMobsAndTriggers(FILE*);
+
 		// Obliczanie wymiarów planszy
 		void calcBounds();
 };
@@ -157,7 +173,7 @@ class MapINFO: public Resource<usint> {
 /**
  * W następnym projekcie będzie VBO..
  */
-class PlatformShape: public Resource<usint> {
+class PlatformShape: public Resource {
 		struct Point {
 				char type;
 				Color col;

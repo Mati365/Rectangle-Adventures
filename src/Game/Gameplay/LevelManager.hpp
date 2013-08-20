@@ -20,22 +20,33 @@ using namespace GameScreen;
  * + Korzysta ze screenów!
  * + Korzysta z systemu plików
  */
+extern string levels[];
+
 class LevelManager {
 	private:
 		int actual_map;
 		deque<const char*> maps;
 
-		LevelManager() :
-						actual_map(-1) {
-		}
+		LevelManager(string*, usint);
 
 	public:
+		static LevelManager& getInstance() {
+			static LevelManager manager(levels, 2);
+			//
+			return manager;
+		}
+
 		/**
 		 * Zwraca NULL'a jeśli koniec,
 		 * jeśli koniec to napisy końcowe
 		 * i podsumowanie gry
 		 */
 		MapINFO* loadNextMap();
+
+		/**
+		 * Wczytywanie całej mapy od nowa
+		 */
+		MapINFO* reloadMap();
 };
 
 #endif /* LEVELMANAGER_HPP_ */

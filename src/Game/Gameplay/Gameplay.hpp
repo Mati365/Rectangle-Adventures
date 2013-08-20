@@ -58,7 +58,6 @@ namespace Gameplay {
 	class ParalaxRenderer: public Renderer, public IntroBackground {
 		protected:
 			MapINFO* map; // mapa główna renderowana
-			MapINFO* buffer_map; // mapa zastępcza podczas ładowania
 
 			/**
 			 * Statycznych obiektów jest mniej
@@ -79,7 +78,7 @@ namespace Gameplay {
 			_Timer shake_timer;
 
 		public:
-			ParalaxRenderer(Body*, float, bool, MapINFO*);
+			ParalaxRenderer(Body*, float, bool, MapINFO* = NULL);
 
 			virtual void drawObject(Window*);
 
@@ -99,19 +98,13 @@ namespace Gameplay {
 				rotate = _rotate;
 			}
 
-			void setBufferMap(MapINFO* buffer) {
-				buffer_map = buffer;
-			}
+			/**
+			 *  Podmiana mapek
+			 */
+			void swapBufferMap();
 
 			MapINFO* getMap() {
 				return map;
-			}
-
-			/**
-			 * Mapa buforowana
-			 */
-			MapINFO* getBufferMap() {
-				return buffer_map;
 			}
 
 			pEngine* getPhysics() {
@@ -123,7 +116,7 @@ namespace Gameplay {
 			}
 
 			~ParalaxRenderer() {
-				if(map) {
+				if (map) {
 					delete map;
 				}
 			}
@@ -135,6 +128,7 @@ namespace Gameplay {
 	class MapRenderer: public ParalaxRenderer, public EventListener {
 		public:
 			enum Weather {
+				NONE,
 				SNOWING,
 				SHAKE,
 				FIREWORKS
@@ -144,6 +138,7 @@ namespace Gameplay {
 			// HUD
 			MessageRenderer msg;
 
+			// Rzutowanie z paralaxy
 			Character* hero;
 
 			// Paralaxy za główną mapą
@@ -160,6 +155,9 @@ namespace Gameplay {
 
 			// Nasycenie w shaderze
 			float col_saturation[3];
+
+			// mapa zastępcza podczas ładowania
+			MapINFO* buffer_map;
 
 		public:
 			MapRenderer(Body*, MapINFO*);
@@ -179,9 +177,32 @@ namespace Gameplay {
 				main_shader_id = _main_shader_id;
 			}
 
+			/**
+			 * Ustawienie mapy buforowanej do
+			 * wczytywania nowych poziomów
+			 */
+			void swapBufferMap();
+
+			void setBufferMap(MapINFO* buffer) {
+				buffer_map = buffer;
+			}
+
+			/**
+			 * Mapa buforowana
+			 */
+			MapINFO* getBufferMap() {
+				return buffer_map;
+			}
+
+			// Wczytywanie mapy
+			void setMap(MapINFO*);
+
 			// Pogoda
 			void addWeather(usint);
 			void setHero(Character*);
+
+			// Game over
+			void showGameOver();
 
 			// Metoda przesłonięta!
 			virtual Character* getHero() {

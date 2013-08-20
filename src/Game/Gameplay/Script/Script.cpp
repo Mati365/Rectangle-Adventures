@@ -11,6 +11,7 @@
 #include "../Particle/Particle.hpp"
 
 #include "../Screens/Screens.hpp"
+#include "../LevelManager.hpp"
 
 #include "../../Tools/Logger.hpp"
 #include "../../Tools/Converter.hpp"
@@ -31,7 +32,7 @@ Func funcs[] = {
 					{ ADD_WEATHER, "ADD_WEATHER", 1 },
 					{ SHOW_MESSAGE, "SHOW_MESSAGE", 2 },
 					{ SHOW_SPLASH, "SHOW_SPLASH", 1 },
-					{ LOAD_MAP, "LOAD_MAP", 1 },
+					{ NEXT_LEVEL, "NEXT_LEVEL", 0 },
 					{ ADD_CHECKPOINT, "ADD_CHECKPOINT", 1 },
 					{ CREATE_OBJECT, "CREATE_OBJECT", 5 } };
 
@@ -294,6 +295,13 @@ bool Interpreter::interpret(Script* script) {
 						NULL,
 						Convert::stringTo<float>(func.args[4]))->script_id =
 						Convert::stringTo<usint>(func.args[3]);
+				break;
+
+				/**
+				 * Następny poziom!
+				 */
+			case NEXT_LEVEL:
+				LevelManager::getInstance().loadNextMap();
 				break;
 
 				/**

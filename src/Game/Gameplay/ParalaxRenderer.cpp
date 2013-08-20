@@ -11,7 +11,6 @@ using namespace Gameplay;
 ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, bool _draw_quad,
 		MapINFO* _map) :
 				map(_map),
-				buffer_map(NULL),
 				cam(_target),
 				ratio(_ratio),
 				draw_quad(_draw_quad),

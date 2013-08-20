@@ -36,10 +36,12 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	
 	glColor3ub(particle.col.r, particle.col.g, particle.col.b);
 	glBegin(GL_LINE_LOOP);
+
 	glVertex2f(x, y);
 	glVertex2f(x + w, y);
 	glVertex2f(x + w, y + w);
 	glVertex2f(x, y + w);
+
 	glEnd();
 	
 	if (!particle.life.active || particle.col.a < 30) {

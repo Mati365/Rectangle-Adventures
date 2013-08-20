@@ -61,7 +61,7 @@ PlatformShape* getShapeFromFilesystem(const char* _path, float _angle) {
 //---------------------------------------
 
 PlatformShape::PlatformShape(FILE* _file, const char* _label, float _angle) :
-				Resource<usint>(_label),
+				Resource(_label),
 				id(0),
 				bounds(0, 0, 0, 0),
 				angle(TO_RAD(_angle)),
@@ -143,6 +143,9 @@ bool PlatformShape::load(FILE* _file) {
 			}
 			break;
 
+			/**
+			 *
+			 */
 			case 'C': {
 				Color col;
 				//---
@@ -188,8 +191,9 @@ bool PlatformShape::recompile() {
 	// Kompilacja!
 	glNewList(id, GL_COMPILE);
 	glLineWidth(line_width);
-	glBegin(GL_LINE_STRIP);
 	glColor4ub(main_col.r, main_col.g, main_col.b, main_col.a);
+
+	glBegin(GL_LINE_STRIP);
 
 	for (usint i = 0; i < count; ++i) {
 		Point* point = &points[i];
@@ -224,8 +228,10 @@ bool PlatformShape::recompile() {
 				 *
 				 */
 			case 'S':
-				glEnd();
-				glBegin(GL_LINE_STRIP);
+				if (i > 0) {
+					glEnd();
+					glBegin(GL_LINE_STRIP);
+				}
 				break;
 		}
 	}

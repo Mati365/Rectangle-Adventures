@@ -71,24 +71,10 @@ ResourceFactory::_TextureConfig ResourceFactory::factory_types[] =
 				20,
 				"kolce.txt",
 				"spikes_right",
-				false },
-			{
-				SPIKES,
-				pEngine::LEFT,
-				-90.f,
-				20,
-				"kolce.txt",
-				"spikes_left",
-				false },
-			{ SPIKES, pEngine::UP, 0.f, 23, "kolce.txt", "spikes_up", false },
-			{
-				SPIKES,
-				pEngine::DOWN,
-				180.f,
-				23,
-				"kolce.txt",
-				"spikes_down",
-				false },
+				true },
+			{ SPIKES, pEngine::LEFT, -90.f, 20, "kolce.txt", "spikes_left", true },
+			{ SPIKES, pEngine::UP, 0.f, 23, "kolce.txt", "spikes_up", true },
+			{ SPIKES, pEngine::DOWN, 180.f, 23, "kolce.txt", "spikes_down", true },
 
 			// PUNKTY
 			{ SCORE, pEngine::NONE, 0.f, 12, "punkt.txt", "score", true },
@@ -113,24 +99,10 @@ ResourceFactory::_TextureConfig ResourceFactory::factory_types[] =
 				0,
 				"pocisk.txt",
 				"bullet_right",
-				false },
-			{
-				BULLET,
-				pEngine::LEFT,
-				-90.f,
-				0,
-				"pocisk.txt",
-				"bullet_left",
-				false },
-			{ BULLET, pEngine::UP, 0.f, 0, "pocisk.txt", "bullet_up", false },
-			{
-				BULLET,
-				pEngine::DOWN,
-				180.f,
-				0,
-				"pocisk.txt",
-				"bullet_down",
-				false } };
+				true },
+			{ BULLET, pEngine::LEFT, -90.f, 0, "pocisk.txt", "bullet_left", true },
+			{ BULLET, pEngine::UP, 0.f, 0, "pocisk.txt", "bullet_up", true },
+			{ BULLET, pEngine::DOWN, 180.f, 0, "pocisk.txt", "bullet_down", true } };
 
 /**
  * Konstruktor prywatny!
@@ -160,41 +132,59 @@ usint ResourceFactory::genTextureID(usint _type, usint _orientation) const {
  */
 void ResourceFactory::loadMainTexturesPack() {
 	// Gracz
-	readShape("gracz_mikolaj.txt", "player", 0);
 	readShape("czaszka.txt", "cranium", 0);
 	
 	// Moby
-	loadMobsTexturesPack("", false);
-	changeTemperatureOfTextures(ICY);
+	loadMobsTexturesPack("");
 
-	//
 	logEvent(Logger::LOG_INFO, "Pomyślnie wczytano paczkę tekstur!");
 }
 
-void ResourceFactory::loadMobsTexturesPack(const char* _addition,
-		bool _temperature_changed) {
-
+void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
 	// Tekstury mobów
+	usint _total_deleted = 0;
+	bool _first_load = !textures.size();
+
 	for (_TextureConfig& factory_object : factory_types) {
-		if (_temperature_changed && !factory_object.temperature_enabled) {
+		if (!_first_load && !factory_object.temperature_enabled) {
 			continue;
 		}
-		usint _resource_id = genTextureID(
-				factory_object.type,
+		usint _texture_id = genTextureID(
+				factory_object.factory_type,
 				factory_object.orientation);
-		factory_object.resource_id = _resource_id;
 
 		// Usuwanie starej tekstury
-		textures.erase(_resource_id);
+		if (!_first_load) {
+			if (!main_resource_manager.deleteResource(
+					factory_object.resource_id)) {
+				logEvent(
+						Logger::LOG_WARNING,
+						"Bug: Problem ze skasowaniem obiektu!");
+			}
+			textures.erase(_texture_id);
+		}
 
 		//
-		putTexture(
-				_resource_id,
-				readShape(
-						((string) factory_object.file_name + _addition).c_str(),
-						factory_object.resource_label,
-						factory_object.rotation));
+		string filename = factory_object.file_name;
+		PlatformShape* _new_shape = readShape(
+				filename,
+				factory_object.resource_label,
+				factory_object.rotation);
+		if (_addition) {
+			filename += _addition;
+		}
+		putTexture(_texture_id, _new_shape);
+
+		// Bugfix! ResourceID != TextureID
+		factory_object.resource_id = _new_shape->getResourceID();
+
+		// Liczenie
+		_total_deleted++;
 	}
+	logEvent(
+			Logger::LOG_INFO,
+			"Zarejestrowano " + Convert::toString<usint>(_total_deleted)
+					+ " obiektów! Brak memoryleak!");
 }
 
 /**
@@ -208,6 +198,13 @@ PlatformShape* ResourceFactory::getTexture(usint _id, usint _orientation) {
  * Zmiana temperatur tekstur!
  */
 void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
+	/**
+	 * Po co wczytywać 2 razy te same obiekty?
+	 * Mniejsze ryzyko wycieku pamięci
+	 */
+	if (_texure_temperature == texture_temperature) {
+		return;
+	}
 	texture_temperature = _texure_temperature;
 
 	// Dodatek do wczytywanej mapy
@@ -230,15 +227,9 @@ void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
 
 	}
 
-	// Usuwanie starych tekstur
-	for (_TextureConfig& factory_object : factory_types) {
-		if (factory_object.temperature_enabled) {
-			main_resource_manager.deleteResource(factory_object.resource_id);
-		}
-	}
-
 	// Wczytywanie na nowo
-	loadMobsTexturesPack(addition, true);
+	loadMobsTexturesPack(addition);
+	texturePackRealloc();
 }
 
 /**
@@ -332,7 +323,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 							BULLET,
 							4)] },
 				340);
-		_object->orientation = _orientation;
 		dynamic_cast<Gun*>(_object)->fitToWidth(_width);
 	} else {
 		/**
@@ -346,8 +336,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				Character::NONE);
 		Character* character = dynamic_cast<Character*>(_object);
 		character->fitToWidth(_width);
-
-		character->orientation = _orientation;
 		/**
 		 * Generowanie obiektów
 		 */
@@ -367,11 +355,69 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 			}
 		}
 	}
+	// Potrzebne przy realokacji tekstur
+	_object->orientation = _orientation;
+	_object->factory_type = _type;
+
 	addBody(_object);
-//
+	//
 	return _object;
 }
 
+/**
+ * Reallokacja tekstur, obiekty posiadają stare
+ * wskaźniki do tekstur!
+ */
+bool ResourceFactory::texturePackRealloc() {
+	if (created.empty()) {
+		return false;
+	}
+	usint reallocated = 0;
+
+	for (auto* obj : created) {
+		if (obj->type == Body::PLATFORM) {
+			continue;
+		}
+
+		// Konfiguracja tekstury
+		_TextureConfig* tex_conf = getFactoryType(
+				obj->factory_type,
+				obj->orientation);
+
+		// Odbiorca tekstury
+		IrregularPlatform* receiver = dynamic_cast<IrregularPlatform*>(obj);
+		if (!receiver) {
+			logEvent(Logger::LOG_ERROR, "BUG: Brak odbiorcy tekstury!");
+			return false;
+		}
+
+		// Nowa tekstura
+		PlatformShape* new_shape =
+				dynamic_cast<PlatformShape*>(main_resource_manager.getByID(
+						tex_conf->resource_id));
+		if (!new_shape) {
+			logEvent(
+					Logger::LOG_WARNING,
+					(string )"BUG: Pusta przealokowana tekstura! ");
+			continue;
+		}
+		receiver->setShape(new_shape);
+		receiver->fitToWidth(tex_conf->width);
+
+		// Liczenie
+		reallocated++;
+	}
+
+	logEvent(
+			Logger::LOG_INFO,
+			"Przealokowano " + Convert::toString<usint>(reallocated)
+					+ " obiektów!");
+	return true;
+}
+
+/**
+ * Dodawanie obiektu
+ */
 void ResourceFactory::addBody(Body* _object) {
 	if (_object) {
 		created.push_back(_object);
@@ -389,7 +435,7 @@ void ResourceFactory::unloadObjects() {
 		}
 	}
 	triggers.clear();
-//
+	//
 	for (auto* object : created) {
 		if (object) {
 			delete object;

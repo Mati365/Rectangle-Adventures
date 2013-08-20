@@ -59,6 +59,9 @@ void Platform::disableMoving() {
 	max_distance.x = max_distance.y = 0;
 }
 
+/**
+ * Ścieżka poruszania się
+ */
 void Platform::setMovingDir(const Vector<float>& _velocity,
 		const Vector<float>& _distance, bool _repeat_movement) {
 	velocity = _velocity;
@@ -97,14 +100,18 @@ void Platform::drawBorder() {
 	glLineWidth(3);
 	if (border[0] && border[1] && border[2] && border[3]) {
 		glBegin(GL_LINE_LOOP);
+
 		glVertex2f(x, y);
 		glVertex2f(x + w, y);
+
 		glColor4ub(col.r, col.g, col.b, 0.f);
 		glVertex2f(x + w, y + h);
 		glVertex2f(x, y + h);
+
 		glEnd();
 	} else {
 		glBegin(GL_LINES);
+
 		if (border[pEngine::UP - 1]) {
 			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x, y);
@@ -117,15 +124,18 @@ void Platform::drawBorder() {
 		if (border[pEngine::LEFT - 1]) {
 			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x, y);
+
 			glColor4ub(col.r, col.g, col.b, 0.f);
 			glVertex2f(x, y + h);
 		}
 		if (border[pEngine::RIGHT - 1]) {
 			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x + w, y);
+
 			glColor4ub(col.r, col.g, col.b, 0.f);
 			glVertex2f(x + w, y + h);
 		}
+
 		glEnd();
 	}
 	/**
@@ -135,13 +145,17 @@ void Platform::drawBorder() {
 	if (fill_type == ICY) {
 		glLineWidth(5);
 		glBegin(GL_LINE_STRIP);
+
 		glColor4ub(255, 255, 255, 55);
 		glVertex2f(x - 2, y + h * 0.4f);
+
 		glColor4ub(255, 255, 255, 255);
 		glVertex2f(x - 2, y - 2);
 		glVertex2f(x + w + 2, y - 2);
+
 		glColor4ub(255, 255, 255, 55);
 		glVertex2f(x + w + 2, y + h * 0.4f);
+
 		glEnd();
 	}
 }
@@ -153,6 +167,7 @@ void Platform::drawBody() {
 	if (fill_type == NONE) {
 		return;
 	}
+
 	/**
 	 * Wypełnienie!
 	 */
@@ -165,10 +180,12 @@ void Platform::drawBody() {
 		case SIMPLE:
 		case ICY:
 			glBegin(GL_LINES);
+
 			if (w > h) {
 				for (usint i = 0; i < w / 10; ++i) {
 					glColor4ub(col.r, col.g, col.b, 0.f);
 					glVertex2f(x + i * 10, y + h);
+
 					glColor4ub(col.r, col.g, col.b, col.a * 0.3f);
 					glVertex2f(x + i * 10, y);
 				}
@@ -185,6 +202,7 @@ void Platform::drawBody() {
 					glVertex2f(x, y + i * 10);
 				}
 			}
+
 			glEnd();
 			break;
 			
@@ -193,10 +211,12 @@ void Platform::drawBody() {
 			 */
 		case DIAGONAL:
 			glBegin(GL_LINES);
+
 			if (w > h) {
 				for (usint i = 0; i < w / 10; ++i) {
 					glColor4ub(col.r, col.g, col.b, 0.f);
 					glVertex2f(x + i * 10, y + h);
+
 					glColor4ub(col.r, col.g, col.b, col.a * 0.3f);
 					glVertex2f(x + i * 10 + 10, y);
 				}
@@ -204,13 +224,47 @@ void Platform::drawBody() {
 				for (usint i = 0; i < h / 10; ++i) {
 					glColor4ub(col.r, col.g, col.b, 0.f);
 					glVertex2f(x + w, y + i * 10);
+
 					glColor4ub(col.r, col.g, col.b, col.a * 0.3f);
 					glVertex2f(x, y + i * 10 + 10);
 				}
 			}
+
 			glEnd();
 			break;
 			
+			/**
+			 *  Stal jak w Donkey Kong
+			 */
+		case METAL:
+			glBegin(GL_LINES);
+
+			if (w > h) {
+				for (usint i = 0; i < w / 8; ++i) {
+					int space = 8;
+					if (i % 2) {
+						space = -space;
+					}
+
+					glColor4ub(col.r, col.g, col.b, 0.f);
+					glVertex2f(x + i * 8, y + h);
+
+					glColor4ub(col.r, col.g, col.b, col.a * 0.3f);
+					glVertex2f(x + i * 8 + space, y);
+				}
+			} else {
+				for (usint i = 0; i < h / 10; ++i) {
+					glColor4ub(col.r, col.g, col.b, 0.f);
+					glVertex2f(x + w, y + i * 10);
+
+					glColor4ub(col.r, col.g, col.b, col.a * 0.3f);
+					glVertex2f(x, y + i * 10 + 10);
+				}
+			}
+
+			glEnd();
+			break;
+
 			/**
 			 *  Alpha w środku!
 			 */
@@ -226,10 +280,11 @@ void Platform::drawBody() {
  */
 void Platform::compileList() {
 	glDeleteLists(list, 1);
-	//
 	glNewList(list, GL_COMPILE);
+
 	drawBorder();
 	drawBody();
+
 	glEndList();
 }
 
@@ -257,7 +312,6 @@ IrregularPlatform::IrregularPlatform(float _x, float _y, usint _state,
 				shape(NULL),
 				scale(1) {
 	if (!_shape) {
-		logEvent(Logger::LOG_ERROR, "Nie mogę załadować pustej tekstury!");
 		return;
 	}
 	setShape(_shape);
@@ -317,6 +371,7 @@ void IrregularPlatform::drawObject(Window*) {
 	 */
 	glPushMatrix();
 	glTranslatef(x, y, 1);
+
 	if (scale != 1.f) {
 		glScalef(scale, scale, 1.f);
 	}
@@ -324,6 +379,7 @@ void IrregularPlatform::drawObject(Window*) {
 		glColor4ub(col.r, col.g, col.b, col.a);
 		glCallList(shape->getID());
 	}
+
 	glPopMatrix();
 	//oglWrapper::drawRect(x, y, w, h, oglWrapper::GREEN, 2.f);
 }

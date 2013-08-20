@@ -8,6 +8,7 @@
 #include "../Gameplay.hpp"
 
 #include "../Screens/Screens.hpp"
+#include "../LevelManager.hpp"
 
 #include "../../GUI/GUI.hpp"
 #include "../../Tools/Logger.hpp"
@@ -47,7 +48,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				score(13, 54, Body::NONE, NULL, SCORE_ICON_WIDTH),
 				score_bar(
 						Rect<float>(
-								SPACES * 3 + SCORE_ICON_WIDTH + SPACES * 2,
+								SPACES * 3 + HEART_ICON_WIDTH + SPACES * 2,
 								54,
 								62,
 								16),
@@ -139,40 +140,69 @@ void MessageRenderer::addMessage(const Message& msg) {
  * Rysowanie obramowania HUDu
  */
 void MessageRenderer::drawBorder(Window* _window) {
-	/**
-	 * Wypełnienie!
-	 */
-	oglWrapper::drawFillRect(
-			SPACES,
-			_window->getBounds()->y - height + SPACES,
-			_window->getBounds()->x - SPACES * 2,
-			height - SPACES * 2,
-			oglWrapper::BLACK);
+	if (screen == HUD_SCREEN) {
+		/**
+		 * Obramowanie HUDu
+		 */
+		glPushAttrib(GL_ENABLE_BIT);
+		glLineStipple(1, 0xAAAA);
+		glEnable(GL_LINE_STIPPLE);
 
-	/**
-	 * Obramowanie!
-	 */
-	glPushAttrib(GL_ENABLE_BIT);
-	glLineStipple(1, 0xAAAA);
-	glEnable(GL_LINE_STIPPLE);
-	/**
-	 * Optymalizacja!
-	 */
-	float x = SPACES, y = _window->getBounds()->y - height + SPACES, w =
-			_window->getBounds()->x - SPACES * 2, h = height - SPACES * 2;
-	glLineWidth(screen != HUD_SCREEN ? 3 : 2);
-	//
-	glBegin(GL_LINE_LOOP);
-	glColor4ub(border_color.r, border_color.g, border_color.b, 150.f);
-	glVertex2f(x, y);
-	glVertex2f(x + w, y);
-	glColor4ub(border_color.r, border_color.g, border_color.b, 0.f);
-	glVertex2f(x + w, y + h);
-	glVertex2f(x, y + h);
-	glEnd();
-	//
-	glPopAttrib();
-	if (screen != HUD_SCREEN) {
+		glBegin(GL_LINES);
+
+		glColor4f(1.f, 1.f, 1.f, 1.f);
+		glVertex2f(score_bar.x + score_bar.w + SPACES * 2, SPACES * 2);
+
+		glColor4f(1.f, 1.f, 1.f, .5f);
+		glVertex2f(
+				score_bar.x + score_bar.w + SPACES * 2,
+				score_bar.h + score_bar.y + SPACES * 2);
+		glVertex2f(
+				score_bar.x + score_bar.w + SPACES * 2,
+				score_bar.h + score_bar.y + SPACES * 2);
+
+		glColor4f(1.f, 1.f, 1.f, 1.f);
+		glVertex2f(SPACES * 2, score_bar.h + score_bar.y + SPACES * 2);
+
+		glEnd();
+
+		glPopAttrib();
+	} else {
+		/**
+		 * Wypełnienie!
+		 */
+		oglWrapper::drawFillRect(
+				SPACES,
+				_window->getBounds()->y - height + SPACES,
+				_window->getBounds()->x - SPACES * 2,
+				height - SPACES * 2,
+				oglWrapper::BLACK);
+
+		/**
+		 * Optymalizacja!
+		 */
+		float x = SPACES, y = _window->getBounds()->y - height + SPACES, w =
+				_window->getBounds()->x - SPACES * 2, h = height - SPACES * 2;
+
+		glPushAttrib(GL_ENABLE_BIT);
+		glLineStipple(1, 0xAAAA);
+		glEnable(GL_LINE_STIPPLE);
+		glLineWidth(screen != HUD_SCREEN ? 3 : 2);
+
+		glBegin(GL_LINE_LOOP);
+
+		glColor4ub(border_color.r, border_color.g, border_color.b, 150.f);
+		glVertex2f(x, y);
+		glVertex2f(x + w, y);
+
+		glColor4ub(border_color.r, border_color.g, border_color.b, 0.f);
+		glVertex2f(x + w, y + h);
+		glVertex2f(x, y + h);
+
+		glEnd();
+
+		glPopAttrib();
+
 		oglWrapper::drawFillRect(
 				SPACES * 2,
 				_window->getBounds()->y - height,
@@ -340,6 +370,7 @@ void MessageRenderer::drawIntroMessage(Window* _window) {
 			&& title.getRenderLength() == title.getString()->length()) {
 		text.setHidden(false);
 	}
+
 	/**
 	 * Wyświetlanie INTRO/OUTRO
 	 */
@@ -368,6 +399,8 @@ void MessageRenderer::getCallback(Control* const & control) {
 		menu = new Menu();
 		//
 		active_screen = menu;
+	} else if (control == retry_game) {
+		LevelManager::getInstance().reloadMap();
 	}
 }
 
@@ -391,6 +424,7 @@ void MessageRenderer::drawObject(Window* _window) {
 			 *
 			 */
 		case HUD_SCREEN:
+			drawBorder(_window);
 			drawPlayerHUD(_window);
 			break;
 

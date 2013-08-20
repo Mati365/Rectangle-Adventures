@@ -61,7 +61,6 @@ namespace GameScreen {
 	class Game: public Screen {
 		protected:
 			MapRenderer* lvl;
-			Character* hero;
 
 		public:
 			Game(const char*);
@@ -70,7 +69,7 @@ namespace GameScreen {
 			virtual void drawObject(Window*);
 
 			Character* getHero() const {
-				return hero;
+				return lvl->getHero();
 			}
 			
 			MapRenderer* getMapRenderer() const {

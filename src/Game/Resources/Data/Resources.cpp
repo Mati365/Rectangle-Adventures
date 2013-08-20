@@ -9,7 +9,7 @@
 #include "../../Engine/Sound/Sounds.hpp"
 
 Package main_filesystem(FILESYSTEM_PACKAGE, FILESYSTEM_AUTHOR);
-ResourceManager<usint> main_resource_manager;
+ResourceManager main_resource_manager;
 
 /**
  * Sprawdzenie autentyczności archiwum!
