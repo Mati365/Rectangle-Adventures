@@ -135,6 +135,22 @@ class ResourceManager {
 			}
 			return false;
 		}
+
+		/** Kasowanie niedobitków */
+		~ResourceManager() {
+			usint count = 0;
+			for (auto& obj : resources) {
+				if (!obj) {
+					continue;
+				}
+				delete obj;
+				count++;
+			}
+			logEvent(
+					Logger::LOG_INFO,
+					"Usunięto " + Convert::toString<usint>(count)
+							+ " niedobitków!");
+		}
 };
 
 #endif /* RESOURCEMANAGER_HPP_ */

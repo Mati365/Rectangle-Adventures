@@ -321,6 +321,9 @@ IrregularPlatform::IrregularPlatform(float _x, float _y, usint _state,
 }
 
 void IrregularPlatform::setShape(PlatformShape* _shape) {
+	if(!_shape) {
+		return;
+	}
 	Rect<float>& _bounds = _shape->getBounds();
 	//
 	w = _bounds.w;

@@ -12,8 +12,6 @@
 
 using namespace Gameplay;
 
-#define DEFAULT_SHADOW_RADIUS 200
-
 /**
  * Główny renderer mapy
  */
@@ -133,51 +131,55 @@ void MapRenderer::addWeather(usint _type) {
 }
 
 /**
- * Wczytywanie mapy
- */
-/**
  * Podmienienie mapy buforowej ze zwykłą
  */
 void MapRenderer::swapBufferMap() {
 	setMap(buffer_map);
-	//buffer_map = NULL;
 }
 
 void MapRenderer::setMap(MapINFO* _map) {
 	static_objects.clear();
+
 	shake_timer.reset();
+	shake_timer.active = false;
 
 	/**
 	 * Ustawienia
 	 */
 	addWeather(_map->map_weather);
-	if (hero) {
-		if (hero->getShape()) {
-			main_resource_manager.deleteResource(
-					hero->getShape()->getResourceID());
-		}
-		hero->setShape(_map->hero_shape);
-		hero->fitToWidth(_map->hero_bounds.w);
-
-		hero->x = _map->hero_bounds.x;
-		hero->y = _map->hero_bounds.y;
-
-		hero->getStatus()->health = MAX_LIVES;
-		hero->getStatus()->score = 0;
-
-		//
-		_map->physics->insert(hero);
-	}
 	ResourceFactory::getInstance(_map->physics).changeTemperatureOfTextures(
 			_map->map_temperature);
 
-	/**
-	 * Kończenie
-	 */
 	if (map) {
-		//delete map;
+		//delete map; // coś nie tak BUG!
+		map = NULL;
 	}
 	map = _map;
+
+	/** Reset gracza */
+	resetHero();
+}
+
+/**
+ * Resetowanie gracza
+ */
+void MapRenderer::resetHero() {
+	if (!hero || !map) {
+		return;
+	}
+	if (hero->getShape()) {
+		main_resource_manager.deleteResource(hero->getShape()->getResourceID());
+	}
+	hero->setShape(map->hero_shape);
+	hero->fitToWidth(map->hero_bounds.w);
+
+	hero->x = map->hero_bounds.x;
+	hero->y = map->hero_bounds.y;
+
+	hero->getStatus()->health = MAX_LIVES;
+	hero->getStatus()->score = 0;
+
+	map->physics->insert(hero);
 }
 
 /**
@@ -197,7 +199,7 @@ void MapRenderer::showGameOver() {
 		 * A co jeśli jest może checkpoint?
 		 */
 		if (hero->isCheckpointAvailable()) {
-			hero->recoverFromCheckpoint(map->physics);
+			hero->recoverFromCheckpoint(map);
 			//
 			resetColorSaturation();
 			shadow_radius = DEFAULT_SHADOW_RADIUS;
@@ -210,10 +212,10 @@ void MapRenderer::showGameOver() {
 	}
 }
 
+/**
+ * Rysowanie
+ */
 void MapRenderer::drawObject(Window* _window) {
-	/**
-	 * Rysowanie
-	 */
 	shaders[main_shader_id]->begin();
 	shaders[main_shader_id]->setUniform2f(
 			"center",
@@ -226,12 +228,12 @@ void MapRenderer::drawObject(Window* _window) {
 			col_saturation[2]);
 	shaders[main_shader_id]->setUniform1f("radius", shadow_radius);
 
-//
+	//
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}
 	ParalaxRenderer::drawObject(_window);
-//
+	//
 
 	shaders[main_shader_id]->end();
 	/**

@@ -23,15 +23,16 @@ using namespace GameScreen;
 extern string levels[];
 
 class LevelManager {
+#define MAP_COUNT 2
+
 	private:
 		int actual_map;
-		deque<const char*> maps;
 
-		LevelManager(string*, usint);
+		LevelManager();
 
 	public:
 		static LevelManager& getInstance() {
-			static LevelManager manager(levels, 2);
+			static LevelManager manager;
 			//
 			return manager;
 		}
@@ -47,6 +48,12 @@ class LevelManager {
 		 * Wczytywanie całej mapy od nowa
 		 */
 		MapINFO* reloadMap();
+
+		/**
+		 * Pobieranie pierwszej mapy
+		 * wczytanej z save
+		 */
+		MapINFO* getFirstMap();
 };
 
 #endif /* LEVELMANAGER_HPP_ */

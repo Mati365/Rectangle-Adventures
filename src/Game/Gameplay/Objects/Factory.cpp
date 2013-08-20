@@ -164,8 +164,11 @@ void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
 			textures.erase(_texture_id);
 		}
 
-		//
+		// Wczytywanie nowych tekstur
 		string filename = factory_object.file_name;
+		if (_addition) {
+			filename += _addition;
+		}
 		PlatformShape* _new_shape = readShape(
 				filename,
 				factory_object.resource_label,
@@ -185,6 +188,58 @@ void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
 			Logger::LOG_INFO,
 			"Zarejestrowano " + Convert::toString<usint>(_total_deleted)
 					+ " obiektów! Brak memoryleak!");
+}
+
+/**
+ * Reallokacja tekstur, obiekty posiadają stare
+ * wskaźniki do tekstur!
+ */
+bool ResourceFactory::texturePackRealloc() {
+	if (created.empty()) {
+		return false;
+	}
+	usint reallocated = 0;
+
+	for (auto* obj : created) {
+		if (obj->type == Body::PLATFORM) {
+			continue;
+		}
+
+		// Konfiguracja tekstury
+		_TextureConfig* tex_conf = getFactoryType(
+				obj->factory_type,
+				obj->orientation);
+
+		// Odbiorca tekstury
+		IrregularPlatform* receiver = dynamic_cast<IrregularPlatform*>(obj);
+		if (!receiver) {
+			logEvent(Logger::LOG_ERROR, "BUG: Brak odbiorcy tekstury!");
+			continue;
+		}
+
+		// Nowa tekstura
+		PlatformShape* new_shape =
+				dynamic_cast<PlatformShape*>(main_resource_manager.getByID(
+						tex_conf->resource_id));
+
+		if (!new_shape) {
+			logEvent(
+					Logger::LOG_WARNING,
+					(string )"BUG: Pusta przealokowana tekstura! ");
+			continue;
+		}
+		receiver->setShape(new_shape);
+		receiver->fitToWidth(tex_conf->width);
+
+		// Liczenie
+		reallocated++;
+	}
+
+	logEvent(
+			Logger::LOG_INFO,
+			"Przealokowano " + Convert::toString<usint>(reallocated)
+					+ " obiektów!");
+	return true;
 }
 
 /**
@@ -362,57 +417,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	addBody(_object);
 	//
 	return _object;
-}
-
-/**
- * Reallokacja tekstur, obiekty posiadają stare
- * wskaźniki do tekstur!
- */
-bool ResourceFactory::texturePackRealloc() {
-	if (created.empty()) {
-		return false;
-	}
-	usint reallocated = 0;
-
-	for (auto* obj : created) {
-		if (obj->type == Body::PLATFORM) {
-			continue;
-		}
-
-		// Konfiguracja tekstury
-		_TextureConfig* tex_conf = getFactoryType(
-				obj->factory_type,
-				obj->orientation);
-
-		// Odbiorca tekstury
-		IrregularPlatform* receiver = dynamic_cast<IrregularPlatform*>(obj);
-		if (!receiver) {
-			logEvent(Logger::LOG_ERROR, "BUG: Brak odbiorcy tekstury!");
-			return false;
-		}
-
-		// Nowa tekstura
-		PlatformShape* new_shape =
-				dynamic_cast<PlatformShape*>(main_resource_manager.getByID(
-						tex_conf->resource_id));
-		if (!new_shape) {
-			logEvent(
-					Logger::LOG_WARNING,
-					(string )"BUG: Pusta przealokowana tekstura! ");
-			continue;
-		}
-		receiver->setShape(new_shape);
-		receiver->fitToWidth(tex_conf->width);
-
-		// Liczenie
-		reallocated++;
-	}
-
-	logEvent(
-			Logger::LOG_INFO,
-			"Przealokowano " + Convert::toString<usint>(reallocated)
-					+ " obiektów!");
-	return true;
 }
 
 /**

@@ -171,14 +171,15 @@ void Character::addCheckpoint(bool _reload_map) {
 /**
  * Odzyskanie z ostatniego checkpoint'a
  */
-void Character::recoverFromCheckpoint(pEngine* physics) {
+void Character::recoverFromCheckpoint(MapINFO* map) {
+	if (type != HERO) {
+		return;
+	}
 	status = last_checkpoint.last_status;
 
 	// Resetowanie wyglądu
-	float _last_w = w;
-
-	setShape(getShapePointer("player"));
-	fitToWidth(_last_w / 0.6);
+	setShape(map->hero_shape);
+	fitToWidth(map->hero_bounds.w);
 
 	// Resetowanie pozycji
 	velocity.x = velocity.y = 0;
@@ -191,7 +192,7 @@ void Character::recoverFromCheckpoint(pEngine* physics) {
 					status.score - MAX_SCORE * 0.1 : 0;
 	status.health -= 1;
 
-	hitMe(physics);
+	hitMe(map->physics);
 }
 
 /**

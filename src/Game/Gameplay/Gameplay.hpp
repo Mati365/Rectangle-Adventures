@@ -57,7 +57,8 @@ namespace Gameplay {
 	 */
 	class ParalaxRenderer: public Renderer, public IntroBackground {
 		protected:
-			MapINFO* map; // mapa główna renderowana
+			/** Mapa do głównego renderowania */
+			MapINFO* map;
 
 			/**
 			 * Statycznych obiektów jest mniej
@@ -66,15 +67,15 @@ namespace Gameplay {
 			 */
 			deque<AllocKiller<Body> > static_objects;
 
-			// Kamera
+			/** Kamera */
 			Camera cam;
 			float ratio;
 
-			// Rysowanie fioletowej szachownicy
+			/** Rysowanie fioletowej szachownicy */
 			bool draw_quad;
 			bool rotate;
 
-			// Timer potrząsania
+			/** Timer potrząsania */
 			_Timer shake_timer;
 
 		public:
@@ -87,7 +88,7 @@ namespace Gameplay {
 			 */
 			void addStaticObject(Body*);
 
-			// Potrząsanie ekranem
+			/** Potrząsanie ekranem */
 			void shake();
 
 			virtual Character* getHero() {
@@ -126,6 +127,8 @@ namespace Gameplay {
 	 * Główny renderer mapy!
 	 */
 	class MapRenderer: public ParalaxRenderer, public EventListener {
+#define DEFAULT_SHADOW_RADIUS 250
+
 		public:
 			enum Weather {
 				NONE,
@@ -135,28 +138,28 @@ namespace Gameplay {
 			};
 
 		private:
-			// HUD
+			/** HUD */
 			MessageRenderer msg;
 
-			// Rzutowanie z paralaxy
+			/** Rzutowanie z paralaxy */
 			Character* hero;
 
-			// Paralaxy za główną mapą
+			/** Paralaxy za główną mapą */
 			deque<ParalaxRenderer*> paralax_background;
 
-			// Hud w menu jest zablokowany
+			/** Hud w menu jest zablokowany */
 			bool hud_enabled;
 
-			// Główny shader renderu
+			/** Główny shader renderu */
 			usint main_shader_id;
 
-			// Promień cienia wokół kamery
+			/** Promień cienia wokół kamery */
 			float shadow_radius;
 
-			// Nasycenie w shaderze
+			/** Nasycenie w shaderze */
 			float col_saturation[3];
 
-			// mapa zastępcza podczas ładowania
+			/** mapa zastępcza podczas ładowania */
 			MapINFO* buffer_map;
 
 		public:
@@ -167,12 +170,12 @@ namespace Gameplay {
 
 			ParalaxRenderer* addToParalax(MapINFO*, float, Body*);
 
-			// Włączanie HUDu
+			/** Włączanie HUDu */
 			void enableHUD(bool _hud_enabled) {
 				hud_enabled = _hud_enabled;
 			}
 			
-			// Ustawienie głównego shaderu
+			/** Ustawienie głównego shaderu */
 			void setMainShader(usint _main_shader_id) {
 				main_shader_id = _main_shader_id;
 			}
@@ -187,24 +190,25 @@ namespace Gameplay {
 				buffer_map = buffer;
 			}
 
-			/**
-			 * Mapa buforowana
-			 */
+			/** Mapa buforowana */
 			MapINFO* getBufferMap() {
 				return buffer_map;
 			}
 
-			// Wczytywanie mapy
+			/** Wczytywanie mapy */
 			void setMap(MapINFO*);
 
-			// Pogoda
+			/** Resetowanie głównego gracza */
+			void resetHero();
+
+			/** Pogoda */
 			void addWeather(usint);
 			void setHero(Character*);
 
-			// Game over
+			/** Game over */
 			void showGameOver();
 
-			// Metoda przesłonięta!
+			/** Metoda przesłonięta! */
 			virtual Character* getHero() {
 				return hero;
 			}
@@ -216,7 +220,7 @@ namespace Gameplay {
 			~MapRenderer();
 
 		private:
-			// Resetowanie saturacji barw
+			/** Resetowanie saturacji barw */
 			inline void resetColorSaturation() {
 				col_saturation[0] = col_saturation[1] = col_saturation[2] = 1.f;
 			}

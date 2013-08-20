@@ -45,11 +45,11 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 
 				heart_anim(30),
 
-				score(13, 54, Body::NONE, NULL, SCORE_ICON_WIDTH),
+				score(0, 16, Body::NONE, NULL, SCORE_ICON_WIDTH),
 				score_bar(
 						Rect<float>(
-								SPACES * 3 + HEART_ICON_WIDTH + SPACES * 2,
-								54,
+								health_bar.x + health_bar.w + SPACES * 8,
+								16,
 								62,
 								16),
 						oglWrapper::GREEN,
@@ -330,7 +330,7 @@ void MessageRenderer::updateHUDControls() {
 	 * Punkty!
 	 */
 	score_bar.setValue(hero->getStatus()->score);
-	score.x = 20 - score.w / 2;
+	score.x = health_bar.x + health_bar.w + SPACES * 5 - score.w / 2;
 }
 
 /**
@@ -404,6 +404,9 @@ void MessageRenderer::getCallback(Control* const & control) {
 	}
 }
 
+/**
+ * Rysowanie HUDu
+ */
 void MessageRenderer::drawObject(Window* _window) {
 	if (msgs.size() > 0 && screen != INTRO_SCREEN) {
 		popMessage();

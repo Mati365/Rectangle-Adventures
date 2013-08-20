@@ -11,11 +11,8 @@ string levels[2] { "mapa.txt", "mapa2.txt" };
 /**
  * Konstruktor
  */
-LevelManager::LevelManager(string* levels, usint count) :
-				actual_map(-1) {
-	for (usint i = 0; i < count; ++i) {
-		maps.push_back(levels[i].c_str());
-	}
+LevelManager::LevelManager() :
+				actual_map(0) {
 }
 
 /**
@@ -23,7 +20,7 @@ LevelManager::LevelManager(string* levels, usint count) :
  * + Kasowanie ostatniej mapy ze ekranu game
  */
 MapINFO* LevelManager::loadNextMap() {
-	if (maps.empty() || !game) {
+	if (!game) {
 		logEvent(
 				Logger::LOG_ERROR,
 				"Nie mogę wczytać nastepnej mapy! Koniec gry.");
@@ -32,7 +29,9 @@ MapINFO* LevelManager::loadNextMap() {
 
 	// Wczytywanie nowej mapy
 	MapINFO* buffer = reloadMap();
-	maps.pop_front();
+	if (actual_map + 1 < MAP_COUNT) {
+		actual_map++;
+	}
 
 	// Obiekt dynamicznie alokowany
 	return buffer;
@@ -42,9 +41,7 @@ MapINFO* LevelManager::loadNextMap() {
  * Wczytywanie całej mapy od nowa
  */
 MapINFO* LevelManager::reloadMap() {
-	const char* path = maps.front();
-
-	if (strlen(path) == 0) {
+	if (actual_map > MAP_COUNT) {
 		return NULL;
 	}
 	/*
@@ -53,8 +50,15 @@ MapINFO* LevelManager::reloadMap() {
 	 delete _last_buffer;
 	 }
 	 */
-	MapINFO* buffer = loadMap(path);
+	MapINFO* buffer = loadMap(levels[actual_map].c_str());
 	game->getMapRenderer()->setBufferMap(buffer);
 
 	return buffer;
+}
+
+/**
+ * Wczytywanie pierwszej mapy
+ */
+MapINFO* LevelManager::getFirstMap() {
+	return loadMap(levels[0].c_str());
 }

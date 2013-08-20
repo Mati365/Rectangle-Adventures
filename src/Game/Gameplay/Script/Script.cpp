@@ -106,8 +106,15 @@ bool Interpreter::interpret(Script* script) {
 		}
 		switch (func.id) {
 			/**
-			 * Typ skryptu!
+			 * Następny poziom!
 			 */
+			case NEXT_LEVEL:
+				LevelManager::getInstance().loadNextMap();
+				break;
+
+				/**
+				 * Typ skryptu!
+				 */
 			case SCRIPT_TYPE: {
 				int type = Convert::stringTo<int>(func.args[0]);
 				switch (type) {
@@ -295,13 +302,6 @@ bool Interpreter::interpret(Script* script) {
 						NULL,
 						Convert::stringTo<float>(func.args[4]))->script_id =
 						Convert::stringTo<usint>(func.args[3]);
-				break;
-
-				/**
-				 * Następny poziom!
-				 */
-			case NEXT_LEVEL:
-				LevelManager::getInstance().loadNextMap();
 				break;
 
 				/**

@@ -7,21 +7,16 @@
 #include "Screens.hpp"
 
 #include "../../Gameplay/Gameplay.hpp"
+#include "../LevelManager.hpp"
+
 #include "../../Resources/Data/ResourceManager.hpp"
 
 using namespace GameScreen;
 
 Game::Game(const char* map_path) {
-	MapINFO* map = loadMap(map_path);
-	
 	lvl = new MapRenderer(
-			new Character(
-					"Ufolud",
-					map->hero_bounds.x,
-					map->hero_bounds.y,
-					NULL,
-					Body::HERO),
-			map);
+			new Character("Ufolud", 0, 0, NULL, Body::HERO),
+			LevelManager::getInstance().getFirstMap());
 }
 
 void Game::catchEvent(const Event& event) {

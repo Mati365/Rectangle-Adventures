@@ -419,7 +419,7 @@ class Character: public IrregularPlatform {
 		 * checkpointa
 		 */
 		void addCheckpoint(bool);
-		void recoverFromCheckpoint(pEngine*);
+		void recoverFromCheckpoint(MapINFO*);
 
 		bool isCheckpointAvailable() const {
 			return !last_checkpoint.reload_map;
