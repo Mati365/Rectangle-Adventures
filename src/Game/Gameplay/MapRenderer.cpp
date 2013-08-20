@@ -167,7 +167,8 @@ void MapRenderer::resetHero() {
 	if (!hero || !map) {
 		return;
 	}
-	if (hero->getShape()) {
+	if (hero->getShape()
+			&& strcmp(hero->getShape()->getLabel(), "cranium") == -1) {
 		main_resource_manager.deleteResource(hero->getShape()->getResourceID());
 	}
 	hero->setShape(map->hero_shape);

@@ -6,6 +6,9 @@
  */
 #include "Weapons.hpp"
 
+/**
+ * Konstruktor pocisku
+ */
 Bullet::Bullet(float _x, float _y, const Vector<float>& _direction,
 		PlatformShape* _shape, usint _max_flight_distance, usint _orientation,
 		const CharacterStatus& _status) :
@@ -53,12 +56,21 @@ void Bullet::drawObject(Window*) {
 /**
  * Event pocisku
  */
-void Bullet::catchCollision(pEngine*, usint, Body* body) {
+void Bullet::catchCollision(pEngine* _physics, usint _dir, Body* body) {
 	if (IS_SET(body->state, Body::HIDDEN)
 			|| IS_SET(body->state, Body::BACKGROUND)) {
 		return;
 	}
+	/**
+	 * Bugfix!
+	 * + Nieraz przy stykaniu się pocisku
+	 * z graczem pocisk wyparowywał zanim
+	 * dał callback do gracza!
+	 */
 	destroyed = true;
+	if (body && !body->destroyed) {
+		body->catchCollision(_physics, Physics::invertDir(_dir), this);
+	}
 }
 
 /**

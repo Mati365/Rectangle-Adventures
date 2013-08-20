@@ -133,7 +133,7 @@ usint ResourceFactory::genTextureID(usint _type, usint _orientation) const {
 void ResourceFactory::loadMainTexturesPack() {
 	// Gracz
 	readShape("czaszka.txt", "cranium", 0);
-	
+
 	// Moby
 	loadMobsTexturesPack("");
 
