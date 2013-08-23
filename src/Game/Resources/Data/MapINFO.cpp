@@ -317,6 +317,7 @@ bool MapINFO::load(FILE* map) {
 	if (!map) {
 		return false;
 	}
+	ResourceFactory::getInstance(NULL).unload();
 
 	readHeader(map);
 	readShapes(map);
@@ -341,6 +342,7 @@ void MapINFO::unload() {
 					"BUG! Nie mogę skasować zasobu - możliwy memoryleak!");
 		}
 	}
+	ResourceFactory::getInstance(NULL).unload();
 
 	// Kasowanie fizyki razem z obiektami!
 	if (physics) {

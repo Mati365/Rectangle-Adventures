@@ -146,7 +146,7 @@ void ResourceFactory::loadMainTexturesPack() {
 void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
 	// Tekstury mobów
 	usint _total_deleted = 0;
-	bool _first_load = !textures.size();
+	bool _first_load = textures.empty();
 
 	for (_TextureConfig& factory_object : factory_types) {
 		if (!_first_load && !factory_object.temperature_enabled) {
@@ -176,9 +176,6 @@ void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
 				filename,
 				factory_object.resource_label,
 				factory_object.rotation);
-		if (_addition) {
-			filename += _addition;
-		}
 		putTexture(_texture_id, _new_shape);
 
 		// Bugfix! ResourceID != TextureID
@@ -209,10 +206,6 @@ bool ResourceFactory::texturePackRealloc() {
 		// Odbiorca tekstury
 		if (!obj) {
 			created.erase(created.begin() + i);
-			continue;
-		}
-
-		if (obj->factory_type == OBJECT || obj->factory_type == KILLZONE) {
 			continue;
 		}
 
@@ -286,7 +279,7 @@ void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
 	}
 	texture_temperature = _texure_temperature;
 
-// Dodatek do wczytywanej mapy
+	// Dodatek do wczytywanej mapy
 	const char* addition;
 	switch (texture_temperature) {
 		//
@@ -306,7 +299,7 @@ void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
 
 	}
 
-// Wczytywanie na nowo
+	// Wczytywanie na nowo
 	loadMobsTexturesPack(addition);
 	texturePackRealloc();
 }
@@ -440,6 +433,19 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	addBody(_object);
 	//
 	return _object;
+}
+
+/**
+ * Resetowanie
+ */
+void ResourceFactory::unload() {
+	created.clear();
+	/**
+	 for (auto& tex : textures) {
+	 main_resource_manager.deleteResource(tex.second->getResourceID());
+	 }
+	 textures.clear();
+	 **/
 }
 
 /**

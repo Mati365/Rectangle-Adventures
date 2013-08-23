@@ -61,22 +61,17 @@ void QuadTree::update(Rect<float>& _bounds) {
 		return;
 	}
 	for (usint i = 0; i < bodies.size(); ++i) {
+		bool erase = false;
 		Body* obj = bodies[i];
+		//
 		if (!obj) {
-			bodies.erase(bodies.begin() + i);
-			i--;
-			continue;
-		}
-		if (IS_SET(obj->state, Body::STATIC)) {
-			continue;
-		}
-		if (obj->destroyed) {
+			erase = true;
+
+		} else if (obj->destroyed) {
 			if (!obj->with_observer) {
 				safe_delete<Body>(obj);
-				bodies.erase(bodies.begin() + i);
-				i--;
-				continue;
 			}
+			erase = true;
 		} else if (!IS_SET(obj->state, Body::STATIC)) {
 			Rect<float> _rect = static_cast<Rect<float> >(*obj);
 			//
@@ -86,9 +81,12 @@ void QuadTree::update(Rect<float>& _bounds) {
 				} else {
 					insertToSubQuad(obj, false);
 				}
-				bodies.erase(bodies.begin() + i);
-				i--;
+				erase = true;
 			}
+		}
+		if (erase) {
+			bodies.erase(bodies.begin() + i);
+			i--;
 		}
 	}
 	if (NW) {

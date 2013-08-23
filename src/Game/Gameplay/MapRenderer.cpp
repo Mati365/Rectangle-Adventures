@@ -140,6 +140,9 @@ void MapRenderer::swapBufferMap() {
 }
 
 void MapRenderer::setMap(MapINFO* _map) {
+	for (auto& obj : static_objects) {
+		safe_delete<Body>(obj);
+	}
 	static_objects.clear();
 
 	shake_timer.reset();
@@ -152,9 +155,7 @@ void MapRenderer::setMap(MapINFO* _map) {
 	ResourceFactory::getInstance(_map->physics).changeTemperatureOfTextures(
 			_map->map_temperature);
 
-	if (map) {
-		safe_delete<MapINFO>(map); // crash
-	}
+	safe_delete<MapINFO>(map);
 	map = _map;
 
 	/** Reset gracza */
@@ -261,7 +262,7 @@ void MapRenderer::drawObject(Window* _window) {
 			if (shadow_radius >= DEFAULT_SHADOW_RADIUS) {
 				shadow_radius = DEFAULT_SHADOW_RADIUS;
 				if (!hero->isDead()) {
-					//buffer_map = nullptr;
+					buffer_map = nullptr;
 				}
 			}
 			if (hero->isDead()) {
@@ -298,7 +299,11 @@ void MapRenderer::drawObject(Window* _window) {
 	 */
 	if (buffer_swap_required) {
 		setMap(buffer_map);
+
 		buffer_map = nullptr;
+		buffer_swap_required = false;
+
+		shadow_radius = DEFAULT_SHADOW_RADIUS;
 	}
 }
 

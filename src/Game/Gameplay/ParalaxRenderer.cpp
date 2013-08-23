@@ -23,7 +23,7 @@ ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, bool _draw_quad,
  * Obiekty nie podlegające fizyce typu particle
  */
 void ParalaxRenderer::addStaticObject(Body* _renderer) {
-	static_objects.push_back(AllocKiller<Body>(_renderer));
+	static_objects.push_back(_renderer);
 }
 
 /**

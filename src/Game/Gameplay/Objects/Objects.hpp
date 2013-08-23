@@ -682,6 +682,11 @@ class ResourceFactory {
 		 */
 		static ResourceFactory& getInstance(pEngine*);
 
+		/**
+		 * Resetowanie
+		 */
+		void unload();
+
 	private:
 		void loadMainTexturesPack();
 		void loadMobsTexturesPack(const char*);
