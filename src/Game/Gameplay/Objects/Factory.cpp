@@ -203,7 +203,15 @@ bool ResourceFactory::texturePackRealloc() {
 	}
 	usint reallocated = 0;
 
-	for (auto* obj : created) {
+	for (usint i = 0; i < created.size(); ++i) {
+		Body* obj = created[i];
+
+		// Odbiorca tekstury
+		if (!obj) {
+			created.erase(created.begin() + i);
+			continue;
+		}
+
 		if (obj->factory_type == OBJECT || obj->factory_type == KILLZONE) {
 			continue;
 		}
@@ -213,7 +221,6 @@ bool ResourceFactory::texturePackRealloc() {
 				obj->factory_type,
 				obj->orientation);
 
-		// Odbiorca tekstury
 		IrregularPlatform* receiver = dynamic_cast<IrregularPlatform*>(obj);
 		if (!receiver) {
 			logEvent(Logger::LOG_ERROR, "BUG: Brak odbiorcy tekstury!");
@@ -279,7 +286,7 @@ void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
 	}
 	texture_temperature = _texure_temperature;
 
-	// Dodatek do wczytywanej mapy
+// Dodatek do wczytywanej mapy
 	const char* addition;
 	switch (texture_temperature) {
 		//
@@ -299,7 +306,7 @@ void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
 
 	}
 
-	// Wczytywanie na nowo
+// Wczytywanie na nowo
 	loadMobsTexturesPack(addition);
 	texturePackRealloc();
 }
@@ -352,7 +359,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				_y,
 				_w,
 				_h);
-		triggers.push_back(trigger);
 		physics->insert(trigger);
 		//
 		return trigger;
@@ -444,23 +450,4 @@ void ResourceFactory::addBody(Body* _object) {
 		created.push_back(_object);
 		physics->insert(_object);
 	}
-}
-
-/**
- * Kasowanie całego poziomu!
- */
-void ResourceFactory::unloadObjects() {
-	for (auto* trigger : triggers) {
-		if (trigger) {
-			delete trigger;
-		}
-	}
-	triggers.clear();
-	//
-	for (auto* object : created) {
-		if (object) {
-			delete object;
-		}
-	}
-	created.clear();
 }

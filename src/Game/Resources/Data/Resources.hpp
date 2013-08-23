@@ -123,7 +123,6 @@ class MapINFO: public Resource {
 		 * Platform jest dużo, AllocKiller
 		 * zwolnił by to niemiłosiernie
 		 */
-		deque<Platform*> platforms;
 		deque<usint> resources;
 
 		/**
@@ -165,9 +164,6 @@ class MapINFO: public Resource {
 		void readShapes(FILE*);
 		void readPlatforms(FILE*);
 		void readMobsAndTriggers(FILE*);
-
-		// Obliczanie wymiarów planszy
-		void calcBounds();
 };
 
 /**

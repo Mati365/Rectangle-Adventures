@@ -123,9 +123,5 @@ void Menu::drawObject(Window* window) {
  * Brak przecieku! 'lvl' usuwany w ~Game!!
  */
 Menu::~Menu() {
-	for (usint i = 0; i < entries.size(); ++i) {
-		delete entries[i];
-	}
-	//
 	logEvent(Logger::LOG_INFO, "Usuwanie obiektów menu zakończone sukcesem!");
 }

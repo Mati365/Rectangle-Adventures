@@ -5,6 +5,7 @@
  *      Author: mati
  */
 #include <map>
+#include <iostream>
 
 #include "Physics.hpp"
 
@@ -59,26 +60,34 @@ void QuadTree::update(Rect<float>& _bounds) {
 	if (!rect.intersect(_bounds)) {
 		return;
 	}
-	for (auto iter = bodies.begin(); iter != bodies.end(); ++iter) {
-		if (!(*iter)) {
-			iter = bodies.erase(iter) - 1;
+	for (usint i = 0; i < bodies.size(); ++i) {
+		Body* obj = bodies[i];
+		if (!obj) {
+			bodies.erase(bodies.begin() + i);
+			i--;
 			continue;
 		}
-		if ((*iter)->destroyed) {
-			if ((*iter)->dynamically_allocated) {
-				delete *iter;
+		if (IS_SET(obj->state, Body::STATIC)) {
+			continue;
+		}
+		if (obj->destroyed) {
+			if (!obj->with_observer) {
+				safe_delete<Body>(obj);
+				bodies.erase(bodies.begin() + i);
+				i--;
+				continue;
 			}
-			iter = bodies.erase(iter) - 1;
-		} else if (!IS_SET((*iter)->state, Body::STATIC)) {
-			Rect<float> _rect((*iter)->x, (*iter)->y, (*iter)->w, (*iter)->h);
+		} else if (!IS_SET(obj->state, Body::STATIC)) {
+			Rect<float> _rect = static_cast<Rect<float> >(*obj);
 			//
 			if (!rect.contains(_rect)) {
 				if (parent) {
-					parent->insertToSubQuad(*iter, true);
+					parent->insertToSubQuad(obj, true);
 				} else {
-					insertToSubQuad(*iter, false);
+					insertToSubQuad(obj, false);
 				}
-				iter = bodies.erase(iter) - 1;
+				bodies.erase(bodies.begin() + i);
+				i--;
 			}
 		}
 	}
@@ -116,6 +125,9 @@ void QuadTree::drawObject(Window*) {
  * Dodawanie elementu!
  */
 bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
+	if (!body) {
+		return false;
+	}
 	if (!rect.contains(*body)) {
 		if (recursive && parent) {
 			return parent->insertToSubQuad(body, true);
@@ -158,8 +170,8 @@ void QuadTree::insertGroup(deque<Body*>* bodies) {
 			Body* body = (*iter);
 			iter = bodies->erase(iter);
 			//
-			if (body->dynamically_allocated) {
-				delete body;
+			if (!body->with_observer) {
+				safe_delete<Body>(body);
 			}
 		} else {
 			insertToSubQuad(*iter++, false);
@@ -167,8 +179,32 @@ void QuadTree::insertGroup(deque<Body*>* bodies) {
 	}
 }
 
+/**
+ * Dodawanie
+ */
 void QuadTree::insert(Body* body) {
 	insertToSubQuad(body, false);
+}
+
+/**
+ * Usuwanie
+ */
+bool QuadTree::remove(Body* body) {
+	for (auto iter = bodies.begin(); iter != bodies.end(); ++iter) {
+		// Porównywanie adresów
+		if (*iter == body) {
+			if (!body->with_observer) {
+				safe_delete<Body>(body);
+			}
+			bodies.erase(iter);
+			return true;
+		}
+	}
+	if (NW) {
+		return NW->remove(body) || NE->remove(body) || SW->remove(body)
+				|| SE->remove(body);
+	}
+	return false;
 }
 
 /**
@@ -200,22 +236,17 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 	}
 }
 
-void QuadTree::clear() {
-	bodies.clear();
-	if (NW) {
-		NW->clear();
-		NE->clear();
-		SW->clear();
-		SE->clear();
-	}
-}
-
 QuadTree::~QuadTree() {
+	for (auto& obj : bodies) {
+		if (obj && !obj->with_observer) {
+			safe_delete<Body>(obj);
+		}
+	}
 	if (NW) {
-		delete NW;
-		delete NE;
-		delete SW;
-		delete SE;
+		safe_delete<QuadTree>(NW);
+		safe_delete<QuadTree>(NE);
+		safe_delete<QuadTree>(SW);
+		safe_delete<QuadTree>(SE);
 	}
 }
 

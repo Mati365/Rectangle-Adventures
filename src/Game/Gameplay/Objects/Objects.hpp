@@ -37,7 +37,7 @@ using namespace Sound;
 /**
  * Platforma, po której porusza się gracz
  */
-class Platform: public Body, public Cloneable {
+class Platform: public Body {
 	public:
 		enum Type {
 			DIAGONAL, // ukośne linie
@@ -114,23 +114,7 @@ class Platform: public Body, public Cloneable {
 			return &col;
 		}
 
-		/**
-		 * Klonowanie obiektów!
-		 */
-		virtual Cloneable* getClone() const {
-			return new Platform(*this);
-		}
-
-		virtual bool recover(Cloneable* _clone) {
-			Platform* obj = dynamic_cast<Platform*>(_clone);
-			if (!obj) {
-				return false;
-			}
-			(*this) = *obj;
-			return true;
-		}
-
-		~Platform() {
+		virtual ~Platform() {
 			if (list) {
 				glDeleteLists(list, 1);
 			}
@@ -171,13 +155,6 @@ class IrregularPlatform: public Platform {
 		
 		void setShape(PlatformShape*);
 
-		/**
-		 * Klonowanie obiektów!
-		 */
-		virtual Cloneable* getClone() const {
-			return new IrregularPlatform(*this);
-		}
-		
 		/**
 		 * Zmiana rozmiaru tylko
 		 * do szerokości!
@@ -442,13 +419,6 @@ class Character: public IrregularPlatform {
 		 */
 		void updateMe();
 
-		/**
-		 * Klonowanie obiektów!
-		 */
-		virtual Cloneable* getClone() const {
-			return new Character(*this);
-		}
-		
 		virtual bool recover(Cloneable* _clone) {
 			Character* obj = dynamic_cast<Character*>(_clone);
 			if (!obj) {
@@ -496,6 +466,9 @@ class Trigger: public Body {
 			state = Body::HIDDEN;
 		}
 
+		virtual void drawObject(Window*) {
+		}
+
 		/**
 		 * Generowanie zdarzenia!
 		 */
@@ -508,7 +481,7 @@ class Trigger: public Body {
 			}
 		}
 		
-		~Trigger() {
+		virtual ~Trigger() {
 			if (script) {
 				delete script;
 			}
@@ -654,7 +627,6 @@ class ResourceFactory {
 
 	private:
 		deque<Body*> created;
-		deque<Trigger*> triggers;
 
 		/**
 		 * PODSTAWOWE ZASOBY!!!
@@ -692,11 +664,6 @@ class ResourceFactory {
 		 * są jeszcze ich stare wskaźniki
 		 */
 		bool texturePackRealloc();
-
-		/**
-		 * Kasowanie obiektów mapy!
-		 */
-		void unloadObjects();
 
 		/**
 		 * Pobieranie tekstury!

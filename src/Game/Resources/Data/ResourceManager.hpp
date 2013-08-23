@@ -102,7 +102,7 @@ class ResourceManager {
 					return res;
 				}
 			}
-			return NULL;
+			return nullptr;
 		}
 
 		/**
@@ -118,18 +118,18 @@ class ResourceManager {
 					return res;
 				}
 			}
-			return NULL;
+			return nullptr;
 		}
 
 		/**
 		 * Kasowanie zasobu - wolne
 		 */
 		bool deleteResource(usint _id) {
-			for (auto iter = resources.begin(); iter != resources.end();
-					++iter) {
-				if ((*iter)->getResourceID() == _id) {
-					delete (*iter);
-					resources.erase(iter);
+			for (usint i = 0; i < resources.size(); ++i) {
+				Resource* res = resources[i];
+				if (res->getResourceID() == _id) {
+					safe_delete (res);
+					resources.erase(resources.begin() + i);
 					return true;
 				}
 			}
@@ -143,7 +143,7 @@ class ResourceManager {
 				if (!obj) {
 					continue;
 				}
-				delete obj;
+				safe_delete<Resource>(obj);
 				count++;
 			}
 			logEvent(

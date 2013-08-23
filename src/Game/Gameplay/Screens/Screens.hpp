@@ -63,7 +63,7 @@ namespace GameScreen {
 			MapRenderer* lvl;
 
 		public:
-			Game(const char*);
+			Game(const char* = NULL);
 
 			virtual void catchEvent(const Event&);
 			virtual void drawObject(Window*);
@@ -90,9 +90,10 @@ namespace GameScreen {
 	 */
 	class Menu: public Game, public Callback {
 		private:
-			// Podstawowe info o grze
+			/** Podstawowe info o grze */
 			glText ver;
-			// Elementy menu
+
+			/** Elementy menu */
 			deque<Control*> entries;
 
 		public:

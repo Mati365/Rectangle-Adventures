@@ -96,8 +96,8 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	/**
 	 * Obiekty poza ekranem wycinamy!
 	 */
-	for (usint i = 0; i < static_objects.size(); ++i) {
-		static_objects[i]->drawObject(_window);
+	for (auto& obj : static_objects) {
+		obj->drawObject(_window);
 	}
 	/**
 	 * Renderowanie obiektów podlegających fizyce

@@ -9,6 +9,7 @@
 #define PHYSICS_HPP_
 #include <deque>
 #include <map>
+#include <iostream>
 
 #include "../Graphics/Engine.hpp"
 #include "../../Tools/Tools.hpp"
@@ -115,10 +116,11 @@ namespace Physics {
 			void insertGroup(deque<Body*>*);
 			void insert(Body*);
 
+			bool remove(Body*);
+
 			void getBodiesAt(Rect<float>&, deque<Body*>&);
 			void update(Rect<float>&);
 
-			void clear();
 			virtual void drawObject(Window*);
 
 			~QuadTree();
@@ -127,8 +129,14 @@ namespace Physics {
 			bool insertToSubQuad(Body*, bool);
 	};
 	
+	/**
+	 * Główny silnik fizyczny
+	 */
 	class pEngine {
 		public:
+			/**
+			 * Zwrot
+			 */
 			enum {
 				NONE,
 				RIGHT,
@@ -140,6 +148,7 @@ namespace Physics {
 		private:
 			QuadTree* quadtree;
 			Rect<float> bounds;
+
 			/**
 			 * Fizyka sprawdzana jest tylko i
 			 * wyłącznie na widocznym ekranie!
@@ -148,17 +157,18 @@ namespace Physics {
 			deque<Body*> visible_bodies;
 
 			float gravity_speed;
+
 			/**
-			 * Obiekty buforowe!
+			 *  Wszystkie obiekty dodane do silnika
+			 *  wykorzystywane w skryptach
 			 */
 			deque<Body*> list;
 
-			/**
-			 * Timer!
-			 */
+			/** Pauza */
 			bool pause;
-			usint timer;
-			usint sleep_time;
+
+			/** Uśpienie */
+			_Timer sleep_timer;
 
 		public:
 			pEngine(const Rect<float>&, float);
@@ -174,15 +184,16 @@ namespace Physics {
 				active_range = _active_range;
 			}
 			
-			void insert(Body* body) {
-				list.push_back(body);
-				quadtree->insert(body);
-			}
+			/** Dodawanie obiektu */
+			void insert(Body*);
+
+			/** Usuwanie obiektu */
+			bool remove(Body*);
 
 			void clear() {
 				list.clear();
 			}
-			
+
 			bool collide(const Body*, const Body*) const;
 			bool moveAndCheck(float, float, Body*, const Body*);
 			void updateWorld();
@@ -199,11 +210,11 @@ namespace Physics {
 			Rect<float>& getBounds() {
 				return bounds;
 			}
-			
+
 			deque<Body*>* getList() {
 				return &list;
 			}
-			
+
 			float getGravitySpeed() const {
 				return gravity_speed;
 			}
@@ -259,101 +270,53 @@ namespace Physics {
 				BUFFERED = 1 << 4
 			};
 
+			/** Stan fizyczny */
 			usint state;
 
 			Vector<float> velocity;
-			float roughness; // chropowatość
+
+			/** Chropowatość */
+			float roughness;
 			float weight;
 
-			/**
-			 * Flaga, typ obiektu
-			 */
+			/** Flaga, typ obiektu  */
 			usint type;
-			usint factory_type; // typ w fabryce
+
+			/** Typ fabrykowy */
+			usint factory_type;
 
 			usint layer;
 			usint script_id;
 
-			/**
-			 * Orientacja
-			 */
+			/** Orientacja */
 			usint orientation;
 
-			/**
-			 * Długość życia ciała
-			 */
+			/** Długość życia ciała */
 			_Timer life_timer;
 
-			Body() :
-							state(NONE),
-							roughness(DEFAULT_ROUGHNESS),
-							weight(0),
-							type(PLATFORM),
-							factory_type(0),
-							layer(STATIC_LAYER),
-							script_id(0),
-							orientation(pEngine::UP),
-							life_timer(0) {
-				x = 0;
-				y = 0;
-				w = 0;
-				h = 0;
+			Body();
+
+			Body(float, float, float, float, float = DEFAULT_ROUGHNESS, float =
+					1.f, usint = NONE);
+
+			/** Nie wszystko musi mieć callback */
+			virtual void catchCollision(pEngine*, usint, Body*) {
 			}
-			
-			Body(float _x, float _y, float _w, float _h, float _roughness =
-					DEFAULT_ROUGHNESS, float _weight = 1.f, usint _state = NONE) :
-							state(_state),
-							roughness(_roughness),
-							weight(_weight),
-							type(PLATFORM),
-							factory_type(0),
-							layer(STATIC_LAYER),
-							script_id(0),
-							orientation(pEngine::UP),
-							life_timer(0) {
-				x = _x;
-				y = _y;
-				w = _w;
-				h = _h;
-			}
-			
-			/**
-			 * Długość życia do skasowania!
-			 * Particle
-			 */
-			void setMaxLifetime(usint _max_lifetime) {
-				life_timer.max_cycles_count = _max_lifetime;
-				life_timer.reset();
-				//
-				dynamically_allocated = true;
-			}
-			
-			/**
-			 * Wymiary!
-			 */
-			void setBounds(float _x, float _y, float _w, float _h) {
-				x = _x;
-				y = _y;
-				w = _w;
-				h = _h;
-			}
-			/**
-			 * Nadawanie type!
-			 */
+
+			/** Długość życia do skasowania! */
+			void setMaxLifetime(usint);
+
+			/** Wymiary! */
+			void setBounds(float, float, float, float);
+
+			/** Nadawanie type! */
 			void setType(usint _type) {
 				type = _type;
 			}
-			/**
-			 * Nadawanie stanu!
-			 */
+
+			/** Nadawanie stanu! */
 			void setState(usint _state) {
 				state = _state;
-			}
-			
-			virtual void catchCollision(pEngine*, usint, Body*) {
-			}
-			
-			virtual void drawObject(Window*) {
 			}
 			
 			virtual ~Body() {

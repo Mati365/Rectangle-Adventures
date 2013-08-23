@@ -38,6 +38,9 @@ class Bullet: public Character {
 
 		virtual void catchCollision(pEngine*, usint, Body*);
 		virtual void drawObject(Window*);
+
+		virtual ~Bullet() {
+		}
 };
 
 /**
@@ -65,6 +68,9 @@ class Gun: public IrregularPlatform {
 					_bullet_shapes.begin(),
 					_bullet_shapes.end(),
 					bullet_shapes);
+		}
+
+		virtual ~Gun() {
 		}
 
 	private:

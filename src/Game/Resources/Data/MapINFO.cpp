@@ -25,9 +25,7 @@ bool loadMap(const char* path, MapINFO* map) {
 MapINFO* loadMap(const char* path) {
 	MapINFO* map = new MapINFO(path);
 	if (!loadMap(path, map)) {
-		delete map;
-		//
-		return NULL;
+		safe_delete<MapINFO>(map);
 	}
 	return map;
 }
@@ -84,25 +82,6 @@ MapINFO::MapINFO(const char* _label) :
 				hero_shape(NULL),
 				map_weather(0),
 				map_temperature(1) {
-}
-
-/**
- * Wyliczanie maksymalnych wymiarów mapy
- * z platform statycznych, nie mobów!
- */
-void MapINFO::calcBounds() {
-	Rect<float> max;
-	for (usint i = 0; i < platforms.size(); ++i) {
-		float _x = platforms[i]->x + platforms[i]->w;
-		float _y = platforms[i]->y + platforms[i]->h;
-		if (max.w < _x) {
-			max.w = _x;
-		}
-		if (max.h < _y) {
-			max.h = _y;
-		}
-	}
-	bounds = max;
 }
 
 /**
@@ -181,6 +160,8 @@ void MapINFO::readPlatforms(FILE* map) {
 	char shape[256];
 	usint border[4];
 
+	deque<Body*> objects;
+
 	// Wczytywanie parametrów graficznych platform..
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
@@ -251,7 +232,33 @@ void MapINFO::readPlatforms(FILE* map) {
 		}
 		platform->compileList();
 		//
-		platforms.push_back(platform);
+		objects.push_back(platform);
+	}
+	/**
+	 * Wyliczanie wymiarów planszy
+	 */
+	Rect<float> max;
+	for (auto& obj : objects) {
+		float _x = obj->x + obj->w;
+		float _y = obj->y + obj->h;
+		if (max.w < _x) {
+			max.w = _x;
+		}
+		if (max.h < _y) {
+			max.h = _y;
+		}
+	}
+	bounds = max;
+
+	/**
+	 * Dodawanie elementów
+	 */
+	if (physics) {
+		safe_delete<pEngine>(physics);
+	}
+	physics = new pEngine(bounds, 0.3f);
+	for (auto& obj : objects) {
+		physics->insert(obj);
 	}
 }
 
@@ -287,7 +294,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 				&rect.h,
 				shape);
 		//
-		ResourceFactory::getInstance(physics).createObject(
+		ResourceFactory::getInstance(NULL).createObject(
 				ResourceFactory::SCRIPT_BOX,
 				rect.x,
 				rect.y,
@@ -315,17 +322,7 @@ bool MapINFO::load(FILE* map) {
 	readShapes(map);
 	readPlatforms(map);
 	
-	// Obliczanie wymiarów!
-	calcBounds();
-	
 	// Inicjacja fizyki!
-	if (physics) {
-		delete physics;
-	}
-	physics = new pEngine(bounds, 0.3f);
-	for (auto iter = platforms.begin(); iter != platforms.end(); ++iter) {
-		physics->insert(*iter);
-	}
 	ResourceFactory::getInstance(physics);
 
 	readMobsAndTriggers(map);
@@ -336,17 +333,6 @@ bool MapINFO::load(FILE* map) {
  * Usuwanie wszystkiego co wczytane!
  */
 void MapINFO::unload() {
-	if (physics) {
-		delete physics;
-	}
-	/**
-	 * Szybsze niż AllocKiller
-	 */
-	for (auto* obj : platforms) {
-		delete obj;
-	}
-	ResourceFactory::getInstance(NULL).unloadObjects();
-
 	// Usuwanie kształtów! Woolne!
 	for (auto& res_id : resources) {
 		if (!main_resource_manager.deleteResource(res_id)) {
@@ -355,5 +341,11 @@ void MapINFO::unload() {
 					"BUG! Nie mogę skasować zasobu - możliwy memoryleak!");
 		}
 	}
+
+	// Kasowanie fizyki razem z obiektami!
+	if (physics) {
+		safe_delete<pEngine>(physics);
+	}
+
 	logEvent(Logger::LOG_INFO, "Pomyślnie usunięto mapę!");
 }

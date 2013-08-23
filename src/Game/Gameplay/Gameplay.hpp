@@ -91,19 +91,15 @@ namespace Gameplay {
 			/** Potrząsanie ekranem */
 			void shake();
 
-			virtual Character* getHero() {
-				return NULL;
-			}
-			
+			/** Odblokowywanie rotacji kamery */
 			void enableRotate(bool _rotate) {
 				rotate = _rotate;
 			}
 
-			/**
-			 *  Podmiana mapek
-			 */
-			void swapBufferMap();
-
+			virtual Character* getHero() {
+				return NULL;
+			}
+			
 			MapINFO* getMap() {
 				return map;
 			}
@@ -118,7 +114,7 @@ namespace Gameplay {
 
 			~ParalaxRenderer() {
 				if (map) {
-					delete map;
+					safe_delete<MapINFO>(map);
 				}
 			}
 	};
@@ -156,11 +152,14 @@ namespace Gameplay {
 			/** Promień cienia wokół kamery */
 			float shadow_radius;
 
-			/** Nasycenie w shaderze */
+			/** Nasycenie kolorów w shaderze */
 			float col_saturation[3];
 
 			/** mapa zastępcza podczas ładowania */
 			MapINFO* buffer_map;
+
+			/** Zamiana mapy po narysowaniu klatki */
+			bool buffer_swap_required;
 
 		public:
 			MapRenderer(Body*, MapINFO*);

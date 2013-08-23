@@ -25,8 +25,8 @@ void loadShadersPack() {
 }
 
 void unloadShadersPack() {
-	for (auto* shader : shaders) {
-		delete shader;
+	for (auto& shader : shaders) {
+		safe_delete<Shader>(shader);
 	}
 }
 

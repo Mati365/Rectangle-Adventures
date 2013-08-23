@@ -188,17 +188,16 @@ namespace Engine {
 			 * kasuje go potem obiekt obserwujący
 			 */
 			bool destroyed;
-			/**
-			 * Obiekty stworzone dynamicznie,
-			 * nie kontrolowane przez żaden
-			 * inny obiekt np. pocisk
-			 */
-			bool dynamically_allocated;
 
-			//
+			/**
+			 * Jeśli ma obserwatora to nie jest
+			 * kasowany w silniku fizycznym
+			 */
+			bool with_observer;
+
 			Renderer() :
 							destroyed(false),
-							dynamically_allocated(false) {
+							with_observer(false) {
 			}
 			
 			virtual void drawObject(Window*) = 0;

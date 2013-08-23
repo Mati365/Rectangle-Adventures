@@ -13,6 +13,8 @@
 #include <map>
 #include <cmath>
 
+#include "Logger.hpp"
+
 using namespace std;
 
 #define USINT_SUB(a, b) ((int)a - (int)b < 0?a=0:a -= b)
@@ -24,6 +26,15 @@ typedef unsigned short int usint;
 template<typename T = int>
 T getIntRandom(T min, T max) {
 	return rand() % (max - min + 1) + min;
+}
+
+/** Bezpieczne usuwanie */
+template<typename T>
+void safe_delete(T*& _ptr) {
+	if (_ptr) {
+		delete _ptr;
+		_ptr = nullptr;
+	}
 }
 
 /**
@@ -83,14 +94,14 @@ class AllocKiller {
 		
 	public:
 		/**
-		 * Przy: void dupa(allocKiller);
-		 * void dupa(allocKiller(zmienna));
+		 * Przy: void as(allocKiller);
+		 * void as(allocKiller(zmienna));
 		 * zamiast
-		 * void dupa(zmienna);
+		 * void as(zmienna);
 		 */
 		explicit AllocKiller(T* _ptr) :
 						ptr(_ptr),
-						counter(NULL) {
+						counter(nullptr) {
 			pushReference();
 		}
 		

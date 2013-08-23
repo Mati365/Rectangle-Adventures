@@ -18,10 +18,12 @@ using namespace Gameplay;
 MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 				ParalaxRenderer(_hero, 0.95f, true),
 				msg(45, Color(0, 128, 255), Color(255, 255, 255), this),
+				hero(nullptr),
 				hud_enabled(true),
 				main_shader_id(WINDOW_SHADOW_SHADER),
 				shadow_radius(DEFAULT_SHADOW_RADIUS),
-				buffer_map(NULL) {
+				buffer_map(nullptr),
+				buffer_swap_required(false) {
 	setHero(dynamic_cast<Character*>(_hero));
 	setMap(_map);
 
@@ -42,7 +44,7 @@ ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
 		paralax_background.push_front(renderer);
 		return renderer;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -134,7 +136,7 @@ void MapRenderer::addWeather(usint _type) {
  * Podmienienie mapy buforowej ze zwykłą
  */
 void MapRenderer::swapBufferMap() {
-	setMap(buffer_map);
+	buffer_swap_required = true;
 }
 
 void MapRenderer::setMap(MapINFO* _map) {
@@ -151,8 +153,7 @@ void MapRenderer::setMap(MapINFO* _map) {
 			_map->map_temperature);
 
 	if (map) {
-		//delete map; // coś nie tak BUG!
-		map = NULL;
+		safe_delete<MapINFO>(map); // crash
 	}
 	map = _map;
 
@@ -180,6 +181,8 @@ void MapRenderer::resetHero() {
 	hero->getStatus()->health = MAX_LIVES;
 	hero->getStatus()->score = 0;
 
+	hero->with_observer = true;
+
 	map->physics->insert(hero);
 }
 
@@ -187,6 +190,7 @@ void MapRenderer::resetHero() {
  * Ustawienie focusa kamery i bohatera
  */
 void MapRenderer::setHero(Character* _hero) {
+	// Ustawienie nowego gracza
 	hero = _hero;
 	cam.focus = hero;
 }
@@ -229,14 +233,16 @@ void MapRenderer::drawObject(Window* _window) {
 			col_saturation[2]);
 	shaders[main_shader_id]->setUniform1f("radius", shadow_radius);
 
-	//
+	/**
+	 * Główny rendering mapy - najpierw paralaksa
+	 */
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}
 	ParalaxRenderer::drawObject(_window);
-	//
 
 	shaders[main_shader_id]->end();
+
 	/**
 	 * Sprawdzenie stanu gracza oraz dopasowanie do niego
 	 * shaderu
@@ -246,7 +252,7 @@ void MapRenderer::drawObject(Window* _window) {
 		msg.setScreen(MessageRenderer::HUD_SCREEN);
 		resetColorSaturation();
 	}
-	if (hero->isDead() || buffer_map) {
+	if (hero->isDead() || (buffer_map && buffer_swap_required)) {
 		if (col_saturation[0] == 0.f) {
 			/**
 			 * WINDOW_DEATH_SHADER
@@ -255,7 +261,7 @@ void MapRenderer::drawObject(Window* _window) {
 			if (shadow_radius >= DEFAULT_SHADOW_RADIUS) {
 				shadow_radius = DEFAULT_SHADOW_RADIUS;
 				if (!hero->isDead()) {
-					buffer_map = NULL;
+					//buffer_map = nullptr;
 				}
 			}
 			if (hero->isDead()) {
@@ -287,16 +293,21 @@ void MapRenderer::drawObject(Window* _window) {
 	if (hud_enabled) {
 		msg.drawObject(_window);
 	}
+	/**
+	 * Podmiana buforu - bezpieczniejsza
+	 */
+	if (buffer_swap_required) {
+		setMap(buffer_map);
+		buffer_map = nullptr;
+	}
 }
 
 MapRenderer::~MapRenderer() {
-	for (auto* paralax : paralax_background) {
+	for (auto& paralax : paralax_background) {
 		if (paralax) {
-			delete paralax;
+			safe_delete<ParalaxRenderer>(paralax);
 		}
 	}
-	if (hero) {
-		delete hero;
-	}
+	safe_delete<Character>(hero);
 }
 

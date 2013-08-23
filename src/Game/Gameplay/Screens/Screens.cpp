@@ -23,7 +23,7 @@ Splash* GameScreen::splash = NULL;
  */
 void GameScreen::loadScreens() {
 	game = new Game("mapa.txt");
-	menu = new Menu();
+	//menu = new Menu();
 	splash = new Splash();
 }
 

@@ -20,7 +20,6 @@ Bullet::Bullet(float _x, float _y, const Vector<float>& _direction,
 				direction(_direction),
 				start_pos(_x, _y) {
 	status = _status;
-	dynamically_allocated = true;
 	orientation = _orientation;
 	//
 	if (orientation == pEngine::UP || orientation == pEngine::DOWN) {

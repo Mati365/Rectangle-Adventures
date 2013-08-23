@@ -16,7 +16,9 @@ using namespace GameScreen;
 Game::Game(const char* map_path) {
 	lvl = new MapRenderer(
 			new Character("Ufolud", 0, 0, NULL, Body::HERO),
-			LevelManager::getInstance().getFirstMap());
+			!map_path ?
+					LevelManager::getInstance().getFirstMap() :
+					loadMap(map_path));
 }
 
 void Game::catchEvent(const Event& event) {

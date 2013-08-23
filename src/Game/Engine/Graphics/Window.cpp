@@ -71,7 +71,7 @@ void Window::init() {
 		logEvent(
 				Logger::LOG_INFO,
 				"Nastąpił problem podczas wczytywania menu.");
-		return;
+		//return;
 	}
 	active_screen = game;
 	splash->pushTitle(

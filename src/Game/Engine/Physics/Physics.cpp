@@ -6,6 +6,9 @@
  */
 #include <cmath>
 #include <algorithm>
+#include <iostream>
+
+#include "../../Gameplay/Objects/Objects.hpp"
 
 #include "Physics.hpp"
 
@@ -42,17 +45,36 @@ pEngine::pEngine(const Rect<float>& _bounds, float _gravity_speed) :
 				bounds(_bounds),
 				gravity_speed(_gravity_speed),
 				pause(false),
-				timer(0),
-				sleep_time(0) {
+				sleep_timer(0) {
 	quadtree = new QuadTree(NULL, _bounds, 0);
+}
+
+/**
+ * Usuwanie obiektu
+ */
+void pEngine::insert(Body* body) {
+	if (!body) {
+		return;
+	}
+	if (IS_SET(body->state, Body::STATIC)) {
+		list.push_back(body);
+	}
+	quadtree->insert(body);
+}
+
+/**
+ * Dodawanie obiektu
+ */
+bool pEngine::remove(Body* body) {
+	return quadtree->remove(body);
 }
 
 /**
  * Usypianie silnika!
  */
 void pEngine::setSleep(usint _sleep_time) {
-	timer = 0;
-	sleep_time = _sleep_time;
+	sleep_timer.reset();
+	sleep_timer.max_cycles_count = _sleep_time;
 }
 
 /**
@@ -72,13 +94,15 @@ void pEngine::updateWorld() {
 	if (pause) {
 		return;
 	}
-	if (sleep_time != 0) {
-		timer++;
-		if (timer > sleep_time) {
-			timer = 0;
-		} else {
-			return;
+	/**
+	 * Uśpienie
+	 */
+	if (sleep_timer.active) {
+		sleep_timer.tick();
+		if (!sleep_timer.active) {
+			sleep_timer.reset();
 		}
+		return;
 	}
 	
 	/**
@@ -93,7 +117,7 @@ void pEngine::updateWorld() {
 	 */
 	quadtree->update(active_range);
 	quadtree->getBodiesAt(active_range, visible_bodies);
-	
+
 	/**
 	 * Sprawdzenie kolizji!
 	 */
@@ -161,8 +185,8 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 		Body* source = _bodies[i];
 
 		// Czyszczenie
-		for (auto*& col : source->collisions) {
-			col = NULL;
+		for (auto& coll : source->collisions) {
+			coll = nullptr;
 		}
 
 		// Statyszne obiekty są omijane
@@ -295,11 +319,9 @@ bool pEngine::collide(const Body* _body, const Body* _body2) const {
 	return false;
 }
 
+/**
+ * Czyszczenie!
+ */
 pEngine::~pEngine() {
-	/**
-	 * Czyszczenie!
-	 */
-	if (quadtree) {
-		delete quadtree;
-	}
+	safe_delete<QuadTree>(quadtree);
 }
