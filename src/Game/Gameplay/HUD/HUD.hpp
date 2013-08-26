@@ -112,7 +112,10 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		ProgressBar score_bar;
 
 		/** reload gry */
-		Button retry_icon;
+		Button retry_hud;
+
+		/** pozostaly czas */
+		//glText left_time;
 
 		/**
 		 * Ekran smierci

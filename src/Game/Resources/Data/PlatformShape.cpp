@@ -66,7 +66,7 @@ PlatformShape::PlatformShape(FILE* _file, const char* _label, float _angle) :
 				bounds(0, 0, 0, 0),
 				angle(TO_RAD(_angle)),
 				//
-				points(NULL),
+				points(nullptr),
 				count(0),
 				//
 				main_col(oglWrapper::WHITE),

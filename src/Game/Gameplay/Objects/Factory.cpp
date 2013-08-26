@@ -426,6 +426,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 			}
 		}
 	}
+
 	// Potrzebne przy realokacji tekstur
 	_object->orientation = _orientation;
 	_object->factory_type = _type;
@@ -445,7 +446,7 @@ void ResourceFactory::unload() {
 	 main_resource_manager.deleteResource(tex.second->getResourceID());
 	 }
 	 textures.clear();
-	 **/
+	 */
 }
 
 /**

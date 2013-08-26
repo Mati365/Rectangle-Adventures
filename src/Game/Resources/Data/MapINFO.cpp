@@ -62,8 +62,12 @@ bool readMob(FILE* file) {
 			orientation);
 	//
 	body->script_id = script_id;
-	if (body->state == 1) { // NONE = 1
+	if (body->state == Body::NONE) {
 		body->state = state;
+		if (IS_SET(body->state, Body::STATIC)) {
+			ResourceFactory::getInstance(NULL).getPhysics()->insertToConstBodies(
+					body);
+		}
 	}
 	return true;
 }

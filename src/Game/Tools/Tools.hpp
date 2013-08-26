@@ -41,21 +41,33 @@ void safe_delete(T*& _ptr) {
  * Prosty timer
  */
 struct _Timer {
+		/** Cykle */
 		int max_cycles_count;
 		int cycles_count;
 
+		/** Uśpienie między cyklami */
+		int sleep_beetwen_cycle;
+		int sleep_time;
+
 		bool active;
+		bool loop;
 
 		_Timer() :
 						max_cycles_count(0),
 						cycles_count(0),
-						active(false) {
+						sleep_beetwen_cycle(0),
+						sleep_time(0),
+						active(false),
+						loop(false) {
 		}
 
 		_Timer(int _max_cycles_count, int _cycles_count = 0) :
 						max_cycles_count(_max_cycles_count),
 						cycles_count(_cycles_count),
-						active(max_cycles_count != 0) {
+						sleep_beetwen_cycle(0),
+						sleep_time(0),
+						active(max_cycles_count != 0),
+						loop(false) {
 		}
 		/**
 		 * Okrążenie timeru
@@ -64,9 +76,25 @@ struct _Timer {
 			if (!active) {
 				return;
 			}
+
+			/** Uśpienie */
+			if (sleep_beetwen_cycle != 0) {
+				sleep_time++;
+				if (sleep_beetwen_cycle > sleep_time) {
+					return;
+				} else {
+					sleep_time = 0;
+				}
+			}
+
+			/** Cykle */
 			cycles_count++;
 			if (max_cycles_count <= cycles_count) {
-				active = false;
+				if (loop) {
+					cycles_count = 0;
+				} else {
+					active = false;
+				}
 			} else {
 				active = true;
 			}
@@ -78,6 +106,7 @@ struct _Timer {
 		void reset() {
 			active = true;
 			cycles_count = 0;
+			sleep_time = 0;
 		}
 };
 
@@ -130,7 +159,7 @@ class AllocKiller {
 	private:
 		void pushReference() {
 			if (!ptr) {
-				return;;
+				return;
 			}
 			if (!counter) {
 				counter = new long(1);
@@ -142,8 +171,8 @@ class AllocKiller {
 		void releaseReference() {
 			(*counter)--;
 			if ((*counter) == 0) {
-				delete counter;
-				delete ptr;
+				safe_delete<long>(counter);
+				safe_delete<T>(ptr);
 			}
 		}
 };
@@ -206,6 +235,7 @@ namespace Memory {
 			}
 			
 			bool recover();
+
 			virtual ~Snapshot() {
 			}
 	};

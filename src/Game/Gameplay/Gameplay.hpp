@@ -65,7 +65,7 @@ namespace Gameplay {
 			 * AllocKiller nie powinien zmniejszyć
 			 * wydajności
 			 */
-			deque<Body*> static_objects;
+			deque<AllocKiller<Body> > static_objects;
 
 			/** Kamera */
 			Camera cam;

@@ -187,6 +187,12 @@ namespace Physics {
 			/** Dodawanie obiektu */
 			void insert(Body*);
 
+			/**
+			 * Lista ciał, które są statyczne, mają
+			 * uchwyty skryptów
+			 */
+			void insertToConstBodies(Body*);
+
 			/** Usuwanie obiektu */
 			bool remove(Body*);
 
@@ -293,6 +299,9 @@ namespace Physics {
 
 			/** Długość życia ciała */
 			_Timer life_timer;
+
+			/** Silnik fizyczny */
+			pEngine* physics;
 
 			Body();
 

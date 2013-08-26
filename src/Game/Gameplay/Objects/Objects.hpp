@@ -279,7 +279,8 @@ class Character: public IrregularPlatform {
 		enum Action {
 			JUMPING = 1 << 0,
 			CLIMBING = 1 << 1,
-			BLOODING = 1 << 2
+			BLOODING = 1 << 2,
+			SLEEPING = 1 << 3
 		};
 
 		/**
@@ -301,16 +302,24 @@ class Character: public IrregularPlatform {
 		 * Animowany tekst np. po zdobyciu
 		 * punktu unoszący się do góry
 		 */
+#define TOOLTIP_SPEED -1
+
 		struct _Tooltip {
 				_Timer life_timer;
 				glText text;
 				Vector<float> pos;
+				float speed;
 
 				_Tooltip(const char* _text, const Vector<float>& _pos,
-						const Color& _col) :
-								life_timer(strlen(_text) * 11),
+						const Color& _col, usint _life_time = 0, float _speed =
+								TOOLTIP_SPEED) :
+								life_timer(
+										_life_time == 0 ?
+												strlen(_text) * 11 :
+												_life_time),
 								text(_col, _text, GLUT_BITMAP_HELVETICA_18, 18),
-								pos(_pos) {
+								pos(_pos),
+								speed(_speed) {
 				}
 		};
 
@@ -328,15 +337,9 @@ class Character: public IrregularPlatform {
 		CharacterStatus status;
 
 		/**
-		 * Długość wyświetlenia pojedynczej
-		 * klatki zaczerwienienia gracza
-		 */
-		_Timer blood_anim_visible_time;
-
-		/**
 		 * Ilość klatek zaczerwienienia
 		 */
-		_Timer blood_anim_cycles;
+		_Timer blood_anim;
 
 		/**
 		 * Lewitacja obiektu - przeznaczone
@@ -344,6 +347,12 @@ class Character: public IrregularPlatform {
 		 */
 		_Timer levitation_timer;
 		Vector<float> start_pos;
+
+		/**
+		 *  Uśpienie
+		 */
+		_Timer sleep_timer; // timer uśpienia
+		_Timer zzz_delay; // timer emitowania zzz
 
 		/**
 		 * Zamiast stosu lepiej dać ostatni
@@ -371,8 +380,7 @@ class Character: public IrregularPlatform {
 		 * od krwii
 		 */
 		bool isBlooding() const {
-			return blood_anim_cycles.cycles_count % 2
-					&& IS_SET(action, BLOODING);
+			return blood_anim.cycles_count % 2 && IS_SET(action, BLOODING);
 		}
 
 		bool isJumping() const {
@@ -387,9 +395,12 @@ class Character: public IrregularPlatform {
 			return action;
 		}
 
-		inline void addTooltip(const char* _text, const Color& _col) {
-			tooltips.push_back(_Tooltip(_text, Vector<float>(x, y), _col));
-		}
+		/**
+		 * Dodawanie napisu unoszącego się
+		 * nad graczem
+		 */
+		void addTooltip(const char*, const Color&, float = 0, float = 0, usint =
+				0, float = TOOLTIP_SPEED);
 
 		/**
 		 * Przepisywanie informacji do
@@ -406,13 +417,19 @@ class Character: public IrregularPlatform {
 		 * Akcje dotyczące poruszania się i
 		 * zachowania gracza
 		 */
-		void die(pEngine*); // śmierć, rozprucie ;)
-		void hitMe(pEngine*); // uderz mnie ;_;
+		void die(); // śmierć, rozprucie ;)
+		void hitMe(); // uderz mnie ;_;
 				
 		void move(float, float);
-		void jump(float, bool);
+		void jump(float, bool = false);
 
 		void dodge(usint); // taktyczny unik
+
+		/** Odświeżanie timeru spania */
+		void updateSleeping();
+
+		/** Resetowanie spania */
+		void resetSleeping();
 
 		/**
 		 * Odświeżanie gracza
@@ -686,6 +703,13 @@ class ResourceFactory {
 		 * Resetowanie
 		 */
 		void unload();
+
+		/**
+		 * Pobieranie wskaźniku do fizyki
+		 */
+		pEngine* getPhysics() {
+			return physics;
+		}
 
 	private:
 		void loadMainTexturesPack();

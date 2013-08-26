@@ -140,9 +140,6 @@ void MapRenderer::swapBufferMap() {
 }
 
 void MapRenderer::setMap(MapINFO* _map) {
-	for (auto& obj : static_objects) {
-		safe_delete<Body>(obj);
-	}
 	static_objects.clear();
 
 	shake_timer.reset();

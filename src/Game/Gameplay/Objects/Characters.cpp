@@ -74,14 +74,19 @@ Character::Character(const string& _nick, float _x, float _y,
 				IrregularPlatform(_x, _y, true, _shape),
 				action(JUMPING),
 				status(MAX_LIVES, false, 0, 0, _x, _y),
+
 				// Timery
-				blood_anim_visible_time(11),
-				blood_anim_cycles(8),
+				blood_anim(8),
 				levitation_timer(
 						DEFAULT_LEVITATION_DURATION,
 						getIntRandom<int>(0, DEFAULT_LEVITATION_DURATION)),
-				start_pos(_x, _y) {
+				start_pos(_x, _y),
+				// Uśpienie
+				sleep_timer(300),
+				zzz_delay(30) {
 	type = _type;
+	levitation_timer.loop = true;
+	blood_anim.sleep_beetwen_cycle = 11;
 	//
 	addCheckpoint(true);
 }
@@ -89,9 +94,10 @@ Character::Character(const string& _nick, float _x, float _y,
 /**
  * Uderzenie - zmniejszenie życia
  */
-void Character::hitMe(pEngine* physics) {
+void Character::hitMe() {
 	ADD_FLAG(action, BLOODING);
 	//
+	blood_anim.reset();
 	generateExplosion(
 			physics,
 			static_cast<Rect<float> >(*this),
@@ -107,7 +113,7 @@ void Character::hitMe(pEngine* physics) {
 /**
  * Eksplozja
  */
-void Character::die(pEngine* physics) {
+void Character::die() {
 	if (isDead()) {
 		return;
 	}
@@ -140,6 +146,53 @@ void Character::die(pEngine* physics) {
 	 * Dźwięk śmierci ;_;
 	 */
 	playResourceSound(DIE_SOUND);
+}
+
+/**
+ * Odblokowywanie spania
+ */
+void Character::updateSleeping() {
+	// Upływ czasu nieaktywności
+	sleep_timer.tick();
+	if (!sleep_timer.active) {
+		// Emitowanie Zzz
+		zzz_delay.tick();
+		if (!zzz_delay.active) {
+			addTooltip(
+					"Zzz",
+					oglWrapper::WHITE,
+					0,
+					0,
+					zzz_delay.max_cycles_count / 3 * 10,
+					TOOLTIP_SPEED / 2.f);
+			zzz_delay.reset();
+		}
+	}
+	ADD_FLAG(action, SLEEPING);
+}
+
+/**
+ * Resetowanie spania
+ */
+void Character::resetSleeping() {
+	sleep_timer.reset();
+	//
+	UNFLAG(action, SLEEPING);
+}
+
+/**
+ * Napis nad graczem
+ */
+void Character::addTooltip(const char* _text, const Color& _col,
+		float _x_correction, float _y_correction, usint _life_time,
+		float _speed) {
+	tooltips.push_back(
+			_Tooltip(
+					_text,
+					Vector<float>(x + _x_correction, y + _y_correction),
+					_col,
+					_life_time,
+					_speed));
 }
 
 /**
@@ -192,13 +245,37 @@ void Character::recoverFromCheckpoint(MapINFO* map) {
 					status.score - MAX_SCORE * 0.1 : 0;
 	status.health -= 1;
 
-	hitMe(map->physics);
+	hitMe();
 }
 
 /**
  * Kolizja gracza
  */
 void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
+	/**
+	 * Kolizje dla mobów
+	 */
+	switch (type) {
+		/**
+		 *
+		 */
+		case SPIKES:
+			if (dir == pEngine::DOWN && orientation == pEngine::DOWN
+					&& !body->collisions[pEngine::UP - 1]) {
+				body->catchCollision(physics, invertDir(dir), this);
+			}
+			break;
+
+			/**
+			 *
+			 */
+		default:
+			break;
+	}
+
+	/**
+	 * Test martwości
+	 */
 	if (isDead()) {
 		return;
 	}
@@ -210,7 +287,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			&& (type == Body::HERO || type == Body::ENEMY)) {
 		// Zryte formatowanie
 		if (velocity.y < -9 && status.health > 0) {
-			die(physics);
+			die();
 			return;
 		}
 		UNFLAG(action, JUMPING);
@@ -317,7 +394,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 				body->destroyed = true;
 			} else {
 				status -= enemy->status;
-				hitMe(physics);
+				hitMe();
 			}
 			dodge(dir);
 			break;
@@ -329,7 +406,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			status += enemy->status;
 			body->destroyed = true;
 			//
-			hitMe(physics);
+			hitMe();
 			dodge(dir);
 			break;
 
@@ -342,7 +419,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			}
 			status += enemy->status;
 			//
-			hitMe(physics);
+			hitMe();
 			dodge(dir);
 			break;
 
@@ -353,7 +430,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			break;
 	}
 	if (status.health == 0) {
-		die(physics);
+		die();
 	}
 }
 
@@ -365,11 +442,15 @@ void Character::updateMe() {
 		/**
 		 *
 		 */
+		case HERO:
+			updateSleeping();
+			break;
+
+			/**
+			 *
+			 */
 		case SCORE: {
 			levitation_timer.tick();
-			if (!levitation_timer.active) {
-				levitation_timer.reset();
-			}
 
 			/**
 			 * Lewitacja to 1/3 wysokości obiektu
@@ -393,6 +474,11 @@ void Character::updateMe() {
 												- (float) levitation_timer.cycles_count
 														/ (float) levitation_timer.max_cycles_count);
 			}
+
+			/**
+			 * Kurczenie się serca
+			 */
+
 		}
 			break;
 
@@ -441,6 +527,8 @@ void Character::dodge(usint _dir) {
  * Skok z określoną prędkością!
  */
 void Character::jump(float _y_speed, bool _force) {
+	resetSleeping();
+	//
 	if (!isDead() && (!IS_SET(action, JUMPING) || _force)) {
 		ADD_FLAG(action, JUMPING);
 		velocity.y = -_y_speed;
@@ -455,12 +543,16 @@ void Character::jump(float _y_speed, bool _force) {
  * Poruszanie się
  */
 void Character::move(float x_speed, float y_speed) {
+	resetSleeping();
+	//
 	if ((x_speed > 0 && velocity.x < 0) || (x_speed < 0 && velocity.x > 0)) {
 		velocity.x = 0;
 	}
+
 	if (isDead() || velocity.x >= 4.f || velocity.x <= -4.f) {
 		return;
 	}
+
 	velocity.x += x_speed;
 	velocity.y += y_speed;
 }
@@ -470,25 +562,15 @@ void Character::move(float x_speed, float y_speed) {
  * z wrogiem
  */
 void Character::updateHitAnim() {
-	blood_anim_visible_time.tick();
-
-	if (!blood_anim_visible_time.active) {
-		blood_anim_visible_time.reset();
-		blood_anim_cycles.tick();
-
-		if (!blood_anim_cycles.active) {
-			UNFLAG(action, BLOODING);
-			//
-			blood_anim_cycles.reset();
-		}
+	blood_anim.tick();
+	if (!blood_anim.active) {
+		UNFLAG(action, BLOODING);
 	}
 }
 
 /**
  * Rysowanie tooltipów
  */
-#define TOOLTIP_SPEED -1
-
 void Character::drawTooltips() {
 	if (tooltips.empty()) {
 		return;
@@ -509,7 +591,7 @@ void Character::drawTooltips() {
 		_Tooltip& object = tooltips[i];
 
 		// I przy okazji to odświeżanie
-		object.pos.y += TOOLTIP_SPEED;
+		object.pos.y += object.speed;
 
 		if (object.life_timer.active) {
 			object.life_timer.tick();
@@ -542,7 +624,9 @@ void Character::drawTooltips() {
  * Malowanie całego gracza
  */
 void Character::drawObject(Window*) {
-	updateMe(); // Odświeżanie obiektu
+	// Odświeżanie obiektu
+	updateMe();
+
 	//
 	glLineWidth(1.f);
 	if (IS_SET(action, BLOODING)) {

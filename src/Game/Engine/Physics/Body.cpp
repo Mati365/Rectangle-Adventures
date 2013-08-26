@@ -23,7 +23,8 @@ Body::Body() :
 				layer(STATIC_LAYER),
 				script_id(0),
 				orientation(pEngine::UP),
-				life_timer(0) {
+				life_timer(0),
+				physics(nullptr) {
 	x = 0;
 	y = 0;
 	w = 0;
@@ -40,7 +41,8 @@ Body::Body(float _x, float _y, float _w, float _h, float _roughness,
 				layer(STATIC_LAYER),
 				script_id(0),
 				orientation(pEngine::UP),
-				life_timer(0) {
+				life_timer(0),
+				physics(nullptr) {
 	x = _x;
 	y = _y;
 	w = _w;

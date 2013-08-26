@@ -43,7 +43,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						MAX_LIVES,
 						Control::VERTICAL),
 
-				heart_anim(30),
+				heart_anim(3),
 
 				score(0, 16, Body::NONE, NULL, SCORE_ICON_WIDTH),
 				score_bar(
@@ -56,14 +56,15 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						MAX_SCORE,
 						Control::VERTICAL),
 
-				retry_icon(
+				retry_hud(
 						Rect<float>(
-								WINDOW_WIDTH - 100 - SPACES * 2,
+								WINDOW_WIDTH - 22 - SPACES * 2,
 								16,
-								32,
+								16,
 								score_bar.y + score_bar.h),
 						"Od nowa",
 						NULL,
+						false,
 						this),
 
 				game_over(
@@ -91,6 +92,10 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 			Rect<float>(WINDOW_WIDTH / 2 + 10, WINDOW_HEIGHT - 45, 100, 35),
 			"Do menu");
 	return_to_menu->putCallback(Event::MOUSE_RELEASED, this);
+
+	/** Długość cyklu animacji serca */
+	heart_anim.sleep_beetwen_cycle = 50;
+	heart_anim.loop = true;
 }
 
 /**
@@ -104,6 +109,7 @@ void MessageRenderer::openCutscene(const Message& msg) {
 		logEvent(Logger::LOG_WARNING, "Brak cutsceny!");
 		return;
 	}
+
 	if (cutscene_box) {
 		delete cutscene_box;
 	}
@@ -113,6 +119,7 @@ void MessageRenderer::openCutscene(const Message& msg) {
 			Body::STATIC,
 			msg.cutscene);
 	cutscene_box->fitToWidth(WINDOW_WIDTH);
+
 	//
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
 
@@ -153,27 +160,71 @@ void MessageRenderer::addMessage(const Message& msg) {
 void MessageRenderer::drawBorder(Window* _window) {
 	if (screen == HUD_SCREEN) {
 		/**
+		 * Kolor HUDu
+		 */
+		Color col(1.f, 1.f, 1.f);
+
+		/**
 		 * Obramowanie HUDu
 		 */
+		Vector<float> progress_hud_bounds(
+				score_bar.x + score_bar.w + SPACES * 2,
+				score_bar.h + score_bar.y + SPACES * 2);
+
 		glPushAttrib(GL_ENABLE_BIT);
 		glLineStipple(1, 0xAAAA);
 		glEnable(GL_LINE_STIPPLE);
+		glLineWidth(2.f);
 
-		glBegin(GL_LINES);
+		/**
+		 * Obramowanie pasków życia
+		 */
+		glBegin(GL_LINE_STRIP);
 
-		glColor4f(1.f, 1.f, 1.f, 1.f);
-		glVertex2f(score_bar.x + score_bar.w + SPACES * 2, SPACES * 2);
+		glColor4f(col.r, col.g, col.b, 1.f);
+		glVertex2f(progress_hud_bounds.x, SPACES * 2);
 
-		glColor4f(1.f, 1.f, 1.f, .5f);
-		glVertex2f(
-				score_bar.x + score_bar.w + SPACES * 2,
-				score_bar.h + score_bar.y + SPACES * 2);
-		glVertex2f(
-				score_bar.x + score_bar.w + SPACES * 2,
-				score_bar.h + score_bar.y + SPACES * 2);
+		glColor4f(col.r, col.g, col.b, .5f);
+		glVertex2f(progress_hud_bounds.x, progress_hud_bounds.y);
 
-		glColor4f(1.f, 1.f, 1.f, 1.f);
-		glVertex2f(SPACES * 2, score_bar.h + score_bar.y + SPACES * 2);
+		glColor4f(col.r, col.g, col.b, 1.f);
+		glVertex2f(SPACES * 2, progress_hud_bounds.y);
+
+		glEnd();
+
+		/**
+		 * Obramowanie przycisku restartu
+		 */
+		Vector<float> retry_hud_bounds(retry_hud.x - SPACES * 2, SPACES * 2);
+
+		glBegin(GL_LINE_STRIP);
+
+		glColor4f(col.r, col.g, col.b, 1.f);
+		glVertex2f(retry_hud_bounds.x, SPACES * 2);
+
+		glColor4f(col.r, col.g, col.b, .5f);
+		glVertex2f(retry_hud_bounds.x, progress_hud_bounds.y);
+
+		glColor4f(col.r, col.g, col.b, 1.f);
+		glVertex2f(WINDOW_WIDTH - SPACES * 2, progress_hud_bounds.y);
+
+		glEnd();
+
+		/**
+		 * Obramowanie poziomu lawy
+		 */
+		glBegin(GL_LINE_STRIP);
+
+		glColor4f(col.r, col.g, col.b, 1.f);
+		glVertex2f(progress_hud_bounds.x + SPACES * 20, SPACES * 2);
+
+		// dolna część
+		glColor4f(col.r, col.g, col.b, .5f);
+		glVertex2f(progress_hud_bounds.x + SPACES * 20, progress_hud_bounds.y);
+		glVertex2f(retry_hud_bounds.x - SPACES * 20, progress_hud_bounds.y);
+
+		glColor4f(col.r, col.g, col.b, 1.f);
+		glVertex2f(retry_hud_bounds.x - SPACES * 20, SPACES * 2);
 
 		glEnd();
 
@@ -318,14 +369,10 @@ void MessageRenderer::updateHUDControls() {
 	 * Pukanie serca!
 	 */
 	heart_anim.tick();
+	heart.fitToWidth(
+			(float) HEART_ICON_WIDTH * ((float) heart_anim.cycles_count + 1)
+					/ (float) heart_anim.max_cycles_count);
 	if (!heart_anim.active) {
-		if (heart.w == HEART_ICON_WIDTH) {
-			heart.fitToWidth((float) HEART_ICON_WIDTH / 1.25f);
-		} else if (heart.w == (float) HEART_ICON_WIDTH / 1.25f) {
-			heart.fitToWidth((float) HEART_ICON_WIDTH / 1.4f);
-		} else if (heart.w == (float) HEART_ICON_WIDTH / 1.4f) {
-			heart.fitToWidth(HEART_ICON_WIDTH);
-		}
 		//
 		heart_anim.reset();
 	}
@@ -356,10 +403,10 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	score.drawObject(NULL);
 	score_bar.drawObject(NULL);
 
-	if (!retry_icon.getIcon()) {
-		retry_icon.setIcon(getShapePointer("retry_shape"));
+	if (!retry_hud.getIcon()) {
+		retry_hud.setIcon(getShapePointer("retry_shape"));
 	}
-	retry_icon.drawObject(NULL);
+	retry_hud.drawObject(NULL);
 }
 
 /**

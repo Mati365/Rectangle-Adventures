@@ -50,20 +50,30 @@ pEngine::pEngine(const Rect<float>& _bounds, float _gravity_speed) :
 }
 
 /**
- * Usuwanie obiektu
+ * Dodawanie obiektu
  */
 void pEngine::insert(Body* body) {
 	if (!body) {
 		return;
 	}
+	body->physics = this;
 	if (IS_SET(body->state, Body::STATIC)) {
 		list.push_back(body);
 	}
 	quadtree->insert(body);
 }
 
+void pEngine::insertToConstBodies(Body* body) {
+	for (auto& obj : list) {
+		if (obj == body) {
+			return;
+		}
+	}
+	list.push_back(body);
+}
+
 /**
- * Dodawanie obiektu
+ * Usuwanie obiektu
  */
 bool pEngine::remove(Body* body) {
 	return quadtree->remove(body);
