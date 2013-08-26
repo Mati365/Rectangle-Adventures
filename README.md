@@ -1,7 +1,7 @@
 Rect-Adventures
 ===============
+![Gameplay](screenshot.png)
 ![Gameplay](screenshot4.png)
-![Gameplay](screenshot3.png)
 
 Jest to gra platformowo-zręcznościowa, której głównym założeniem jest renderowanie całej grafiki przy pomocy tylko i wyłącznie wektorów. Celem tej gry jest 'uzbieranie' określonej ilości śmieci z planszy przez robota pamiętając o omijaniu przeszkód.
 
@@ -30,7 +30,7 @@ Języki programowania to: C++0x oraz Java, zaimplementowane technologie:
 - Prosty język skryptowy umożliwiający interakcje z platformami
 
 Wymagania:
-RAM: 32mb / Procesor: min.1GHZ / GPU, nie testowane jednak brak użycia VBO zmniejsza ilosć wymaganej pamięci karty.
+RAM: 64mb / Procesor: min.1GHZ / GPU, nie testowane jednak brak użycia VBO zmniejsza ilosć wymaganej pamięci karty.
 
 Uruchomienie:
 chmod +x ./Rect\ Adventures && ./Rect\ Adventures
