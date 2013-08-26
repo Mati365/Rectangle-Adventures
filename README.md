@@ -1,6 +1,6 @@
 Rect-Adventures
 ===============
-![Gameplay](screenshot.png)
+![Gameplay](Screenshot.png)
 ![Gameplay](screenshot4.png)
 
 Jest to gra platformowo-zręcznościowa, której głównym założeniem jest renderowanie całej grafiki przy pomocy tylko i wyłącznie wektorów. Celem tej gry jest 'uzbieranie' określonej ilości śmieci z planszy przez robota pamiętając o omijaniu przeszkód.
