@@ -263,17 +263,15 @@ class AI {
 
 //-------------------------
 
-/**
- * Generowanie 'krwii' ;)
- */
+#define BLOOD_LAYER (STATIC_LAYER + 16)
+
+/** Generowanie 'krwii' ;) */
 void generateExplosion(pEngine*, const Rect<float>&, usint, const Color&, float,
 		float, const Vector<float>&, float = -1, usint = Body::NONE);
 
 //
 
-/**
- * Klasa GRACZA
- */
+/** Klasa GRACZA */
 class Character: public IrregularPlatform {
 	public:
 		enum Action {
@@ -419,7 +417,7 @@ class Character: public IrregularPlatform {
 		 */
 		void die(); // śmierć, rozprucie ;)
 		void hitMe(); // uderz mnie ;_;
-				
+
 		void move(float, float);
 		void jump(float, bool = false);
 

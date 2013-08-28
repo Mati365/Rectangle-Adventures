@@ -33,22 +33,39 @@ namespace Gameplay {
 	using namespace GUI;
 	
 	class Camera {
+			/**
+			 * Focus będzie bardziej na
+			 * dole ekranu
+			 */
+#define Y_SPACE 100
+
 		public:
 			Rect<float> pos;
 			Body* focus;
 
+			/**
+			 * Pozycja kamery to nie pozycja względem krawędzi!!
+			 */
 			Camera(Body* _focus) :
 							focus(_focus) {
 				pos.w = WINDOW_WIDTH;
 				pos.h = WINDOW_HEIGHT;
 			}
 			
+			/** Odświeżanie pocycji kamery */
 			void updateCam(Window* _window) {
 				if (!focus) {
 					return;
 				}
 				pos.x = focus->x - pos.w / 2 + focus->w / 2;
-				pos.y = focus->y - pos.h / 2 + focus->h / 2;
+				pos.y = focus->y - pos.h / 2 + focus->h / 2 - Y_SPACE;
+			}
+
+			/** Pobieranie pozycji względem krawędzi okna */
+			Vector<float> getFocusScreenPos() const {
+				return Vector<float>(
+						focus->x + focus->w / 2 - pos.x,
+						focus->y + focus->h / 2 - pos.y - Y_SPACE);
 			}
 	};
 	
@@ -56,7 +73,19 @@ namespace Gameplay {
 	 * Renderer paralaxy
 	 */
 	class ParalaxRenderer: public Renderer, public IntroBackground {
+		public:
+			/** Konfiguracja renderera */
+			enum RendererConfig {
+				DRAW_QUAD = 1 << 1, // Rysowanie siatki z quadtree
+				ROTATION = 1 << 2, // Rotacja mapy
+				PARALLAX = 1 << 3 // Brak rysowania gracza
+			};
+
 		protected:
+
+			/** Konfiguracja */
+			usint config;
+
 			/** Mapa do głównego renderowania */
 			MapINFO* map;
 
@@ -71,15 +100,11 @@ namespace Gameplay {
 			Camera cam;
 			float ratio;
 
-			/** Rysowanie fioletowej szachownicy */
-			bool draw_quad;
-			bool rotate;
-
 			/** Timer potrząsania */
 			_Timer shake_timer;
 
 		public:
-			ParalaxRenderer(Body*, float, bool, MapINFO* = NULL);
+			ParalaxRenderer(Body*, float, MapINFO* = nullptr);
 
 			virtual void drawObject(Window*);
 
@@ -91,9 +116,13 @@ namespace Gameplay {
 			/** Potrząsanie ekranem */
 			void shake();
 
-			/** Odblokowywanie rotacji kamery */
-			void enableRotate(bool _rotate) {
-				rotate = _rotate;
+			/** Ustawienie konfiguracji */
+			void setConfig(usint _config) {
+				config = _config;
+			}
+
+			usint getConfig() const {
+				return config;
 			}
 
 			virtual Character* getHero() {
@@ -123,7 +152,8 @@ namespace Gameplay {
 	 * Główny renderer mapy!
 	 */
 	class MapRenderer: public ParalaxRenderer, public EventListener {
-#define DEFAULT_SHADOW_RADIUS 250
+#define DEFAULT_SHADOW_RADIUS 350
+#define DEFAULT_CAM_RATIO .95f
 
 		public:
 			enum Weather {
@@ -167,7 +197,8 @@ namespace Gameplay {
 			virtual void catchEvent(const Event&);
 			virtual void drawObject(Window*);
 
-			ParalaxRenderer* addToParalax(MapINFO*, float, Body*);
+			/** Dodawanie paralaksy */
+			ParalaxRenderer* addToParalax(MapINFO*, float, Body*, usint = 0);
 
 			/** Włączanie HUDu */
 			void enableHUD(bool _hud_enabled) {

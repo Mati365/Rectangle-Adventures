@@ -16,7 +16,7 @@ using namespace Gameplay;
  * Główny renderer mapy
  */
 MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
-				ParalaxRenderer(_hero, 0.95f, true),
+				ParalaxRenderer(_hero, DEFAULT_CAM_RATIO),
 				msg(45, Color(0, 128, 255), Color(255, 255, 255), this),
 				hero(nullptr),
 				hud_enabled(true),
@@ -26,6 +26,7 @@ MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 				buffer_swap_required(false) {
 	setHero(dynamic_cast<Character*>(_hero));
 	setMap(_map);
+	setConfig(RendererConfig::DRAW_QUAD);
 
 	resetColorSaturation();
 }
@@ -34,14 +35,16 @@ MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
  * Dodawanie tła gry!
  */
 ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
-		Body* _body) {
+		Body* _body, usint _config) {
 	if (map->physics) {
 		ParalaxRenderer* renderer = new ParalaxRenderer(
 				_body,
 				_ratio,
-				true,
 				_paralax);
+		renderer->setConfig(_config);
+
 		paralax_background.push_front(renderer);
+		//
 		return renderer;
 	}
 	return nullptr;
@@ -219,11 +222,31 @@ void MapRenderer::showGameOver() {
  * Rysowanie
  */
 void MapRenderer::drawObject(Window* _window) {
+	if (!hero) {
+		return;
+	}
+
+	/** Aby gracz nie wychodził za ekran! */
+	Vector<float> hero_screen_pos = cam.getFocusScreenPos();
+
+	/** odległość max. ruchów gracza na erkanie */
+	float go_distance = .75f;
+
+	if (hero_screen_pos.x > WINDOW_WIDTH * go_distance
+			|| hero_screen_pos.x < WINDOW_WIDTH * (1 - go_distance)
+			|| hero_screen_pos.y > WINDOW_HEIGHT * go_distance
+			|| hero_screen_pos.y < WINDOW_HEIGHT * (1 - go_distance)) {
+		ratio = 1.f + (1.f - DEFAULT_CAM_RATIO); // z powrotem na środek ekranu
+	} else {
+		ratio = DEFAULT_CAM_RATIO;
+	}
+
+	/** Konfiguracja shadera */
 	shaders[main_shader_id]->begin();
 	shaders[main_shader_id]->setUniform2f(
 			"center",
-			hero->x + hero->w / 2 - cam.pos.x,
-			hero->y + hero->h / 2 - cam.pos.y);
+			hero_screen_pos.x,
+			hero_screen_pos.y);
 	shaders[main_shader_id]->setUniform3f(
 			"active_colors",
 			col_saturation[0],

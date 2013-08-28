@@ -19,6 +19,12 @@ Game::Game(const char* map_path) {
 			!map_path ?
 					LevelManager::getInstance().getFirstMap() :
 					loadMap(map_path));
+	lvl->addToParalax(
+			loadMap("parallax_1.txt", MapINFO::WITHOUT_HERO),
+			0.45f,
+			lvl->getHero(),
+			ParalaxRenderer::PARALLAX | ParalaxRenderer::ROTATION
+					| ParalaxRenderer::DRAW_QUAD);
 }
 
 void Game::catchEvent(const Event& event) {

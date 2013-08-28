@@ -18,7 +18,6 @@ Menu::Menu() :
 						GLUT_BITMAP_HELVETICA_12,
 						12) {
 	lvl->enableHUD(false);
-	lvl->enableRotate(false);
 
 	Character* hero = getHero();
 	hero->getStatus()->health = 1;

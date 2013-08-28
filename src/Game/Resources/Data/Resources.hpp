@@ -90,8 +90,8 @@ class PlatformShape;
 /**
  * Wczytywanie mapy!
  */
-bool loadMap(const char*, MapINFO*);
-MapINFO* loadMap(const char*);
+bool loadMap(const char*, MapINFO*, usint = 0);
+MapINFO* loadMap(const char*, usint = 0);
 
 /**
  * Wczytywanie kształtu!
@@ -112,11 +112,19 @@ class Platform;
 class Character;
 class MapINFO: public Resource {
 	public:
-		struct Parallax {
-				MapINFO* map;
-				float ratio;
+		/**
+		 * Konfiguracja wczytania mapy,
+		 * po co w paralaxie mapie gracz?
+		 */
+		enum OpenConfig {
+			WITHOUT_HERO = 1 << 1,
+			WITHOUT_WEATHER = 1 << 2,
+			WITHOUT_TEMPERATURE = 1 << 3
 		};
 
+		usint open_config;
+
+		/** Fizyka */
 		pEngine* physics;
 
 		/**

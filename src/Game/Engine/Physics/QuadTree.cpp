@@ -214,15 +214,23 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 	}
 	for (usint i = 0; i < bodies.size(); ++i) {
 		Body* body = bodies[i];
-		//
-		if (!IS_SET(body->state, Body::STATIC)
-				&& (body->y + body->h >= _bounds.y + _bounds.h
-						|| body->x + body->w >= _bounds.x + _bounds.w
-						|| body->x <= _bounds.x || body->y <= _bounds.y)) {
-			continue;
-		}
+
+		/** Jeśli obiekt mieści się w zasięgu widzialnego ekranu */
 		if (_bounds.intersect(
 				Rect<float>(body->x, body->y, body->w, body->h))) {
+
+			/** Resetowanie obiektów */
+			UNFLAG(body->state, Body::BUFFERED);
+
+			/** A co jeśli obiekt jest przycięty na ekranie? */
+			if (!IS_SET(body->state, Body::STATIC)
+					&& (body->y + body->h >= _bounds.y + _bounds.h
+							|| body->x + body->w >= _bounds.x + _bounds.w
+							|| body->x <= _bounds.x || body->y <= _bounds.y)) {
+				ADD_FLAG(body->state, Body::BUFFERED);
+			}
+
+			/** Dodawanie obiektu */
 			_bodies.push_back(body);
 		}
 	}

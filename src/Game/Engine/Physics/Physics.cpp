@@ -44,7 +44,7 @@ usint Physics::invertDir(usint _dir) {
 pEngine::pEngine(const Rect<float>& _bounds, float _gravity_speed) :
 				bounds(_bounds),
 				gravity_speed(_gravity_speed),
-				pause(false),
+				config(0),
 				sleep_timer(0) {
 	quadtree = new QuadTree(NULL, _bounds, 0);
 }
@@ -101,12 +101,10 @@ bool pEngine::isBodyActive(Body* object) {
  * Odświeżanie świata!
  */
 void pEngine::updateWorld() {
-	if (pause) {
+	if (IS_SET(config, Flags::PAUSE)) {
 		return;
 	}
-	/**
-	 * Uśpienie
-	 */
+	/** Uśpienie */
 	if (sleep_timer.active) {
 		sleep_timer.tick();
 		if (!sleep_timer.active) {
@@ -115,9 +113,7 @@ void pEngine::updateWorld() {
 		return;
 	}
 	
-	/**
-	 * Usuwanie wykasowanych obiektów!
-	 */
+	/** Usuwanie wykasowanych obiektów! */
 	visible_bodies.clear();
 	
 	/**
@@ -128,20 +124,22 @@ void pEngine::updateWorld() {
 	quadtree->update(active_range);
 	quadtree->getBodiesAt(active_range, visible_bodies);
 
-	/**
-	 * Sprawdzenie kolizji!
-	 */
+	/** Sprawdzenie kolizji! */
 	checkCollisions(visible_bodies);
 	
-	/**
-	 * Grawitacja!
-	 */
+	/** Grawitacja! */
+	if (IS_SET(config, Flags::GRAVITY_DISABLED)) {
+		return;
+	}
 	for (usint i = 0; i < visible_bodies.size(); ++i) {
 		Body* object = visible_bodies[i];
 
-		/**
-		 * Żywotność
-		 */
+		/** Test obiektu  */
+		if (!object || !isBodyActive(object)) {
+			continue;
+		}
+
+		/** Żywotność */
 		if (object->life_timer.active) {
 			object->life_timer.tick();
 			if (!object->life_timer.active) {
@@ -156,28 +154,19 @@ void pEngine::updateWorld() {
 			//
 			continue;
 		}
-		//
-		if (!object || !isBodyActive(object)) {
-			continue;
-		}
-		/**
-		 * Poruszanie się po platformie
-		 */
+
+		/** Poruszanie się po platformie */
 		Body* down_collision = object->collisions[DOWN - 1];
 		if (down_collision && down_collision->velocity.x != 0) {
 			object->x += down_collision->velocity.x;
 		}
 		
-		/**
-		 * Grawitacja
-		 */
+		/** Siła ciążenia */
 		if (object->velocity.y < 20.f) {
 			object->velocity.y += gravity_speed;
 		}
 		
-		/**
-		 * Siła tarcia / w locie też chamuje
-		 */
+		/** Siła tarcia / w locie też chamuje */
 		if (abs(object->velocity.x) > 0) {
 			if (down_collision) {
 				object->velocity.x *= down_collision->roughness;

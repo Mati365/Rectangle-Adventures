@@ -13,18 +13,24 @@
 
 ///////////////////////////////////////
 
-bool loadMap(const char* path, MapINFO* map) {
+bool loadMap(const char* path, MapINFO* map, usint _open_config) {
+	if (!map) {
+		return false;
+	}
 	FILE* __map = main_filesystem.getExternalFile(path, NULL);
+
+	map->open_config = _open_config;
 	if (!map->load(__map)) {
 		return false;
 	}
 	main_filesystem.closeExternalFile();
+
 	return true;
 }
 
-MapINFO* loadMap(const char* path) {
+MapINFO* loadMap(const char* path, usint _open_config) {
 	MapINFO* map = new MapINFO(path);
-	if (!loadMap(path, map)) {
+	if (!loadMap(path, map, _open_config)) {
 		safe_delete<MapINFO>(map);
 	}
 	return map;
@@ -81,6 +87,7 @@ bool readMob(FILE* file) {
 
 MapINFO::MapINFO(const char* _label) :
 				Resource(_label),
+				open_config(0),
 				physics(NULL),
 				hero_bounds(0, 0),
 				hero_shape(NULL),
@@ -97,10 +104,19 @@ MapINFO::MapINFO(const char* _label) :
 void MapINFO::readHeader(FILE* map) {
 	char shape[256];
 
-	// Wczytywanie ustawień mapy
+	/** Wczytywanie ustawień mapy */
 	fscanf(map, "%hu %hu", &map_temperature, &map_weather);
 
-	// Wczytywanie pozycji początkowej gracza
+	/** Przestrzeganie konfiguracji! */
+	if (IS_SET(open_config, WITHOUT_WEATHER)) {
+		map_weather = 0;
+	}
+
+	if (IS_SET(open_config, WITHOUT_TEMPERATURE)) {
+		map_temperature = ResourceFactory::TextureTemperature::NEUTRAL;
+	}
+
+	/** Wczytywanie pozycji początkowej gracza */
 	fscanf(
 			map,
 			"%f %f %f %s\n",
@@ -109,7 +125,7 @@ void MapINFO::readHeader(FILE* map) {
 			&hero_bounds.w,
 			shape);
 
-	if (strlen(shape) != 0) {
+	if (!IS_SET(open_config, WITHOUT_HERO) && strlen(shape) != 0) {
 		hero_shape = readShape(shape, shape, 0);
 		if (hero_shape) {
 			resources.push_back(hero_shape->getResourceID());
@@ -218,9 +234,10 @@ void MapINFO::readPlatforms(FILE* map) {
 			 * Normalna platforma
 			 */
 			platform = new Platform(rect.x, rect.y, rect.w, rect.h, col, state);
+
 			platform->setBorder(border[0], border[1], border[2], border[3]);
+			platform->setFillType(fill_type);
 		}
-		platform->setFillType(fill_type);
 
 		/**
 		 * Warstwa obiektu
@@ -321,6 +338,7 @@ bool MapINFO::load(FILE* map) {
 	if (!map) {
 		return false;
 	}
+
 	ResourceFactory::getInstance(NULL).unload();
 
 	readHeader(map);

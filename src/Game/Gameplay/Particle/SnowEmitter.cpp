@@ -67,7 +67,7 @@ void SnowEmitter::createNewParticle(Window* _window) {
 		Particle part(
 				Vector<float>(x, y),
 				getIntRandom(6, 14),
-				getIntRandom(50, 200),
+				getIntRandom(50, 100),
 				oglWrapper::WHITE);
 		
 		part.velocity = wind;

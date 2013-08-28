@@ -11,6 +11,9 @@
 
 #include "../../Tools/Logger.hpp"
 
+/**
+ * Konstruktor
+ */
 Platform::Platform(float _x, float _y, float _w, float _h, const Color& _col,
 		usint _state) :
 				Body(_x, _y, _w, _h),
@@ -26,6 +29,9 @@ Platform::Platform(float _x, float _y, float _w, float _h, const Color& _col,
 	}
 }
 
+/**
+ * Odświeżanie ruchu platformy
+ */
 bool Platform::updatePlatform() {
 	if (max_distance.x != 0 || max_distance.y != 0) {
 		{
@@ -93,46 +99,56 @@ void Platform::setBorder(bool top, bool right, bool down, bool left) {
 }
 
 void Platform::drawBorder() {
+	bool gradient = (fill_type != Type::NONE);
+
 	/**
 	 * Obramowanie!
 	 */
 	glColor4ub(col.r, col.g, col.b, col.a);
-	glLineWidth(3);
+	glLineWidth(gradient ? 4 : 3);
+
 	if (border[0] && border[1] && border[2] && border[3]) {
 		glBegin(GL_LINE_LOOP);
 
 		glVertex2f(x, y);
 		glVertex2f(x + w, y);
 
-		glColor4ub(col.r, col.g, col.b, 0.f);
+		if (gradient) {
+			glColor4ub(col.r, col.g, col.b, 0.f);
+		}
 		glVertex2f(x + w, y + h);
 		glVertex2f(x, y + h);
 
 		glEnd();
 	} else {
 		glBegin(GL_LINES);
+		glColor4ub(col.r, col.g, col.b, col.a);
 
 		if (border[pEngine::UP - 1]) {
-			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x, y);
 			glVertex2f(x + w, y);
+
 		} else if (border[pEngine::DOWN - 1]) {
-			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x, y + h);
 			glVertex2f(x + w, y + h);
 		}
+
 		if (border[pEngine::LEFT - 1]) {
 			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x, y);
 
-			glColor4ub(col.r, col.g, col.b, 0.f);
+			if (gradient) {
+				glColor4ub(col.r, col.g, col.b, 0.f);
+			}
 			glVertex2f(x, y + h);
 		}
 		if (border[pEngine::RIGHT - 1]) {
 			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x + w, y);
 
-			glColor4ub(col.r, col.g, col.b, 0.f);
+			if (gradient) {
+				glColor4ub(col.r, col.g, col.b, 0.f);
+			}
 			glVertex2f(x + w, y + h);
 		}
 
@@ -164,14 +180,30 @@ void Platform::drawBorder() {
  * Rysowanie wypełnienia!
  */
 void Platform::drawBody() {
-	if (fill_type == NONE) {
+	if (fill_type == Type::NONE) {
 		return;
 	}
+	float line_stroke = 3.f;
 
 	/**
 	 * Wypełnienie!
 	 */
-	glLineWidth(2);
+	glBegin(GL_QUADS);
+
+	glColor4ub(col.r * 0.3f, col.g * 0.3f, col.b * 0.3f, col.a);
+	glVertex2f(x + line_stroke, y + line_stroke);
+	glVertex2f(x + w - line_stroke, y + line_stroke);
+
+	glColor4ub(col.r * 0.3f, col.g * 0.3f, col.b * 0.3f, col.a * 0.1f);
+	glVertex2f(x + w - line_stroke, y + h - line_stroke);
+	glVertex2f(x + line_stroke, y + h - line_stroke);
+
+	glEnd();
+
+	/**
+	 * Kreski w środku
+	 */
+	glLineWidth(line_stroke);
 	switch (fill_type) {
 		
 		/**
@@ -217,7 +249,7 @@ void Platform::drawBody() {
 					glColor4ub(col.r, col.g, col.b, 0.f);
 					glVertex2f(x + i * 10, y + h);
 
-					glColor4ub(col.r, col.g, col.b, col.a * 0.3f);
+					glColor4ub(col.r, col.g, col.b, col.a * 0.5f);
 					glVertex2f(x + i * 10 + 10, y);
 				}
 			} else {
@@ -321,7 +353,7 @@ IrregularPlatform::IrregularPlatform(float _x, float _y, usint _state,
 }
 
 void IrregularPlatform::setShape(PlatformShape* _shape) {
-	if(!_shape) {
+	if (!_shape) {
 		return;
 	}
 	Rect<float>& _bounds = _shape->getBounds();
@@ -357,18 +389,9 @@ void IrregularPlatform::drawObject(Window*) {
 	/**
 	 * Odświeżanie kształtu - mógła zostać podmieniona
 	 * temperatura!
-	 *
-	 if (shape) {
-	 Rect<float>& _new_bounds = shape->getBounds();
-	 if ((w != _new_bounds.w * scale || h != _new_bounds.h * scale)) {
-	 w = _new_bounds.w * scale;
-	 h = _new_bounds.h * scale;
-	 }
-	 }
 	 */
-
-	// Odświeżanie
 	updatePlatform();
+
 	/**
 	 * Rysowanie
 	 */

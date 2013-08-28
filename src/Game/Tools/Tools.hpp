@@ -17,8 +17,15 @@
 
 using namespace std;
 
+#define IS_SET(source, flag) (source&flag)
+
+#define UNFLAG(source, flag) (source &= ~flag)
+#define ADD_FLAG(source, flag) (source |= flag)
+
 #define USINT_SUB(a, b) ((int)a - (int)b < 0?a=0:a -= b)
+
 #define PI 3.14159265
+
 #define TO_RAD(a) (a * PI / 180)
 
 typedef unsigned short int usint;

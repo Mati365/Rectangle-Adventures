@@ -30,10 +30,12 @@ void oglWrapper::drawRect(float x, float y, float w, float h, const Color& col,
 	glColor4ub(col.r, col.g, col.b, col.a);
 	glLineWidth(stroke);
 	glBegin(GL_LINE_LOOP);
+
 	glVertex2f(x, y);
 	glVertex2f(x + w, y);
 	glVertex2f(x + w, y + h);
 	glVertex2f(x, y + h);
+
 	glEnd();
 }
 

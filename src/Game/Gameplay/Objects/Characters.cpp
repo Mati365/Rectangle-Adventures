@@ -58,7 +58,7 @@ void generateExplosion(pEngine* physics, const Rect<float>& body, usint count,
 		platform->setBorder(false, false, false, false);
 		platform->setFillType(Platform::FILLED);
 		//
-		platform->layer = STATIC_LAYER + 1;
+		platform->layer = BLOOD_LAYER;
 		platform->velocity = Vector<float>(
 				cosf(angle) * velocity.x,
 				sinf(angle) * velocity.y);

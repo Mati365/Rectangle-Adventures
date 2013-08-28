@@ -9,15 +9,9 @@
 #define PHYSICS_HPP_
 #include <deque>
 #include <map>
-#include <iostream>
 
 #include "../Graphics/Engine.hpp"
 #include "../../Tools/Tools.hpp"
-
-#define IS_SET(source, flag) (source&flag)
-
-#define UNFLAG(source, flag) (source &= ~flag)
-#define ADD_FLAG(source, flag) (source |= flag)
 
 #define STATIC_LAYER 0
 #define MAX_LAYER 2
@@ -134,15 +128,19 @@ namespace Physics {
 	 */
 	class pEngine {
 		public:
-			/**
-			 * Zwrot
-			 */
-			enum {
+			/** Zwrot */
+			enum Dir {
 				NONE,
 				RIGHT,
 				LEFT,
 				UP,
 				DOWN
+			};
+
+			/** Konfiguracja */
+			enum Flags {
+				GRAVITY_DISABLED = 1 << 1,
+				PAUSE = 1 << 2
 			};
 
 		private:
@@ -164,8 +162,8 @@ namespace Physics {
 			 */
 			deque<Body*> list;
 
-			/** Pauza */
-			bool pause;
+			/** Flagi dla silnika */
+			usint config;
 
 			/** Uśpienie */
 			_Timer sleep_timer;
@@ -205,10 +203,20 @@ namespace Physics {
 			void updateWorld();
 
 			void setSleep(usint);
-			void setPause(bool _pause) {
-				pause = _pause;
+
+			/** Dodawanie konfiguracji do silnika */
+			void addConfig(usint _config) {
+				ADD_FLAG(config, _config);
 			}
 			
+			void removeConfig(usint _config) {
+				UNFLAG(config, _config);
+			}
+
+			usint getConfig() const {
+				return config;
+			}
+
 			QuadTree* getQuadTree() const {
 				return quadtree;
 			}
