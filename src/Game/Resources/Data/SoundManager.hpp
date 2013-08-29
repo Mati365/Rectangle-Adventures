@@ -11,6 +11,13 @@
 
 using namespace Sound;
 
+/** Informacje o dźwięku w grze */
+struct _SoundINFO {
+		usint id;
+		const char* path;
+		float volume;
+};
+
 class SoundManager {
 	public:
 		/** Dźwięki w grze */
@@ -24,6 +31,9 @@ class SoundManager {
 			EARTH_QUAKE_SOUND_2, // trzęsienie ziemi
 			DIE_SOUND
 		};
+
+		/** Informacje o zasobach */
+		static _SoundINFO sounds_assets[];
 
 		map<usint, _Sound> sounds;
 

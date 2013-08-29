@@ -7,17 +7,56 @@
 #include "SoundManager.hpp"
 
 /**
+ * Motyw dźwięku!
+ */
+_SoundINFO SoundManager::sounds_assets[DIE_SOUND + 1] {
+														{
+															JUMP_SOUND,
+															"skok.wav",
+															MIX_MAX_VOLUME / 2 },
+														{
+															GUN_SHOT_SOUND,
+															"laser.wav",
+															MIX_MAX_VOLUME / 8 },
+														{
+															MENU_CHOOSE_SOUND,
+															"wybor_menu.wav",
+															MIX_MAX_VOLUME / 2 },
+														{
+															SCORE_SOUND,
+															"punkt.wav",
+															MIX_MAX_VOLUME / 4 },
+														{
+															SPIKES_SOUND,
+															"igly.wav",
+															MIX_MAX_VOLUME },
+														{
+															EARTH_QUAKE_SOUND_1,
+															"trzesienie_ziemi.wav",
+															MIX_MAX_VOLUME },
+														{
+															EARTH_QUAKE_SOUND_2,
+															"trzesienie_ziemi_2.wav",
+															MIX_MAX_VOLUME },
+														{
+															DIE_SOUND,
+															"smierc.wav",
+															MIX_MAX_VOLUME }, };
+
+/**
  * Wczytywanie paczki dźwięków!
  */
 void SoundManager::loadSoundsPack() {
-	sounds[JUMP_SOUND] = {Player::getInstance().loadSound("skok.wav"), MIX_MAX_VOLUME / 2};
-	sounds[GUN_SHOT_SOUND] = {Player::getInstance().loadSound("laser.wav"), MIX_MAX_VOLUME / 8};
-	sounds[MENU_CHOOSE_SOUND] = {Player::getInstance().loadSound("wybor_menu.wav"), MIX_MAX_VOLUME / 2};
-	sounds[SCORE_SOUND] = {Player::getInstance().loadSound("punkt.wav"), MIX_MAX_VOLUME / 4};
-	sounds[SPIKES_SOUND] = {Player::getInstance().loadSound("igly.wav"), MIX_MAX_VOLUME};
-	sounds[EARTH_QUAKE_SOUND_1] = {Player::getInstance().loadSound("trzesienie_ziemi.wav"), MIX_MAX_VOLUME};
-	sounds[EARTH_QUAKE_SOUND_2] = {Player::getInstance().loadSound("trzesienie_ziemi_2.wav"), MIX_MAX_VOLUME};
-	sounds[DIE_SOUND] = {Player::getInstance().loadSound("smierc.wav"), MIX_MAX_VOLUME};
+	BEGIN_LOADING("SFX extracting:");
+	//
+	for (usint i = 0; i < DIE_SOUND + 1; ++i) {
+		_SoundINFO& info = sounds_assets[i];
+		sounds[info.id] = {Player::getInstance().loadSound(info.path), info.volume};
+		//
+		PROGRESS_LOADING();
+	}
+	//
+	END_LOADING();
 }
 
 /**

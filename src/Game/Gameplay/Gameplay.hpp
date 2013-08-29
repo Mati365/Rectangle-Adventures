@@ -152,7 +152,7 @@ namespace Gameplay {
 	 * Główny renderer mapy!
 	 */
 	class MapRenderer: public ParalaxRenderer, public EventListener {
-#define DEFAULT_SHADOW_RADIUS 350
+#define DEFAULT_SHADOW_RADIUS 300
 #define DEFAULT_CAM_RATIO .95f
 
 		public:
@@ -252,7 +252,8 @@ namespace Gameplay {
 		private:
 			/** Resetowanie saturacji barw */
 			inline void resetColorSaturation() {
-				col_saturation[0] = col_saturation[1] = col_saturation[2] = 1.f;
+				col_saturation[0] = 1.2f; // bardziej karmelkowy ekran
+				col_saturation[1] = col_saturation[2] = 1.f;
 			}
 	};
 }

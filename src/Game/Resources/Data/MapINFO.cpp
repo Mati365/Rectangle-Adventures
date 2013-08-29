@@ -133,6 +133,8 @@ void MapINFO::readHeader(FILE* map) {
 			logEvent(Logger::LOG_WARNING, "Brak tekstury gracza");
 		}
 	}
+	//
+	PROGRESS_LOADING();
 }
 
 /**
@@ -155,6 +157,8 @@ void MapINFO::readShapes(FILE* map) {
 
 		resources.push_back(_shape->getResourceID());
 	}
+	//
+	PROGRESS_LOADING();
 }
 
 /**
@@ -261,6 +265,9 @@ void MapINFO::readPlatforms(FILE* map) {
 		//
 		objects.push_back(platform);
 	}
+	PROGRESS_LOADING();
+	//
+
 	/**
 	 * Wyliczanie wymiarów planszy
 	 */
@@ -276,6 +283,8 @@ void MapINFO::readPlatforms(FILE* map) {
 		}
 	}
 	bounds = max;
+	//
+	PROGRESS_LOADING();
 
 	/**
 	 * Dodawanie elementów
@@ -287,6 +296,8 @@ void MapINFO::readPlatforms(FILE* map) {
 	for (auto& obj : objects) {
 		physics->insert(obj);
 	}
+	//
+	PROGRESS_LOADING();
 }
 
 /**
@@ -331,6 +342,8 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 				shape,
 				pEngine::NONE);
 	}
+	//
+	PROGRESS_LOADING();
 }
 
 /**
@@ -344,7 +357,8 @@ bool MapINFO::load(FILE* map) {
 	if (!map) {
 		return false;
 	}
-
+	BEGIN_LOADING("MAP extracting:");
+	//
 	ResourceFactory::getInstance(NULL).unload();
 
 	readHeader(map);
@@ -355,6 +369,8 @@ bool MapINFO::load(FILE* map) {
 	ResourceFactory::getInstance(physics);
 
 	readMobsAndTriggers(map);
+	//
+	END_LOADING();
 	return true;
 }
 

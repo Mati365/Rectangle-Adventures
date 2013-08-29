@@ -51,30 +51,20 @@ class Platform: public Body {
 	protected:
 		Color col;
 
-		/**
-		 * Dla ruchomych elementów..
-		 */
+		/** Dla ruchomych elementów..  */
 		Vector<float> distance;
 		Vector<float> max_distance;
 
-		/**
-		 * Powtarzalność ruchów
-		 */
+		/** Powtarzalność ruchów */
 		bool repeat_movement;
 
-		/**
-		 * Typ rysowania platformy
-		 */
+		/** Typ rysowania platformy */
 		usint fill_type;
 
-		/**
-		 * Dla przyśpieszenia renderingu!
-		 */
+		/** Dla przyśpieszenia renderingu! */
 		usint list;
 
-		/**
-		 * Obramowanie platformy
-		 */
+		/** Obramowanie platformy */
 		bool border[4];
 
 	public:
@@ -320,9 +310,7 @@ class Character: public IrregularPlatform {
 		};
 
 	protected:
-		/**
-		 * Akcja gracza - jego aktualny stan
-		 */
+		/** Akcja gracza - jego aktualny stan */
 		usint action;
 
 		/**
