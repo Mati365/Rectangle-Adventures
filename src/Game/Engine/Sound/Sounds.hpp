@@ -12,54 +12,46 @@
 #include "../../Resources/Data/Resources.hpp"
 
 namespace Sound {
-	/**
-	 * Odtwarzacz plików wav
-	 */
-	class wavPlayer {
+	/** Klasa dźwięku */
+	struct _Sound {
+			Mix_Chunk* chunk;
+			float volume;
+	};
+
+	/** Odtwarzacz plików wav */
+	class Player {
 		private:
 			int audio_rate;
 			Uint16 audio_format;
 			int audio_channels;
 			int audio_buffers;
 
-			/**
-			 * Wzorzec singleton!
-			 */
-			wavPlayer();
+			/** Wzorzec singleton! */
+			Player();
 
 		public:
-			/**
-			 * Wczytywanie pliku wav z systemu plików
-			 */
+			/** Wczytywanie pliku wav z systemu plików */
 			Mix_Chunk* loadSound(const char*);
 
-			/**
-			 * Odtwarzanie pliku wav
-			 */
+			/** Odtwarzanie pliku wav */
 			void playChunk(Mix_Chunk*, float);
 
-			/**
-			 * Zamykanie pliku
-			 */
+			/** Zamykanie pliku */
 			void closeChunk(Mix_Chunk*);
 
-			static wavPlayer& getInstance() {
-				static wavPlayer player;
+			static Player& getInstance() {
+				static Player player;
 				//
 				return player;
 			}
 
-			/**
-			 * Zamykanie odtwarzacza
-			 */
+			/** Zamykanie odtwarzacza */
 			void closeMixAudio() {
 				Mix_CloseAudio();
 			}
 
 		protected:
-			/**
-			 * Otwieranie mix
-			 */
+			/** Otwieranie mix */
 			void openMixAudio();
 	};
 }

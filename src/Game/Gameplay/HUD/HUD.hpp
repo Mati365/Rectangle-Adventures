@@ -116,7 +116,6 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 
 		/** pozostaly czas */
 		//glText left_time;
-
 		/**
 		 * Ekran smierci
 		 */
@@ -173,12 +172,11 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		}
 
 		~MessageRenderer() {
-			if (cutscene_box) {
-				delete cutscene_box;
-			}
-			delete retry_game;
-			delete return_to_menu;
+			safe_delete<IrregularPlatform>(cutscene_box);
+			safe_delete<Button>(retry_game);
+			safe_delete<Button>(return_to_menu);
 		}
+
 	private:
 		/**
 		 * Odświeżanie

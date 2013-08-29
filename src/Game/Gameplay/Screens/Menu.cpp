@@ -7,6 +7,7 @@
 #include "Screens.hpp"
 
 #include "../../Resources/Data/ResourceManager.hpp"
+#include "../../Resources/Data/SoundManager.hpp"
 
 using namespace GameScreen;
 
@@ -56,7 +57,8 @@ void Menu::getCallback(Control* const & control) {
 		 * Obsługa menu!
 		 */
 		if (entries[i] == control) {
-			playResourceSound(MENU_CHOOSE_SOUND);
+			SoundManager::getInstance().playResourceSound(
+					SoundManager::MENU_CHOOSE_SOUND);
 			//
 			switch (i) {
 				case 0:

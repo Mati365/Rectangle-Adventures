@@ -77,9 +77,7 @@ namespace GameScreen {
 			}
 			
 			~Game() {
-				if (lvl) {
-					delete lvl;
-				}
+				safe_delete<MapRenderer>(lvl);
 				logEvent(
 						Logger::LOG_INFO,
 						"Usuwanie obiektów sceny zakończone sukcesem!");

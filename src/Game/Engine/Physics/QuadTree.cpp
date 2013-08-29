@@ -64,14 +64,9 @@ void QuadTree::update(Rect<float>& _bounds) {
 		bool erase = false;
 		Body* obj = bodies[i];
 		//
-		if (!obj) {
+		if (!obj || obj->destroyed) {
 			erase = true;
 
-		} else if (obj->destroyed) {
-			if (!obj->with_observer) {
-				safe_delete<Body>(obj);
-			}
-			erase = true;
 		} else if (!IS_SET(obj->state, Body::STATIC)) {
 			Rect<float> _rect = static_cast<Rect<float> >(*obj);
 			//
@@ -86,6 +81,9 @@ void QuadTree::update(Rect<float>& _bounds) {
 		}
 		if (erase) {
 			bodies.erase(bodies.begin() + i);
+			if (obj && obj->destroyed && obj->with_observer) {
+				safe_delete<Body>(obj);
+			}
 			i--;
 		}
 	}
@@ -226,7 +224,8 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 			if (!IS_SET(body->state, Body::STATIC)
 					&& (body->y + body->h >= _bounds.y + _bounds.h
 							|| body->x + body->w >= _bounds.x + _bounds.w
-							|| body->x <= _bounds.x || body->y <= _bounds.y)) {
+							|| body->x + body->w <= _bounds.x
+							|| body->y + body->h <= _bounds.y)) {
 				ADD_FLAG(body->state, Body::BUFFERED);
 			}
 

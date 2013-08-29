@@ -287,9 +287,10 @@ void PlatformShape::rotate(float _angle) {
 void PlatformShape::unload() {
 	if (points) {
 		delete[] points;
+
+		bounds.x = bounds.y = bounds.w = bounds.h = 0;
+		glDeleteLists(id, 1);
 	}
-	bounds.x = bounds.y = bounds.w = bounds.h = 0;
-	glDeleteLists(id, 1);
 }
 
 PlatformShape::~PlatformShape() {

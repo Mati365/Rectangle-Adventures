@@ -4,6 +4,8 @@
  *  Created on: 14-04-2013
  *      Author: mateusz
  */
+#include "../Resources/Data/SoundManager.hpp"
+
 #include "Gameplay.hpp"
 
 using namespace Gameplay;
@@ -30,9 +32,10 @@ void ParalaxRenderer::addStaticObject(Body* _renderer) {
 void ParalaxRenderer::shake() {
 	shake_timer.reset();
 	//
-	playResourceSound(
+	SoundManager::getInstance().playResourceSound(
 			getIntRandom<int>(0, 2) == 1 ?
-					EARTH_QUAKE_SOUND_1 : EARTH_QUAKE_SOUND_2);
+					SoundManager::EARTH_QUAKE_SOUND_1 :
+					SoundManager::EARTH_QUAKE_SOUND_2);
 }
 
 /**
@@ -61,6 +64,7 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	deque<Body*>* list = physics->getVisibleBodies();
 	
 	glPushMatrix();
+
 	/** Transformacja kamery */
 	if (IS_SET(config, ROTATION)) {
 		glRotatef(sin(cam.focus->x / WINDOW_WIDTH * 2) * -9.f, 0.f, 0.f, 1.f);

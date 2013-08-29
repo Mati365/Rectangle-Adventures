@@ -184,6 +184,7 @@ void MapRenderer::resetHero() {
 
 	hero->with_observer = true;
 
+	map->physics->remove(hero); // dla pewności
 	map->physics->insert(hero);
 }
 
@@ -333,6 +334,7 @@ MapRenderer::~MapRenderer() {
 			safe_delete<ParalaxRenderer>(paralax);
 		}
 	}
-	safe_delete<Character>(hero);
+	/** Crash */
+	//safe_delete<Character>(hero);
 }
 

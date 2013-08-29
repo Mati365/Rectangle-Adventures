@@ -64,7 +64,6 @@ void Window::init() {
 	 * Wczytywanie rdzennych elementów gry
 	 */
 	loadShadersPack();
-	loadSoundsPack();
 	loadScreens();
 	//
 	if (!menu) {
@@ -160,9 +159,7 @@ void Window::init() {
 		}
 #endif
 	}
-	wavPlayer::getInstance().closeMixAudio();
 	//
-	unloadSoundsPack();
 	unloadScreens();
 	unloadShadersPack();
 }

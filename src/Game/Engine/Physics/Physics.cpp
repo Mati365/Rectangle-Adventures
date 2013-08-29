@@ -57,6 +57,7 @@ void pEngine::insert(Body* body) {
 		return;
 	}
 	body->physics = this;
+	/** Obiekty statyczne nie sią usuwane w czasie gry */
 	if (IS_SET(body->state, Body::STATIC)) {
 		list.push_back(body);
 	}
@@ -131,6 +132,7 @@ void pEngine::updateWorld() {
 	if (IS_SET(config, Flags::GRAVITY_DISABLED)) {
 		return;
 	}
+
 	for (usint i = 0; i < visible_bodies.size(); ++i) {
 		Body* object = visible_bodies[i];
 

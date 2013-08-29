@@ -31,13 +31,7 @@ void GameScreen::loadScreens() {
  * Kasowanie!
  */
 void GameScreen::unloadScreens() {
-	if (game) {
-		delete game;
-	}
-	if (menu) {
-		delete menu;
-	}
-	if (splash) {
-		delete splash;
-	}
+	safe_delete<Game>(game);
+	safe_delete<Menu>(menu);
+	safe_delete<Splash>(splash);
 }

@@ -115,9 +115,7 @@ class Platform: public Body {
 		}
 
 		virtual ~Platform() {
-			if (list) {
-				glDeleteLists(list, 1);
-			}
+			glDeleteLists(list, 1);
 		}
 
 	protected:

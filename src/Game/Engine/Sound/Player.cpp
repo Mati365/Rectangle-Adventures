@@ -11,7 +11,7 @@ using namespace Sound;
 /**
  * Wzorzec singleton!
  */
-wavPlayer::wavPlayer() :
+Player::Player() :
 				audio_rate(22050),
 				audio_format(AUDIO_S16SYS),
 				audio_channels(2),
@@ -22,7 +22,7 @@ wavPlayer::wavPlayer() :
 /**
  * Wczytywanie pliku wav z systemu plików
  */
-Mix_Chunk* wavPlayer::loadSound(const char* label) {
+Mix_Chunk* Player::loadSound(const char* label) {
 	size_t filesize;
 	char* buffer = NULL;
 	//
@@ -44,7 +44,7 @@ Mix_Chunk* wavPlayer::loadSound(const char* label) {
 /**
  * Odtwarzanie pliku wav
  */
-void wavPlayer::playChunk(Mix_Chunk* sound, float volume) {
+void Player::playChunk(Mix_Chunk* sound, float volume) {
 	int channel = Mix_PlayChannel(-1, sound, 0);
 	if (channel == -1) {
 		fprintf(stderr, "Nie mogę odtworzyć dźwięku: %s\n", Mix_GetError());
@@ -56,14 +56,14 @@ void wavPlayer::playChunk(Mix_Chunk* sound, float volume) {
 /**
  * Zamykanie pliku
  */
-void wavPlayer::closeChunk(Mix_Chunk* sound) {
+void Player::closeChunk(Mix_Chunk* sound) {
 	Mix_FreeChunk(sound);
 }
 
 /**
  * Otwieranie mix
  */
-void wavPlayer::openMixAudio() {
+void Player::openMixAudio() {
 	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)
 			!= 0) {
 		fprintf(stderr, "Nie mogę zainicjować dźwięku: %s\n", Mix_GetError());

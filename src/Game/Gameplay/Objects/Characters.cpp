@@ -9,6 +9,8 @@
 #include "Objects.hpp"
 #include "Weapons.hpp"
 
+#include "../../Resources/Data/SoundManager.hpp"
+
 #include "../Particle/Particle.hpp"
 #include "../Gameplay.hpp"
 
@@ -107,7 +109,7 @@ void Character::hitMe() {
 			6,
 			Vector<float>(8, 12));
 	//
-	playResourceSound(SPIKES_SOUND);
+	SoundManager::getInstance().playResourceSound(SoundManager::SPIKES_SOUND);
 }
 
 /**
@@ -145,7 +147,7 @@ void Character::die() {
 	/**
 	 * Dźwięk śmierci ;_;
 	 */
-	playResourceSound(DIE_SOUND);
+	SoundManager::getInstance().playResourceSound(SoundManager::DIE_SOUND);
 }
 
 /**
@@ -378,7 +380,8 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			body->destroyed = true;
 			//
 			if (enemy->status.health > 0 || enemy->status.score) {
-				playResourceSound(SCORE_SOUND);
+				SoundManager::getInstance().playResourceSound(
+						SoundManager::SCORE_SOUND);
 			}
 			addTooltip(enemy->status.health > 0 ? "+1hp" : "+1exp", col);
 		}
@@ -534,7 +537,8 @@ void Character::jump(float _y_speed, bool _force) {
 		velocity.y = -_y_speed;
 		//
 		if (!_force && !IS_SET(action, CLIMBING)) {
-			playResourceSound(JUMP_SOUND);
+			SoundManager::getInstance().playResourceSound(
+					SoundManager::JUMP_SOUND);
 		}
 	}
 }

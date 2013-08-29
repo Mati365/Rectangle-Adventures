@@ -141,16 +141,19 @@ void MapINFO::readHeader(FILE* map) {
  * + w funkcji unload wywalane!
  */
 void MapINFO::readShapes(FILE* map) {
-	char shape[256];
+	char path[256];
 	usint size;
 
-	// Wczytywanie listy kształtów
+	/** Wczytywanie listy kształtów */
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
-		fscanf(map, "%s\n", shape);
+		fscanf(map, "%s\n", path);
 
-		// Domyślny kąt to 0*
-		resources.push_back(readShape(shape, shape, 0)->getResourceID());
+		/** Domyślny kąt to 0* */
+		PlatformShape* _shape = readShape(path, path, 0);
+		_shape->setLineWidth(3.f); // lepiej wygląda
+
+		resources.push_back(_shape->getResourceID());
 	}
 }
 
@@ -228,7 +231,10 @@ void MapINFO::readPlatforms(FILE* map) {
 							state,
 							dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 									shape)));
-			dynamic_cast<IrregularPlatform*>(platform)->fitToWidth(rect.w);
+
+			IrregularPlatform* __platform =
+					dynamic_cast<IrregularPlatform*>(platform);
+			__platform->fitToWidth(rect.w);
 		} else {
 			/**
 			 * Normalna platforma

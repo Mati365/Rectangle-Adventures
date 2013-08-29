@@ -6,6 +6,8 @@
  */
 #include "Weapons.hpp"
 
+#include "../../Resources/Data/SoundManager.hpp"
+
 /**
  * Konstruktor pocisku
  */
@@ -158,7 +160,7 @@ void Gun::shot() {
 			break;
 	}
 	//
-	playResourceSound(GUN_SHOT_SOUND);
+	SoundManager::getInstance().playResourceSound(SoundManager::GUN_SHOT_SOUND);
 }
 
 void Gun::drawObject(Window*) {
