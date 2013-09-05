@@ -18,6 +18,7 @@ using namespace GUI;
 
 #define FPS 9
 //#define BENCHMARK
+#define FULLSCREEN
 
 bool Engine::window_opened = true;
 
@@ -41,7 +42,11 @@ Window::Window(const Vector<usint>& _bounds, const string& _title) :
 			WINDOW_WIDTH,
 			WINDOW_HEIGHT,
 			32,
-			SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER);
+			SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER
+#ifdef FULLSCREEN
+					| SDL_FULLSCREEN
+#endif
+					);
 	if (!screen) {
 		return;
 	}

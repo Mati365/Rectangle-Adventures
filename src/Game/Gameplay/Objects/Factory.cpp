@@ -122,14 +122,12 @@ ResourceFactory::ResourceFactory() :
  */
 #define MAX_TEXTURES_COUNT 300
 
-// generowanie kolejnych id dla poszczególnych orientacji
-usint ResourceFactory::genTextureID(usint _type, usint _orientation) const {
-	return 5 * _type + MAX_TEXTURES_COUNT + _orientation;
+/** Generowanie kolejnych id tekstur dla poszczególnych orientacji */
+usint ResourceFactory::genTextureID(usint _factory_type, usint _orientation) {
+	return 5 * _factory_type + MAX_TEXTURES_COUNT + _orientation;
 }
 
-/**
- * Wczytywanie tekstur!
- */
+/** Wczytywanie tekstur! */
 void ResourceFactory::loadMainTexturesPack() {
 	// Gracz
 	readShape("czaszka.txt", "cranium", 0);
@@ -210,7 +208,7 @@ bool ResourceFactory::texturePackRealloc() {
 		}
 
 		// Konfiguracja tekstury
-		_TextureConfig* tex_conf = getFactoryType(
+		_TextureConfig* tex_conf = getFactoryTemplate(
 				obj->factory_type,
 				obj->orientation);
 
@@ -369,7 +367,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	/**
 	 * Przeszukiwanie bazy obiektów
 	 */
-	_TextureConfig* _factory_type = getFactoryType(_type, _orientation);
+	_TextureConfig* _factory_type = getFactoryTemplate(_type, _orientation);
 	usint _width = _factory_type ? _factory_type->width : 0;
 	Platform* _object = NULL;
 

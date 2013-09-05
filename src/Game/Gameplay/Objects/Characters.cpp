@@ -83,13 +83,22 @@ Character::Character(const string& _nick, float _x, float _y,
 						DEFAULT_LEVITATION_DURATION,
 						getIntRandom<int>(0, DEFAULT_LEVITATION_DURATION)),
 				start_pos(_x, _y),
+				// Serce
+				diastole(false),
+				heart_timer(
+						HEART_SHRINK_DURATION,
+						getIntRandom(0, HEART_SHRINK_DURATION)),
 				// Uśpienie
 				sleep_timer(300),
 				zzz_delay(30) {
 	type = _type;
 	levitation_timer.loop = true;
+
+	// Uśpienie
 	blood_anim.sleep_beetwen_cycle = 11;
-	//
+	heart_timer.sleep_beetwen_cycle = 8;
+
+	// Checkpoint
 	addCheckpoint(true);
 }
 
@@ -481,7 +490,28 @@ void Character::updateMe() {
 			/**
 			 * Kurczenie się serca
 			 */
+			if (factory_type == ResourceFactory::HEALTH) {
+				static float orginal_width =
+						ResourceFactory::getFactoryTemplate(
+								factory_type,
+								orientation)->width;
+				heart_timer.tick();
+				if (!heart_timer.active) {
+					heart_timer.reset();
+					diastole = !diastole; // rozkurcz
+				}
 
+				// Wyliczanie nowych rozmiarów
+				float new_width =
+						diastole ?
+								orginal_width - heart_timer.cycles_count :
+								orginal_width - HEART_SHRINK_DURATION
+										+ heart_timer.cycles_count;
+
+				// Zmiana rozmiaru i centrowanie
+				x = start_pos.x + orginal_width / 2 - new_width / 2;
+				fitToWidth(new_width);
+			}
 		}
 			break;
 

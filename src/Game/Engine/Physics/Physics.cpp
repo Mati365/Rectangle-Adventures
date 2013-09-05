@@ -6,7 +6,6 @@
  */
 #include <cmath>
 #include <algorithm>
-#include <iostream>
 
 #include "../../Gameplay/Objects/Objects.hpp"
 

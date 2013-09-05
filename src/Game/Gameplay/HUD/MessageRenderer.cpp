@@ -237,7 +237,7 @@ void MessageRenderer::drawBorder(Window* _window) {
 				SPACES,
 				_window->getBounds()->y - height + SPACES,
 				_window->getBounds()->x - SPACES * 2,
-				height - SPACES * 2,
+				height,
 				oglWrapper::BLACK);
 
 		/**

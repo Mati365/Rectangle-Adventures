@@ -261,6 +261,8 @@ void generateExplosion(pEngine*, const Rect<float>&, usint, const Color&, float,
 
 /** Klasa GRACZA */
 class Character: public IrregularPlatform {
+#define HEART_SHRINK_DURATION 7
+
 	public:
 		enum Action {
 			JUMPING = 1 << 0,
@@ -320,9 +322,7 @@ class Character: public IrregularPlatform {
 		 */
 		CharacterStatus status;
 
-		/**
-		 * Ilość klatek zaczerwienienia
-		 */
+		/** Ilość klatek zaczerwienienia */
 		_Timer blood_anim;
 
 		/**
@@ -332,20 +332,18 @@ class Character: public IrregularPlatform {
 		_Timer levitation_timer;
 		Vector<float> start_pos;
 
-		/**
-		 *  Uśpienie
-		 */
+		/** Timer animacji serca */
+		bool diastole; // rozkurcz
+		_Timer heart_timer;
+
+		/** Uśpienie */
 		_Timer sleep_timer; // timer uśpienia
 		_Timer zzz_delay; // timer emitowania zzz
 
-		/**
-		 * Zamiast stosu lepiej dać ostatni
-		 */
+		/** Zamiast stosu lepiej dać ostatni */
 		_Checkpoint last_checkpoint;
 
-		/**
-		 * Chmurki latające
-		 */
+		/** Chmurki latające */
 		deque<_Tooltip> tooltips;
 
 	public:
@@ -557,18 +555,14 @@ class ResourceFactory {
 			KILLZONE
 		};
 
-		/**
-		 * Poziom trudności
-		 */
+		/** Poziom trudności */
 		enum HardLevel {
 			EASY,
 			NORMAL,
 			HARD
 		};
 
-		/**
-		 * Statusy obiektów
-		 */
+		/** Statusy obiektów */
 		struct _FactoryStatus {
 				// Info dla silnika
 				usint character_type;
@@ -608,17 +602,16 @@ class ResourceFactory {
 
 		void generateChracterStatus(usint);
 
-		/**
-		 * Wyszukiwanie typu obiektu
-		 */
-		static _TextureConfig* getFactoryType(usint _type, usint _orientation) {
+		/** Wyszukiwanie szablonu obiektu */
+		static _TextureConfig* getFactoryTemplate(usint _factory_type,
+				usint _orientation) {
 			/**
 			 * Różne typy są w różnych orientacjach
 			 */
 			for (usint i = 0; i < 18; ++i) {
 				_TextureConfig* obj = &factory_types[i];
 				//
-				if (obj->factory_type == _type
+				if (obj->factory_type == _factory_type
 						&& obj->orientation == _orientation) {
 					return &factory_types[i];
 				}
@@ -626,36 +619,31 @@ class ResourceFactory {
 			return NULL;
 		}
 
+		/** Generowanie kolejnych id dla poszczególnych orientacji */
+		static usint genTextureID(usint, usint);
+
 	private:
 		deque<Body*> created;
 
-		/**
-		 * PODSTAWOWE ZASOBY!!!
-		 */
+		/** PODSTAWOWE ZASOBY!!!  */
 		map<usint, PlatformShape*> textures;
 
-		// Temperatura tekstur
+		/** Temperatura tekstur */
 		usint texture_temperature;
 
-		// Fizyka
+		/** Fizyka */
 		pEngine* physics;
 
 		ResourceFactory();
 
 	public:
-		/**
-		 * Zmiana wystroju tekstur
-		 */
+		/** Zmiana wystroju tekstur */
 		void changeTemperatureOfTextures(usint);
 
-		/**
-		 * Dodawanie tekstury
-		 */
+		/** Dodawanie tekstury  */
 		void putTexture(usint, PlatformShape*);
 
-		/**
-		 * Deklaruje dynamicznie!
-		 */
+		/** Deklaruje dynamicznie! */
 		Body* createObject(usint, float, float, float, float, PlatformShape*,
 				char*, usint);
 
@@ -666,31 +654,21 @@ class ResourceFactory {
 		 */
 		bool texturePackRealloc();
 
-		/**
-		 * Pobieranie tekstury!
-		 */
+		/** Pobieranie tekstury! */
 		PlatformShape* getTexture(usint, usint);
 
-		/**
-		 * Temperatura
-		 */
+		/** Temperatura */
 		usint getTextureTemperature() const {
 			return texture_temperature;
 		}
 
-		/**
-		 * Pobieranie instancji i inicjowanie!
-		 */
+		/** Pobieranie instancji i inicjowanie!  */
 		static ResourceFactory& getInstance(pEngine*);
 
-		/**
-		 * Resetowanie
-		 */
+		/** Resetowanie */
 		void unload();
 
-		/**
-		 * Pobieranie wskaźniku do fizyki
-		 */
+		/** Pobieranie wskaźniku do fizyki */
 		pEngine* getPhysics() {
 			return physics;
 		}
@@ -698,11 +676,6 @@ class ResourceFactory {
 	private:
 		void loadMainTexturesPack();
 		void loadMobsTexturesPack(const char*);
-
-		/**
-		 *  Generowanie kolejnych id dla poszczególnych orientacji
-		 */
-		usint genTextureID(usint, usint) const;
 
 		void addBody(Body*);
 };
