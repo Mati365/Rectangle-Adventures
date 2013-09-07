@@ -103,7 +103,7 @@ namespace GameScreen {
 			MapRenderer* getMapRenderer() {
 				return lvl;
 			}
-
+			
 			/**
 			 * Callback od przycisków!
 			 */

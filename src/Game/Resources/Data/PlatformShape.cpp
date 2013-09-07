@@ -187,14 +187,14 @@ bool PlatformShape::recompile() {
 		return false;
 	}
 	glDeleteLists(id, 1);
-
+	
 	// Kompilacja!
 	glNewList(id, GL_COMPILE);
 	glLineWidth(line_width);
 	glColor4ub(main_col.r, main_col.g, main_col.b, main_col.a);
-
+	
 	glBegin(GL_LINE_STRIP);
-
+	
 	for (usint i = 0; i < count; ++i) {
 		Point* point = &points[i];
 		/**
@@ -213,7 +213,7 @@ bool PlatformShape::recompile() {
 				// Wyliczanie średniego koloru
 				main_col = point->col;
 				break;
-
+				
 				/**
 				 *
 				 */
@@ -223,7 +223,7 @@ bool PlatformShape::recompile() {
 				glVertex2f(pos->x, pos->y);
 			}
 				break;
-
+				
 				/**
 				 *
 				 */
@@ -235,7 +235,7 @@ bool PlatformShape::recompile() {
 				break;
 		}
 	}
-
+	
 	glEnd();
 	glEndList();
 	return true;
@@ -248,7 +248,7 @@ void PlatformShape::rotate(float _angle) {
 	angle = _angle;
 	//
 	bounds.x = bounds.y = 0;
-
+	
 	for (usint i = 0; i < count; ++i) {
 		Vector<float>* pos = &points[i].pos;
 		Vector<float> new_pos;
@@ -266,7 +266,7 @@ void PlatformShape::rotate(float _angle) {
 			bounds.y = pos->y;
 		}
 	}
-
+	
 	/**
 	 * Po rotacji wyrównanie punktu do pozycji
 	 */
@@ -277,7 +277,7 @@ void PlatformShape::rotate(float _angle) {
 		pos->y -= bounds.y < 0 ? bounds.y : -bounds.y;
 	}
 	updateBounds();
-
+	
 	/**
 	 * Rekompilacja listy
 	 */
@@ -287,7 +287,7 @@ void PlatformShape::rotate(float _angle) {
 void PlatformShape::unload() {
 	if (points) {
 		delete[] points;
-
+		
 		bounds.x = bounds.y = bounds.w = bounds.h = 0;
 		glDeleteLists(id, 1);
 	}

@@ -21,7 +21,7 @@ using namespace Physics;
 class Bullet: public Character {
 #define BULLET_WIDTH 8
 #define BULLET_HEIGHT 12
-
+		
 	private:
 		/**
 		 * Wysokość lotu
@@ -31,7 +31,7 @@ class Bullet: public Character {
 
 		Vector<float> direction;
 		Vector<float> start_pos; // pozycja startowa bo grawitacja może znieść
-
+		
 	public:
 		Bullet(float, float, const Vector<float>&, PlatformShape*, usint, usint,
 				const CharacterStatus&);
@@ -69,10 +69,10 @@ class Gun: public IrregularPlatform {
 					_bullet_shapes.end(),
 					bullet_shapes);
 		}
-
+		
 		virtual ~Gun() {
 		}
-
+		
 	private:
 		/** Wystrzał */
 		void shot();

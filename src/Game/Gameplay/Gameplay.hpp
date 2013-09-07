@@ -38,7 +38,7 @@ namespace Gameplay {
 			 * dole ekranu
 			 */
 #define Y_SPACE 100
-
+			
 		public:
 			Rect<float> pos;
 			Body* focus;
@@ -60,7 +60,7 @@ namespace Gameplay {
 				pos.x = focus->x - pos.w / 2 + focus->w / 2;
 				pos.y = focus->y - pos.h / 2 + focus->h / 2 - Y_SPACE;
 			}
-
+			
 			/** Pobieranie pozycji względem krawędzi okna */
 			Vector<float> getFocusScreenPos() const {
 				return Vector<float>(
@@ -82,7 +82,7 @@ namespace Gameplay {
 			};
 
 		protected:
-
+			
 			/** Konfiguracja */
 			usint config;
 
@@ -120,15 +120,15 @@ namespace Gameplay {
 			void setConfig(usint _config) {
 				config = _config;
 			}
-
+			
 			float getRatio() const {
 				return ratio;
 			}
-
+			
 			usint getConfig() const {
 				return config;
 			}
-
+			
 			virtual Character* getHero() {
 				return NULL;
 			}
@@ -136,15 +136,15 @@ namespace Gameplay {
 			MapINFO* getMap() {
 				return map;
 			}
-
+			
 			pEngine* getPhysics() {
 				return map->physics;
 			}
-
+			
 			Camera* getCamera() {
 				return &cam;
 			}
-
+			
 			~ParalaxRenderer() {
 				if (map) {
 					safe_delete<MapINFO>(map);
@@ -158,7 +158,7 @@ namespace Gameplay {
 	class MapRenderer: public ParalaxRenderer, public EventListener {
 #define DEFAULT_SHADOW_RADIUS 300
 #define DEFAULT_CAM_RATIO .95f
-
+			
 		public:
 			enum Weather {
 				NONE,
@@ -213,7 +213,7 @@ namespace Gameplay {
 			void setMainShader(usint _main_shader_id) {
 				main_shader_id = _main_shader_id;
 			}
-
+			
 			/**
 			 * Ustawienie mapy buforowanej do
 			 * wczytywania nowych poziomów
@@ -223,12 +223,12 @@ namespace Gameplay {
 			void setBufferMap(MapINFO* buffer) {
 				buffer_map = buffer;
 			}
-
+			
 			/** Mapa buforowana */
 			MapINFO* getBufferMap() {
 				return buffer_map;
 			}
-
+			
 			/** Wczytywanie mapy */
 			void setMap(MapINFO*);
 

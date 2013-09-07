@@ -22,15 +22,15 @@ usint Physics::invertDir(usint _dir) {
 	switch (_dir) {
 		case pEngine::DOWN:
 			return pEngine::UP;
-
+			
 			//
 		case pEngine::UP:
 			return pEngine::DOWN;
-
+			
 			//
 		case pEngine::LEFT:
 			return pEngine::RIGHT;
-
+			
 			//
 		case pEngine::RIGHT:
 			return pEngine::LEFT;
@@ -138,7 +138,7 @@ void pEngine::updateWorld() {
 	 */
 	quadtree->update(active_range);
 	quadtree->getBodiesAt(active_range, visible_bodies);
-
+	
 	/** Sprawdzenie kolizji! */
 	checkCollisions(visible_bodies);
 	
@@ -146,10 +146,10 @@ void pEngine::updateWorld() {
 	if (IS_SET(config, Flags::GRAVITY_DISABLED)) {
 		return;
 	}
-
+	
 	for (usint i = 0; i < visible_bodies.size(); ++i) {
 		Body* object = visible_bodies[i];
-
+		
 		/** Żywotność */
 		if (object->life_timer.active) {
 			object->life_timer.tick();
@@ -157,12 +157,12 @@ void pEngine::updateWorld() {
 				object->destroyed = true;
 			}
 		}
-
+		
 		/** Test obiektu  */
 		if (!object || !isBodyActive(object)) {
 			continue;
 		}
-
+		
 		/** Czy podlega grawitacji? */
 		if (!(IS_SET(object->state, Body::BACKGROUND)
 				&& (object->velocity.x != 0 || object->velocity.y != 0))) {
@@ -171,12 +171,12 @@ void pEngine::updateWorld() {
 			if (down_collision && down_collision->velocity.x != 0) {
 				object->x += down_collision->velocity.x;
 			}
-
+			
 			/** Siła ciążenia */
 			if (object->velocity.y < 20.f) {
 				object->velocity.y += gravity_speed;
 			}
-
+			
 			/** Siła tarcia / w locie też chamuje */
 			if (abs(object->velocity.x) > 0) {
 				if (down_collision) {
@@ -186,7 +186,7 @@ void pEngine::updateWorld() {
 				}
 			}
 		}
-
+		
 		/** Poruszenie obiektu */
 		updateBodyMovement(object);
 	}
@@ -195,12 +195,12 @@ void pEngine::updateWorld() {
 void pEngine::checkCollisions(deque<Body*>& _bodies) {
 	for (usint i = 0; i < _bodies.size(); ++i) {
 		Body* source = _bodies[i];
-
+		
 		// Czyszczenie
 		for (auto& coll : source->collisions) {
 			coll = nullptr;
 		}
-
+		
 		// Statyszne obiekty są omijane
 		if (!isBodyActive(source)) {
 			continue;
@@ -213,7 +213,7 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 							&& !IS_SET(target->state, Body::STATIC))) {
 				continue;
 			}
-
+			
 			/**
 			 * Kolizje Góra/ Dół
 			 */
@@ -245,7 +245,7 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 				}
 				source->catchCollision(this, horizont_side, target);
 			}
-
+			
 			/**
 			 * Kolizje Lewo
 			 */

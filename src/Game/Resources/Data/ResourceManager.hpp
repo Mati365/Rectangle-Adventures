@@ -43,7 +43,7 @@ class Resource {
 		void setResourceID(usint _id) {
 			resource_id = _id;
 		}
-
+		
 		usint getResourceID() const {
 			return resource_id;
 		}
@@ -71,17 +71,17 @@ class ResourceManager {
 		ResourceManager() :
 						counter(1) {
 		}
-
+		
 		/**
 		 * Zwracanie identyfikatoru
 		 */
 		usint addResource(Resource* _res) {
 			resources.push_back(_res);
 			_res->setResourceID(counter++);
-
+			
 			return counter;
 		}
-
+		
 		/**
 		 * Zwracanie identyfikatora
 		 */
@@ -92,7 +92,7 @@ class ResourceManager {
 			}
 			return 0;
 		}
-
+		
 		/**
 		 * Zwracanie całego obiektu po label'u!
 		 */
@@ -104,14 +104,14 @@ class ResourceManager {
 			}
 			return nullptr;
 		}
-
+		
 		/**
 		 * Pobieranie elementów
 		 */
 		Resource* operator[](usint _id) {
 			return getByID(_id);
 		}
-
+		
 		Resource* getByID(usint _id) {
 			for (auto& res : resources) {
 				if (res->getResourceID() == _id) {
@@ -120,7 +120,7 @@ class ResourceManager {
 			}
 			return nullptr;
 		}
-
+		
 		/**
 		 * Kasowanie zasobu - wolne
 		 */
@@ -128,14 +128,14 @@ class ResourceManager {
 			for (usint i = 0; i < resources.size(); ++i) {
 				Resource* res = resources[i];
 				if (res->getResourceID() == _id) {
-					safe_delete (res);
+					safe_delete(res);
 					resources.erase(resources.begin() + i);
 					return true;
 				}
 			}
 			return false;
 		}
-
+		
 		/** Kasowanie niedobitków */
 		~ResourceManager() {
 			usint count = 0;

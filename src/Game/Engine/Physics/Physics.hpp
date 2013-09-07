@@ -40,13 +40,13 @@ namespace Physics {
 			operator Vector<T>() const {
 				return Vector<T>(x, y);
 			}
-
+			
 			inline void getFromVec(const Vector<float>& _vec) {
 				w = h = 0;
 				x = _vec.x;
 				y = _vec.y;
 			}
-
+			
 			inline Rect<T>& operator+=(const Vector<T>& _vec) {
 				x += _vec.x;
 				y += _vec.y;
@@ -70,7 +70,7 @@ namespace Physics {
 	
 	/** Odwrócenie kierunku */
 	usint invertDir(usint);
-
+	
 	/**
 	 * Todo:
 	 * + Przebudowa, sprawdzanie kolizji tylko
@@ -98,15 +98,15 @@ namespace Physics {
 		public:
 			QuadTree(QuadTree*, const Rect<float>&, usint);
 
-			/**
-			 * Aktualizacja drzewa!
-			 */
+			/** Aktualizacja drzewa! */
 			void subdive();
 
 			void insertGroup(deque<Body*>*);
 			void insert(Body*);
 
+			/** Kasowanie */
 			bool remove(Body*);
+			bool remove(usint);
 
 			void getBodiesAt(Rect<float>&, deque<Body*>&);
 			void update(Rect<float>&);
@@ -189,7 +189,7 @@ namespace Physics {
 			void clear() {
 				list.clear();
 			}
-
+			
 			/** Test kolizji */
 			bool collide(const Body*, const Body*) const;
 
@@ -210,11 +210,11 @@ namespace Physics {
 			void removeConfig(usint _config) {
 				UNFLAG(config, _config);
 			}
-
+			
 			usint getConfig() const {
 				return config;
 			}
-
+			
 			QuadTree* getQuadTree() const {
 				return quadtree;
 			}
@@ -222,11 +222,11 @@ namespace Physics {
 			Rect<float>& getBounds() {
 				return bounds;
 			}
-
+			
 			deque<Body*>* getList() {
 				return &list;
 			}
-
+			
 			float getGravitySpeed() const {
 				return gravity_speed;
 			}
@@ -256,7 +256,7 @@ namespace Physics {
 	 */
 	class Body: public Rect<float>, public Renderer {
 #define DEFAULT_ROUGHNESS 0.85f
-
+			
 		public:
 			Body* collisions[4];
 
@@ -327,7 +327,7 @@ namespace Physics {
 			/** Nie wszystko musi mieć callback */
 			virtual void catchCollision(pEngine*, usint, Body*) {
 			}
-
+			
 			/** Długość życia do skasowania! */
 			void setMaxLifetime(usint);
 
@@ -338,7 +338,7 @@ namespace Physics {
 			void setType(usint _type) {
 				type = _type;
 			}
-
+			
 			/** Nadawanie stanu! */
 			void setState(usint _state) {
 				state = _state;

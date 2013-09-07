@@ -111,7 +111,7 @@ bool Interpreter::interpret(Script* script) {
 			case NEXT_LEVEL:
 				LevelManager::getInstance().loadNextMap();
 				break;
-
+				
 				/**
 				 * Typ skryptu!
 				 */
@@ -195,21 +195,21 @@ bool Interpreter::interpret(Script* script) {
 					case SHAKE:
 						map->addWeather(MapRenderer::SHAKE);
 						break;
-
+						
 						/**
 						 *
 						 */
 					case FIREWORKS:
 						map->addWeather(MapRenderer::FIREWORKS);
 						break;
-
+						
 						/**
 						 *
 						 */
 					case SNOW:
 						map->addWeather(MapRenderer::SNOWING);
 						break;
-
+						
 						/**
 						 *
 						 */
@@ -220,7 +220,7 @@ bool Interpreter::interpret(Script* script) {
 						Convert::stringTo<usint>(func.args[1]));
 			}
 				break;
-
+				
 				/**
 				 * Dodawanie checkpointu!
 				 */
@@ -228,7 +228,7 @@ bool Interpreter::interpret(Script* script) {
 				map->getHero()->addCheckpoint(
 						Convert::stringTo<bool>(func.args[0]));
 				break;
-
+				
 				/**
 				 * Ustawienie kierunku ruchu!
 				 */
@@ -312,7 +312,7 @@ bool Interpreter::interpret(Script* script) {
 						Convert::stringTo<float>(func.args[4]))->script_id =
 						Convert::stringTo<usint>(func.args[3]);
 				break;
-
+				
 				/**
 				 *
 				 */

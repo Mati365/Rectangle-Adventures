@@ -87,7 +87,7 @@ void SoundManager::unloadSoundsPack() {
 SoundManager::~SoundManager() {
 	/** Zamykanie Playera */
 	Player::getInstance().closeMixAudio();
-
+	
 	/** Kasowanie dźwięków */
 	unloadSoundsPack();
 }

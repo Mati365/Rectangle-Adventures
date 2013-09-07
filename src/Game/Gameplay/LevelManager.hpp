@@ -24,7 +24,7 @@ extern string levels[];
 
 class LevelManager {
 #define MAP_COUNT 2
-
+		
 	private:
 		int actual_map;
 
@@ -36,7 +36,7 @@ class LevelManager {
 			//
 			return manager;
 		}
-
+		
 		/**
 		 * Zwraca NULL'a jeśli koniec,
 		 * jeśli koniec to napisy końcowe

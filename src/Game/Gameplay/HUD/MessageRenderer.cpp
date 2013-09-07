@@ -29,7 +29,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				title(_title_color, "", GLUT_BITMAP_HELVETICA_18, 18),
 				border_color(255, 255, 255),
 				background_color(0, 0, 0),
-
+				
 				// HUD
 				hud_temperature(432), // temperatura do ustawienia
 				heart(12, 17, Body::NONE, NULL, HEART_ICON_WIDTH),
@@ -42,9 +42,9 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						oglWrapper::RED,
 						MAX_LIVES,
 						Control::VERTICAL),
-
+				
 				heart_anim(3),
-
+				
 				score(0, 16, Body::NONE, NULL, SCORE_ICON_WIDTH),
 				score_bar(
 						Rect<float>(
@@ -55,7 +55,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						oglWrapper::GREEN,
 						MAX_SCORE,
 						Control::VERTICAL),
-
+				
 				retry_hud(
 						Rect<float>(
 								screen_bounds.x - 22 - SPACES * 2,
@@ -66,13 +66,13 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						NULL,
 						false,
 						this),
-
+				
 				game_over(
 						oglWrapper::WHITE,
 						"Game over",
 						GLUT_BITMAP_HELVETICA_18,
 						18),
-
+				
 				//
 				background(_background),
 				hero(NULL),
@@ -87,7 +87,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 			NULL,
 			this);
 	retry_game->putCallback(Event::MOUSE_RELEASED, this);
-
+	
 	return_to_menu = new Button(
 			Rect<float>(
 					screen_bounds.x / 2 + 10,
@@ -96,7 +96,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 					35),
 			"Do menu");
 	return_to_menu->putCallback(Event::MOUSE_RELEASED, this);
-
+	
 	/** Długość cyklu animacji serca */
 	heart_anim.sleep_beetwen_cycle = 50;
 	heart_anim.loop = true;
@@ -113,7 +113,7 @@ void MessageRenderer::openCutscene(const Message& msg) {
 		logEvent(Logger::LOG_WARNING, "Brak cutsceny!");
 		return;
 	}
-
+	
 	if (cutscene_box) {
 		delete cutscene_box;
 	}
@@ -123,10 +123,10 @@ void MessageRenderer::openCutscene(const Message& msg) {
 			Body::STATIC,
 			msg.cutscene);
 	cutscene_box->fitToWidth(screen_bounds.x);
-
+	
 	//
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
-
+	
 	paralax->getPhysics()->insert(cutscene_box);
 	paralax->getCamera()->focus = cutscene_box;
 }
@@ -145,7 +145,7 @@ void MessageRenderer::closeCutscene() {
 	// Czyszczenie!
 	main_resource_manager.deleteResource(platform->getShape()->getID());
 	cutscene_box->destroyed = true;
-
+	
 	paralax->getCamera()->focus = paralax->getHero();
 	//
 	logEvent(Logger::LOG_INFO, "Zwolniono zasoby cutsceny!");
@@ -172,26 +172,26 @@ void MessageRenderer::drawBorder(Window* _window) {
 				screen_bounds.x - SPACES * 2,
 				height,
 				oglWrapper::BLACK);
-
+		
 		/**
 		 * Optymalizacja!
 		 */
 		float x = SPACES, y = screen_bounds.y - height + SPACES, w =
 				screen_bounds.x - SPACES * 2, h = height - SPACES * 2;
-
+		
 		oglWrapper::beginStroke(0xAAAA);
 		glLineWidth(screen != HUD_SCREEN ? 3 : 2);
-
+		
 		glBegin(GL_LINE_LOOP);
-
+		
 		glColor4ub(border_color.r, border_color.g, border_color.b, 150.f);
 		glVertex2f(x, y);
 		glVertex2f(x + w, y);
-
+		
 		glColor4ub(border_color.r, border_color.g, border_color.b, 0.f);
 		glVertex2f(x + w, y + h);
 		glVertex2f(x, y + h);
-
+		
 		glEnd();
 		oglWrapper::endStroke();
 		oglWrapper::drawFillRect(
@@ -224,7 +224,7 @@ bool MessageRenderer::popMessage() {
 	msgs.pop_back();
 	//
 	openCutscene(pop);
-
+	
 	title.setString(pop.title, 0);
 	text.setString(pop.text, 0);
 	text.setHidden(true);
@@ -250,7 +250,7 @@ void MessageRenderer::catchEvent(const Event& _event) {
 				}
 			}
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -259,7 +259,7 @@ void MessageRenderer::catchEvent(const Event& _event) {
 			return_to_menu->catchEvent(_event);
 			break;
 	}
-
+	
 }
 
 /**
@@ -273,7 +273,7 @@ void MessageRenderer::updateHUDControls() {
 			ResourceFactory::getInstance(NULL).getTextureTemperature();
 	if (hud_temperature != _actual_temperature) {
 		hud_temperature = _actual_temperature;
-
+		
 		// Serce
 		heart.setShape(
 				ResourceFactory::getInstance(NULL).getTexture(
@@ -282,20 +282,20 @@ void MessageRenderer::updateHUDControls() {
 		heart.fitToWidth(HEART_ICON_WIDTH);
 		health_bar.setColor(*heart.getShape()->getMainColor());
 		health_bar.getColor()->a = 208;
-
+		
 		// Punkt
 		score.setShape(
 				ResourceFactory::getInstance(NULL).getTexture(
 						ResourceFactory::SCORE,
 						pEngine::NONE));
-
+		
 		score.fitToWidth(
 				hud_temperature == ResourceFactory::ICY ?
 						SCORE_ICON_WIDTH / 1.5f : SCORE_ICON_WIDTH);
 		score_bar.setColor(*score.getShape()->getMainColor());
 		score_bar.getColor()->a = 208;
 	}
-
+	
 	/**
 	 * Bicie serca!
 	 */
@@ -307,27 +307,27 @@ void MessageRenderer::updateHUDControls() {
 		//
 		heart_anim.reset();
 	}
-
+	
 	/**
 	 * Aktualizacja pozycji
 	 */
 	// HUD nad graczem
 	Rect<float>* cam_pos = &game->getMapRenderer()->getCamera()->pos;
 	float ratio = 2.f - game->getMapRenderer()->getRatio();
-
+	
 	score_bar.x = hero->x * ratio - hero->w / 2 - cam_pos->x - score_bar.w / 2
 			+ hero->velocity.x * 2;
 	score_bar.y = hero->y * ratio - cam_pos->y - 120 - hero->velocity.y / 2;
-
+	
 	score.x = score_bar.x - score.w - SPACES * 2;
 	score.y = score_bar.y - score.h / 2 + score_bar.h / 2;
-
+	
 	health_bar.x = score_bar.x;
 	health_bar.y = score.y - SPACES - health_bar.h;
-
+	
 	heart.x = score.x + score.w / 2 - heart.w / 2;
 	heart.y = health_bar.y;
-
+	
 	// Aktualizacja wartości
 	score_bar.setValue(hero->getStatus()->score);
 	health_bar.setValue(hero->getStatus()->health);
@@ -341,33 +341,33 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 		hero = background->getHero();
 	}
 	updateHUDControls();
-
+	
 	// Rysowanie HUDu
 	score.drawObject(NULL);
 	score_bar.drawObject(NULL);
-
+	
 	heart.drawObject(NULL);
 	health_bar.drawObject(NULL);
-
+	
 	if (!retry_hud.getIcon()) {
 		retry_hud.setIcon(getShapePointer("retry_shape"));
 	}
 	retry_hud.drawObject(NULL);
-
+	
 	// Linia łącząca gracza z HUDem
 	oglWrapper::beginStroke(0xA0A0);
-
+	
 	glLineWidth(2.f);
 	glBegin(GL_LINE_STRIP);
-
+	
 	glColor4f(1.f, 1.f, 1.f, 1.f);
 	glVertex2f(score_bar.x, score_bar.y + 20);
-
+	
 	glColor4f(1.f, 1.f, 1.f, 0.2f);
 	glVertex2f(score_bar.x, score_bar.y + 100);
-
+	
 	glEnd();
-
+	
 	oglWrapper::endStroke();
 }
 
@@ -393,7 +393,7 @@ void MessageRenderer::drawIntroMessage(Window* _window) {
 			&& title.getRenderLength() == title.getString()->length()) {
 		text.setHidden(false);
 	}
-
+	
 	/**
 	 * Wyświetlanie INTRO/OUTRO
 	 */
@@ -447,7 +447,7 @@ void MessageRenderer::drawObject(Window* _window) {
 			drawBorder(_window);
 			drawIntroMessage(_window);
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -455,7 +455,7 @@ void MessageRenderer::drawObject(Window* _window) {
 			drawBorder(_window);
 			drawPlayerHUD(_window);
 			break;
-
+			
 			/**
 			 *
 			 */

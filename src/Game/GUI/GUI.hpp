@@ -140,19 +140,19 @@ namespace GUI {
 			virtual void drawObject(Window*);
 			virtual ~ProgressBar() {
 			}
-
+			
 			usint getValue() const {
 				return value;
 			}
-
+			
 			void setValue(usint _value) {
 				value = _value;
 			}
-
+			
 			void setColor(const Color& _col) {
 				col = _col;
 			}
-
+			
 			Color* getColor() {
 				return &col;
 			}
@@ -179,7 +179,7 @@ namespace GUI {
 			IrregularPlatform* getIcon() {
 				return icon;
 			}
-
+			
 			void setIcon(PlatformShape*);
 
 			~Button() {

@@ -54,6 +54,22 @@ void QuadTree::subdive() {
 }
 
 /**
+ * Kasowanie
+ */
+bool QuadTree::remove(usint _index) {
+	if (_index >= bodies.size() || !bodies[_index]) {
+		return false;
+	}
+	Body* obj = bodies[_index];
+
+	bodies.erase(bodies.begin() + _index);
+	if (obj && obj->destroyed && obj->with_observer) {
+		safe_delete<Body>(obj);
+	}
+	return true;
+}
+
+/**
  * Odświeżanie
  */
 void QuadTree::update(Rect<float>& _bounds) {
@@ -66,7 +82,7 @@ void QuadTree::update(Rect<float>& _bounds) {
 		//
 		if (!obj || obj->destroyed) {
 			erase = true;
-
+			
 		} else if (!IS_SET(obj->state, Body::STATIC)) {
 			Rect<float> _rect = static_cast<Rect<float> >(*obj);
 			//
@@ -80,10 +96,7 @@ void QuadTree::update(Rect<float>& _bounds) {
 			}
 		}
 		if (erase) {
-			bodies.erase(bodies.begin() + i);
-			if (obj && obj->destroyed && obj->with_observer) {
-				safe_delete<Body>(obj);
-			}
+			remove(i);
 			i--;
 		}
 	}
@@ -130,7 +143,7 @@ bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Jeśli 1 lub więcej quadów ma ten sam element to
 	 * wrzuca do rodzica!
@@ -142,7 +155,7 @@ bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
 	if (!NW) {
 		subdive();
 	}
-
+	
 	/**
 	 * Umieszczanie do dzieci
 	 */
@@ -212,23 +225,31 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 	}
 	for (usint i = 0; i < bodies.size(); ++i) {
 		Body* body = bodies[i];
-
+		
 		/** Jeśli obiekt mieści się w zasięgu widzialnego ekranu */
 		if (_bounds.intersect(
 				Rect<float>(body->x, body->y, body->w, body->h))) {
-
+			
 			/** Resetowanie obiektów */
 			UNFLAG(body->state, Body::BUFFERED);
-
+			
 			/** A co jeśli obiekt jest przycięty na ekranie? */
 			if (!IS_SET(body->state, Body::STATIC)
 					&& (body->y + body->h >= _bounds.y + _bounds.h
 							|| body->x + body->w >= _bounds.x + _bounds.w
 							|| body->x + body->w <= _bounds.x
 							|| body->y + body->h <= _bounds.y)) {
+				/** Niewidoczne particle wywalane! */
+				if (!body->with_observer && body->life_timer.active) {
+					remove(i);
+					--i;
+					continue;
+				}
+
+				/** A jak obiekt widoczny.. */
 				ADD_FLAG(body->state, Body::BUFFERED);
 			}
-
+			
 			/** Dodawanie obiektu */
 			_bodies.push_back(body);
 		}

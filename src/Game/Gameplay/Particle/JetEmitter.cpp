@@ -17,10 +17,10 @@ bool JetEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 	
 	particle.life.tick();
-
+	
 	particle.pos += particle.velocity;
 	particle.size *= 0.98f;
-
+	
 	if (particle.size <= 0.02f) {
 		destroyed = true;
 	}

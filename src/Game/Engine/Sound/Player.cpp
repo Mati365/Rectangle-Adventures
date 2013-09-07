@@ -28,14 +28,14 @@ Mix_Chunk* Player::loadSound(const char* label) {
 	//
 	main_filesystem.getExternalFile(label, &filesize);
 	buffer = main_filesystem.getExternalFileContent(label);
-
+	
 	if (!buffer) {
 		return NULL;
 	}
-
+	
 	SDL_RWops* rw = SDL_RWFromMem(buffer, filesize);
 	Mix_Chunk* sound = Mix_LoadWAV_RW(rw, 1);
-
+	
 	delete[] buffer;
 	//
 	return sound;

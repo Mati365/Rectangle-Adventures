@@ -64,9 +64,9 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	
 	/** Lista aktualnie widocznych elementów! */
 	deque<Body*>* list = physics->getVisibleBodies();
-
+	
 	glPushMatrix();
-
+	
 	/** Transformacja kamery */
 	if (IS_SET(config, ROTATION)) {
 		glRotatef(
@@ -85,17 +85,17 @@ void ParalaxRenderer::drawObject(Window* _window) {
 		_y += (float) getIntRandom<int>(3, 10) * sin(prop * 85);
 	}
 	glTranslatef(_x, _y, 0);
-
+	
 	/**  Rysowanie quadtree  */
 	if (IS_SET(config, DRAW_QUAD)) {
 		physics->getQuadTree()->drawObject(NULL);
 	}
-
+	
 	/** Obiekty poza ekranem wycinamy! */
 	for (auto& obj : static_objects) {
 		obj->drawObject(_window);
 	}
-
+	
 	/** Renderowanie obiektów podlegających fizyce  */
 	for (usint i = 0; i < list->size(); ++i) {
 		Body* body = (*list)[i];
@@ -104,7 +104,7 @@ void ParalaxRenderer::drawObject(Window* _window) {
 		}
 		body->drawObject(_window);
 	}
-
+	
 	/** Renderowanie focusa na końcu  */
 	if (!IS_SET(config, PARALLAX)) {
 		cam.focus->drawObject(NULL);

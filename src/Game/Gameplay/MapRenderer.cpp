@@ -27,7 +27,7 @@ MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 	setHero(dynamic_cast<Character*>(_hero));
 	setMap(_map);
 	setConfig(RendererConfig::DRAW_QUAD);
-
+	
 	resetColorSaturation();
 }
 
@@ -42,7 +42,7 @@ ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
 				_ratio,
 				_paralax);
 		renderer->setConfig(_config);
-
+		
 		paralax_background.push_front(renderer);
 		//
 		return renderer;
@@ -70,13 +70,13 @@ void MapRenderer::catchEvent(const Event& _event) {
 				if (_event.key == 'w') {
 					hero->jump(5.f, false);
 				} else if (_event.key == 'a') {
-					hero->move(-2.f, 0.f);
+					hero->move(-.75f, 0.f);
 				} else if (_event.key == 'd') {
-					hero->move(2.f, 0.f);
+					hero->move(.75f, 0.f);
 				}
 			}
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -102,14 +102,14 @@ void MapRenderer::addWeather(usint _type) {
 			addStaticObject(snow);
 		}
 			break;
-
+			
 			/**
 			 * Erupcja wulkanu
 			 */
 		case SHAKE:
 			shake();
 			break;
-
+			
 			/**
 			 * Sztuczne ognie
 			 */
@@ -126,7 +126,7 @@ void MapRenderer::addWeather(usint _type) {
 			addStaticObject(fireworks);
 		}
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -144,20 +144,20 @@ void MapRenderer::swapBufferMap() {
 
 void MapRenderer::setMap(MapINFO* _map) {
 	static_objects.clear();
-
+	
 	shake_timer.reset();
 	shake_timer.active = false;
-
+	
 	/**
 	 * Ustawienia
 	 */
 	addWeather(_map->map_weather);
 	ResourceFactory::getInstance(_map->physics).changeTemperatureOfTextures(
 			_map->map_temperature);
-
+	
 	safe_delete<MapINFO>(map);
 	map = _map;
-
+	
 	/** Reset gracza */
 	resetHero();
 }
@@ -175,15 +175,15 @@ void MapRenderer::resetHero() {
 	}
 	hero->setShape(map->hero_shape);
 	hero->fitToWidth(map->hero_bounds.w);
-
+	
 	hero->x = map->hero_bounds.x;
 	hero->y = map->hero_bounds.y;
-
+	
 	hero->getStatus()->health = MAX_LIVES;
 	hero->getStatus()->score = 0;
-
+	
 	hero->with_observer = true;
-
+	
 	map->physics->remove(hero); // dla pewności
 	map->physics->insert(hero);
 }
@@ -226,13 +226,13 @@ void MapRenderer::drawObject(Window* _window) {
 	if (!hero) {
 		return;
 	}
-
+	
 	/** Aby gracz nie wychodził za ekran! */
 	Vector<float> hero_screen_pos = cam.getFocusScreenPos();
-
+	
 	/** odległość max. ruchów gracza na erkanie */
 	float go_distance = .75f;
-
+	
 	if (hero_screen_pos.x > screen_bounds.x * go_distance
 			|| hero_screen_pos.x < screen_bounds.x * (1 - go_distance)
 			|| hero_screen_pos.y > screen_bounds.y * go_distance
@@ -241,7 +241,7 @@ void MapRenderer::drawObject(Window* _window) {
 	} else {
 		ratio = DEFAULT_CAM_RATIO;
 	}
-
+	
 	/** Konfiguracja shadera */
 	shaders[main_shader_id]->begin();
 	shaders[main_shader_id]->setUniform2f(
@@ -254,7 +254,7 @@ void MapRenderer::drawObject(Window* _window) {
 			col_saturation[1],
 			col_saturation[2]);
 	shaders[main_shader_id]->setUniform1f("radius", shadow_radius);
-
+	
 	/**
 	 * Główny rendering mapy - najpierw paralaksa
 	 */
@@ -262,9 +262,9 @@ void MapRenderer::drawObject(Window* _window) {
 		paralax_background[i]->drawObject(_window);
 	}
 	ParalaxRenderer::drawObject(_window);
-
+	
 	shaders[main_shader_id]->end();
-
+	
 	/**
 	 * Sprawdzenie stanu gracza oraz dopasowanie do niego
 	 * shaderu
@@ -320,10 +320,10 @@ void MapRenderer::drawObject(Window* _window) {
 	 */
 	if (buffer_swap_required) {
 		setMap(buffer_map);
-
+		
 		buffer_map = nullptr;
 		buffer_swap_required = false;
-
+		
 		shadow_radius = DEFAULT_SHADOW_RADIUS;
 	}
 }

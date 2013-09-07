@@ -100,7 +100,7 @@ void Gun::shot() {
 	PlatformShape* shape = bullet_shapes[orientation - 1];
 	const CharacterStatus& bullet_status =
 			ResourceFactory::factory_status[ResourceFactory::BULLET].character_status;
-
+	
 	switch (orientation) {
 		case pEngine::UP:
 			physics->insert(
@@ -113,7 +113,7 @@ void Gun::shot() {
 							orientation,
 							bullet_status));
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -128,7 +128,7 @@ void Gun::shot() {
 							orientation,
 							bullet_status));
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -143,7 +143,7 @@ void Gun::shot() {
 							orientation,
 							bullet_status));
 			break;
-
+			
 			/**
 			 *
 			 */

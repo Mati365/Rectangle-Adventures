@@ -19,7 +19,7 @@ Menu::Menu() :
 						GLUT_BITMAP_HELVETICA_12,
 						12) {
 	lvl->enableHUD(false);
-
+	
 	Character* hero = getHero();
 	hero->getStatus()->health = 1;
 	//
@@ -100,11 +100,11 @@ void Menu::getCallback(Control* const & control) {
 void Menu::catchEvent(const Event& event) {
 	Rect<float>& rect = lvl->getCamera()->pos;
 	mouse.pos += Vector<int>(rect.x, rect.y);
-
+	
 	for (auto iter = entries.begin(); iter != entries.end(); ++iter) {
 		(*iter)->catchEvent(event);
 	}
-
+	
 	mouse.pos -= Vector<int>(rect.x, rect.y);
 }
 

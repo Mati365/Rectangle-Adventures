@@ -146,14 +146,14 @@ namespace oglWrapper {
 			GLuint getFragmentShader() const {
 				return fragment_shader;
 			}
-
+			
 			static GLint getLastShader() {
 				GLint last_program;
 				glGetIntegerv(GL_CURRENT_PROGRAM, &last_program);
 				//
 				return last_program;
 			}
-
+			
 			/**
 			 * Wywołuwanie shaderu!
 			 */
@@ -181,7 +181,7 @@ namespace oglWrapper {
 namespace Engine {
 	/** Natywna rozdzielczość ekranu */
 	extern Vector<float> screen_bounds;
-
+	
 	class Window;
 	class Renderer {
 		public:
@@ -222,7 +222,7 @@ namespace Engine {
 			/** Konstruktor */
 			Window(const string&);
 		public:
-
+			
 			/** Inicjacja okna */
 			void init();
 
@@ -232,7 +232,7 @@ namespace Engine {
 				//
 				return win;
 			}
-
+			
 			~Window();
 
 		private:

@@ -26,7 +26,8 @@ bool Engine::window_opened = true;
 
 #define FPS 9
 //#define BENCHMARK
-#define FULLSCREEN
+//#define FULLSCREEN
+#define VGA_RESOLUTION
 
 /** Konwersja Uint8 do char */
 void translateKeyEvent(Uint8* keystate, Uint16 key, char translated,
@@ -47,10 +48,10 @@ Window::Window(const string& _title) :
 				screen(NULL) {
 	// Inicjalizacja SDL
 	SDL_Init(SDL_INIT_EVERYTHING);
-
+	
 	// Wyliczanie rozdzielczości ekranu!
 	screen_bounds = getNativeResolution();
-
+	
 	// Tworzenie okna
 	screen = SDL_SetVideoMode(
 			screen_bounds.x,
@@ -65,7 +66,7 @@ Window::Window(const string& _title) :
 		return;
 	}
 	SDL_WM_SetCaption(_title.c_str(), _title.c_str());
-
+	
 	//
 	if (IS_SET(screen->flags, SDL_OPENGL)) {
 		logEvent(Logger::LOG_INFO, "OpenGL obsługiwany!");
@@ -91,7 +92,7 @@ void Window::init() {
 		logEvent(
 				Logger::LOG_INFO,
 				"Nastąpił problem podczas wczytywania menu.");
-		//return;
+		return;
 	}
 	active_screen = game;
 	splash->pushTitle(
@@ -104,7 +105,7 @@ void Window::init() {
 			getShapeFromFilesystem("pudlo.txt", -6.f));
 	splash->pushTitle("Rect Adventures", 490);
 	splash->endTo(menu);
-
+	
 	//
 	SDL_Event event;
 	Event key(Event::KEY_PRESSED);
@@ -151,7 +152,7 @@ void Window::init() {
 		translateKeyEvent(keystate, SDLK_a, 'a', key, game);
 		translateKeyEvent(keystate, SDLK_d, 'd', key, game);
 		translateKeyEvent(keystate, SDLK_SPACE, '*', key, game);
-
+		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		active_screen->drawObject(this);
@@ -189,9 +190,13 @@ void Window::init() {
  * Pobieranie natywnej rozdzielczości
  */
 Vector<float> Window::getNativeResolution() {
+#ifndef VGA_RESOLUTION
 	const SDL_VideoInfo* info = SDL_GetVideoInfo();
 	//
-	return Vector<float>(info->current_w, info->current_h);
+	return Vector<float>(info->current_w , info->current_h);
+#else
+	return Vector<float>(640, 480);
+#endif
 }
 
 /**
@@ -206,7 +211,7 @@ bool Window::setupOpenGL() {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glAlphaFunc(GL_GREATER, 0.5f);
-
+	
 	glClearColor(0.f, 0.f, 0.f, 0.f);
 	glViewport(0, 0, screen_bounds.x, screen_bounds.y);
 	glMatrixMode(GL_PROJECTION);
@@ -219,7 +224,7 @@ bool Window::setupOpenGL() {
 		logEvent(Logger::LOG_ERROR, "Brak obsługi shaderów!");
 		return false;
 	}
-
+	
 	return true;
 }
 

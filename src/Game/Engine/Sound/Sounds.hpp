@@ -17,7 +17,7 @@ namespace Sound {
 			Mix_Chunk* chunk;
 			float volume;
 	};
-
+	
 	/** Odtwarzacz plików wav */
 	class Player {
 		private:
@@ -44,12 +44,12 @@ namespace Sound {
 				//
 				return player;
 			}
-
+			
 			/** Zamykanie odtwarzacza */
 			void closeMixAudio() {
 				Mix_CloseAudio();
 			}
-
+			
 		protected:
 			/** Otwieranie mix */
 			void openMixAudio();

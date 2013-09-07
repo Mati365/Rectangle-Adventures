@@ -16,12 +16,12 @@ typedef unsigned short int usint;
 
 class Logger {
 #define logEvent(type, log) Logger::logOperation(type, log, __FILE__, __LINE__)
-
+		
 		/** Do pasku wczytywania */
 #define BEGIN_LOADING(s) logEvent(Logger::LOG_PROGRESSBAR_BEGIN, s)
 #define END_LOADING() logEvent(Logger::LOG_PROGRESSBAR_END, "")
 #define PROGRESS_LOADING() logEvent(Logger::LOG_PROGRESSBAR_PROCENT, "")
-
+		
 	public:
 		enum Type {
 			LOG_ERROR,

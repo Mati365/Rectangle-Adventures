@@ -179,7 +179,7 @@ class PlatformShape: public Resource {
 			//
 			recompile();
 		}
-
+		
 		/**
 		 * Przeszukiwanie wierzchołków,
 		 * wyznaczanie skrajnych rogów
@@ -195,7 +195,7 @@ class PlatformShape: public Resource {
 		Color* getMainColor() {
 			return &main_col;
 		}
-
+		
 		~PlatformShape();
 
 	protected:
@@ -223,11 +223,11 @@ class Save: public PackagePointer {
 		};
 
 		usint stats[LAST_LEVEL_INDEX + 1]; // Na którym lvl został
-
+		
 		Save() {
 			clear();
 		}
-
+		
 		virtual bool read(FILE*);
 		virtual size_t write(FILE*);
 
@@ -256,14 +256,14 @@ class SaveManager {
 						file_name(Convert::getDynamicValue(_file_name)) {
 			save = new Save;
 		}
-
+		
 	public:
 		static SaveManager& getInstance() {
 			static SaveManager _save_manager(SAVE_FILE_RESPATH);
 			//
 			return _save_manager;
 		}
-
+		
 		/** Zapis save do systemu plików */
 		bool writeToFilesystem(Package*);
 		bool readFromFilesystem(Package*);
@@ -271,7 +271,7 @@ class SaveManager {
 		Save* getSave() {
 			return save;
 		}
-
+		
 		/** Destrukcja.. */
 		~SaveManager() {
 			if (file_name) {

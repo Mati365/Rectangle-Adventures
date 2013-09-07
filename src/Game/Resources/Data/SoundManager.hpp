@@ -51,7 +51,7 @@ class SoundManager {
 			//
 			return manager;
 		}
-
+		
 		/**
 		 * Odtwarzanie dźwięku z ID
 		 * + Wczytywanie paczki dźwięków jeśli

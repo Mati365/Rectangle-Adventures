@@ -47,7 +47,7 @@ void ProgressBar::drawObject(Window*) {
 					size,
 					Color(0, 0, 0, 100));
 			break;
-
+			
 			/**
 			 *
 			 */

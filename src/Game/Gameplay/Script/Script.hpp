@@ -11,7 +11,6 @@
 
 #define ARG_COUNT 8 // Maksymalna ilość argumentów!
 #define SPACE_CHARACTER '%' // Znak spacji w skryptach
-
 /** Deklaracja funkcji */
 struct Func {
 		usint id; // identyfikator

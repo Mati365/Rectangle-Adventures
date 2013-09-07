@@ -26,13 +26,13 @@ MapINFO* LevelManager::loadNextMap() {
 				"Nie mogę wczytać nastepnej mapy! Koniec gry.");
 		return NULL;
 	}
-
+	
 	// Wczytywanie nowej mapy
 	if (actual_map + 1 < MAP_COUNT) {
 		actual_map++;
 	}
 	MapINFO* buffer = reloadMap();
-
+	
 	// Obiekt dynamicznie alokowany
 	return buffer;
 }
@@ -46,12 +46,12 @@ MapINFO* LevelManager::reloadMap() {
 	}
 	MapINFO* buffer = loadMap(levels[actual_map].c_str());
 	MapRenderer* map_renderer = game->getMapRenderer();
-
+	
 	map_renderer->setBufferMap(buffer);
-
+	
 	// Gracz musi się zabić ;)
 	map_renderer->getHero()->die();
-
+	
 	return buffer;
 }
 

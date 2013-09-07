@@ -17,10 +17,10 @@ FireworksEmitter::FireworksEmitter(const Rect<float>& _pos, usint _delay,
  */
 bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
-
+	
 	particle.life.tick();
 	particle.pos -= particle.velocity;
-
+	
 	oglWrapper::drawRect(
 			particle.pos.x,
 			particle.pos.y,
@@ -28,7 +28,7 @@ bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
 			particle.size,
 			particle.col,
 			2);
-
+	
 	if (!particle.life.active || destroyed) {
 		generateExplosion(
 				physics,
@@ -63,10 +63,10 @@ void FireworksEmitter::createNewParticle(Window* _window) {
 					getIntRandom<usint>(228, 255),
 					getIntRandom<usint>(18, 255),
 					getIntRandom<usint>(28, 255)));
-
+	
 	part.velocity.y = (float) getIntRandom<int>(5, 10) / 2;
 	part.life.max_cycles_count = 60;
-
+	
 	particles.push_back(part);
 }
 

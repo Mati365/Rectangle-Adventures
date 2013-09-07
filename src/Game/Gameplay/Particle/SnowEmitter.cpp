@@ -20,7 +20,7 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	
 	particle.life.tick();
 	particle.pos += particle.velocity;
-
+	
 	if (particle.col.r > 30) {
 		particle.col.r = 255
 				- 255 * particle.life.cycles_count
@@ -36,12 +36,12 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	
 	glColor3ub(particle.col.r, particle.col.g, particle.col.b);
 	glBegin(GL_LINE_LOOP);
-
+	
 	glVertex2f(x, y);
 	glVertex2f(x + w, y);
 	glVertex2f(x + w, y + w);
 	glVertex2f(x, y + w);
-
+	
 	glEnd();
 	
 	if (!particle.life.active || particle.col.a < 30) {
@@ -59,11 +59,11 @@ void SnowEmitter::createNewParticle(Window* _window) {
 			++i) {
 		float angle = getIntRandom<int>(20, 80);
 		float speed = 1.f;
-
+		
 		Vector<float> wind(
 				cos(TO_RAD(angle)) * speed,
 				sin(TO_RAD(angle)) * speed);
-
+		
 		Particle part(
 				Vector<float>(x, y),
 				getIntRandom(6, 14),
@@ -72,7 +72,7 @@ void SnowEmitter::createNewParticle(Window* _window) {
 		
 		part.velocity = wind;
 		part.angle = angle;
-
+		
 		part.velocity.y += getIntRandom(150, 350) / 150;
 		part.pos.x = x + getIntRandom(-100, (int) w + 100);
 		

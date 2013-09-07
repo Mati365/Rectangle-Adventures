@@ -27,7 +27,7 @@ Lava::Lava(float _x, float _y) :
  * Odświeżanie pozycji
  */
 void Lava::update() {
-
+	
 }
 
 /**

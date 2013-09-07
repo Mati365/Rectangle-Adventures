@@ -19,12 +19,12 @@ bool FireEmitter::drawParticle(usint _index, Window* _window) {
 	
 	particle.life.tick();
 	particle.pos += particle.velocity;
-
+	
 	float prop = (float) particle.life.cycles_count
 			/ (float) particle.life.max_cycles_count;
-
+	
 	particle.size *= (1 - prop);
-
+	
 	if (particle.col.g > 10) {
 		particle.col.g = 255 - 255 * prop;
 		particle.col.a = particle.col.g;

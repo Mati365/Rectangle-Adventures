@@ -18,13 +18,13 @@ bool loadMap(const char* path, MapINFO* map, usint _open_config) {
 		return false;
 	}
 	FILE* __map = main_filesystem.getExternalFile(path, NULL);
-
+	
 	map->open_config = _open_config;
 	if (!map->load(__map)) {
 		return false;
 	}
 	main_filesystem.closeExternalFile();
-
+	
 	return true;
 }
 
@@ -103,19 +103,19 @@ MapINFO::MapINFO(const char* _label) :
  */
 void MapINFO::readHeader(FILE* map) {
 	char shape[256];
-
+	
 	/** Wczytywanie ustawień mapy */
 	fscanf(map, "%hu %hu", &map_temperature, &map_weather);
-
+	
 	/** Przestrzeganie konfiguracji! */
 	if (IS_SET(open_config, WITHOUT_WEATHER)) {
 		map_weather = 0;
 	}
-
+	
 	if (IS_SET(open_config, WITHOUT_TEMPERATURE)) {
 		map_temperature = ResourceFactory::TextureTemperature::NEUTRAL;
 	}
-
+	
 	/** Wczytywanie pozycji początkowej gracza */
 	fscanf(
 			map,
@@ -124,7 +124,7 @@ void MapINFO::readHeader(FILE* map) {
 			&hero_bounds.y,
 			&hero_bounds.w,
 			shape);
-
+	
 	if (!IS_SET(open_config, WITHOUT_HERO) && strlen(shape) != 0) {
 		hero_shape = readShape(shape, shape, 0);
 		if (hero_shape) {
@@ -145,16 +145,16 @@ void MapINFO::readHeader(FILE* map) {
 void MapINFO::readShapes(FILE* map) {
 	char path[256];
 	usint size;
-
+	
 	/** Wczytywanie listy kształtów */
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
 		fscanf(map, "%s\n", path);
-
+		
 		/** Domyślny kąt to 0* */
 		PlatformShape* _shape = readShape(path, path, 0);
 		_shape->setLineWidth(3.f); // lepiej wygląda
-
+				
 		resources.push_back(_shape->getResourceID());
 	}
 	//
@@ -170,7 +170,7 @@ void MapINFO::readPlatforms(FILE* map) {
 	Rect<float> rect;
 	Color col;
 	usint size = 0, state = 0, layer = 0;
-
+	
 	/**
 	 * Poruszanie się platformy
 	 */
@@ -183,12 +183,12 @@ void MapINFO::readPlatforms(FILE* map) {
 	usint fill_type;
 	usint with_shape;
 	usint script_id;
-
+	
 	char shape[256];
 	usint border[4];
-
+	
 	deque<Body*> objects;
-
+	
 	// Wczytywanie parametrów graficznych platform..
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
@@ -220,7 +220,7 @@ void MapINFO::readPlatforms(FILE* map) {
 				shape);
 		//
 		Platform* platform = NULL;
-
+		
 		/**
 		 * Wczytywanie kształtu
 		 */
@@ -235,7 +235,7 @@ void MapINFO::readPlatforms(FILE* map) {
 							state,
 							dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
 									shape)));
-
+			
 			IrregularPlatform* __platform =
 					dynamic_cast<IrregularPlatform*>(platform);
 			__platform->fitToWidth(rect.w);
@@ -244,17 +244,17 @@ void MapINFO::readPlatforms(FILE* map) {
 			 * Normalna platforma
 			 */
 			platform = new Platform(rect.x, rect.y, rect.w, rect.h, col, state);
-
+			
 			platform->setBorder(border[0], border[1], border[2], border[3]);
 			platform->setFillType(fill_type);
 		}
-
+		
 		/**
 		 * Warstwa obiektu
 		 */
 		platform->layer = layer;
 		platform->script_id = script_id;
-
+		
 		/**
 		 * Kierunek ruchu
 		 */
@@ -267,7 +267,7 @@ void MapINFO::readPlatforms(FILE* map) {
 	}
 	PROGRESS_LOADING();
 	//
-
+	
 	/**
 	 * Wyliczanie wymiarów planszy
 	 */
@@ -308,7 +308,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 	char shape[256];
 	usint size;
 	Rect<float> rect(0, 0, 0, 0);
-
+	
 	/**
 	 * Wczytywanie mobów!
 	 */
@@ -316,7 +316,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 	for (usint i = 0; i < size; ++i) {
 		readMob(map);
 	}
-
+	
 	/**
 	 * Wczytywanie skryptów!
 	 */
@@ -360,14 +360,14 @@ bool MapINFO::load(FILE* map) {
 	BEGIN_LOADING("MAP extracting:");
 	//
 	ResourceFactory::getInstance(NULL).unload();
-
+	
 	readHeader(map);
 	readShapes(map);
 	readPlatforms(map);
 	
 	// Inicjacja fizyki!
 	ResourceFactory::getInstance(physics);
-
+	
 	readMobsAndTriggers(map);
 	//
 	END_LOADING();
@@ -387,7 +387,7 @@ void MapINFO::unload() {
 		}
 	}
 	ResourceFactory::getInstance(NULL).unload();
-
+	
 	// Kasowanie fizyki razem z obiektami!
 	if (physics) {
 		safe_delete<pEngine>(physics);

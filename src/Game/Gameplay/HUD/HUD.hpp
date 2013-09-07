@@ -57,7 +57,7 @@ class IntroBackground {
 class MessageRenderer: public Renderer, public EventListener, public Callback {
 #define SCORE_ICON_WIDTH 14
 #define HEART_ICON_WIDTH 16
-
+		
 	public:
 		enum Screen {
 			INTRO_SCREEN,
@@ -144,11 +144,11 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		void setScreen(usint _screen) {
 			screen = _screen;
 		}
-
+		
 		usint getActiveScreen() const {
 			return screen;
 		}
-
+		
 		/**
 		 * Jeśli zamknięte - pokazywane jest
 		 * intro.
@@ -156,21 +156,21 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		usint getScreen() const {
 			return screen;
 		}
-
+		
 		bool hasMessages() const {
 			return !msgs.empty();
 		}
-
+		
 		float getHeight() const {
 			return height;
 		}
-
+		
 		~MessageRenderer() {
 			safe_delete<IrregularPlatform>(cutscene_box);
 			safe_delete<Button>(retry_game);
 			safe_delete<Button>(return_to_menu);
 		}
-
+		
 	private:
 		/** Odświeżanie */
 		void updateHUDControls();

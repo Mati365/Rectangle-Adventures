@@ -67,7 +67,7 @@ struct _Timer {
 						active(false),
 						loop(false) {
 		}
-
+		
 		_Timer(int _max_cycles_count, int _cycles_count = 0) :
 						max_cycles_count(_max_cycles_count),
 						cycles_count(_cycles_count),
@@ -83,7 +83,7 @@ struct _Timer {
 			if (!active) {
 				return;
 			}
-
+			
 			/** Uśpienie */
 			if (sleep_beetwen_cycle != 0) {
 				sleep_time++;
@@ -93,7 +93,7 @@ struct _Timer {
 					sleep_time = 0;
 				}
 			}
-
+			
 			/** Cykle */
 			cycles_count++;
 			if (max_cycles_count <= cycles_count) {
@@ -106,7 +106,7 @@ struct _Timer {
 				active = true;
 			}
 		}
-
+		
 		/**
 		 * Resetowanie timeru
 		 */

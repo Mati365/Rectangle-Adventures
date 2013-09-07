@@ -20,14 +20,14 @@ void Logger::logOperation(usint type, const string& log, const string& file,
 		case LOG_ERROR:
 			buffer += "ERROR! ";
 			break;
-
+			
 			/**
 			 *
 			 */
 		case LOG_WARNING:
 			buffer += "WARN! ";
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -51,14 +51,14 @@ void Logger::logOperation(usint type, const string& log, const string& file,
 			case LOG_PROGRESSBAR_BEGIN:
 				cout << log + " [ ";
 				break;
-
+				
 				/**
 				 *
 				 */
 			case LOG_PROGRESSBAR_PROCENT:
 				cout << "#";
 				break;
-
+				
 				/**
 				 *
 				 */

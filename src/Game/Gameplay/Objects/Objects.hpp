@@ -71,7 +71,7 @@ class Platform: public Body {
 		virtual void drawObject(Window*);
 		virtual void catchCollision(pEngine*, usint, Body*) {
 		}
-
+		
 		/**
 		 * Odblokowanie poruszania się!
 		 */
@@ -94,18 +94,18 @@ class Platform: public Body {
 		usint setOrientation() const {
 			return orientation;
 		}
-
+		
 		usint getFillType() const {
 			return fill_type;
 		}
 		Color* getColor() {
 			return &col;
 		}
-
+		
 		virtual ~Platform() {
 			glDeleteLists(list, 1);
 		}
-
+		
 	protected:
 		bool updatePlatform();
 		/**
@@ -226,7 +226,7 @@ class AI {
 		AI(Character* _character) :
 						character(_character) {
 		}
-
+		
 		/**
 		 * Sterowanie automatem, botem,
 		 * potrzebny zatem wskaźnik do
@@ -252,7 +252,7 @@ void generateExplosion(pEngine*, const Rect<float>&, usint, const Color&, float,
 /** Klasa GRACZA */
 class Character: public IrregularPlatform {
 #define HEART_SHRINK_DURATION 7
-
+		
 	public:
 		enum Action {
 			JUMPING = 1 << 0,
@@ -281,7 +281,7 @@ class Character: public IrregularPlatform {
 		 * punktu unoszący się do góry
 		 */
 #define TOOLTIP_SPEED -1
-
+		
 		struct _Tooltip {
 				_Timer life_timer;
 				glText text;
@@ -329,7 +329,7 @@ class Character: public IrregularPlatform {
 		/** Uśpienie */
 		_Timer sleep_timer; // timer uśpienia
 		_Timer zzz_delay; // timer emitowania zzz
-
+		
 		/** Zamiast stosu lepiej dać ostatni */
 		_Checkpoint last_checkpoint;
 
@@ -354,7 +354,7 @@ class Character: public IrregularPlatform {
 		bool isBlooding() const {
 			return blood_anim.cycles_count % 2 && IS_SET(action, BLOODING);
 		}
-
+		
 		bool isJumping() const {
 			return IS_SET(action, JUMPING);
 		}
@@ -366,7 +366,7 @@ class Character: public IrregularPlatform {
 		usint getAction() const {
 			return action;
 		}
-
+		
 		/**
 		 * Dodawanie napisu unoszącego się
 		 * nad graczem
@@ -384,19 +384,19 @@ class Character: public IrregularPlatform {
 		bool isCheckpointAvailable() const {
 			return !last_checkpoint.reload_map;
 		}
-
+		
 		/**
 		 * Akcje dotyczące poruszania się i
 		 * zachowania gracza
 		 */
 		void die(); // śmierć, rozprucie ;)
 		void hitMe(); // uderz mnie ;_;
-
+		
 		void move(float, float);
 		void jump(float, bool = false);
 
 		void dodge(usint); // taktyczny unik
-
+				
 		/** Odświeżanie timeru spania */
 		void updateSleeping();
 
@@ -449,10 +449,10 @@ class Trigger: public Body {
 			type = Body::TRIGGER;
 			state = Body::HIDDEN;
 		}
-
+		
 		virtual void drawObject(Window*) {
 		}
-
+		
 		/** Generowanie zdarzenia! */
 		inline void generate() {
 			if (destroyed) {
@@ -601,7 +601,7 @@ class ResourceFactory {
 			}
 			return NULL;
 		}
-
+		
 		/** Generowanie kolejnych id dla poszczególnych orientacji */
 		static usint genTextureID(usint, usint);
 
@@ -644,7 +644,7 @@ class ResourceFactory {
 		usint getTextureTemperature() const {
 			return texture_temperature;
 		}
-
+		
 		/** Pobieranie instancji i inicjowanie!  */
 		static ResourceFactory& getInstance(pEngine*);
 
@@ -655,7 +655,7 @@ class ResourceFactory {
 		pEngine* getPhysics() {
 			return physics;
 		}
-
+		
 	private:
 		void loadMainTexturesPack();
 		void loadMobsTexturesPack(const char*);

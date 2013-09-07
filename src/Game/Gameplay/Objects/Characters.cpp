@@ -31,7 +31,7 @@ void generateExplosion(pEngine* physics, const Rect<float>& body, usint count,
 		const Color& col, float min_size, float max_size,
 		const Vector<float>& velocity, float life_time, usint state) {
 	float angle;
-
+	
 	/**
 	 * Generowanie cząsteczek krwii w postaci eksplozji
 	 * Różny promień
@@ -42,7 +42,7 @@ void generateExplosion(pEngine* physics, const Rect<float>& body, usint count,
 		Vector<float> r(
 				getIntRandom<int>(0, body.w / 2),
 				getIntRandom<int>(0, body.h / 2));
-
+		
 		r.x *= cosf(angle);
 		r.y *= sinf(angle);
 		//
@@ -76,7 +76,7 @@ Character::Character(const string& _nick, float _x, float _y,
 				IrregularPlatform(_x, _y, true, _shape),
 				action(JUMPING),
 				status(MAX_LIVES, false, 0, 0, _x, _y),
-
+				
 				// Timery
 				blood_anim(8),
 				levitation_timer(
@@ -93,11 +93,11 @@ Character::Character(const string& _nick, float _x, float _y,
 				zzz_delay(30) {
 	type = _type;
 	levitation_timer.loop = true;
-
+	
 	// Uśpienie
 	blood_anim.sleep_beetwen_cycle = 11;
 	heart_timer.sleep_beetwen_cycle = 8;
-
+	
 	// Checkpoint
 	addCheckpoint(true);
 }
@@ -132,7 +132,7 @@ void Character::die() {
 	 * TRRUP
 	 */
 	status.health = DEATH;
-
+	
 	/**
 	 * Generowanie eksplozji
 	 */
@@ -144,15 +144,15 @@ void Character::die() {
 			3,
 			6,
 			Vector<float>(8, 12));
-
+	
 	/**
 	 * Zmiana kształtu na trup
 	 */
 	float _last_w = w;
-
+	
 	setShape(getShapePointer("cranium"));
 	fitToWidth(_last_w * 0.6);
-
+	
 	/**
 	 * Dźwięk śmierci ;_;
 	 */
@@ -214,14 +214,14 @@ void Character::addCheckpoint(bool _reload_map) {
 	if (type != HERO) {
 		return;
 	}
-
+	
 	status.start_pos = (Vector<float> ) *this;
 	//
 	last_checkpoint.last_status = status;
 	last_checkpoint.reload_map = _reload_map;
 	//
 	last_checkpoint.last_status.health = MAX_LIVES;
-
+	
 	/**
 	 * Tooltip musi być xD
 	 */
@@ -240,22 +240,22 @@ void Character::recoverFromCheckpoint(MapINFO* map) {
 		return;
 	}
 	status = last_checkpoint.last_status;
-
+	
 	// Resetowanie wyglądu
 	setShape(map->hero_shape);
 	fitToWidth(map->hero_bounds.w);
-
+	
 	// Resetowanie pozycji
 	velocity.x = velocity.y = 0;
 	x = status.start_pos.x;
 	y = status.start_pos.y;
-
+	
 	// Odjąć trza życia i punktów
 	status.score =
 			status.score - MAX_SCORE * 0.1 > 0 ?
 					status.score - MAX_SCORE * 0.1 : 0;
 	status.health -= 1;
-
+	
 	hitMe();
 }
 
@@ -269,22 +269,22 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 	if (type != HERO) {
 		return;
 	}
-
+	
 	// Skrypty
 	if (body->type == Body::TRIGGER) {
 		dynamic_cast<Trigger*>(body)->generate();
 		return;
 	}
-
+	
 	// Reset flag
 	UNFLAG(action, CLIMBING);
-
+	
 	// Akcje gracza
 	Character* enemy = dynamic_cast<Character*>(body);
 	if (!enemy) {
 		return;
 	}
-
+	
 	switch (enemy->type) {
 		/**
 		 * Strefa śmierci ;_;
@@ -292,7 +292,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 		case KILLZONE:
 			status.health = 0;
 			break;
-
+			
 			/**
 			 * Na lianie tylo w dół!
 			 */
@@ -318,7 +318,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 			ADD_FLAG(action, CLIMBING);
 		}
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -351,7 +351,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 			addTooltip(enemy->status.health > 0 ? "+1hp" : "+1exp", col);
 		}
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -364,7 +364,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 			}
 			dodge(dir);
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -375,7 +375,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 			hitMe();
 			dodge(dir);
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -388,7 +388,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 			hitMe();
 			dodge(dir);
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -415,7 +415,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	 * dostał
 	 */
 	bool is_hero = type == HERO;
-
+	
 	if (!is_hero) {
 		switch (type) {
 			/**
@@ -427,7 +427,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 					body->catchCollision(physics, invertDir(dir), this);
 				}
 				break;
-
+				
 				/**
 				 *
 				 */
@@ -436,7 +436,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 					body->catchCollision(physics, invertDir(dir), this);
 				}
 				break;
-
+				
 				/**
 				 *
 				 */
@@ -444,12 +444,12 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 				break;
 		}
 	}
-
+	
 	// Test martwości
 	if (isDead()) {
 		return;
 	}
-
+	
 	// Ginąć może nie tylko gracz
 	if (dir == pEngine::DOWN && !IS_SET(body->state, Body::HIDDEN)
 			&& (type == Body::HERO || type == Body::ENEMY)) {
@@ -476,13 +476,13 @@ void Character::updateMe() {
 		case HERO:
 			updateSleeping();
 			break;
-
+			
 			/**
 			 *
 			 */
 		case SCORE: {
 			levitation_timer.tick();
-
+			
 			/**
 			 * Lewitacja to 1/3 wysokości obiektu
 			 * Obiekt musi być BACKGROUND
@@ -505,7 +505,7 @@ void Character::updateMe() {
 												- (float) levitation_timer.cycles_count
 														/ (float) levitation_timer.max_cycles_count);
 			}
-
+			
 			/**
 			 * Kurczenie się serca
 			 */
@@ -519,21 +519,21 @@ void Character::updateMe() {
 					heart_timer.reset();
 					diastole = !diastole; // rozkurcz
 				}
-
+				
 				// Wyliczanie nowych rozmiarów
 				float new_width =
 						diastole ?
 								orginal_width - heart_timer.cycles_count :
 								orginal_width - HEART_SHRINK_DURATION
 										+ heart_timer.cycles_count;
-
+				
 				// Zmiana rozmiaru i centrowanie
 				x = start_pos.x + orginal_width / 2 - new_width / 2;
 				fitToWidth(new_width);
 			}
 		}
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -544,24 +544,24 @@ void Character::updateMe() {
 						(usint) pEngine::RIGHT,
 						(usint) pEngine::LEFT);
 			}
-
+			
 			// Kolizja!
 			if (collisions[orientation - 1]) {
 				orientation = invertDir(orientation);
 			}
-
+			
 			// Poruszanie się
 			switch (orientation) {
 				case pEngine::LEFT:
 					velocity.x = -2.f;
 					break;
-
+					
 				case pEngine::RIGHT:
 					velocity.x = 2.f;
 					break;
 			}
 			break;
-
+			
 			/**
 			 *
 			 */
@@ -580,17 +580,17 @@ void Character::dodge(usint _dir) {
 		case pEngine::RIGHT:
 			velocity.x = -_speed;
 			break;
-
+			
 			//
 		case pEngine::LEFT:
 			velocity.x = _speed;
 			break;
-
+			
 			//
 		case pEngine::UP:
 			velocity.y = -_speed;
 			break;
-
+			
 			//
 		case pEngine::DOWN:
 			velocity.y = _speed;
@@ -632,11 +632,11 @@ void Character::move(float x_speed, float y_speed) {
 	if ((x_speed > 0 && velocity.x < 0) || (x_speed < 0 && velocity.x > 0)) {
 		velocity.x = 0;
 	}
-
+	
 	if (isDead() || velocity.x >= 4.f || velocity.x <= -4.f) {
 		return;
 	}
-
+	
 	velocity.x += x_speed;
 	velocity.y += y_speed;
 }
@@ -659,24 +659,24 @@ void Character::drawTooltips() {
 	if (tooltips.empty()) {
 		return;
 	}
-
+	
 	/**
 	 * Wyłączanie starego
 	 * shaderu
 	 */
 	GLint last_program = Shader::getLastShader();
 	glUseProgram(0);
-
+	
 	/**
 	 * Gridy lub interatory zbyt
 	 * zmniejszą prędkość
 	 */
 	for (usint i = 0; i < tooltips.size();) {
 		_Tooltip& object = tooltips[i];
-
+		
 		// I przy okazji to odświeżanie
 		object.pos.y += object.speed;
-
+		
 		if (object.life_timer.active) {
 			object.life_timer.tick();
 			//
@@ -689,15 +689,15 @@ void Character::drawTooltips() {
 			tooltips.erase(tooltips.begin() + i);
 			continue;
 		}
-
+		
 		// Rysowanie
 		object.text.printText(
 				object.pos.x - object.text.getScreenLength() / 2,
 				object.pos.y);
-
+		
 		++i;
 	}
-
+	
 	/**
 	 * Przywracanie starego shaderu
 	 */
@@ -710,7 +710,7 @@ void Character::drawTooltips() {
 void Character::drawObject(Window*) {
 	// Odświeżanie obiektu
 	updateMe();
-
+	
 	//
 	glLineWidth(1.f);
 	if (IS_SET(action, BLOODING)) {
@@ -721,13 +721,13 @@ void Character::drawObject(Window*) {
 			 * Pobieranie ostatniego shaderu
 			 */
 			GLint last_program = Shader::getLastShader();
-
+			
 			shaders[HIT_CHARACTER_SHADER]->begin();
 			//
 			IrregularPlatform::drawObject(NULL);
 			//
 			shaders[HIT_CHARACTER_SHADER]->end();
-
+			
 			/**
 			 * Powrót do ostatniego shaderu
 			 */

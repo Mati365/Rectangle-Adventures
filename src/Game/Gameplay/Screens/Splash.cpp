@@ -46,13 +46,13 @@ Splash::Splash() :
 
 void Splash::drawObject(Window*) {
 	SplashInfo* _text = texts.back();
-
+	
 	//
 	if (strlen(title.getString()->c_str()) == 0 && !texts.empty()) {
 		title.setString(_text->text, -1);
 	}
 	_text->timer.tick();
-
+	
 	// Tekst
 	title.getColor()->a = (usint) (255.f
 			* (1.f
@@ -64,26 +64,26 @@ void Splash::drawObject(Window*) {
 					screen_bounds.y / 2
 							- title.getLinesOfText() * title.getFontHeight() :
 					_text->logo->y + _text->logo->h + 50);
-
+	
 	// Logo
 	if (_text->logo) {
 		_text->logo->drawObject(NULL);
 		//
 		PlatformShape* shape = _text->logo->getShape();
 		shape->setLineWidth(3);
-
+		
 		// Zanikanie
 		shape->getMainColor()->r = title.getColor()->a;
 		shape->getMainColor()->g = title.getColor()->a;
 		shape->getMainColor()->b = title.getColor()->a;
 		shape->recompile();
 	}
-
+	
 	/**
 	 * Timer, efekt zanikania
 	 */
 	if (!_text->timer.active) {
-		delete _text;
+		safe_delete<SplashInfo>(_text);
 		texts.pop_back();
 		//
 		if (texts.empty()) {
