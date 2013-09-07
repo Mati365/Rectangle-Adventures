@@ -48,8 +48,8 @@ namespace Gameplay {
 			 */
 			Camera(Body* _focus) :
 							focus(_focus) {
-				pos.w = WINDOW_WIDTH;
-				pos.h = WINDOW_HEIGHT;
+				pos.w = screen_bounds.x;
+				pos.h = screen_bounds.y;
 			}
 			
 			/** Odświeżanie pocycji kamery */
@@ -119,6 +119,10 @@ namespace Gameplay {
 			/** Ustawienie konfiguracji */
 			void setConfig(usint _config) {
 				config = _config;
+			}
+
+			float getRatio() const {
+				return ratio;
 			}
 
 			usint getConfig() const {
@@ -252,7 +256,7 @@ namespace Gameplay {
 		private:
 			/** Resetowanie saturacji barw */
 			inline void resetColorSaturation() {
-				col_saturation[0] = 1.2f; // bardziej karmelkowy ekran
+				col_saturation[0] = 1.1f; // bardziej karmelkowy ekran
 				col_saturation[1] = col_saturation[2] = 1.f;
 			}
 	};

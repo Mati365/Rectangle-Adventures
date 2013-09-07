@@ -116,9 +116,7 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 
 		/** pozostaly czas */
 		//glText left_time;
-		/**
-		 * Ekran smierci
-		 */
+		/** Ekran smierci */
 		glText game_over;
 		Button* retry_game;
 		Button* return_to_menu;
@@ -136,17 +134,13 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		virtual void drawObject(Window*);
 		virtual void catchEvent(const Event&);
 
-		/**
-		 * Callback od przycisków!
-		 */
+		/** Callback od przycisków! */
 		void getCallback(Control* const &);
 
 		bool popMessage();
 		void addMessage(const Message&);
 
-		/**
-		 * Ekran śmierci
-		 */
+		/** Ekran śmierci */
 		void setScreen(usint _screen) {
 			screen = _screen;
 		}
@@ -178,14 +172,10 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		}
 
 	private:
-		/**
-		 * Odświeżanie
-		 */
+		/** Odświeżanie */
 		void updateHUDControls();
 
-		/**
-		 * Otwieranie przerywnika pomiędzy scenami!
-		 */
+		/** Otwieranie przerywnika pomiędzy scenami! */
 		void openCutscene(const Message&);
 		void closeCutscene();
 

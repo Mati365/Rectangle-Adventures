@@ -115,9 +115,7 @@ void Menu::drawObject(Window* window) {
 	if (lvl) {
 		lvl->drawObject(window);
 	}
-	ver.printText(
-			WINDOW_WIDTH - ver.getScreenLength() - 10,
-			WINDOW_HEIGHT - 20);
+	ver.printText(screen_bounds.x / 2 - ver.getScreenLength() / 2, 20);
 }
 
 /**

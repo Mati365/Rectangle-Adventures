@@ -11,9 +11,6 @@
 #include <SDL/SDL.h>
 #include <string>
 
-#define WINDOW_WIDTH 640
-#define WINDOW_HEIGHT 480
-
 using namespace std;
 
 typedef unsigned short int usint;
@@ -93,6 +90,9 @@ struct Vector {
  * Wrapper na podstawowe funkcje OpenGL
  */
 namespace oglWrapper {
+	/**
+	 * Paleta barw
+	 */
 	extern Color RED, DARK_RED, GREEN, DARK_GREEN, BLUE, DARK_BLUE, BLACK,
 			WHITE, GRAY, YELLOW, ORANGE, PURPLE;
 	
@@ -179,6 +179,9 @@ namespace oglWrapper {
  * Silnik graficzny!
  */
 namespace Engine {
+	/** Natywna rozdzielczość ekranu */
+	extern Vector<float> screen_bounds;
+
 	class Window;
 	class Renderer {
 		public:
@@ -209,26 +212,35 @@ namespace Engine {
 	};
 	/**
 	 * Główne okno aplikacji obsługujące pętle gry!
+	 * + Singleton
 	 */
 	extern bool window_opened;
 	class Window {
 		private:
 			SDL_Surface* screen;
-			Vector<usint> bounds;
 
+			/** Konstruktor */
+			Window(const string&);
 		public:
-			Window(const Vector<usint>&, const string&);
 
+			/** Inicjacja okna */
 			void init();
 
-			const Vector<usint>* getBounds() {
-				return &bounds;
+			/** Singleton */
+			static Window& getInstance() {
+				static Window win("Okno");
+				//
+				return win;
 			}
-			
+
 			~Window();
 
 		private:
+			/** Instalacja OpenGL */
 			bool setupOpenGL();
+
+			/** Wyliczanie natywnej rozdzielczości ekranu */
+			Vector<float> getNativeResolution();
 	};
 }
 

@@ -61,18 +61,14 @@ namespace Physics {
 						&& _child.y >= y && _child.y + _child.h <= y + h);
 			}
 			
-			/**
-			 * Czy koliduje z obiektem
-			 */
+			/** Czy koliduje z obiektem */
 			inline bool intersect(const Rect<T>& _body) {
 				return (_body.x + _body.w >= x && _body.x <= x + w
 						&& _body.y + _body.h >= y && _body.y <= y + h);
 			}
 	};
 	
-	/**
-	 * Odwrócenie kierunku
-	 */
+	/** Odwrócenie kierunku */
 	usint invertDir(usint);
 
 	/**
@@ -123,9 +119,7 @@ namespace Physics {
 			bool insertToSubQuad(Body*, bool);
 	};
 	
-	/**
-	 * Główny silnik fizyczny
-	 */
+	/** Główny silnik fizyczny */
 	class pEngine {
 		public:
 			/** Zwrot */
@@ -171,9 +165,7 @@ namespace Physics {
 		public:
 			pEngine(const Rect<float>&, float);
 
-			/**
-			 * Obszar widoczny!
-			 */
+			/** Obszar widoczny! */
 			deque<Body*>* getVisibleBodies() {
 				return &visible_bodies;
 			}
@@ -198,10 +190,16 @@ namespace Physics {
 				list.clear();
 			}
 
+			/** Test kolizji */
 			bool collide(const Body*, const Body*) const;
+
+			/** Poruszenie się i test kolizji */
 			bool moveAndCheck(float, float, Body*, const Body*);
+
+			/** Odświeżenie świata */
 			void updateWorld();
 
+			/** Ustawienie lagu */
 			void setSleep(usint);
 
 			/** Dodawanie konfiguracji do silnika */
@@ -236,10 +234,19 @@ namespace Physics {
 			~pEngine();
 
 		private:
-			// Czy warto sprawdzać dla niego kolizje
+			/** Aktualizacja poruszania się obiektu */
+			void updateBodyMovement(Body*);
+
+			/** Czy warto sprawdzać dla niego kolizje */
 			bool isBodyActive(Body*);
+
+			/** Czy się porusza? */
+			bool isMoving(Body*);
+
+			/** Sprawdzenie kolizji między obiektami z listy */
 			void checkCollisions(deque<Body*>&);
 
+			/** Detekcja kolizji */
 			usint checkVerticalCollision(Body*, Body*);
 			usint checkHorizontalCollision(Body*, Body*);
 	};
@@ -277,11 +284,12 @@ namespace Physics {
 				STATIC = 1 << 1,
 				HIDDEN = 1 << 2,
 				BACKGROUND = 1 << 3, // tło nie oddziaływujące
+				FLYING = 1 << 4, // latający np. poruszające się platformy
 				/**
 				 * Element pomiędzy widocznym ekranem
 				 * a widocznym musi nie podlegać fizyce
 				 */
-				BUFFERED = 1 << 4
+				BUFFERED = 1 << 5
 			};
 
 			/** Stan fizyczny */

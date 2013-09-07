@@ -22,7 +22,7 @@ void ProgressBar::drawObject(Window*) {
 	 * Obramowanie
 	 */
 	if (border_enabled) {
-		oglWrapper::drawRect(x, y, w, h, oglWrapper::WHITE, 2);
+		oglWrapper::drawRect(x, y, w, h, Color(255, 255, 255, col.a), 2);
 	}
 	/**
 	 * Wypełnienie:

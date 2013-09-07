@@ -16,14 +16,19 @@ using namespace Gameplay;
 using namespace GameScreen;
 using namespace GUI;
 
+/** Natywna rozdzielczośc ekranu! */
+Vector<float> Engine::screen_bounds;
+
+/** Czy okno jest otwarte? */
+bool Engine::window_opened = true;
+
+/** Flagi pętli gry */
+
 #define FPS 9
 //#define BENCHMARK
 #define FULLSCREEN
 
-bool Engine::window_opened = true;
-
-//
-
+/** Konwersja Uint8 do char */
 void translateKeyEvent(Uint8* keystate, Uint16 key, char translated,
 		Event& event, Screen* renderer) {
 	if (keystate[key]) {
@@ -35,30 +40,41 @@ void translateKeyEvent(Uint8* keystate, Uint16 key, char translated,
 	event.key = ' ';
 }
 
-Window::Window(const Vector<usint>& _bounds, const string& _title) :
-				screen(NULL),
-				bounds(_bounds) {
+/**
+ * Konstruktor
+ */
+Window::Window(const string& _title) :
+				screen(NULL) {
+	// Inicjalizacja SDL
+	SDL_Init(SDL_INIT_EVERYTHING);
+
+	// Wyliczanie rozdzielczości ekranu!
+	screen_bounds = getNativeResolution();
+
+	// Tworzenie okna
 	screen = SDL_SetVideoMode(
-			WINDOW_WIDTH,
-			WINDOW_HEIGHT,
+			screen_bounds.x,
+			screen_bounds.y,
 			32,
 			SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER
 #ifdef FULLSCREEN
 					| SDL_FULLSCREEN
 #endif
-					);
+			);
 	if (!screen) {
 		return;
 	}
-	SDL_Init(SDL_INIT_EVERYTHING);
 	SDL_WM_SetCaption(_title.c_str(), _title.c_str());
 
 	//
-	if (screen->flags & SDL_OPENGL) {
+	if (IS_SET(screen->flags, SDL_OPENGL)) {
 		logEvent(Logger::LOG_INFO, "OpenGL obsługiwany!");
 	}
 }
 
+/**
+ * Inicjacja okna
+ */
 void Window::init() {
 	if (setupOpenGL()) {
 		logEvent(Logger::LOG_INFO, "Okno skonfigurowane sukcesem!");
@@ -140,7 +156,7 @@ void Window::init() {
 		glLoadIdentity();
 		active_screen->drawObject(this);
 #ifdef BENCHMARK
-		frame_count.printText(WINDOW_WIDTH - 50, 20);
+		frame_count.printText(screen_bounds.x - 50, 70);
 #endif
 		glFlush();
 		SDL_GL_SwapBuffers();
@@ -169,6 +185,18 @@ void Window::init() {
 	unloadShadersPack();
 }
 
+/**
+ * Pobieranie natywnej rozdzielczości
+ */
+Vector<float> Window::getNativeResolution() {
+	const SDL_VideoInfo* info = SDL_GetVideoInfo();
+	//
+	return Vector<float>(info->current_w, info->current_h);
+}
+
+/**
+ * Instalacja OpenGL
+ */
 bool Window::setupOpenGL() {
 	glewInit();
 	
@@ -177,12 +205,13 @@ bool Window::setupOpenGL() {
 	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
+	glAlphaFunc(GL_GREATER, 0.5f);
+
 	glClearColor(0.f, 0.f, 0.f, 0.f);
-	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	glViewport(0, 0, screen_bounds.x, screen_bounds.y);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, WINDOW_WIDTH, WINDOW_HEIGHT, 0, -1, 1);
+	glOrtho(0, screen_bounds.x, screen_bounds.y, 0, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	

@@ -262,74 +262,30 @@ void Character::recoverFromCheckpoint(MapINFO* map) {
 /**
  * Kolizja gracza
  */
-void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
+void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 	/**
-	 * Kolizje dla mobów
+	 * Tylko gracz akceptuje reszte kolizji!
 	 */
-	switch (type) {
-		/**
-		 *
-		 */
-		case SPIKES:
-			if (dir == pEngine::DOWN && orientation == pEngine::DOWN
-					&& !body->collisions[pEngine::UP - 1]) {
-				body->catchCollision(physics, invertDir(dir), this);
-			}
-			break;
-
-			/**
-			 *
-			 */
-		default:
-			break;
-	}
-
-	/**
-	 * Test martwości
-	 */
-	if (isDead()) {
-		return;
-	}
-
-	/**
-	 * Ginąć może nie tylko gracz
-	 */
-	if (dir == pEngine::DOWN && !IS_SET(body->state, Body::HIDDEN)
-			&& (type == Body::HERO || type == Body::ENEMY)) {
-		// Zryte formatowanie
-		if (velocity.y < -9 && status.health > 0) {
-			die();
-			return;
-		}
-		UNFLAG(action, JUMPING);
-	}
 	if (type != HERO) {
 		return;
 	}
 
-	/**
-	 * Skrypty
-	 */
+	// Skrypty
 	if (body->type == Body::TRIGGER) {
 		dynamic_cast<Trigger*>(body)->generate();
 		return;
 	}
-	
-	/**
-	 * Kasowanie flag
-	 */
+
+	// Reset flag
 	UNFLAG(action, CLIMBING);
 
-	/**
-	 * Akcje gracza
-	 */
+	// Akcje gracza
 	Character* enemy = dynamic_cast<Character*>(body);
 	if (!enemy) {
 		return;
 	}
 
 	switch (enemy->type) {
-
 		/**
 		 * Strefa śmierci ;_;
 		 */
@@ -401,11 +357,9 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 			 */
 		case ENEMY:
 			if (dir == pEngine::DOWN || dir == pEngine::UP) {
-				status += enemy->status;
-				//
 				body->destroyed = true;
 			} else {
-				status -= enemy->status;
+				status += enemy->status;
 				hitMe();
 			}
 			dodge(dir);
@@ -444,6 +398,71 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (status.health == 0) {
 		die();
 	}
+}
+
+/**
+ * Kolizje wszystkich obiektów
+ */
+void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
+	if (!body) {
+		return;
+	}
+	/**
+	 * Callbackowe kolizje dla mobów,
+	 * nie wiadomo kto pierwszy odebrał
+	 * kolizje gracz czy mob, dlatego
+	 * lepiej upewnić się że np. gracz ją
+	 * dostał
+	 */
+	bool is_hero = type == HERO;
+
+	if (!is_hero) {
+		switch (type) {
+			/**
+			 *
+			 */
+			case SPIKES:
+				if (dir == pEngine::DOWN && orientation == pEngine::DOWN
+						&& !body->collisions[pEngine::UP - 1]) {
+					body->catchCollision(physics, invertDir(dir), this);
+				}
+				break;
+
+				/**
+				 *
+				 */
+			case ENEMY:
+				if (body->type == HERO) {
+					body->catchCollision(physics, invertDir(dir), this);
+				}
+				break;
+
+				/**
+				 *
+				 */
+			default:
+				break;
+		}
+	}
+
+	// Test martwości
+	if (isDead()) {
+		return;
+	}
+
+	// Ginąć może nie tylko gracz
+	if (dir == pEngine::DOWN && !IS_SET(body->state, Body::HIDDEN)
+			&& (type == Body::HERO || type == Body::ENEMY)) {
+		// Zryte formatowanie
+		if (velocity.y < -9 && status.health > 0) {
+			die();
+			return;
+		}
+		UNFLAG(action, JUMPING);
+	}
+	
+	// Kolizje gracza
+	catchPlayerCollision(physics, dir, body);
 }
 
 /**
@@ -518,6 +537,34 @@ void Character::updateMe() {
 			/**
 			 *
 			 */
+		case ENEMY:
+			// A co jeśli kierunku nie ma?
+			if (orientation == pEngine::NONE) {
+				orientation = getIntRandom(
+						(usint) pEngine::RIGHT,
+						(usint) pEngine::LEFT);
+			}
+
+			// Kolizja!
+			if (collisions[orientation - 1]) {
+				orientation = invertDir(orientation);
+			}
+
+			// Poruszanie się
+			switch (orientation) {
+				case pEngine::LEFT:
+					velocity.x = -2.f;
+					break;
+
+				case pEngine::RIGHT:
+					velocity.x = 2.f;
+					break;
+			}
+			break;
+
+			/**
+			 *
+			 */
 		default:
 			break;
 	}
@@ -563,6 +610,9 @@ void Character::jump(float _y_speed, bool _force) {
 	resetSleeping();
 	//
 	if (!isDead() && (!IS_SET(action, JUMPING) || _force)) {
+		if (!IS_SET(action, CLIMBING) && !collisions[pEngine::DOWN - 1]) {
+			return;
+		}
 		ADD_FLAG(action, JUMPING);
 		velocity.y = -_y_speed;
 		//

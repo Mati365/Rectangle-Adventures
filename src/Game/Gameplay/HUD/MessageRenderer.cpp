@@ -58,7 +58,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 
 				retry_hud(
 						Rect<float>(
-								WINDOW_WIDTH - 22 - SPACES * 2,
+								screen_bounds.x - 22 - SPACES * 2,
 								16,
 								16,
 								score_bar.y + score_bar.h),
@@ -79,8 +79,8 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				cutscene_box(NULL) {
 	retry_game = new Button(
 			Rect<float>(
-					WINDOW_WIDTH / 2 - 10 - 100,
-					WINDOW_HEIGHT - 45,
+					screen_bounds.x / 2 - 10 - 100,
+					screen_bounds.y - 45,
 					100,
 					35),
 			"Od nowa",
@@ -89,7 +89,11 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 	retry_game->putCallback(Event::MOUSE_RELEASED, this);
 
 	return_to_menu = new Button(
-			Rect<float>(WINDOW_WIDTH / 2 + 10, WINDOW_HEIGHT - 45, 100, 35),
+			Rect<float>(
+					screen_bounds.x / 2 + 10,
+					screen_bounds.y - 45,
+					100,
+					35),
 			"Do menu");
 	return_to_menu->putCallback(Event::MOUSE_RELEASED, this);
 
@@ -118,7 +122,7 @@ void MessageRenderer::openCutscene(const Message& msg) {
 			-2000,
 			Body::STATIC,
 			msg.cutscene);
-	cutscene_box->fitToWidth(WINDOW_WIDTH);
+	cutscene_box->fitToWidth(screen_bounds.x);
 
 	//
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
@@ -158,97 +162,24 @@ void MessageRenderer::addMessage(const Message& msg) {
  * Rysowanie obramowania HUDu
  */
 void MessageRenderer::drawBorder(Window* _window) {
-	if (screen == HUD_SCREEN) {
-		/**
-		 * Kolor HUDu
-		 */
-		Color col(1.f, 1.f, 1.f);
-
-		/**
-		 * Obramowanie HUDu
-		 */
-		Vector<float> progress_hud_bounds(
-				score_bar.x + score_bar.w + SPACES * 2,
-				score_bar.h + score_bar.y + SPACES * 2);
-
-		glPushAttrib(GL_ENABLE_BIT);
-		glLineStipple(1, 0xAAAA);
-		glEnable(GL_LINE_STIPPLE);
-		glLineWidth(2.f);
-
-		/**
-		 * Obramowanie pasków życia
-		 */
-		glBegin(GL_LINE_STRIP);
-
-		glColor4f(col.r, col.g, col.b, 1.f);
-		glVertex2f(progress_hud_bounds.x, SPACES * 2);
-
-		glColor4f(col.r, col.g, col.b, .5f);
-		glVertex2f(progress_hud_bounds.x, progress_hud_bounds.y);
-
-		glColor4f(col.r, col.g, col.b, 1.f);
-		glVertex2f(SPACES * 2, progress_hud_bounds.y);
-
-		glEnd();
-
-		/**
-		 * Obramowanie przycisku restartu
-		 */
-		Vector<float> retry_hud_bounds(retry_hud.x - SPACES * 2, SPACES * 2);
-
-		glBegin(GL_LINE_STRIP);
-
-		glColor4f(col.r, col.g, col.b, 1.f);
-		glVertex2f(retry_hud_bounds.x, SPACES * 2);
-
-		glColor4f(col.r, col.g, col.b, .5f);
-		glVertex2f(retry_hud_bounds.x, progress_hud_bounds.y);
-
-		glColor4f(col.r, col.g, col.b, 1.f);
-		glVertex2f(WINDOW_WIDTH - SPACES * 2, progress_hud_bounds.y);
-
-		glEnd();
-
-		/**
-		 * Obramowanie poziomu lawy
-		 */
-		glBegin(GL_LINE_STRIP);
-
-		glColor4f(col.r, col.g, col.b, 1.f);
-		glVertex2f(progress_hud_bounds.x + SPACES * 20, SPACES * 2);
-
-		// dolna część
-		glColor4f(col.r, col.g, col.b, .5f);
-		glVertex2f(progress_hud_bounds.x + SPACES * 20, progress_hud_bounds.y);
-		glVertex2f(retry_hud_bounds.x - SPACES * 20, progress_hud_bounds.y);
-
-		glColor4f(col.r, col.g, col.b, 1.f);
-		glVertex2f(retry_hud_bounds.x - SPACES * 20, SPACES * 2);
-
-		glEnd();
-
-		glPopAttrib();
-	} else {
+	if (screen == INTRO_SCREEN) {
 		/**
 		 * Wypełnienie!
 		 */
 		oglWrapper::drawFillRect(
 				SPACES,
-				_window->getBounds()->y - height + SPACES,
-				_window->getBounds()->x - SPACES * 2,
+				screen_bounds.y - height + SPACES,
+				screen_bounds.x - SPACES * 2,
 				height,
 				oglWrapper::BLACK);
 
 		/**
 		 * Optymalizacja!
 		 */
-		float x = SPACES, y = _window->getBounds()->y - height + SPACES, w =
-				_window->getBounds()->x - SPACES * 2, h = height - SPACES * 2;
+		float x = SPACES, y = screen_bounds.y - height + SPACES, w =
+				screen_bounds.x - SPACES * 2, h = height - SPACES * 2;
 
-		glPushAttrib(GL_ENABLE_BIT);
-		glLineStipple(1, 0xAAAA);
-		glEnable(GL_LINE_STIPPLE);
+		oglWrapper::beginStroke(0xAAAA);
 		glLineWidth(screen != HUD_SCREEN ? 3 : 2);
 
 		glBegin(GL_LINE_LOOP);
@@ -262,12 +193,10 @@ void MessageRenderer::drawBorder(Window* _window) {
 		glVertex2f(x, y + h);
 
 		glEnd();
-
-		glPopAttrib();
-
+		oglWrapper::endStroke();
 		oglWrapper::drawFillRect(
 				SPACES * 2,
-				_window->getBounds()->y - height,
+				screen_bounds.y - height,
 				title.getScreenLength() + 20,
 				17,
 				background_color);
@@ -337,7 +266,6 @@ void MessageRenderer::catchEvent(const Event& _event) {
  * Odświeżanie kontrolek HUDa
  */
 void MessageRenderer::updateHUDControls() {
-
 	/**
 	 * Sprawdzenie temperatury HUDa
 	 */
@@ -353,20 +281,23 @@ void MessageRenderer::updateHUDControls() {
 						pEngine::NONE));
 		heart.fitToWidth(HEART_ICON_WIDTH);
 		health_bar.setColor(*heart.getShape()->getMainColor());
+		health_bar.getColor()->a = 208;
 
 		// Punkt
 		score.setShape(
 				ResourceFactory::getInstance(NULL).getTexture(
 						ResourceFactory::SCORE,
 						pEngine::NONE));
+
 		score.fitToWidth(
 				hud_temperature == ResourceFactory::ICY ?
 						SCORE_ICON_WIDTH / 1.5f : SCORE_ICON_WIDTH);
 		score_bar.setColor(*score.getShape()->getMainColor());
+		score_bar.getColor()->a = 208;
 	}
 
 	/**
-	 * Pukanie serca!
+	 * Bicie serca!
 	 */
 	heart_anim.tick();
 	heart.fitToWidth(
@@ -376,19 +307,30 @@ void MessageRenderer::updateHUDControls() {
 		//
 		heart_anim.reset();
 	}
-	// Centrowanie
-	heart.x = 20 - heart.w / 2;
-	heart.y = 24 - heart.h / 2;
-	health_bar.setValue(hero->getStatus()->health);
-
-	heart.drawObject(NULL);
-	health_bar.drawObject(NULL);
 
 	/**
-	 * Punkty!
+	 * Aktualizacja pozycji
 	 */
+	// HUD nad graczem
+	Rect<float>* cam_pos = &game->getMapRenderer()->getCamera()->pos;
+	float ratio = 2.f - game->getMapRenderer()->getRatio();
+
+	score_bar.x = hero->x * ratio - hero->w / 2 - cam_pos->x - score_bar.w / 2
+			+ hero->velocity.x * 2;
+	score_bar.y = hero->y * ratio - cam_pos->y - 120 - hero->velocity.y / 2;
+
+	score.x = score_bar.x - score.w - SPACES * 2;
+	score.y = score_bar.y - score.h / 2 + score_bar.h / 2;
+
+	health_bar.x = score_bar.x;
+	health_bar.y = score.y - SPACES - health_bar.h;
+
+	heart.x = score.x + score.w / 2 - heart.w / 2;
+	heart.y = health_bar.y;
+
+	// Aktualizacja wartości
 	score_bar.setValue(hero->getStatus()->score);
-	score.x = health_bar.x + health_bar.w + SPACES * 5 - score.w / 2;
+	health_bar.setValue(hero->getStatus()->health);
 }
 
 /**
@@ -399,14 +341,34 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 		hero = background->getHero();
 	}
 	updateHUDControls();
-	//
+
+	// Rysowanie HUDu
 	score.drawObject(NULL);
 	score_bar.drawObject(NULL);
+
+	heart.drawObject(NULL);
+	health_bar.drawObject(NULL);
 
 	if (!retry_hud.getIcon()) {
 		retry_hud.setIcon(getShapePointer("retry_shape"));
 	}
 	retry_hud.drawObject(NULL);
+
+	// Linia łącząca gracza z HUDem
+	oglWrapper::beginStroke(0xA0A0);
+
+	glLineWidth(2.f);
+	glBegin(GL_LINE_STRIP);
+
+	glColor4f(1.f, 1.f, 1.f, 1.f);
+	glVertex2f(score_bar.x, score_bar.y + 20);
+
+	glColor4f(1.f, 1.f, 1.f, 0.2f);
+	glVertex2f(score_bar.x, score_bar.y + 100);
+
+	glEnd();
+
+	oglWrapper::endStroke();
 }
 
 /**
@@ -423,9 +385,7 @@ void MessageRenderer::drawIntroMessage(Window* _window) {
 					"Aby kontynuowac wcisnij [SPACJE]!",
 					GLUT_BITMAP_HELVETICA_18,
 					18);
-			t.printText(
-					_window->getBounds()->x / 2 - t.getScreenLength() / 2,
-					90);
+			t.printText(screen_bounds.x / 2 - t.getScreenLength() / 2, 90);
 		} else {
 			popMessage();
 		}
@@ -437,15 +397,17 @@ void MessageRenderer::drawIntroMessage(Window* _window) {
 	/**
 	 * Wyświetlanie INTRO/OUTRO
 	 */
-	title.printText(SPACES * 2 + 5, _window->getBounds()->y - height + 12);
-	text.printText(SPACES * 2 + 2, _window->getBounds()->y - 23 + 10);
+	title.printText(SPACES * 2 + 5, screen_bounds.y - height + 12);
+	text.printText(SPACES * 2 + 2, screen_bounds.y - 23 + 10);
 }
 
 /**
  * Ekran śmierci
  */
 void MessageRenderer::drawDeathScreen(Window*) {
-	game_over.printText(WINDOW_WIDTH / 2 - game_over.getScreenLength() / 2, 80);
+	game_over.printText(
+			screen_bounds.x / 2 - game_over.getScreenLength() / 2,
+			80);
 	//
 	retry_game->drawObject(NULL);
 	return_to_menu->drawObject(NULL);
@@ -458,7 +420,7 @@ void MessageRenderer::getCallback(Control* const & control) {
 	logEvent(Logger::LOG_INFO, "Otrzymano event w ekranie śmierci!");
 	//
 	if (control == return_to_menu) {
-		delete menu;
+		safe_delete<Menu>(menu);
 		menu = new Menu();
 		//
 		active_screen = menu;

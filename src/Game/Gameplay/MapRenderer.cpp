@@ -96,7 +96,7 @@ void MapRenderer::addWeather(usint _type) {
 		 */
 		case SNOWING: {
 			SnowEmitter* snow = new SnowEmitter(
-					Rect<float>(0, 20, WINDOW_WIDTH, 0));
+					Rect<float>(0, 20, screen_bounds.x, 0));
 			snow->setFocus(&cam.pos);
 			//
 			addStaticObject(snow);
@@ -118,8 +118,8 @@ void MapRenderer::addWeather(usint _type) {
 					Rect<float>(
 							cam.pos.x,
 							cam.pos.y,
-							WINDOW_WIDTH,
-							WINDOW_HEIGHT),
+							screen_bounds.x,
+							screen_bounds.y),
 					50,
 					map->physics);
 			//
@@ -233,10 +233,10 @@ void MapRenderer::drawObject(Window* _window) {
 	/** odległość max. ruchów gracza na erkanie */
 	float go_distance = .75f;
 
-	if (hero_screen_pos.x > WINDOW_WIDTH * go_distance
-			|| hero_screen_pos.x < WINDOW_WIDTH * (1 - go_distance)
-			|| hero_screen_pos.y > WINDOW_HEIGHT * go_distance
-			|| hero_screen_pos.y < WINDOW_HEIGHT * (1 - go_distance)) {
+	if (hero_screen_pos.x > screen_bounds.x * go_distance
+			|| hero_screen_pos.x < screen_bounds.x * (1 - go_distance)
+			|| hero_screen_pos.y > screen_bounds.y * go_distance
+			|| hero_screen_pos.y < screen_bounds.y * (1 - go_distance)) {
 		ratio = 1.f + (1.f - DEFAULT_CAM_RATIO); // z powrotem na środek ekranu
 	} else {
 		ratio = DEFAULT_CAM_RATIO;

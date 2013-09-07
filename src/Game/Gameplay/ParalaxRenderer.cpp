@@ -50,10 +50,12 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	if (!physics->getList()->empty()) {
 		physics->setActiveRange(
 				Rect<float>(
-						cam.pos.x * ratio,
-						cam.pos.y * ratio,
-						WINDOW_WIDTH,
-						WINDOW_HEIGHT));
+						cam.focus->x - DEFAULT_SHADOW_RADIUS
+								+ cam.focus->velocity.x,
+						cam.focus->y - DEFAULT_SHADOW_RADIUS
+								+ cam.focus->velocity.y,
+						DEFAULT_SHADOW_RADIUS * 2 - cam.focus->velocity.x * 2,
+						DEFAULT_SHADOW_RADIUS * 2 - cam.focus->velocity.y * 2));
 		physics->updateWorld();
 	}
 	
@@ -62,12 +64,16 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	
 	/** Lista aktualnie widocznych elementów! */
 	deque<Body*>* list = physics->getVisibleBodies();
-	
+
 	glPushMatrix();
 
 	/** Transformacja kamery */
 	if (IS_SET(config, ROTATION)) {
-		glRotatef(sin(cam.focus->x / WINDOW_WIDTH * 2) * -9.f, 0.f, 0.f, 1.f);
+		glRotatef(
+				sin(cam.focus->x / screen_bounds.x * 2) * -9.f,
+				0.f,
+				0.f,
+				1.f);
 	}
 	float _x = -cam.pos.x * ratio, _y = -cam.pos.y * ratio;
 	if (shake_timer.active) {

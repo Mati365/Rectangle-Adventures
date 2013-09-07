@@ -18,12 +18,12 @@ Splash::SplashInfo::SplashInfo(const char* _text, usint _visible_time,
 				logo(NULL) {
 	if (_logo) {
 		logo = new IrregularPlatform(
-				WINDOW_WIDTH / 2 - LOGO_WIDTH / 2,
+				screen_bounds.x / 2 - LOGO_WIDTH / 2,
 				0,
 				0,
 				_logo);
 		logo->fitToWidth(LOGO_WIDTH);
-		logo->y = WINDOW_HEIGHT / 2 - logo->h / 2 - 40;
+		logo->y = screen_bounds.y / 2 - logo->h / 2 - 40;
 	}
 }
 
@@ -59,9 +59,9 @@ void Splash::drawObject(Window*) {
 					- (float) _text->timer.cycles_count
 							/ (float) _text->timer.max_cycles_count));
 	title.printText(
-			WINDOW_WIDTH / 2 - title.getScreenLength() / 2,
+			screen_bounds.x / 2 - title.getScreenLength() / 2,
 			!_text->logo ?
-					WINDOW_HEIGHT / 2
+					screen_bounds.y / 2
 							- title.getLinesOfText() * title.getFontHeight() :
 					_text->logo->y + _text->logo->h + 50);
 

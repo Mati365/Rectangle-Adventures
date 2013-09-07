@@ -152,6 +152,10 @@ namespace GUI {
 			void setColor(const Color& _col) {
 				col = _col;
 			}
+
+			Color* getColor() {
+				return &col;
+			}
 	};
 	
 	/**

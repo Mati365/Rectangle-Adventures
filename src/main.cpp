@@ -36,8 +36,7 @@ int main(int argc, char **argv) {
 		logEvent(Logger::LOG_ERROR, "Plik archiwum gry nie jest autentyczny!");
 		return 1;
 	}
-	Engine::Window win(Vector<usint>(WINDOW_WIDTH, WINDOW_HEIGHT), "Gra");
-	win.init();
+	Window::getInstance().init();
 #else
 	/**
 	 * Example: ./archiver NAZWA_ARCHIWUM AUTOR plik1.txt plik2.txt

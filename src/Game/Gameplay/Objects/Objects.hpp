@@ -25,9 +25,7 @@ using namespace Engine;
 using namespace Physics;
 using namespace Sound;
 
-/**
- * Konfiguracja gameplay!
- */
+/** Konfiguracja gameplay! */
 #define MAX_LIVES 3
 #define MAX_SCORE 50
 #define DEATH -1
@@ -134,9 +132,7 @@ class IrregularPlatform: public Platform {
 
 		virtual void drawObject(Window*);
 
-		/**
-		 * Kształt platformy!
-		 */
+		/** Kształt platformy! */
 		PlatformShape* getShape() const {
 			return shape;
 		}
@@ -149,9 +145,7 @@ class IrregularPlatform: public Platform {
 		 */
 		void fitToWidth(float);
 
-		/**
-		 * Skalowanie całego obiektu!
-		 */
+		/** Skalowanie całego obiektu! */
 		void setScale(float);
 
 		float getScale() const {
@@ -240,9 +234,7 @@ class AI {
 		 */
 		virtual void drive() = 0;
 
-		/**
-		 * Wykrywanie kolizji, reakcja!
-		 */
+		/** Wykrywanie kolizji, reakcja!  */
 		virtual void getCollision(pEngine*, usint, Body*) = 0;
 
 		virtual ~AI() {
@@ -256,8 +248,6 @@ class AI {
 /** Generowanie 'krwii' ;) */
 void generateExplosion(pEngine*, const Rect<float>&, usint, const Color&, float,
 		float, const Vector<float>&, float = -1, usint = Body::NONE);
-
-//
 
 /** Klasa GRACZA */
 class Character: public IrregularPlatform {
@@ -413,9 +403,7 @@ class Character: public IrregularPlatform {
 		/** Resetowanie spania */
 		void resetSleeping();
 
-		/**
-		 * Odświeżanie gracza
-		 */
+		/** Odświeżanie gracza */
 		void updateMe();
 
 		virtual bool recover(Cloneable* _clone) {
@@ -439,20 +427,17 @@ class Character: public IrregularPlatform {
 		}
 		
 	private:
-		/**
-		 * Odświeżanie..
-		 */
+		/** Kolizje gracza */
+		void catchPlayerCollision(pEngine*, usint, Body*);
+
+		/** Odświeżanie.. */
 		void updateHitAnim();
 
-		/**
-		 * Rysowanie elementów opcjonalnych..
-		 */
+		/** Rysowanie elementów opcjonalnych.. */
 		void drawTooltips();
 };
 
-/**
- * Obiekt generujący skrypt
- */
+/** Obiekt generujący skrypt */
 class Trigger: public Body {
 	private:
 		Script* script;
@@ -468,9 +453,7 @@ class Trigger: public Body {
 		virtual void drawObject(Window*) {
 		}
 
-		/**
-		 * Generowanie zdarzenia!
-		 */
+		/** Generowanie zdarzenia! */
 		inline void generate() {
 			if (destroyed) {
 				return;
@@ -507,7 +490,7 @@ class Lava: public Body {
 		virtual void drawObject(Window*);
 
 	protected:
-		// Odświeżanie
+		/** Odświeżanie */
 		void update();
 };
 

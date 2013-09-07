@@ -98,6 +98,21 @@ bool pEngine::isBodyActive(Body* object) {
 }
 
 /**
+ * Czy obiekt się porusza?
+ */
+bool pEngine::isMoving(Body* body) {
+	return !(body->velocity.x == 0 && body->velocity.y == 0);
+}
+
+/**
+ * Aktualizowanie ruchów ciała
+ */
+void pEngine::updateBodyMovement(Body* object) {
+	object->y += object->velocity.y;
+	object->x += object->velocity.x;
+}
+
+/**
  * Odświeżanie świata!
  */
 void pEngine::updateWorld() {
@@ -135,11 +150,6 @@ void pEngine::updateWorld() {
 	for (usint i = 0; i < visible_bodies.size(); ++i) {
 		Body* object = visible_bodies[i];
 
-		/** Test obiektu  */
-		if (!object || !isBodyActive(object)) {
-			continue;
-		}
-
 		/** Żywotność */
 		if (object->life_timer.active) {
 			object->life_timer.tick();
@@ -148,35 +158,37 @@ void pEngine::updateWorld() {
 			}
 		}
 
-		if (IS_SET(object->state, Body::BACKGROUND)
-				&& (object->velocity.x != 0 || object->velocity.y != 0)) {
-			object->y += object->velocity.y;
-			object->x += object->velocity.x;
-			//
+		/** Test obiektu  */
+		if (!object || !isBodyActive(object)) {
 			continue;
 		}
 
-		/** Poruszanie się po platformie */
-		Body* down_collision = object->collisions[DOWN - 1];
-		if (down_collision && down_collision->velocity.x != 0) {
-			object->x += down_collision->velocity.x;
-		}
-		
-		/** Siła ciążenia */
-		if (object->velocity.y < 20.f) {
-			object->velocity.y += gravity_speed;
-		}
-		
-		/** Siła tarcia / w locie też chamuje */
-		if (abs(object->velocity.x) > 0) {
-			if (down_collision) {
-				object->velocity.x *= down_collision->roughness;
-			} else {
-				object->velocity.x *= DEFAULT_ROUGHNESS;
+		/** Czy podlega grawitacji? */
+		if (!(IS_SET(object->state, Body::BACKGROUND)
+				&& (object->velocity.x != 0 || object->velocity.y != 0))) {
+			/** Poruszanie się po platformie */
+			Body* down_collision = object->collisions[DOWN - 1];
+			if (down_collision && down_collision->velocity.x != 0) {
+				object->x += down_collision->velocity.x;
+			}
+
+			/** Siła ciążenia */
+			if (object->velocity.y < 20.f) {
+				object->velocity.y += gravity_speed;
+			}
+
+			/** Siła tarcia / w locie też chamuje */
+			if (abs(object->velocity.x) > 0) {
+				if (down_collision) {
+					object->velocity.x *= down_collision->roughness;
+				} else {
+					object->velocity.x *= DEFAULT_ROUGHNESS;
+				}
 			}
 		}
-		object->y += object->velocity.y;
-		object->x += object->velocity.x;
+
+		/** Poruszenie obiektu */
+		updateBodyMovement(object);
 	}
 }
 

@@ -12,9 +12,7 @@
 #define ARG_COUNT 8 // Maksymalna ilość argumentów!
 #define SPACE_CHARACTER '%' // Znak spacji w skryptach
 
-/**
- * Deklaracja funkcji
- */
+/** Deklaracja funkcji */
 struct Func {
 		usint id; // identyfikator
 		char func_name[40]; // nazwa funkcji
@@ -82,9 +80,7 @@ class Script {
 		}
 };
 
-/**
- * Singleton, na później..
- */
+/** Singleton, na później.. */
 class Interpreter {
 	private:
 		Interpreter() {
@@ -102,9 +98,8 @@ class Interpreter {
 		 * Przyjmowanie również dynamiczne!
 		 */
 		Script* compile(char*);
-		/**
-		 * Interpretacja ze skryptu!
-		 */
+
+		/** Interpretacja ze skryptu!*/
 		bool interpret(Script*);
 };
 #endif /* SCRIPT_HPP_ */
