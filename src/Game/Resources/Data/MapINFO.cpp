@@ -65,12 +65,10 @@ bool readMob(FILE* file) {
 			0,
 			NULL,
 			NULL,
-			orientation);
+			orientation,
+			state);
 	//
 	body->script_id = script_id;
-	if (body->state == Body::NONE) {
-		body->state = state;
-	}
 	return true;
 }
 

@@ -628,7 +628,7 @@ class ResourceFactory {
 
 		/** Deklaruje dynamicznie! */
 		Body* createObject(usint, float, float, float, float, PlatformShape*,
-				char*, usint);
+				char*, usint, usint = Body::NONE);
 
 		/**
 		 * Reallokacja tekstur po

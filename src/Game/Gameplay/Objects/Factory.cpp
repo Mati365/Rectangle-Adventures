@@ -327,7 +327,8 @@ ResourceFactory& ResourceFactory::getInstance(pEngine* _physics) {
  * Generowanie obiektów wraz ze skryptami
  */
 Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
-		float _h, PlatformShape* _shape, char* _script, usint _orientation) {
+		float _h, PlatformShape* _shape, char* _script, usint _orientation,
+		usint _state) {
 	if (physics == NULL) {
 		logEvent(Logger::LOG_ERROR, "Fabryka zgłasza praw fizyki brak!");
 		return NULL;
@@ -431,6 +432,9 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	// Potrzebne przy realokacji tekstur
 	_object->orientation = _orientation;
 	_object->factory_type = _type;
+	if(_state != Body::NONE) {
+		_object->state = _state;
+	}
 	
 	addBody(_object);
 	//
