@@ -54,8 +54,8 @@ void ParalaxRenderer::drawObject(Window* _window) {
 								+ cam.focus->velocity.x,
 						cam.focus->y - DEFAULT_SHADOW_RADIUS
 								+ cam.focus->velocity.y,
-						DEFAULT_SHADOW_RADIUS * 2 - cam.focus->velocity.x * 2,
-						DEFAULT_SHADOW_RADIUS * 2 - cam.focus->velocity.y * 2));
+						DEFAULT_SHADOW_RADIUS * 2 + cam.focus->velocity.x * 2,
+						DEFAULT_SHADOW_RADIUS * 2 + cam.focus->velocity.y * 2));
 		physics->updateWorld();
 	}
 	

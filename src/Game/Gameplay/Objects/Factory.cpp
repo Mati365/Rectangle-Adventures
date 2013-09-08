@@ -450,6 +450,8 @@ void ResourceFactory::unload() {
 void ResourceFactory::addBody(Body* _object) {
 	if (_object) {
 		created.push_back(_object);
-		physics->insert(_object);
+
+		/** Siłowe dodanie do listy! */
+		physics->insert(_object, true);
 	}
 }

@@ -51,25 +51,16 @@ pEngine::pEngine(const Rect<float>& _bounds, float _gravity_speed) :
 /**
  * Dodawanie obiektu
  */
-void pEngine::insert(Body* body) {
+void pEngine::insert(Body* body, bool _force_register) {
 	if (!body) {
 		return;
 	}
 	body->physics = this;
 	/** Obiekty statyczne nie sią usuwane w czasie gry */
-	if (IS_SET(body->state, Body::STATIC)) {
+	if (_force_register || IS_SET(body->state, Body::STATIC)) {
 		list.push_back(body);
 	}
 	quadtree->insert(body);
-}
-
-void pEngine::insertToConstBodies(Body* body) {
-	for (auto& obj : list) {
-		if (obj == body) {
-			return;
-		}
-	}
-	list.push_back(body);
 }
 
 /**

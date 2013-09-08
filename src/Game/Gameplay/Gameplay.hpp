@@ -108,9 +108,7 @@ namespace Gameplay {
 
 			virtual void drawObject(Window*);
 
-			/**
-			 * Element statyczny np. element interface'u
-			 */
+			/** Element statyczny np. element interface'u  */
 			void addStaticObject(Body*);
 
 			/** Potrząsanie ekranem */

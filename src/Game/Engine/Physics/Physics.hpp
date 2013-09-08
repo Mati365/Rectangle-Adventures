@@ -175,13 +175,7 @@ namespace Physics {
 			}
 			
 			/** Dodawanie obiektu */
-			void insert(Body*);
-
-			/**
-			 * Lista ciał, które są statyczne, mają
-			 * uchwyty skryptów
-			 */
-			void insertToConstBodies(Body*);
+			void insert(Body*, bool = false);
 
 			/** Usuwanie obiektu */
 			bool remove(Body*);
