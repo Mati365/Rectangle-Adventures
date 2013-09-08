@@ -6,6 +6,8 @@
  */
 #include "Screens.hpp"
 
+#include "../../Tools/Tools.hpp"
+
 #include "../../Resources/Data/ResourceManager.hpp"
 #include "../../Resources/Data/SoundManager.hpp"
 
@@ -69,12 +71,20 @@ void Menu::getCallback(Control* const & control) {
 					break;
 					
 				case 1:
+					safe_delete<Game>(game);
+					game = new Game("mapa.txt");
+
+					game->getMapRenderer()->addToParalax(
+							loadMap("parallax_1.txt", MapINFO::WITHOUT_HERO),
+							0.45f,
+							game->getMapRenderer()->getHero(),
+							ParalaxRenderer::PARALLAX
+									| ParalaxRenderer::ROTATION
+									| ParalaxRenderer::DRAW_QUAD);
+
 					/**
 					 * Nowa gra
 					 */
-					splash->pushTitle(
-							"Tip: Skaczac na kupy pasek zycia regeneruj sie..",
-							211); // dla picu ;0
 					active_screen = splash;
 					splash->endTo(game);
 					//

@@ -146,9 +146,7 @@ namespace Gameplay {
 			}
 			
 			~ParalaxRenderer() {
-				if (map) {
-					safe_delete<MapINFO>(map);
-				}
+				safe_delete<MapINFO>(map);
 			}
 	};
 	

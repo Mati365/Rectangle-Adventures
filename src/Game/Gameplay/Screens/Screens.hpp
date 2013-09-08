@@ -104,9 +104,7 @@ namespace GameScreen {
 				return lvl;
 			}
 			
-			/**
-			 * Callback od przycisków!
-			 */
+			/** Callback od przycisków! */
 			void getCallback(Control* const &);
 
 			~Menu();
@@ -129,9 +127,7 @@ namespace GameScreen {
 					char* text;
 					_Timer timer;
 
-					/**
-					 * Logo podczas pierwszego włącznia
-					 */
+					/** Logo podczas pierwszego włącznia */
 					IrregularPlatform* logo;
 
 					SplashInfo(const char*, usint, PlatformShape* = NULL);
@@ -151,9 +147,7 @@ namespace GameScreen {
 
 			virtual void drawObject(Window*);
 
-			/**
-			 * Czyszczenie!
-			 */
+			/** Czyszczenie! */
 			void unload() {
 				for (usint i = 0; i < texts.size(); ++i) {
 					delete texts[i];
@@ -161,9 +155,7 @@ namespace GameScreen {
 				texts.clear();
 			}
 			
-			/**
-			 * Przerzucanie po splashu!
-			 */
+			/** Przerzucanie po splashu! */
 			void endTo(Screen* _return_to) {
 				return_to = _return_to;
 			}
@@ -174,6 +166,10 @@ namespace GameScreen {
 			}
 			
 			~Splash();
+
+		private:
+			/** Powrót do starego ekranu */
+			void returnScreen();
 	};
 }
 

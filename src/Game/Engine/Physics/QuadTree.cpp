@@ -61,7 +61,7 @@ bool QuadTree::remove(usint _index) {
 		return false;
 	}
 	Body* obj = bodies[_index];
-
+	
 	bodies.erase(bodies.begin() + _index);
 	if (obj && obj->destroyed && obj->with_observer) {
 		safe_delete<Body>(obj);

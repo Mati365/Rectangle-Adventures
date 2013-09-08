@@ -289,10 +289,9 @@ void MapINFO::readPlatforms(FILE* map) {
 	/**
 	 * Dodawanie elementów
 	 */
-	if (physics) {
-		safe_delete<pEngine>(physics);
-	}
+	safe_delete<pEngine>(physics);
 	physics = new pEngine(bounds, 0.3f);
+	
 	for (auto& obj : objects) {
 		physics->insert(obj);
 	}
@@ -389,9 +388,7 @@ void MapINFO::unload() {
 	ResourceFactory::getInstance(NULL).unload();
 	
 	// Kasowanie fizyki razem z obiektami!
-	if (physics) {
-		safe_delete<pEngine>(physics);
-	}
-
+	safe_delete<pEngine>(physics);
+	
 	logEvent(Logger::LOG_INFO, "Pomyślnie usunięto mapę!");
 }

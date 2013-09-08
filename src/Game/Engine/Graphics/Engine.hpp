@@ -242,6 +242,10 @@ namespace Engine {
 			/** Wyliczanie natywnej rozdzielczości ekranu */
 			Vector<float> getNativeResolution();
 	};
+
+	/** Opcje myszki */
+	extern void hideMouse();
+	extern void showMouse();
 }
 
 #endif /* ENGINE_HPP_ */

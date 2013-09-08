@@ -330,11 +330,7 @@ void MapRenderer::drawObject(Window* _window) {
 
 MapRenderer::~MapRenderer() {
 	for (auto& paralax : paralax_background) {
-		if (paralax) {
-			safe_delete<ParalaxRenderer>(paralax);
-		}
+		safe_delete<ParalaxRenderer>(paralax);
 	}
-	/** Crash */
-	//safe_delete<Character>(hero);
 }
 

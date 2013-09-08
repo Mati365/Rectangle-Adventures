@@ -45,6 +45,10 @@ Splash::Splash() :
 }
 
 void Splash::drawObject(Window*) {
+	if (texts.empty()) {
+		returnScreen();
+		return;
+	}
 	SplashInfo* _text = texts.back();
 	
 	//
@@ -84,17 +88,22 @@ void Splash::drawObject(Window*) {
 	 */
 	if (!_text->timer.active) {
 		safe_delete<SplashInfo>(_text);
-		texts.pop_back();
-		//
-		if (texts.empty()) {
-			title.setString("", 0);
-			if (return_to) {
-				active_screen = return_to;
-			}
-			return;
+		if (texts.empty() || texts.size() == 1) {
+			returnScreen();
+			texts.clear();
+
+		} else {
+
+			texts.pop_back();
+			title.setString(texts.back()->text, -1);
 		}
-		//
-		title.setString(texts.back()->text, -1);
+	}
+}
+
+void Splash::returnScreen() {
+	title.setString("", 0);
+	if (return_to) {
+		active_screen = return_to;
 	}
 }
 

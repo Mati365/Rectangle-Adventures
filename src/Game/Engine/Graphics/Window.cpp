@@ -26,7 +26,7 @@ bool Engine::window_opened = true;
 
 #define FPS 9
 //#define BENCHMARK
-//#define FULLSCREEN
+#define FULLSCREEN
 #define VGA_RESOLUTION
 
 /** Konwersja Uint8 do char */
@@ -61,7 +61,7 @@ Window::Window(const string& _title) :
 #ifdef FULLSCREEN
 					| SDL_FULLSCREEN
 #endif
-			);
+					);
 	if (!screen) {
 		return;
 	}
@@ -94,18 +94,16 @@ void Window::init() {
 				"Nastąpił problem podczas wczytywania menu.");
 		return;
 	}
-	active_screen = game;
-	splash->pushTitle(
-			"..cziken58 prezentuje..",
-			520,
-			getShapeFromFilesystem("iluzja_trojkat.txt", 6.f));
-	splash->pushTitle(
-			"...gre nie wczytujaca ani jednego sprite...",
-			690,
-			getShapeFromFilesystem("pudlo.txt", -6.f));
-	splash->pushTitle("Rect Adventures", 490);
-	splash->endTo(menu);
-	
+	active_screen = menu;
+	/**
+	 splash->pushTitle(
+	 "..cziken58 prezentuje..",
+	 520,
+	 getShapeFromFilesystem("iluzja_trojkat.txt", 6.f));
+	 splash->pushTitle("Rect Adventures", 490);
+	 splash->endTo(menu);
+	 */
+
 	//
 	SDL_Event event;
 	Event key(Event::KEY_PRESSED);

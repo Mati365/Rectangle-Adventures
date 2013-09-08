@@ -211,6 +211,9 @@ bool ResourceFactory::texturePackRealloc() {
 		_TextureConfig* tex_conf = getFactoryTemplate(
 				obj->factory_type,
 				obj->orientation);
+		if (!tex_conf) {
+			continue;
+		}
 		
 		IrregularPlatform* receiver = dynamic_cast<IrregularPlatform*>(obj);
 		if (!receiver) {
@@ -439,12 +442,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
  */
 void ResourceFactory::unload() {
 	created.clear();
-	/**
-	 for (auto& tex : textures) {
-	 main_resource_manager.deleteResource(tex.second->getResourceID());
-	 }
-	 textures.clear();
-	 */
 }
 
 /**
