@@ -360,15 +360,6 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	}
 	
 	/**
-	 * Lawa
-	 */
-	if (_type == LAVA) {
-		Lava* lava = new Lava(_x, _y);
-		//
-		addBody(lava);
-	}
-	
-	/**
 	 * Przeszukiwanie bazy obiektów
 	 */
 	_TextureConfig* _factory_type = getFactoryTemplate(_type, _orientation);
@@ -432,7 +423,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	// Potrzebne przy realokacji tekstur
 	_object->orientation = _orientation;
 	_object->factory_type = _type;
-	if(_state != Body::NONE) {
+	if (_state != Body::NONE) {
 		_object->state = _state;
 	}
 	
@@ -454,8 +445,8 @@ void ResourceFactory::unload() {
 void ResourceFactory::addBody(Body* _object) {
 	if (_object) {
 		created.push_back(_object);
-
+		
 		/** Siłowe dodanie do listy! */
-		physics->insert(_object, true);
+		physics->insert(_object);
 	}
 }

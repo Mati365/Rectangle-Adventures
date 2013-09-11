@@ -70,10 +70,10 @@ void Menu::getCallback(Control* const & control) {
 					SDL_Delay(200);
 					break;
 					
-				case 1:
+				case 1: {
 					safe_delete<Game>(game);
 					game = new Game("mapa.txt");
-
+					
 					game->getMapRenderer()->addToParalax(
 							loadMap("parallax_1.txt", MapINFO::WITHOUT_HERO),
 							0.45f,
@@ -81,7 +81,14 @@ void Menu::getCallback(Control* const & control) {
 							ParalaxRenderer::PARALLAX
 									| ParalaxRenderer::ROTATION
 									| ParalaxRenderer::DRAW_QUAD);
-
+					
+					Portal* portal_a = new Portal(360, 380, pEngine::UP);
+					Portal* portal_b = new Portal(260, 380, pEngine::DOWN);
+					portal_a->linkTo(portal_b);
+					
+					game->getMapRenderer()->getPhysics()->insert(portal_a);
+					game->getMapRenderer()->getPhysics()->insert(portal_b);
+					
 					/**
 					 * Nowa gra
 					 */
@@ -89,6 +96,7 @@ void Menu::getCallback(Control* const & control) {
 					splash->endTo(game);
 					//
 					SDL_Delay(200);
+				}
 					break;
 					
 				case 2:
@@ -108,7 +116,7 @@ void Menu::getCallback(Control* const & control) {
  * Odbieranie eventów z okna!
  */
 void Menu::catchEvent(const Event& event) {
-	Rect<float>& rect = lvl->getCamera()->pos;
+	Rect<float>& rect = *Camera::getFor(nullptr).getPos();
 	mouse.pos += Vector<int>(rect.x, rect.y);
 	
 	for (auto iter = entries.begin(); iter != entries.end(); ++iter) {

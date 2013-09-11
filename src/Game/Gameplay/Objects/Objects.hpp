@@ -471,27 +471,56 @@ class Trigger: public Body {
 };
 
 /**
- * Lawa nie jest obiektem, nie podlega
- * fizyce ale jeśli gracz w nią wpadnie
- * to ginie
+ * Portal 1 część obiektu wchodzi jedną stroną,
+ * druga drugą stroną
  */
-class Lava: public Body {
+class Portal: public Body {
 	private:
-		/**
-		 * Płomień działa jak parallax
-		 * są ich 2
-		 */
-		Vector<float> pos[2];
-		PlatformShape* flame_shapes[2];
+		/** Podłączony portal */
+		Portal* linked;
+
+		/** Obiekt w portalu */
+		struct PortalBody {
+				enum {
+					BODY_BEGIN,
+					BODY_END
+				};
+
+				Body* body;
+				usint flag;
+		} body_inside;
+
+		/** Procent pokonania protalu */
+		float teleport_procent;
 
 	public:
-		Lava(float, float);
+		Portal(float, float, usint);
 
 		virtual void drawObject(Window*);
 
-	protected:
-		/** Odświeżanie */
-		void update();
+		/** BUG!!! Nie odbiera callbacków! */
+		virtual void catchCollision(pEngine*, usint, Body*) {
+		}
+		
+		/** Wskakitanie do portalu */
+		bool enter(Body*, usint);
+
+		/** Linkowanie */
+		void linkTo(Portal* _linked) {
+			linked = _linked;
+			
+			// Linkowanie samego siebie
+			linked->linked = this;
+		}
+		
+		/** Pobieranie połączonego portalu */
+		Portal* getLinkedPortal() {
+			return linked;
+		}
+		
+	private:
+		/** Odświeżanie obiektu w środku portalu */
+		void updateBodyInside();
 };
 
 /**

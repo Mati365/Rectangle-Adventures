@@ -13,10 +13,11 @@ using namespace Gameplay;
 ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, MapINFO* _map) :
 				config(0),
 				map(_map),
-				cam(_target),
 				ratio(_ratio),
 				shake_timer(170) {
 	shake_timer.active = false;
+	//
+	Camera::getFor(_target);
 }
 
 /**
@@ -45,17 +46,21 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	if (!map) {
 		return;
 	}
+	Camera& cam = Camera::getFor(nullptr);
+	
 	/** Odświeżanie fizyki */
 	pEngine* physics = map->physics;
 	if (!physics->getList()->empty()) {
 		physics->setActiveRange(
 				Rect<float>(
-						cam.focus->x - DEFAULT_SHADOW_RADIUS
-								+ cam.focus->velocity.x,
-						cam.focus->y - DEFAULT_SHADOW_RADIUS
-								+ cam.focus->velocity.y,
-						DEFAULT_SHADOW_RADIUS * 2 + cam.focus->velocity.x * 2,
-						DEFAULT_SHADOW_RADIUS * 2 + cam.focus->velocity.y * 2));
+						cam.getFocus()->x - DEFAULT_SHADOW_RADIUS
+								+ cam.getFocus()->velocity.x,
+						cam.getFocus()->y - DEFAULT_SHADOW_RADIUS
+								+ cam.getFocus()->velocity.y,
+						DEFAULT_SHADOW_RADIUS * 2
+								+ cam.getFocus()->velocity.x * 2,
+						DEFAULT_SHADOW_RADIUS * 2
+								+ cam.getFocus()->velocity.y * 2));
 		physics->updateWorld();
 	}
 	
@@ -70,12 +75,12 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	/** Transformacja kamery */
 	if (IS_SET(config, ROTATION)) {
 		glRotatef(
-				sin(cam.focus->x / screen_bounds.x * 2) * -9.f,
+				sin(cam.getFocus()->x / screen_bounds.x * 2) * -9.f,
 				0.f,
 				0.f,
 				1.f);
 	}
-	float _x = -cam.pos.x * ratio, _y = -cam.pos.y * ratio;
+	float _x = -cam.getPos()->x * ratio, _y = -cam.getPos()->y * ratio;
 	if (shake_timer.active) {
 		shake_timer.tick();
 		//
@@ -99,15 +104,16 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	/** Renderowanie obiektów podlegających fizyce  */
 	for (usint i = 0; i < list->size(); ++i) {
 		Body* body = (*list)[i];
-		if (IS_SET(body->state, Body::HIDDEN) || body == cam.focus) {
+		if (IS_SET(body->state, Body::HIDDEN) || body == cam.getFocus()) {
 			continue;
 		}
 		body->drawObject(_window);
 	}
 	
 	/** Renderowanie focusa na końcu  */
-	if (!IS_SET(config, PARALLAX)) {
-		cam.focus->drawObject(NULL);
+	if (!IS_SET(config, PARALLAX)
+			&& !IS_SET(cam.getFocus()->state, Body::HIDDEN)) {
+		cam.getFocus()->drawObject(NULL);
 	}
 	glPopMatrix();
 }

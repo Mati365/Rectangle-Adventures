@@ -39,33 +39,41 @@ namespace Gameplay {
 			 */
 #define Y_SPACE 100
 			
-		public:
+		private:
 			Rect<float> pos;
 			Body* focus;
 
+		public:
 			/**
 			 * Pozycja kamery to nie pozycja względem krawędzi!!
 			 */
-			Camera(Body* _focus) :
-							focus(_focus) {
-				pos.w = screen_bounds.x;
-				pos.h = screen_bounds.y;
-			}
-			
+			Camera(Body*);
+
 			/** Odświeżanie pocycji kamery */
-			void updateCam(Window* _window) {
-				if (!focus) {
-					return;
-				}
-				pos.x = focus->x - pos.w / 2 + focus->w / 2;
-				pos.y = focus->y - pos.h / 2 + focus->h / 2 - Y_SPACE;
+			void updateCam(Window*);
+
+			/** Ustawienie focusa */
+			void setFocus(Body*);
+
+			/** Pobieranie pozycji względem krawędzi okna */
+			Vector<float> getFocusScreenPos() const;
+
+			Body* getFocus() {
+				return focus;
 			}
 			
-			/** Pobieranie pozycji względem krawędzi okna */
-			Vector<float> getFocusScreenPos() const {
-				return Vector<float>(
-						focus->x + focus->w / 2 - pos.x,
-						focus->y + focus->h / 2 - pos.y - Y_SPACE);
+			Rect<float>* getPos() {
+				return &pos;
+			}
+			
+			/** nullptr zwraca ostatni focus */
+			static Camera& getFor(Body* focus) {
+				static Camera camera(focus);
+				if (focus) {
+					camera.focus = focus;
+				}
+				//
+				return camera;
 			}
 	};
 	
@@ -97,7 +105,6 @@ namespace Gameplay {
 			deque<AllocKiller<Body> > static_objects;
 
 			/** Kamera */
-			Camera cam;
 			float ratio;
 
 			/** Timer potrząsania */
@@ -137,10 +144,6 @@ namespace Gameplay {
 			
 			pEngine* getPhysics() {
 				return map->physics;
-			}
-			
-			Camera* getCamera() {
-				return &cam;
 			}
 			
 			~ParalaxRenderer() {

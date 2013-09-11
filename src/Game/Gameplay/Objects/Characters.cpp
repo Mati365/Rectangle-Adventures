@@ -270,6 +270,14 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 		return;
 	}
 	
+	// Portale
+	if (body->type == Body::PORTAL) {
+		if (dynamic_cast<Portal*>(body)->enter(this, dir)) {
+			cout << "S" << endl;
+		}
+		return;
+	}
+	
 	// Skrypty
 	if (body->type == Body::TRIGGER) {
 		dynamic_cast<Trigger*>(body)->generate();
@@ -724,7 +732,7 @@ void Character::drawObject(Window*) {
 			
 			shaders[HIT_CHARACTER_SHADER]->begin();
 			//
-			IrregularPlatform::drawObject(NULL);
+			IrregularPlatform::drawObject(nullptr);
 			//
 			shaders[HIT_CHARACTER_SHADER]->end();
 			
@@ -734,7 +742,7 @@ void Character::drawObject(Window*) {
 			glUseProgram(last_program);
 		}
 	} else {
-		IrregularPlatform::drawObject(NULL);
+		IrregularPlatform::drawObject(nullptr);
 	}
 	drawTooltips();
 }

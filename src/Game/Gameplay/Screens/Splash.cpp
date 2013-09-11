@@ -91,9 +91,9 @@ void Splash::drawObject(Window*) {
 		if (texts.empty() || texts.size() == 1) {
 			returnScreen();
 			texts.clear();
-
+			
 		} else {
-
+			
 			texts.pop_back();
 			title.setString(texts.back()->text, -1);
 		}

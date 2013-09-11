@@ -97,7 +97,7 @@ void MapRenderer::addWeather(usint _type) {
 		case SNOWING: {
 			SnowEmitter* snow = new SnowEmitter(
 					Rect<float>(0, 20, screen_bounds.x, 0));
-			snow->setFocus(&cam.pos);
+			snow->setFocus(Camera::getFor(nullptr).getPos());
 			//
 			addStaticObject(snow);
 		}
@@ -116,8 +116,8 @@ void MapRenderer::addWeather(usint _type) {
 		case FIREWORKS: {
 			FireworksEmitter* fireworks = new FireworksEmitter(
 					Rect<float>(
-							cam.pos.x,
-							cam.pos.y,
+							Camera::getFor(nullptr).getPos()->x,
+							Camera::getFor(nullptr).getPos()->y,
 							screen_bounds.x,
 							screen_bounds.y),
 					50,
@@ -194,7 +194,7 @@ void MapRenderer::resetHero() {
 void MapRenderer::setHero(Character* _hero) {
 	// Ustawienie nowego gracza
 	hero = _hero;
-	cam.focus = hero;
+	Camera::getFor(hero);
 }
 
 /**
@@ -228,7 +228,7 @@ void MapRenderer::drawObject(Window* _window) {
 	}
 	
 	/** Aby gracz nie wychodził za ekran! */
-	Vector<float> hero_screen_pos = cam.getFocusScreenPos();
+	Vector<float> hero_screen_pos = Camera::getFor(nullptr).getFocusScreenPos();
 	
 	/** odległość max. ruchów gracza na erkanie */
 	float go_distance = .75f;

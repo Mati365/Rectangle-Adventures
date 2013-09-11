@@ -128,7 +128,7 @@ void MessageRenderer::openCutscene(const Message& msg) {
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
 	
 	paralax->getPhysics()->insert(cutscene_box);
-	paralax->getCamera()->focus = cutscene_box;
+	Camera::getFor(cutscene_box);
 }
 
 /**
@@ -137,16 +137,16 @@ void MessageRenderer::openCutscene(const Message& msg) {
 void MessageRenderer::closeCutscene() {
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
 	IrregularPlatform* platform =
-			dynamic_cast<IrregularPlatform*>(paralax->getCamera()->focus);
+			dynamic_cast<IrregularPlatform*>(Camera::getFor(nullptr).getFocus());
 	//
-	if (paralax->getCamera()->focus == paralax->getHero()) {
+	if (Camera::getFor(nullptr).getFocus() == paralax->getHero()) {
 		return;
 	}
 	// Czyszczenie!
 	main_resource_manager.deleteResource(platform->getShape()->getID());
 	cutscene_box->destroyed = true;
 	
-	paralax->getCamera()->focus = paralax->getHero();
+	Camera::getFor(paralax->getHero());
 	//
 	logEvent(Logger::LOG_INFO, "Zwolniono zasoby cutsceny!");
 }
@@ -312,7 +312,7 @@ void MessageRenderer::updateHUDControls() {
 	 * Aktualizacja pozycji
 	 */
 	// HUD nad graczem
-	Rect<float>* cam_pos = &game->getMapRenderer()->getCamera()->pos;
+	Rect<float>* cam_pos = Camera::getFor(nullptr).getPos();
 	float ratio = 2.f - game->getMapRenderer()->getRatio();
 	
 	score_bar.x = hero->x * ratio - hero->w / 2 - cam_pos->x - score_bar.w / 2

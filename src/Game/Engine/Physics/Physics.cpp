@@ -82,10 +82,8 @@ void pEngine::setSleep(usint _sleep_time) {
  * Sprawdzenie aktywności obiektu!
  */
 bool pEngine::isBodyActive(Body* object) {
-	return !(IS_SET(object->state, Body::STATIC)
-			|| IS_SET(object->state, Body::HIDDEN)
-			|| IS_SET(object->state, Body::BACKGROUND)
-			|| IS_SET(object->state, Body::BUFFERED));
+	//return !(IS_SET(object->state, (Body::STATIC | Body::HIDDEN | Body::BACKGROUND | Body::BUFFERED | Body::FLYING)));
+	return object->state == Body::NONE;
 }
 
 /**
@@ -150,7 +148,9 @@ void pEngine::updateWorld() {
 		}
 		
 		/** Test obiektu  */
-		if (!object || !isBodyActive(object)) {
+		if (!object
+				|| !isBodyActive(
+						object) || IS_SET(object->state, Body::FLYING)) {
 			continue;
 		}
 		
@@ -204,7 +204,6 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 							&& !IS_SET(target->state, Body::STATIC))) {
 				continue;
 			}
-			
 			/**
 			 * Kolizje Góra/ Dół
 			 */

@@ -267,6 +267,7 @@ namespace Physics {
 				SPIKES, // kolce
 				LADDER, // drabina
 				LIANE, // liana
+				PORTAL, // portal
 				KILLZONE // strefa śmierci gracza
 			};
 

@@ -26,7 +26,7 @@ bool Engine::window_opened = true;
 
 #define FPS 9
 //#define BENCHMARK
-#define FULLSCREEN
+//#define FULLSCREEN
 #define VGA_RESOLUTION
 
 /** Konwersja Uint8 do char */
@@ -35,7 +35,7 @@ void translateKeyEvent(Uint8* keystate, Uint16 key, char translated,
 	if (keystate[key]) {
 		event.key = translated;
 	}
-	if (event.key != ' ') {
+	if (event.key != ' ' && renderer) {
 		renderer->catchEvent(event);
 	}
 	event.key = ' ';
@@ -95,15 +95,7 @@ void Window::init() {
 		return;
 	}
 	active_screen = menu;
-	/**
-	 splash->pushTitle(
-	 "..cziken58 prezentuje..",
-	 520,
-	 getShapeFromFilesystem("iluzja_trojkat.txt", 6.f));
-	 splash->pushTitle("Rect Adventures", 490);
-	 splash->endTo(menu);
-	 */
-
+	
 	//
 	SDL_Event event;
 	Event key(Event::KEY_PRESSED);
