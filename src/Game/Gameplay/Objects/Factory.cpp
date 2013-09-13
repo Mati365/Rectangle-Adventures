@@ -37,7 +37,7 @@ void ResourceFactory::generateChracterStatus(usint _hard_level) {
 
 	// KOLCE
 	factory_status[SPIKES] = {
-		Character::SPIKES, Body::BACKGROUND, true,
+		Character::SPIKES, Body::NONE, true,
 		CharacterStatus(-1, false, 0, 0)
 	};
 

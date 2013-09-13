@@ -155,7 +155,7 @@ namespace Gameplay {
 	 * Główny renderer mapy!
 	 */
 	class MapRenderer: public ParalaxRenderer, public EventListener {
-#define DEFAULT_SHADOW_RADIUS 300
+#define DEFAULT_SHADOW_RADIUS 230
 #define DEFAULT_CAM_RATIO .95f
 			
 		public:

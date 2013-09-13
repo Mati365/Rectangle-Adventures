@@ -159,8 +159,12 @@ void pEngine::updateWorld() {
 				&& (object->velocity.x != 0 || object->velocity.y != 0))) {
 			/** Poruszanie się po platformie */
 			Body* down_collision = object->collisions[DOWN - 1];
+
 			if (down_collision && down_collision->velocity.x != 0) {
-				object->x += down_collision->velocity.x;
+				if (!object->collisions[pEngine::LEFT - 1]
+						&& !object->collisions[pEngine::RIGHT - 1]) {
+					object->x += down_collision->velocity.x;
+				}
 			}
 			
 			/** Siła ciążenia */
@@ -255,7 +259,7 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
  * Sprawdzenie kolizji w poziomie!
  */
 usint pEngine::checkVerticalCollision(Body* _body, Body* _body2) {
-	if (_body2->x + _body2->w <= _body->x
+	if (_body2->x <= _body->x
 			&& moveAndCheck(
 					_body->velocity.x,
 					-gravity_speed * 2,
@@ -265,7 +269,7 @@ usint pEngine::checkVerticalCollision(Body* _body, Body* _body2) {
 		/**
 		 *
 		 */
-	} else if (_body2->x >= _body->x + _body->w
+	} else if (_body2->x >= _body->x
 			&& moveAndCheck(
 					_body->velocity.x,
 					-gravity_speed * 2,
@@ -291,9 +295,15 @@ usint pEngine::checkHorizontalCollision(Body* _body, Body* _body2) {
 				&& _body->y + _body->h + _body->velocity.y >= _body2->y
 				&& _body->y < _body2->y) {
 			return DOWN;
+			/**
+			 *
+			 */
 		} else if (_body->y + _body->velocity.y <= _body2->y + _body2->h
 				&& _body->y >= _body2->y + _body2->h && _body->y > _body2->y) {
 			return UP;
+			/**
+			 *
+			 */
 		}
 	}
 	return NONE;

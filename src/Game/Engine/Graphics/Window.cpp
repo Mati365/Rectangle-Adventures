@@ -26,7 +26,7 @@ bool Engine::window_opened = true;
 
 #define FPS 9
 //#define BENCHMARK
-//#define FULLSCREEN
+#define FULLSCREEN
 #define VGA_RESOLUTION
 
 /** Konwersja Uint8 do char */
@@ -183,7 +183,7 @@ Vector<float> Window::getNativeResolution() {
 #ifndef VGA_RESOLUTION
 	const SDL_VideoInfo* info = SDL_GetVideoInfo();
 	//
-	return Vector<float>(info->current_w , info->current_h);
+	return Vector<float>(info->current_w, info->current_h);
 #else
 	return Vector<float>(640, 480);
 #endif
@@ -207,6 +207,7 @@ bool Window::setupOpenGL() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, screen_bounds.x, screen_bounds.y, 0, -1, 1);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	

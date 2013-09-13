@@ -3,16 +3,21 @@ in vec4 gl_FragCoord;
 uniform vec2 center; // środek okna
 uniform float radius; // promień
 uniform vec3 active_colors; // aktuwne kolory
-const float light = 0.2f; // oświetlenie
+const float light = .2f; // oświetlenie
+
+// EFEKT TV!!
 
 void main() {
 	// Wyliczanie odległości punktu od środka okna
-	vec3 vec = gl_FragCoord;
+	vec2 vec = gl_FragCoord.xy;
 	vec4 col = gl_Color;
 	
 	vec2 point = vec2(vec.x - center.x, vec.y - center.y);
 	float distance = sqrt(point.x * point.x + point.y * point.y);
 
-	float p = 1.f - distance / radius + light;
+	float p = 1.f - distance/ radius + light; // procent rozjaśnienia
+	if(mod(vec.y, 1.5f) == 0) {
+		p += -light + 0.4f;
+	}
 	gl_FragColor = vec4(col.r * p * active_colors.r, col.g * p * active_colors.g, col.b * p * active_colors.b, col.a);
 }
