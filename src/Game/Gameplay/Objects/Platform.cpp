@@ -183,7 +183,7 @@ void Platform::drawBody() {
 	if (fill_type == Type::NONE) {
 		return;
 	}
-	float line_stroke = 3.f;
+	float line_stroke = 2.f;
 	
 	/**
 	 * Wypełnienie!
@@ -203,7 +203,7 @@ void Platform::drawBody() {
 	/**
 	 * Kreski w środku
 	 */
-	glLineWidth(line_stroke);
+	glLineWidth(line_stroke + 1);
 	switch (fill_type) {
 		
 		/**

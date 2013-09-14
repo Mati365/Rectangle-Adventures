@@ -25,7 +25,7 @@ bool Engine::window_opened = true;
 /** Flagi pętli gry */
 
 #define FPS 9
-//#define BENCHMARK
+#define BENCHMARK
 #define FULLSCREEN
 #define VGA_RESOLUTION
 

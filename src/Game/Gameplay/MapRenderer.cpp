@@ -97,7 +97,7 @@ void MapRenderer::addWeather(usint _type) {
 		case SNOWING: {
 			SnowEmitter* snow = new SnowEmitter(
 					Rect<float>(0, 20, screen_bounds.x, 0));
-			snow->setFocus(Camera::getFor(nullptr).getPos());
+			snow->setFocus(Camera::getFor().getPos());
 			//
 			addStaticObject(snow);
 		}
@@ -116,8 +116,8 @@ void MapRenderer::addWeather(usint _type) {
 		case FIREWORKS: {
 			FireworksEmitter* fireworks = new FireworksEmitter(
 					Rect<float>(
-							Camera::getFor(nullptr).getPos()->x,
-							Camera::getFor(nullptr).getPos()->y,
+							Camera::getFor().getPos()->x,
+							Camera::getFor().getPos()->y,
 							screen_bounds.x,
 							screen_bounds.y),
 					50,
@@ -220,19 +220,19 @@ void MapRenderer::showGameOver() {
 }
 
 /**
- * Rysowanie
+ * Obliczanie współczynnika przesunięcia
  */
-void MapRenderer::drawObject(Window* _window) {
+void MapRenderer::calcCameraRatio() {
 	if (!hero) {
 		return;
 	}
-	
+
 	/** Aby gracz nie wychodził za ekran! */
-	Vector<float> hero_screen_pos = Camera::getFor(nullptr).getFocusScreenPos();
-	
+	Vector<float> hero_screen_pos = Camera::getFor().getFocusScreenPos();
+
 	/** odległość max. ruchów gracza na erkanie */
 	float go_distance = .75f;
-	
+
 	if (hero_screen_pos.x > screen_bounds.x * go_distance
 			|| hero_screen_pos.x < screen_bounds.x * (1 - go_distance)
 			|| hero_screen_pos.y > screen_bounds.y * go_distance
@@ -241,13 +241,24 @@ void MapRenderer::drawObject(Window* _window) {
 	} else {
 		ratio = DEFAULT_CAM_RATIO;
 	}
+}
+
+/**
+ * Rysowanie
+ */
+void MapRenderer::drawObject(Window* _window) {
+	if (!hero) {
+		return;
+	}
+	/** Obliczenie współczynnika kamery */
+	calcCameraRatio();
 	
 	/** Konfiguracja shadera */
 	shaders[main_shader_id]->begin();
 	shaders[main_shader_id]->setUniform2f(
 			"center",
-			hero_screen_pos.x,
-			hero_screen_pos.y);
+			screen_bounds.x / 2,
+			screen_bounds.y / 2);
 	shaders[main_shader_id]->setUniform3f(
 			"active_colors",
 			col_saturation[0],
@@ -255,6 +266,13 @@ void MapRenderer::drawObject(Window* _window) {
 			col_saturation[2]);
 	shaders[main_shader_id]->setUniform1f("radius", shadow_radius);
 	
+	oglWrapper::drawFillRect(
+			0,
+			0,
+			screen_bounds.x,
+			screen_bounds.y,
+			Color(8, 8, 8));
+
 	/**
 	 * Główny rendering mapy - najpierw paralaksa
 	 */

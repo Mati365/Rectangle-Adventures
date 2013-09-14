@@ -42,7 +42,7 @@ namespace Physics {
 			}
 			
 			inline void getFromVec(const Vector<float>& _vec) {
-				w = h = 0;
+				//w = h = 0;
 				x = _vec.x;
 				y = _vec.y;
 			}
@@ -338,7 +338,7 @@ namespace Physics {
 			void setState(usint _state) {
 				state = _state;
 			}
-			
+
 			virtual ~Body() {
 			}
 	};

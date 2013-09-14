@@ -137,9 +137,9 @@ void MessageRenderer::openCutscene(const Message& msg) {
 void MessageRenderer::closeCutscene() {
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
 	IrregularPlatform* platform =
-			dynamic_cast<IrregularPlatform*>(Camera::getFor(nullptr).getFocus());
+			dynamic_cast<IrregularPlatform*>(Camera::getFor().getFocus());
 	//
-	if (Camera::getFor(nullptr).getFocus() == paralax->getHero()) {
+	if (Camera::getFor().getFocus() == paralax->getHero()) {
 		return;
 	}
 	// Czyszczenie!
@@ -312,7 +312,7 @@ void MessageRenderer::updateHUDControls() {
 	 * Aktualizacja pozycji
 	 */
 	// HUD nad graczem
-	Rect<float>* cam_pos = Camera::getFor(nullptr).getPos();
+	Rect<float>* cam_pos = Camera::getFor().getPos();
 	float ratio = 2.f - game->getMapRenderer()->getRatio();
 	
 	score_bar.x = hero->x * ratio - hero->w / 2 - cam_pos->x - score_bar.w / 2

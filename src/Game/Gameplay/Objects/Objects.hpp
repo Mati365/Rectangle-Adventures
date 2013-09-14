@@ -488,13 +488,14 @@ class Portal: public Body {
 
 				Body* body;
 				usint flag;
+				Rect<float> body_bounds;
 		} body_inside;
 
 		/** Procent pokonania protalu */
 		float teleport_procent;
 
 	public:
-		Portal(float, float, usint);
+		Portal(float, float, usint, usint = PortalBody::BODY_BEGIN);
 
 		virtual void drawObject(Window*);
 
@@ -506,13 +507,8 @@ class Portal: public Body {
 		bool enter(Body*, usint);
 
 		/** Linkowanie */
-		void linkTo(Portal* _linked) {
-			linked = _linked;
-			
-			// Linkowanie samego siebie
-			linked->linked = this;
-		}
-		
+		void linkTo(Portal*);
+
 		/** Pobieranie połączonego portalu */
 		Portal* getLinkedPortal() {
 			return linked;
@@ -521,6 +517,22 @@ class Portal: public Body {
 	private:
 		/** Odświeżanie obiektu w środku portalu */
 		void updateBodyInside();
+
+		/** Pobieranie pozycji dla stencil buffer */
+		Rect<float> getStencilTexCoord();
+
+		/** Reset */
+		void exitBody();
+
+		/** Czy jest vertykalny? */
+		inline bool isVertical() {
+			return orientation == pEngine::UP || orientation == pEngine::DOWN;
+		}
+
+		/** Czy jest horyzontalny? */
+		inline bool isHorizontal() {
+			return orientation == pEngine::LEFT || orientation == pEngine::RIGHT;
+		}
 };
 
 /**

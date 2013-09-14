@@ -82,8 +82,8 @@ void Menu::getCallback(Control* const & control) {
 									| ParalaxRenderer::ROTATION
 									| ParalaxRenderer::DRAW_QUAD);
 					
-					Portal* portal_a = new Portal(360, 380, pEngine::UP);
-					Portal* portal_b = new Portal(260, 380, pEngine::DOWN);
+					Portal* portal_a = new Portal(360, 420, pEngine::UP);
+					Portal* portal_b = new Portal(1220, 420, pEngine::DOWN);
 					portal_a->linkTo(portal_b);
 					
 					game->getMapRenderer()->getPhysics()->insert(portal_a);
@@ -116,7 +116,7 @@ void Menu::getCallback(Control* const & control) {
  * Odbieranie eventów z okna!
  */
 void Menu::catchEvent(const Event& event) {
-	Rect<float>& rect = *Camera::getFor(nullptr).getPos();
+	Rect<float>& rect = *Camera::getFor().getPos();
 	mouse.pos += Vector<int>(rect.x, rect.y);
 	
 	for (auto iter = entries.begin(); iter != entries.end(); ++iter) {

@@ -46,21 +46,29 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	if (!map) {
 		return;
 	}
-	Camera& cam = Camera::getFor(nullptr);
+	Camera& cam = Camera::getFor();
 	
 	/** Odświeżanie fizyki */
 	pEngine* physics = map->physics;
 	if (!physics->getList()->empty()) {
+		/**
+		 physics->setActiveRange(
+		 Rect<float>(
+		 cam.getFocus()->x - DEFAULT_SHADOW_RADIUS
+		 + cam.getFocus()->velocity.x,
+		 cam.getFocus()->y - DEFAULT_SHADOW_RADIUS
+		 + cam.getFocus()->velocity.y,
+		 DEFAULT_SHADOW_RADIUS * 2
+		 + cam.getFocus()->velocity.x * 2,
+		 DEFAULT_SHADOW_RADIUS * 2
+		 + cam.getFocus()->velocity.y * 2));
+		 */
 		physics->setActiveRange(
 				Rect<float>(
-						cam.getFocus()->x - DEFAULT_SHADOW_RADIUS
-								+ cam.getFocus()->velocity.x,
-						cam.getFocus()->y - DEFAULT_SHADOW_RADIUS
-								+ cam.getFocus()->velocity.y,
-						DEFAULT_SHADOW_RADIUS * 2
-								+ cam.getFocus()->velocity.x * 2,
-						DEFAULT_SHADOW_RADIUS * 2
-								+ cam.getFocus()->velocity.y * 2));
+						cam.getPos()->x,
+						cam.getPos()->y,
+						cam.getPos()->w,
+						cam.getPos()->h));
 		physics->updateWorld();
 	}
 	
@@ -104,7 +112,8 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	/** Renderowanie obiektów podlegających fizyce  */
 	for (usint i = 0; i < list->size(); ++i) {
 		Body* body = (*list)[i];
-		if (IS_SET(body->state, Body::HIDDEN) || body == cam.getFocus()) {
+		if (body->type == Body::HERO || IS_SET(body->state, Body::HIDDEN)
+				|| body == cam.getFocus()) {
 			continue;
 		}
 		body->drawObject(_window);

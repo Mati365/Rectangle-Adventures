@@ -272,9 +272,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 	
 	// Portale
 	if (body->type == Body::PORTAL) {
-		if (dynamic_cast<Portal*>(body)->enter(this, dir)) {
-			cout << "S" << endl;
-		}
+		dynamic_cast<Portal*>(body)->enter(this, dir);
 		return;
 	}
 	

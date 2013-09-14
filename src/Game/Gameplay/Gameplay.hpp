@@ -43,6 +43,9 @@ namespace Gameplay {
 			Rect<float> pos;
 			Body* focus;
 
+			/** Czy scrollowanie do focusa? */
+			bool scrolling;
+
 		public:
 			/**
 			 * Pozycja kamery to nie pozycja względem krawędzi!!
@@ -54,6 +57,9 @@ namespace Gameplay {
 
 			/** Ustawienie focusa */
 			void setFocus(Body*);
+
+			/** Skrollowanie do.. */
+			void scrollTo(Body*);
 
 			/** Pobieranie pozycji względem krawędzi okna */
 			Vector<float> getFocusScreenPos() const;
@@ -67,7 +73,7 @@ namespace Gameplay {
 			}
 			
 			/** nullptr zwraca ostatni focus */
-			static Camera& getFor(Body* focus) {
+			static Camera& getFor(Body* focus = nullptr) {
 				static Camera camera(focus);
 				if (focus) {
 					camera.focus = focus;
@@ -258,6 +264,9 @@ namespace Gameplay {
 				col_saturation[0] = 1.1f; // bardziej karmelkowy ekran
 				col_saturation[1] = col_saturation[2] = 1.f;
 			}
+
+			/** Obliczanie współczynnika przesunięcia */
+			void calcCameraRatio();
 	};
 }
 
