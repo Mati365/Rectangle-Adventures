@@ -19,7 +19,7 @@ bool JetEmitter::drawParticle(usint _index, Window* _window) {
 	particle.life.tick();
 	
 	particle.pos += particle.velocity;
-	particle.size *= 0.98f;
+	particle.size *= 0.99f;
 	
 	if (particle.size <= 0.02f) {
 		destroyed = true;
@@ -27,13 +27,12 @@ bool JetEmitter::drawParticle(usint _index, Window* _window) {
 	
 	particle.pos.x = x + (w - particle.size) / 2.f;
 	
-	oglWrapper::drawRect(
+	oglWrapper::drawFillRect(
 			particle.pos.x,
 			particle.pos.y,
 			particle.size,
 			h * 0.1f * (particle.size / w),
-			particle.col,
-			2);
+			particle.col);
 	
 	if (!particle.life.active || destroyed) {
 		particles.erase(particles.begin() + _index);
@@ -43,11 +42,11 @@ bool JetEmitter::drawParticle(usint _index, Window* _window) {
 }
 
 void JetEmitter::createNewParticle(Window* _window) {
-	Particle part(Vector<float>(x, y), w, 30, col);
+	Particle part(Vector<float>(x, y), w, h / .15, col);
 	
 	part.pos.x = x + pos_in_body.x;
 	part.pos.y = y + pos_in_body.y;
-	part.velocity.y = 1.f;
+	part.velocity.y = -.15f;
 	
 	particles.push_back(part);
 }

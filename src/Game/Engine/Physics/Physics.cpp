@@ -68,12 +68,12 @@ void Physics::dodgeBody(Body* _body, usint _dir, float _speed) {
 
 			//
 		case pEngine::UP:
-			_body->velocity.y = -_speed;
+			_body->velocity.y = _speed;
 			break;
 
 			//
 		case pEngine::DOWN:
-			_body->velocity.y = _speed;
+			_body->velocity.y = -_speed;
 			break;
 	}
 	//

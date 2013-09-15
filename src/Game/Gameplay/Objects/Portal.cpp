@@ -16,12 +16,13 @@ Portal::Portal(float _x, float _y, usint _orientation, usint _flag) :
 				teleport_procent(0.f) {
 	body_inside = {nullptr, _flag};
 	orientation = _orientation;
+
 	/** BACKGROUND nie obsługuje callbacków kolizji */
-	state = Body::FLYING;
 	type = Body::PORTAL;
+	state = Body::FLYING;
 
 	/** Jeśli pionowy to zamiana wartości */
-	if(isHorizontal()) {
+	if(isHorizontalDir(_orientation)) {
 		xor_swap<int>((int*)&w, (int*)&h);
 	}
 }
@@ -167,16 +168,39 @@ Rect<float> Portal::getStencilTexCoord() {
 
 /** Rysowanie */
 void Portal::drawObject(Window*) {
-	/** Rysowanie portalu */
+	if (!linked) {
+		return;
+	}
+	/** Główny rendering */
+
+	beginStroke(0xF0F0);
+
+	glLineWidth(2.f);
+	if (body_inside.flag == PortalBody::BODY_BEGIN) {
+		glColor3ub(255.f, 255.f, 255.f);
+	} else {
+		glColor3ub(155.f, 155.f, 155.f);
+	}
+	glBegin(GL_LINE_STRIP);
+
+	glVertex2f(x, y);
+	glVertex2f(x, linked->y);
+	glVertex2f(linked->x, linked->y);
+
+	glEnd();
+
+	endStroke();
+
 	oglWrapper::drawRect(
 			x,
 			y,
 			w,
 			h,
-			body_inside.flag == PortalBody::BODY_BEGIN ?
-					oglWrapper::GREEN : oglWrapper::RED,
-			1);
-	
+			body_inside.flag == PortalBody::BODY_END ?
+					oglWrapper::RED : oglWrapper::GREEN,
+			2.f);
+
+	/** Rysowanie portalu */
 	Body* _body = body_inside.body;
 	if (!_body) {
 		return;
@@ -228,11 +252,12 @@ void Portal::exitBody() {
 
 		_body->x = new_pos.x;
 		_body->y = new_pos.y;
+		_body->velocity.x = _body->velocity.y = 0;
 
 		_body->setState(Body::NONE);
 
 		/** Odpychanie ciała */
-		dodgeBody(_body, orientation, -2.f);
+		dodgeBody(_body, invertDir(orientation), 2);
 	}
 
 	body_inside.body = nullptr;
@@ -248,21 +273,22 @@ void Portal::updateBodyInside() {
 	if (!linked || !body_inside.body) {
 		return;
 	}
-	if (teleport_procent < 1) {
+	Body* _body = body_inside.body;
+
+	if (teleport_procent < 0) {
+		exitBody();
+	} else if (teleport_procent < 1) {
 		float speed_proc = 0.f;
 
 		/** Wyliacznie procentu z prędkości wpadania */
 		if (isVertical()) {
-			speed_proc = (float) body_inside.body->velocity.y
-					/ (float) body_inside.body->h;
+			speed_proc = (float) _body->velocity.y / (float) _body->h;
 		} else {
-			speed_proc = (float) body_inside.body->velocity.x
-					/ (float) body_inside.body->w;
+			speed_proc = (float) _body->velocity.x / (float) _body->w;
 		}
 
-		/** Odświeżanie i ograniczenie prędkości */
-		teleport_procent += abs(speed_proc) / 5;
-		//teleport_procent += .005f;
+		/** Dodawanie procentu */
+		teleport_procent += abs(speed_proc / 5);
 	} else {
 		/** Zerowanie */
 		exitBody();
@@ -274,7 +300,8 @@ void Portal::updateBodyInside() {
 
 /** Wchodzenie do portalu */
 bool Portal::enter(Body* body, usint _dir) {
-	if (teleport_procent != 0 || body_inside.body || !linked || !body) {
+	if (_dir == orientation || teleport_procent != 0 || body_inside.body
+			|| !linked || !body) {
 		return false;
 	}
 
@@ -282,9 +309,8 @@ bool Portal::enter(Body* body, usint _dir) {
 	if ((isVertical() && !isHorizontalDir(_dir))
 			|| (isHorizontal() && isHorizontalDir(_dir))) {
 		orientation = invertDir(_dir);
-		body_inside.flag = PortalBody::BODY_BEGIN;
 
-		linked->orientation = orientation;
+		body_inside.flag = PortalBody::BODY_BEGIN;
 		linked->body_inside.flag = PortalBody::BODY_END;
 	}
 

@@ -82,8 +82,8 @@ void Menu::getCallback(Control* const & control) {
 									| ParalaxRenderer::ROTATION
 									| ParalaxRenderer::DRAW_QUAD);
 					
-					Portal* portal_a = new Portal(360, 400, pEngine::RIGHT);
-					Portal* portal_b = new Portal(450, 200, pEngine::LEFT);
+					Portal* portal_a = new Portal(390, 400, pEngine::RIGHT);
+					Portal* portal_b = new Portal(820, 340, pEngine::RIGHT);
 					portal_a->linkTo(portal_b);
 					
 					game->getMapRenderer()->getPhysics()->insert(portal_a);
