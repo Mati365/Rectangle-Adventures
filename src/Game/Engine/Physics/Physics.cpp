@@ -38,6 +38,49 @@ usint Physics::invertDir(usint _dir) {
 	return pEngine::NONE;
 }
 
+/**
+ * Vertykalny czy Hpryzontalny
+ */
+bool Physics::isHorizontalDir(usint _dir) {
+	if (_dir == pEngine::LEFT || _dir == pEngine::RIGHT) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ * Odepchnięcie ciała
+ */
+/**
+ * Unik
+ */
+void Physics::dodgeBody(Body* _body, usint _dir, float _speed) {
+	//
+	switch (_dir) {
+		case pEngine::RIGHT:
+			_body->velocity.x = -_speed;
+			break;
+
+			//
+		case pEngine::LEFT:
+			_body->velocity.x = _speed;
+			break;
+
+			//
+		case pEngine::UP:
+			_body->velocity.y = -_speed;
+			break;
+
+			//
+		case pEngine::DOWN:
+			_body->velocity.y = _speed;
+			break;
+	}
+	//
+	_body->x += _body->velocity.x;
+	_body->y += _body->velocity.y;
+}
+
 //---------------------------
 
 pEngine::pEngine(const Rect<float>& _bounds, float _gravity_speed) :

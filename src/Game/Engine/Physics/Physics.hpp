@@ -70,7 +70,14 @@ namespace Physics {
 	
 	/** Odwrócenie kierunku */
 	usint invertDir(usint);
+
+	/** Vertykalny czy Hpryzontalny */
+	bool isHorizontalDir(usint);
 	
+	/** Odepchnięcie ciała */
+	class Body;
+	void dodgeBody(Body*, usint, float);
+
 	/**
 	 * Todo:
 	 * + Przebudowa, sprawdzanie kolizji tylko

@@ -60,6 +60,9 @@ namespace Gameplay {
 
 			/** Skrollowanie do.. */
 			void scrollTo(Body*);
+			void disableScrolling() {
+				scrolling = false;
+			}
 
 			/** Pobieranie pozycji względem krawędzi okna */
 			Vector<float> getFocusScreenPos() const;

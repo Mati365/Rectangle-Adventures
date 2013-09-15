@@ -68,11 +68,11 @@ void MapRenderer::catchEvent(const Event& _event) {
 		case Event::KEY_PRESSED:
 			if (hero) {
 				if (_event.key == 'w') {
-					hero->jump(5.f, false);
+					hero->jump(4.f, false);
 				} else if (_event.key == 'a') {
-					hero->move(-.75f, 0.f);
+					hero->move(-.45f, 0.f);
 				} else if (_event.key == 'd') {
-					hero->move(.75f, 0.f);
+					hero->move(.45f, 0.f);
 				}
 			}
 			break;

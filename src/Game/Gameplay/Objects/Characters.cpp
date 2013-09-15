@@ -580,31 +580,7 @@ void Character::updateMe() {
  * Unik
  */
 void Character::dodge(usint _dir) {
-	float _speed = velocity.y * 0.5f;
-	//
-	switch (_dir) {
-		case pEngine::RIGHT:
-			velocity.x = -_speed;
-			break;
-			
-			//
-		case pEngine::LEFT:
-			velocity.x = _speed;
-			break;
-			
-			//
-		case pEngine::UP:
-			velocity.y = -_speed;
-			break;
-			
-			//
-		case pEngine::DOWN:
-			velocity.y = _speed;
-			break;
-	}
-	//
-	x += velocity.x;
-	y += velocity.y;
+	dodgeBody(this, _dir, velocity.y * 0.5f);
 	//
 	addTooltip("Ouch!", oglWrapper::WHITE);
 }

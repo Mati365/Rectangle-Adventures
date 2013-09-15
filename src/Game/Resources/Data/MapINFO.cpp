@@ -284,7 +284,7 @@ void MapINFO::readPlatforms(FILE* map) {
 	 * Dodawanie elementów
 	 */
 	safe_delete<pEngine>(physics);
-	physics = new pEngine(bounds, 0.3f);
+	physics = new pEngine(bounds, 0.2f);
 	
 	for (auto& obj : objects) {
 		physics->insert(obj);

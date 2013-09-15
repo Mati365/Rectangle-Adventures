@@ -526,12 +526,12 @@ class Portal: public Body {
 
 		/** Czy jest vertykalny? */
 		inline bool isVertical() {
-			return orientation == pEngine::UP || orientation == pEngine::DOWN;
+			return w >= h;
 		}
 
 		/** Czy jest horyzontalny? */
 		inline bool isHorizontal() {
-			return orientation == pEngine::LEFT || orientation == pEngine::RIGHT;
+			return h <= w;
 		}
 };
 

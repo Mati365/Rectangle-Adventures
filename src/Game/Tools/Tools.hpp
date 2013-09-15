@@ -30,6 +30,16 @@ using namespace std;
 
 typedef unsigned short int usint;
 
+/** Zamiana zmiennych liczbowych */
+template<typename T>
+void xor_swap(T* t1, T* t2) {
+	//t1 = t1 ^ t2;
+	//t2 = t1 ^ t2;
+	//t1 = t1 ^ t2;
+	*t1 ^= *t2 ^= *t1 ^= *t2;
+}
+
+/** Pobieranie losowej */
 template<typename T = int>
 T getIntRandom(T min, T max) {
 	return rand() % (max - min + 1) + min;

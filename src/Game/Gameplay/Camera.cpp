@@ -10,7 +10,7 @@ using namespace Gameplay;
 
 Camera::Camera(Body* _focus) :
 				focus(_focus),
-				scrolling(false) {
+				scrolling(true) {
 	pos.w = screen_bounds.x;
 	pos.h = screen_bounds.y;
 }
@@ -25,28 +25,24 @@ void Camera::updateCam(Window* _window) {
 			focus->y - pos.h / 2 + focus->h / 2 - Y_SPACE + focus->velocity.y);
 
 	if (scrolling) {
-		float scroll_speed = .75f;
+		/**
+		 * 1220 - 13.f
+		 * odleglosc - x
+		 */
+		Vector<float> point(target_pos.x - pos.x, target_pos.y - pos.y);
+		float c = sqrt(point.x * point.x + point.y * point.y);
+		float scroll_speed = c * 20.f / ((pos.w + pos.h) / 4);
 
-		/** Klasyczny sposób scrollingu :P */
-		if (pos.x < target_pos.x) {
+		if (pos.x < target_pos.x - scroll_speed) {
 			pos.x += scroll_speed;
-		} else if (pos.x > target_pos.x) {
+		} else if (pos.x > target_pos.x + scroll_speed) {
 			pos.x -= scroll_speed;
 		}
 
-		if (pos.y < target_pos.y) {
+		if (pos.y < target_pos.y - scroll_speed) {
 			pos.y += scroll_speed;
-		} else if (pos.y > target_pos.y) {
+		} else if (pos.y > target_pos.y + scroll_speed) {
 			pos.y -= scroll_speed;
-		}
-
-		/** A jeśli na miejscu? */
-		if (pos.x >= target_pos.x - scroll_speed
-				&& pos.x <= target_pos.x + scroll_speed
-				&& pos.y >= target_pos.y - scroll_speed
-				&& pos.y <= target_pos.y + scroll_speed) {
-			cout << "S" << endl;
-			scrolling = false;
 		}
 	} else {
 		pos.getFromVec(target_pos);

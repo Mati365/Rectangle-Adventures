@@ -16,8 +16,8 @@ void main() {
 	float distance = sqrt(point.x * point.x + point.y * point.y);
 
 	float p = 1.f - distance/ radius + light; // procent rozjaśnienia
-	if(mod(vec.y, 1.5f) == 0) {
-		p += -light + 0.4f;
+	if(sin(vec.y * 5) > 0) {
+		p += -light + 0.3f;
 	}
 	gl_FragColor = vec4(col.r * p * active_colors.r, col.g * p * active_colors.g, col.b * p * active_colors.b, col.a);
 }

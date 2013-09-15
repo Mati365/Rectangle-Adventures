@@ -74,6 +74,7 @@ void Platform::setMovingDir(const Vector<float>& _velocity,
 	max_distance = _distance;
 	repeat_movement = _repeat_movement;
 	distance.x = distance.y = 0;
+	state = Body::FLYING;
 }
 
 /**

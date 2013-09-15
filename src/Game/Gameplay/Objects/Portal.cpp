@@ -19,6 +19,11 @@ Portal::Portal(float _x, float _y, usint _orientation, usint _flag) :
 	/** BACKGROUND nie obsługuje callbacków kolizji */
 	state = Body::FLYING;
 	type = Body::PORTAL;
+
+	/** Jeśli pionowy to zamiana wartości */
+	if(isHorizontal()) {
+		xor_swap<int>((int*)&w, (int*)&h);
+	}
 }
 
 /** Linkowanie */
@@ -98,6 +103,64 @@ Rect<float> Portal::getStencilTexCoord() {
 		};
 	}
 
+	/** Centrowanie obiektu dla Pionowych */
+	if (orientation == pEngine::LEFT || orientation == pEngine::RIGHT) {
+		pos.y = y - h / 2 + _body->h / 2;
+		_body->y = pos.y;
+		/**
+		 * Znając procent można obliczyć zagłębienie się
+		 * obiektu i wynurzenie po przeciwnej stronie
+		 * portalu
+		 */
+		switch (body_inside.flag) {
+			/**
+			 * Początek ciała:
+			 */
+			case PortalBody::BODY_BEGIN:
+				if (orientation == pEngine::RIGHT) {
+					/** Obiekt grawitacją wciągany w lewo */
+					pos.w = body_inside.body_bounds.w;
+
+					/** Uaktualnianie pozycji */
+					pos.x = x;
+					_body->x = pos.x
+							- teleport_procent * body_inside.body_bounds.w;
+				} else {
+					/** Wciąganie w prawą stronę */
+					pos.w = (1.f - teleport_procent)
+							* body_inside.body_bounds.w;
+					pos.x = x - pos.w;
+					_body->x = pos.x;
+				}
+				break;
+
+				/**
+				 * Koniec ciała:
+				 */
+			case PortalBody::BODY_END:
+				if (orientation == pEngine::LEFT) {
+					/** Obiekt grawitacją wciągany w lewo */
+					pos.w = body_inside.body_bounds.w
+							- (1.f - teleport_procent)
+									* body_inside.body_bounds.w;
+
+					/** Uaktualnianie pozycji */
+					pos.x = x - teleport_procent * body_inside.body_bounds.w;
+					_body->x = pos.x;
+				} else {
+					/** Obiekt wyciągany w prawo */
+					pos.w = body_inside.body_bounds.w;
+
+					/** Uaktualnianie pozycji */
+					pos.x = x;
+					_body->x = x
+							- (1.f - teleport_procent)
+									* body_inside.body_bounds.w;
+				}
+				break;
+		};
+	}
+
 	//
 	return pos;
 }
@@ -167,6 +230,9 @@ void Portal::exitBody() {
 		_body->y = new_pos.y;
 
 		_body->setState(Body::NONE);
+
+		/** Odpychanie ciała */
+		dodgeBody(_body, orientation, -2.f);
 	}
 
 	body_inside.body = nullptr;
@@ -182,9 +248,8 @@ void Portal::updateBodyInside() {
 	if (!linked || !body_inside.body) {
 		return;
 	}
-
 	if (teleport_procent < 1) {
-		float speed_proc = .005f;
+		float speed_proc = 0.f;
 
 		/** Wyliacznie procentu z prędkości wpadania */
 		if (isVertical()) {
@@ -195,8 +260,9 @@ void Portal::updateBodyInside() {
 					/ (float) body_inside.body->w;
 		}
 
-		/** Odświeżanie */
-		teleport_procent += abs(speed_proc);
+		/** Odświeżanie i ograniczenie prędkości */
+		teleport_procent += abs(speed_proc) / 5;
+		//teleport_procent += .005f;
 	} else {
 		/** Zerowanie */
 		exitBody();
@@ -208,9 +274,18 @@ void Portal::updateBodyInside() {
 
 /** Wchodzenie do portalu */
 bool Portal::enter(Body* body, usint _dir) {
-	if (teleport_procent != 0 || body_inside.body || !linked || !body
-			|| invertDir(_dir) != orientation) {
+	if (teleport_procent != 0 || body_inside.body || !linked || !body) {
 		return false;
+	}
+
+	// Odwrócenie portalu
+	if ((isVertical() && !isHorizontalDir(_dir))
+			|| (isHorizontal() && isHorizontalDir(_dir))) {
+		orientation = invertDir(_dir);
+		body_inside.flag = PortalBody::BODY_BEGIN;
+
+		linked->orientation = orientation;
+		linked->body_inside.flag = PortalBody::BODY_END;
 	}
 
 	// Dołączanie obiektów do portali
