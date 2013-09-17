@@ -16,7 +16,8 @@ glText::glText(const Color& _col, const string& _str, void* _font,
 				anim(false),
 				hidden(false),
 				actual_anim_time(0),
-				actual_text_pos(0) {
+				actual_text_pos(0),
+				read_speed(CHARACTERS_READ_SPEED) {
 	updateScreenLength();
 }
 
@@ -51,7 +52,7 @@ void glText::printText(float _x, float _y) {
 	}
 	if (anim) {
 		actual_anim_time++;
-		if (actual_anim_time > CHARACTERS_READ_SPEED) {
+		if (actual_anim_time > read_speed) {
 			actual_anim_time = 0;
 			actual_text_pos++;
 			if (actual_text_pos > str.length()) {

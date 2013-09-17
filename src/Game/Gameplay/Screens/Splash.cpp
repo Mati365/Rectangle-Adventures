@@ -31,9 +31,7 @@ Splash::SplashInfo::~SplashInfo() {
 	if (text) {
 		delete[] text;
 	}
-	if (logo) {
-		delete logo;
-	}
+	safe_delete<IrregularPlatform>(logo);
 }
 
 /**
@@ -42,6 +40,7 @@ Splash::SplashInfo::~SplashInfo() {
 Splash::Splash() :
 				title(oglWrapper::WHITE, "", GLUT_BITMAP_HELVETICA_18, 18),
 				return_to(NULL) {
+	title.setReadSpeed(CHARACTERS_READ_SPEED * 2);
 }
 
 void Splash::drawObject(Window*) {
@@ -53,7 +52,7 @@ void Splash::drawObject(Window*) {
 	
 	//
 	if (strlen(title.getString()->c_str()) == 0 && !texts.empty()) {
-		title.setString(_text->text, -1);
+		title.setString(_text->text, 0);
 	}
 	_text->timer.tick();
 	
@@ -95,7 +94,7 @@ void Splash::drawObject(Window*) {
 		} else {
 			
 			texts.pop_back();
-			title.setString(texts.back()->text, -1);
+			title.setString(texts.back()->text, 0);
 		}
 	}
 }

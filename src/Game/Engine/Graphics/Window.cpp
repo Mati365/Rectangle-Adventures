@@ -26,7 +26,7 @@ bool Engine::window_opened = true;
 
 #define FPS 9
 //#define BENCHMARK
-#define FULLSCREEN
+//#define FULLSCREEN
 #define VGA_RESOLUTION
 
 /** Konwersja Uint8 do char */
@@ -95,6 +95,9 @@ void Window::init() {
 		return;
 	}
 	active_screen = menu;
+	//splash->endTo(menu);
+	//splash->pushTitle("Mati365 presents..", 400, nullptr);
+	//splash->pushTitle("Rect Adventures", 400, nullptr);
 	
 	//
 	SDL_Event event;

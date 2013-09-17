@@ -340,9 +340,24 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	usint _texture_id = genTextureID(_type, _orientation);
 	
 	/**
-	 * Obiekt skryptu dziedziczy tylko
+	 * Obiekt skryptu i portalu dziedziczy tylko
 	 * od Body!
 	 */
+	if (_type == PORTAL_BEGIN || _type == PORTAL_END) {
+		Portal* portal = new Portal(_x, _y, _orientation, Body::FLYING);
+		if (_type == PORTAL_END) {
+			if (created.empty()) {
+				safe_delete<Portal>(portal);
+				return nullptr;
+			}
+			portal->linkTo(dynamic_cast<Portal*>(created.back()));
+		}
+
+		addBody(portal);
+		//
+		return portal;
+	}
+
 	if (_type == SCRIPT_BOX) {
 		if (!_script) {
 			logEvent(Logger::LOG_WARNING, "Nie mogę utworzyć triggera!");

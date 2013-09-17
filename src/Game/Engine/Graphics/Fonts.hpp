@@ -35,9 +35,15 @@ class glText {
 		usint actual_anim_time;
 		usint actual_text_pos;
 
+		usint read_speed;
+
 	public:
 		glText(const Color&, const string&, void* = GLUT_BITMAP_TIMES_ROMAN_10,
 				usint = 10);
+
+		void setReadSpeed(usint _speed) {
+			read_speed = _speed;
+		}
 
 		void setColor(const Color& _col) {
 			col = _col;
@@ -46,6 +52,7 @@ class glText {
 		void setHidden(bool _hidden) {
 			hidden = _hidden;
 		}
+
 		bool isHidden() const {
 			return hidden;
 		}

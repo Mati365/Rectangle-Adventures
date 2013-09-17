@@ -567,7 +567,8 @@ class ResourceFactory {
 			SPIKES, // kolce
 			LADDER, // drabina
 			LIANE, // liana
-			LAVA, // lawa
+			PORTAL_BEGIN, // portal początek
+			PORTAL_END, // poral koniec
 			/**
 			 * Dynamiczne obiekty nie są wczytywane
 			 * dlatego idą na koniec
