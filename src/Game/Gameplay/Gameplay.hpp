@@ -41,7 +41,7 @@ namespace Gameplay {
 			
 		private:
 			Rect<float> pos;
-			Body* focus;
+			deque<Body*> focus;
 
 			/** Czy scrollowanie do focusa? */
 			bool scrolling;
@@ -65,10 +65,10 @@ namespace Gameplay {
 			}
 
 			/** Pobieranie pozycji względem krawędzi okna */
-			Vector<float> getFocusScreenPos() const;
+			Vector<float> getFocusScreenPos();
 
 			Body* getFocus() {
-				return focus;
+				return focus.back();
 			}
 			
 			Rect<float>* getPos() {
@@ -79,7 +79,7 @@ namespace Gameplay {
 			static Camera& getFor(Body* focus = nullptr) {
 				static Camera camera(focus);
 				if (focus) {
-					camera.focus = focus;
+					camera.setFocus(focus);
 				}
 				//
 				return camera;

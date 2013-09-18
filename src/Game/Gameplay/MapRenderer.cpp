@@ -254,11 +254,10 @@ void MapRenderer::drawObject(Window* _window) {
 	calcCameraRatio();
 	
 	/** Konfiguracja shadera */
+	Vector<float> focus_pos = Camera::getFor().getFocusScreenPos();
+
 	shaders[main_shader_id]->begin();
-	shaders[main_shader_id]->setUniform2f(
-			"center",
-			screen_bounds.x / 2,
-			screen_bounds.y / 2);
+	shaders[main_shader_id]->setUniform2f("center", focus_pos.x, focus_pos.y);
 	shaders[main_shader_id]->setUniform3f(
 			"active_colors",
 			col_saturation[0],
@@ -266,6 +265,7 @@ void MapRenderer::drawObject(Window* _window) {
 			col_saturation[2]);
 	shaders[main_shader_id]->setUniform1f("radius", shadow_radius);
 	
+	/** Tło */
 	oglWrapper::drawFillRect(
 			0,
 			0,

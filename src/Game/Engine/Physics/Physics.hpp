@@ -250,6 +250,9 @@ namespace Physics {
 			/** Detekcja kolizji */
 			usint checkVerticalCollision(Body*, Body*);
 			usint checkHorizontalCollision(Body*, Body*);
+
+			/** Popychanie obiektu */
+			void pushFromObject(Body*, usint);
 	};
 	
 	/**

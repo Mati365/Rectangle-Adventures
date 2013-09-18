@@ -286,12 +286,15 @@ void Portal::updateBodyInside() {
 		} else {
 			speed_proc = (float) _body->velocity.x / (float) _body->w;
 		}
-
+		if (speed_proc < .001f) {
+			speed_proc = .2f;
+		}
 		/** Dodawanie procentu */
 		teleport_procent += abs(speed_proc / 5);
 	} else {
 		/** Zerowanie */
 		exitBody();
+
 		Camera::getFor().scrollTo(nullptr);
 	}
 	// Synchronizacja

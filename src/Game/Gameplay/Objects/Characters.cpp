@@ -309,7 +309,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 			if (velocity.y > _max_speed) {
 				velocity.y = _max_speed;
 			} else if (velocity.y < 0) {
-				if (enemy->type == LADDER && velocity.y < -_max_speed * 2.f) {
+				if (enemy->type == LADDER && velocity.y <= -_max_speed) {
 					velocity.y = -_max_speed * 2.f;
 				} else if (enemy->type == LIANE) {
 					velocity.y = physics->getGravitySpeed() / 2;
@@ -460,7 +460,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (dir == pEngine::DOWN && !IS_SET(body->state, Body::HIDDEN)
 			&& (type == Body::HERO || type == Body::ENEMY)) {
 		// Zryte formatowanie
-		if (velocity.y < -9 && status.health > 0) {
+		if (velocity.y < -7 && status.health > 0) {
 			die();
 			return;
 		}

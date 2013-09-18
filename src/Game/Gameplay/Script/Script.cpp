@@ -153,8 +153,8 @@ bool Interpreter::interpret(Script* script) {
 					 */
 					if ((*iter)->script_id == id) {
 						/**
-						 *   Rzutowanie na platforme, jeśli to nie platforma to zwróci
-						 *   nulla
+						 *  Rzutowanie na platforme, jeśli to nie platforma to zwróci
+						 *  nulla
 						 */
 						selected = dynamic_cast<Platform*>(*iter);
 						break;

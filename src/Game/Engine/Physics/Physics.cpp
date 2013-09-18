@@ -145,6 +145,34 @@ void pEngine::updateBodyMovement(Body* object) {
 }
 
 /**
+ * Popychanie obiektu!
+ */
+void pEngine::pushFromObject(Body* source, usint dir) {
+	/** Popychanie obiektów */
+
+	if (abs(source->velocity.x) > 0 && dir > 0) {
+		Body* collision = source->collisions[dir - 1];
+
+		/** Prawa kolizja */
+		if (collision && isBodyActive(collision)) {
+			float speed = -source->velocity.x * 0.85f;
+
+			switch (dir) {
+				case pEngine::RIGHT:
+					if (abs(collision->velocity.x) < abs(source->velocity.x))
+						collision->velocity.x += speed;
+					break;
+
+				case pEngine::LEFT:
+					if (abs(collision->velocity.x) > abs(source->velocity.x))
+						collision->velocity.x -= speed;
+					break;
+			}
+		}
+	}
+}
+
+/**
  * Odświeżanie świata!
  */
 void pEngine::updateWorld() {
@@ -195,6 +223,14 @@ void pEngine::updateWorld() {
 				|| !isBodyActive(
 						object) || IS_SET(object->state, Body::FLYING)) {
 			continue;
+		}
+
+		/** Popychanie obiektów */
+		if (!IS_SET(object->state, Body::STATIC)
+				&& abs(object->velocity.x) > 0) {
+			/** Test kolizji w poziomie */
+			pushFromObject(object, pEngine::RIGHT);
+			pushFromObject(object, pEngine::LEFT);
 		}
 
 		/** Czy podlega grawitacji? */
