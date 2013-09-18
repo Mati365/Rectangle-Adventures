@@ -61,7 +61,7 @@ Window::Window(const string& _title) :
 #ifdef FULLSCREEN
 					| SDL_FULLSCREEN
 #endif
-					);
+			);
 	if (!screen) {
 		return;
 	}

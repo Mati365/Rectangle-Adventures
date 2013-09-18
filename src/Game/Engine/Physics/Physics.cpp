@@ -196,7 +196,7 @@ void pEngine::updateWorld() {
 						object) || IS_SET(object->state, Body::FLYING)) {
 			continue;
 		}
-		
+
 		/** Czy podlega grawitacji? */
 		if (!(IS_SET(object->state, Body::BACKGROUND)
 				&& (object->velocity.x != 0 || object->velocity.y != 0))) {

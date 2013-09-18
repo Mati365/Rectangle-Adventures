@@ -81,7 +81,6 @@ void Menu::getCallback(Control* const & control) {
 							ParalaxRenderer::PARALLAX
 									| ParalaxRenderer::ROTATION
 									| ParalaxRenderer::DRAW_QUAD);
-					
 					/**
 					 * Nowa gra
 					 */
