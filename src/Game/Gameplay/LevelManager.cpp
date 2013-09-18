@@ -42,8 +42,9 @@ MapINFO* LevelManager::loadNextMap() {
  */
 MapINFO* LevelManager::reloadMap() {
 	if (actual_map > MAP_COUNT) {
-		return NULL;
+		return nullptr;
 	}
+
 	MapINFO* buffer = loadMap(levels[actual_map].c_str());
 	MapRenderer* map_renderer = game->getMapRenderer();
 	
@@ -51,7 +52,7 @@ MapINFO* LevelManager::reloadMap() {
 	
 	// Gracz musi się zabić ;)
 	map_renderer->getHero()->die();
-	
+
 	return buffer;
 }
 

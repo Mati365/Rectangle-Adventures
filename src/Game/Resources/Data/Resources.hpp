@@ -85,7 +85,17 @@ class MapINFO: public Resource {
 		 * Platform jest dużo, AllocKiller
 		 * zwolnił by to niemiłosiernie
 		 */
-		deque<usint> resources;
+		struct MapResource {
+				usint id;
+				char label[256];
+
+				MapResource(usint _id, const char* _label) :
+								id(_id) {
+					strcpy(label, _label);
+				}
+		};
+
+		deque<MapResource> resources;
 
 		/**
 		 * Informacje początkowe o graczu

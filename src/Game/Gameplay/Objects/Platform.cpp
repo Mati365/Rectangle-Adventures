@@ -408,5 +408,4 @@ void IrregularPlatform::drawObject(Window*) {
 	}
 	
 	glPopMatrix();
-	//oglWrapper::drawRect(x, y, w, h, oglWrapper::GREEN, 2.f);
 }

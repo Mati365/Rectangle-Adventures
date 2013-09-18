@@ -11,7 +11,7 @@
 
 char* Convert::getDynamicValue(const char* str) {
 	if (!str || strlen(str) == 0) {
-		return NULL;
+		return nullptr;
 	}
 	char* _str = new char[strlen(str) + 1];
 	strcpy(_str, str);

@@ -122,7 +122,7 @@ void MapINFO::readHeader(FILE* map) {
 	if (!IS_SET(open_config, WITHOUT_HERO) && strlen(shape) != 0) {
 		hero_shape = readShape(shape, shape, 0);
 		if (hero_shape) {
-			resources.push_back(hero_shape->getResourceID());
+			resources.push_back( { hero_shape->getResourceID(), shape });
 		} else {
 			logEvent(Logger::LOG_WARNING, "Brak tekstury gracza");
 		}
@@ -149,7 +149,7 @@ void MapINFO::readShapes(FILE* map) {
 		PlatformShape* _shape = readShape(path, path, 0);
 		_shape->setLineWidth(3.f); // lepiej wygląda
 				
-		resources.push_back(_shape->getResourceID());
+		resources.push_back( { _shape->getResourceID(), path });
 	}
 	//
 	PROGRESS_LOADING();
@@ -183,8 +183,14 @@ void MapINFO::readPlatforms(FILE* map) {
 	
 	deque<Body*> objects;
 	
+	cout << endl;
+	for(auto& res : resources) {
+		cout << res.label << endl;
+	}
+
 	// Wczytywanie parametrów graficznych platform..
 	fscanf(map, "%hu\n", &size);
+
 	for (usint i = 0; i < size; ++i) {
 		fscanf(
 				map,
@@ -220,25 +226,34 @@ void MapINFO::readPlatforms(FILE* map) {
 		 */
 		if (with_shape) {
 			/**
+			 * Wyszukiwanie nie powtarzającego się identyfikatora
+			 * tekstury!
+			 */
+			usint _resource_id = 0;
+			for (auto& res : resources) {
+				if (strcmp(res.label, shape) == 0) {
+					_resource_id = res.id;
+				}
+			}
+
+			/**
 			 * Platforma niereguralna - kształt
 			 */
-			platform =
-					new IrregularPlatform(
-							rect.x,
-							rect.y,
-							state,
-							dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(
-									shape)));
-			
+			platform = new IrregularPlatform(rect.x, rect.y, state,
+			// Bugfix: Stara mapa w pamięci może mieć tą samą teksturę!
+					dynamic_cast<PlatformShape*>(main_resource_manager.getByID(
+							_resource_id)));
+
 			IrregularPlatform* __platform =
 					dynamic_cast<IrregularPlatform*>(platform);
+
 			__platform->fitToWidth(rect.w);
 		} else {
 			/**
 			 * Normalna platforma
 			 */
 			platform = new Platform(rect.x, rect.y, rect.w, rect.h, col, state);
-			
+
 			platform->setBorder(border[0], border[1], border[2], border[3]);
 			platform->setFillType(fill_type);
 		}
@@ -256,12 +271,12 @@ void MapINFO::readPlatforms(FILE* map) {
 			platform->setMovingDir(velocity, max_distance, repeat_movement);
 		}
 		platform->compileList();
-		//
+//
 		objects.push_back(platform);
 	}
 	PROGRESS_LOADING();
-	//
-	
+//
+
 	/**
 	 * Wyliczanie wymiarów planszy
 	 */
@@ -277,7 +292,7 @@ void MapINFO::readPlatforms(FILE* map) {
 		}
 	}
 	bounds = max;
-	//
+//
 	PROGRESS_LOADING();
 
 	/**
@@ -285,11 +300,11 @@ void MapINFO::readPlatforms(FILE* map) {
 	 */
 	safe_delete<pEngine>(physics);
 	physics = new pEngine(bounds, 0.2f);
-	
+
 	for (auto& obj : objects) {
 		physics->insert(obj);
 	}
-	//
+//
 	PROGRESS_LOADING();
 }
 
@@ -301,7 +316,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 	char shape[256];
 	usint size;
 	Rect<float> rect(0, 0, 0, 0);
-	
+
 	/**
 	 * Wczytywanie mobów!
 	 */
@@ -309,7 +324,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 	for (usint i = 0; i < size; ++i) {
 		readMob(map);
 	}
-	
+
 	/**
 	 * Wczytywanie skryptów!
 	 */
@@ -324,7 +339,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 				&rect.w,
 				&rect.h,
 				shape);
-		//
+//
 		ResourceFactory::getInstance(NULL).createObject(
 				ResourceFactory::SCRIPT_BOX,
 				rect.x,
@@ -335,7 +350,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 				shape,
 				pEngine::NONE);
 	}
-	//
+//
 	PROGRESS_LOADING();
 }
 
@@ -373,7 +388,7 @@ bool MapINFO::load(FILE* map) {
 void MapINFO::unload() {
 	// Usuwanie kształtów! Woolne!
 	for (auto& res_id : resources) {
-		if (!main_resource_manager.deleteResource(res_id)) {
+		if (!main_resource_manager.deleteResource(res_id.id)) {
 			logEvent(
 					Logger::LOG_WARNING,
 					"BUG! Nie mogę skasować zasobu - możliwy memoryleak!");

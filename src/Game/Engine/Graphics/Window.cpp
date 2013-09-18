@@ -26,7 +26,7 @@ bool Engine::window_opened = true;
 
 #define FPS 9
 //#define BENCHMARK
-#define FULLSCREEN
+//#define FULLSCREEN
 #define VGA_RESOLUTION
 
 /** Konwersja Uint8 do char */
