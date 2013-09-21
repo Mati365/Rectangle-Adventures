@@ -9,10 +9,13 @@
 //#define _ARCHIVER_
 
 #ifndef _ARCHIVER_
-#include <GL/glut.h>
 
 #include "Game/Engine/Graphics/Engine.hpp"
 #include "Game/Resources/Data/Resources.hpp"
+
+#include <GL/glew.h>
+#include <GL/glut.h>
+
 //
 #else
 //

@@ -10,7 +10,7 @@
 #include "../../Tools/Logger.hpp"
 
 /**
- * Generowanie statusów
+ * Generowanie statusĂłw
  */
 map<usint, ResourceFactory::_FactoryStatus> ResourceFactory::factory_status;
 
@@ -23,13 +23,13 @@ void ResourceFactory::generateChracterStatus(usint _hard_level) {
 		CharacterStatus(0, false, 0, 1)
 	};
 
-	// ŻYCIE
+	// Ĺ»YCIE
 	factory_status[HEALTH] = {
 		Character::SCORE, Body::BACKGROUND, true,
 		CharacterStatus(1, false, 0, 0)
 	};
 
-	// WRÓG
+	// WRĂ“G
 	factory_status[GHOST] = {
 		Character::ENEMY, Body::NONE, true,
 		CharacterStatus(-1, false, 0, 0)
@@ -117,12 +117,12 @@ ResourceFactory::ResourceFactory() :
 /**
  * Mapowanie podstawowych tekstur w grze!
  *
- * UWAGA! KOLEJNE KIERUNKI TEKSTUR SĄ FLAGAMI +MAX_ILOŚĆ od
+ * UWAGA! KOLEJNE KIERUNKI TEKSTUR SÄ„ FLAGAMI +MAX_ILOĹšÄ† od
  * PIERWOTNEJ!!!
  */
 #define MAX_TEXTURES_COUNT 300
 
-/** Generowanie kolejnych id tekstur dla poszczególnych orientacji */
+/** Generowanie kolejnych id tekstur dla poszczegĂłlnych orientacji */
 usint ResourceFactory::genTextureID(usint _factory_type, usint _orientation) {
 	return 5 * _factory_type + MAX_TEXTURES_COUNT + _orientation;
 }
@@ -138,11 +138,11 @@ void ResourceFactory::loadMainTexturesPack() {
 	// Moby
 	loadMobsTexturesPack("");
 	
-	logEvent(Logger::LOG_INFO, "Pomyślnie wczytano paczkę tekstur!");
+	logEvent(Logger::LOG_INFO, "PomyĹ›lnie wczytano paczkÄ™ tekstur!");
 }
 
 void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
-	// Tekstury mobów
+	// Tekstury mobĂłw
 	usint _total_deleted = 0;
 	bool _first_load = textures.empty();
 	
@@ -185,12 +185,12 @@ void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
 	logEvent(
 			Logger::LOG_INFO,
 			"Zarejestrowano " + Convert::toString<usint>(_total_deleted)
-					+ " obiektów! Brak memoryleak!");
+					+ " obiektĂłw! Brak memoryleak!");
 }
 
 /**
- * Reallokacja tekstur, obiekty posiadają stare
- * wskaźniki do tekstur!
+ * Reallokacja tekstur, obiekty posiadajÄ… stare
+ * wskaĹşniki do tekstur!
  */
 bool ResourceFactory::texturePackRealloc() {
 	if (created.empty()) {
@@ -236,8 +236,8 @@ bool ResourceFactory::texturePackRealloc() {
 		receiver->fitToWidth(tex_conf->width);
 		
 		/**
-		 * Oprócz samej tekstury działka
-		 * muszą zostać przeładowane tekstury
+		 * OprĂłcz samej tekstury dziaĹ‚ka
+		 * muszÄ… zostaÄ‡ przeĹ‚adowane tekstury
 		 * broni na nim
 		 */
 		if (obj->factory_type == GUN) {
@@ -256,7 +256,7 @@ bool ResourceFactory::texturePackRealloc() {
 	logEvent(
 			Logger::LOG_INFO,
 			"Przealokowano " + Convert::toString<usint>(reallocated)
-					+ " obiektów!");
+					+ " obiektĂłw!");
 	return true;
 }
 
@@ -272,8 +272,8 @@ PlatformShape* ResourceFactory::getTexture(usint _id, usint _orientation) {
  */
 void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
 	/**
-	 * Po co wczytywać 2 razy te same obiekty?
-	 * Mniejsze ryzyko wycieku pamięci
+	 * Po co wczytywaÄ‡ 2 razy te same obiekty?
+	 * Mniejsze ryzyko wycieku pamiÄ™ci
 	 */
 	if (_texure_temperature == texture_temperature) {
 		return;
@@ -306,7 +306,7 @@ void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
 }
 
 /**
- * Dokładanie tekstur!
+ * DokĹ‚adanie tekstur!
  */
 void ResourceFactory::putTexture(usint id, PlatformShape* shape) {
 	textures[id] = shape;
@@ -324,13 +324,13 @@ ResourceFactory& ResourceFactory::getInstance(pEngine* _physics) {
 }
 
 /**
- * Generowanie obiektów wraz ze skryptami
+ * Generowanie obiektĂłw wraz ze skryptami
  */
 Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		float _h, PlatformShape* _shape, char* _script, usint _orientation,
 		usint _state) {
 	if (physics == NULL) {
-		logEvent(Logger::LOG_ERROR, "Fabryka zgłasza praw fizyki brak!");
+		logEvent(Logger::LOG_ERROR, "Fabryka zgĹ‚asza praw fizyki brak!");
 		return NULL;
 	}
 	
@@ -352,15 +352,15 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 			}
 			portal->linkTo(dynamic_cast<Portal*>(created.back()));
 		}
-
+		
 		addBody(portal);
 		//
 		return portal;
 	}
-
+	
 	if (_type == SCRIPT_BOX) {
 		if (!_script) {
-			logEvent(Logger::LOG_WARNING, "Nie mogę utworzyć triggera!");
+			logEvent(Logger::LOG_WARNING, "Nie mogÄ™ utworzyÄ‡ triggera!");
 			return NULL;
 		}
 		Trigger* trigger = new Trigger(
@@ -375,7 +375,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	}
 	
 	/**
-	 * Przeszukiwanie bazy obiektów
+	 * Przeszukiwanie bazy obiektĂłw
 	 */
 	_TextureConfig* _factory_type = getFactoryTemplate(_type, _orientation);
 	usint _width = _factory_type ? _factory_type->width : 0;
@@ -383,12 +383,12 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	
 	if (_type == KILLZONE) {
 		/**
-		 * STREFA ŚMIERCI
+		 * STREFA ĹšMIERCI
 		 */
 		_object = new Platform(_x, _y, _w, _h, oglWrapper::WHITE, Body::HIDDEN);
 	} else if (_type == GUN) {
 		/**
-		 * BROŃ
+		 * BROĹ�
 		 */
 		_object = new Gun(
 				physics,
@@ -401,7 +401,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 					textures[genTextureID(BULLET, 3)], textures[genTextureID(
 							BULLET,
 							4)] },
-				340);
+				80);
 		dynamic_cast<Gun*>(_object)->fitToWidth(_width);
 	} else {
 		/**
@@ -416,7 +416,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		Character* character = dynamic_cast<Character*>(_object);
 		character->fitToWidth(_width);
 		/**
-		 * Generowanie obiektów
+		 * Generowanie obiektĂłw
 		 */
 		if (_type == OBJECT) {
 			character->setType(Character::PLATFORM);
@@ -461,7 +461,7 @@ void ResourceFactory::addBody(Body* _object) {
 	if (_object) {
 		created.push_back(_object);
 		
-		/** Siłowe dodanie do listy! */
+		/** SiĹ‚owe dodanie do listy! */
 		physics->insert(_object);
 	}
 }

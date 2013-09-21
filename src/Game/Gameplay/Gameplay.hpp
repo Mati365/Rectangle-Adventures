@@ -63,7 +63,7 @@ namespace Gameplay {
 			void disableScrolling() {
 				scrolling = false;
 			}
-
+			
 			/** Pobieranie pozycji względem krawędzi okna */
 			Vector<float> getFocusScreenPos();
 
@@ -267,7 +267,7 @@ namespace Gameplay {
 				col_saturation[0] = 1.1f; // bardziej karmelkowy ekran
 				col_saturation[1] = col_saturation[2] = 1.f;
 			}
-
+			
 			/** Obliczanie współczynnika przesunięcia */
 			void calcCameraRatio();
 	};

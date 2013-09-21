@@ -39,31 +39,15 @@ class IO {
 		/**
 		 * Zapisywanie string!
 		 */
-		static bool writeString(FILE* file, const char* str) {
-			if (!file) {
-				return false;
-			}
-			int len = strlen(str) + 1;
-			// Ostatni znak to znak końca linii
-			fwrite(&len, sizeof(int), 1, file);
-			fwrite(str, sizeof(char), len, file);
-			return true;
-		}
-		
-		static bool writeString(const char* path, const char* str) {
-			FILE* file = fopen(path, "w");
-			if (!writeString(file, str)) {
-				return false;
-			}
-			fclose(file);
-			return true;
-		}
+		static bool writeString(FILE*, const char*);
+
+		static bool writeString(const char*, const char*);
+
 		/**
 		 * Wielkość string'u zapisywanego do pliku!
 		 */
-		static int stringLength(const char* str) {
-			return strlen(str) + sizeof(int) + 1;
-		}
+		static int stringLength(const char*);
+
 		/**
 		 * Odczyt
 		 */
@@ -92,78 +76,31 @@ class IO {
 		/**
 		 * Odczytywanie string!
 		 */
-		static const char* readString(FILE* file) {
-			if (!file) {
-				return NULL;
-			}
-			int len;
-			fread(&len, sizeof(int), 1, file);
-			char* str = new char[len + 1];
-			memset(str, ' ', len);
-			fread(str, sizeof(char), len, file);
-			//
-			return str;
-		}
-		
-		static const char* readString(const char* path) {
-			FILE* file = fopen(path, "r");
-			if (!file) {
-				return NULL;
-			}
-			const char* str = readString(file);
-			fclose(file);
-			//
-			return str;
-		}
+		static const char* readString(FILE*);
+
+		static const char* readString(const char*);
+
 		/**
 		 *
 		 */
-		static char* getFileContent(const char* _path) {
-			FILE* file = fopen(_path, "rb");
-			//
-			char* content = getFileContent(file, 0);
-			if (content) {
-				fclose(file);
-			}
-			//
-			return content;
-		}
-		
-		static char* getFileContent(FILE* file, size_t len) {
-			if (!file) {
-				return NULL;
-			}
-			if (len == 0) {
-				len = getFileLength(file);
-			}
-			//
-			char* content = new char[len + 1];
-			memset(content, 0, len + 1);
-			fread(content, len, 1, file);
-			//
-			return content;
-		}
+		static char* getFileContent(const char*);
+
+		static char* getFileContent(FILE*, size_t);
+
 		/**
 		 *
 		 */
-		static bool fileExists(const char* path) {
-			FILE* file = fopen(path, "r");
-			bool exists = file;
-			//
-			fclose(file);
-			return exists;
-		}
+		static bool fileExists(const char*);
+
 		/**
 		 *
 		 */
-		static size_t getFileLength(FILE* file) {
-			size_t pos = ftell(file);
-			fseek(file, 0, SEEK_END);
-			size_t length = ftell(file);
-			fseek(file, pos, SEEK_SET);
-			//
-			return length;
-		}
+		static size_t getFileLength(FILE*);
+
+		/**
+		 *
+		 */
+		static size_t getFileLength(const char*);
 };
 
 #endif /* IO_HPP_ */

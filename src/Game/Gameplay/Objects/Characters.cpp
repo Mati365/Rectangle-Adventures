@@ -78,7 +78,7 @@ Character::Character(const string& _nick, float _x, float _y,
 				status(MAX_LIVES, false, 0, 0, _x, _y),
 				
 				// Timery
-				blood_anim(8),
+				blood_anim(5),
 				levitation_timer(
 						DEFAULT_LEVITATION_DURATION,
 						getIntRandom<int>(0, DEFAULT_LEVITATION_DURATION)),

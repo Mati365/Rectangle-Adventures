@@ -4,9 +4,8 @@
  *  Created on: 16-03-2013
  *      Author: mati
  */
-#include <GL/gl.h>
-#include <GL/glut.h>
-
+//#include <GL/gl.h>
+//#include <GL/glut.h>
 #include "Gameplay.hpp"
 #include "Particle/Particle.hpp"
 
@@ -68,11 +67,11 @@ void MapRenderer::catchEvent(const Event& _event) {
 		case Event::KEY_PRESSED:
 			if (hero) {
 				if (_event.key == 'w') {
-					hero->jump(4.f, false);
+					hero->jump(7.f, false);
 				} else if (_event.key == 'a') {
-					hero->move(-.45f, 0.f);
+					hero->move(-1.3f, 0.f);
 				} else if (_event.key == 'd') {
-					hero->move(.45f, 0.f);
+					hero->move(1.3f, 0.f);
 				}
 			}
 			break;
@@ -226,13 +225,13 @@ void MapRenderer::calcCameraRatio() {
 	if (!hero) {
 		return;
 	}
-
+	
 	/** Aby gracz nie wychodził za ekran! */
 	Vector<float> hero_screen_pos = Camera::getFor().getFocusScreenPos();
-
+	
 	/** odległość max. ruchów gracza na erkanie */
 	float go_distance = .75f;
-
+	
 	if (hero_screen_pos.x > screen_bounds.x * go_distance
 			|| hero_screen_pos.x < screen_bounds.x * (1 - go_distance)
 			|| hero_screen_pos.y > screen_bounds.y * go_distance
@@ -255,7 +254,7 @@ void MapRenderer::drawObject(Window* _window) {
 	
 	/** Konfiguracja shadera */
 	Vector<float> focus_pos = Camera::getFor().getFocusScreenPos();
-
+	
 	shaders[main_shader_id]->begin();
 	shaders[main_shader_id]->setUniform2f("center", focus_pos.x, focus_pos.y);
 	shaders[main_shader_id]->setUniform3f(
@@ -272,7 +271,7 @@ void MapRenderer::drawObject(Window* _window) {
 			screen_bounds.x,
 			screen_bounds.y,
 			Color(8, 8, 8));
-
+	
 	/**
 	 * Główny rendering mapy - najpierw paralaksa
 	 */

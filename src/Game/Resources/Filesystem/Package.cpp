@@ -4,14 +4,21 @@
  *  Created on: 20-06-2013
  *      Author: mateusz
  */
+#ifndef OS_WINDOWS
 #include <unistd.h>
+#else
+#include <windows.h>
+#endif
+
 #include <sys/types.h>
 
 #include "../../Tools/Converter.hpp"
-
 #include "Filesystem.hpp"
 
 using namespace Filesystem;
+
+/** Logowanie procesu wczytywania */
+#define LOADING_LOG
 
 Package::Package(const char* path, const char* author) :
 				file_path(Convert::getDynamicValue(path)),
@@ -185,7 +192,13 @@ bool Package::deleteObject(const char* label) {
 	
 	// Zmiana rozmiaru
 	fflush(file);
-	//ftruncate(fileno(file), header.getLength() + header.data_length);
+	
+	// Zmiana rozmiaru
+#ifdef OS_WINDOWS
+#else
+	ftruncate(fileno(file), header.getLength() + header.data_length);
+#endif
+	
 	fclose(file);
 	file = fopen(file_path, "rb+");
 	//
@@ -206,7 +219,7 @@ FILE* Package::getExternalFile(const char* _label, size_t* _length) {
 	PackagePointer* pointer = pointer_stack.getPointer(_label);
 	//
 	if (!pointer) {
-		logEvent(Logger::LOG_ERROR, "Nie mogę otworzyć wskazanego pliku!");
+		logEvent(Logger::LOG_ERROR, "Nie mogę otworzyć wskazanej paczki!");
 		return NULL;
 	}
 	if (_length) {

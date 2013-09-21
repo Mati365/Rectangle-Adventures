@@ -7,7 +7,10 @@
 
 #ifndef ENGINE_HPP_
 #define ENGINE_HPP_
+
+#include <GL/glew.h>
 #include <GL/gl.h>
+
 #include <SDL/SDL.h>
 #include <string>
 
@@ -113,7 +116,7 @@ namespace oglWrapper {
 	/**
 	 * Shadery!
 	 */
-	extern GLuint createShader(GLuint, const GLchar*);
+	extern usint createShader(usint, const char*);
 	
 	class Shader {
 		private:
@@ -133,7 +136,7 @@ namespace oglWrapper {
 							geometry_shader(0) {
 			}
 			
-			Shader(GLchar*, GLchar*, GLchar*);
+			Shader(char*, char*, char*);
 
 			GLuint getShaderProgram() const {
 				return program_object;

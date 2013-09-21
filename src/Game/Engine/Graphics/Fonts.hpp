@@ -7,11 +7,13 @@
 
 #ifndef FONTS_HPP_
 #define FONTS_HPP_
-#include <GL/gl.h>
-#include <GL/glut.h>
+
 #include <string>
 
 #include "Engine.hpp"
+
+//#include <GL/gl.h>
+#include <GL/glut.h>
 
 #define NEWLINE_CHARACTER '/'
 
@@ -44,7 +46,7 @@ class glText {
 		void setReadSpeed(usint _speed) {
 			read_speed = _speed;
 		}
-
+		
 		void setColor(const Color& _col) {
 			col = _col;
 		}
@@ -52,7 +54,7 @@ class glText {
 		void setHidden(bool _hidden) {
 			hidden = _hidden;
 		}
-
+		
 		bool isHidden() const {
 			return hidden;
 		}

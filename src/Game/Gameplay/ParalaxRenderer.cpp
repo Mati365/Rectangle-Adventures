@@ -51,24 +51,16 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	/** Odświeżanie fizyki */
 	pEngine* physics = map->physics;
 	if (!physics->getList()->empty()) {
-		/**
-		 physics->setActiveRange(
-		 Rect<float>(
-		 cam.getFocus()->x - DEFAULT_SHADOW_RADIUS
-		 + cam.getFocus()->velocity.x,
-		 cam.getFocus()->y - DEFAULT_SHADOW_RADIUS
-		 + cam.getFocus()->velocity.y,
-		 DEFAULT_SHADOW_RADIUS * 2
-		 + cam.getFocus()->velocity.x * 2,
-		 DEFAULT_SHADOW_RADIUS * 2
-		 + cam.getFocus()->velocity.y * 2));
-		 */
 		physics->setActiveRange(
 				Rect<float>(
-						cam.getPos()->x,
-						cam.getPos()->y,
-						cam.getPos()->w,
-						cam.getPos()->h));
+						cam.getFocus()->x - DEFAULT_SHADOW_RADIUS
+								+ cam.getFocus()->velocity.x,
+						cam.getFocus()->y - DEFAULT_SHADOW_RADIUS
+								+ cam.getFocus()->velocity.y,
+						DEFAULT_SHADOW_RADIUS * 2
+								+ cam.getFocus()->velocity.x * 2,
+						DEFAULT_SHADOW_RADIUS * 2
+								+ cam.getFocus()->velocity.y * 2));
 		physics->updateWorld();
 	}
 	
@@ -101,7 +93,7 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	
 	/**  Rysowanie quadtree  */
 	if (IS_SET(config, DRAW_QUAD)) {
-		physics->getQuadTree()->drawObject(NULL);
+		//physics->getQuadTree()->drawObject(NULL);
 	}
 	
 	/** Obiekty poza ekranem wycinamy! */

@@ -15,7 +15,7 @@ using namespace oglWrapper;
 
 //--------------------------
 
-GLuint oglWrapper::createShader(const GLuint type, const GLchar* _text) {
+usint oglWrapper::createShader(usint type, const char* _text) {
 	if (strlen(_text) == 0) {
 		logEvent(Logger::LOG_ERROR, "Pusty shader!");
 		return 0;

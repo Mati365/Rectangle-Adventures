@@ -21,22 +21,22 @@ void Camera::updateCam(Window* _window) {
 		return;
 	}
 	Body* focus = getFocus();
-
+	
 	Vector<float> target_pos(
 			focus->x - pos.w / 2 + focus->w / 2 + focus->velocity.x,
 			focus->y - pos.h / 2 + focus->h / 2 - Y_SPACE + focus->velocity.y);
-
+	
 	if (scrolling) {
 		Vector<float> point(target_pos.x - pos.x, target_pos.y - pos.y);
 		float c = sqrt(point.x * point.x + point.y * point.y);
 		float scroll_speed = c * 20.f / ((pos.w + pos.h) / 4);
-
+		
 		if (pos.x < target_pos.x - scroll_speed) {
 			pos.x += scroll_speed;
 		} else if (pos.x > target_pos.x + scroll_speed) {
 			pos.x -= scroll_speed;
 		}
-
+		
 		if (pos.y < target_pos.y - scroll_speed) {
 			pos.y += scroll_speed;
 		} else if (pos.y > target_pos.y + scroll_speed) {
@@ -50,7 +50,7 @@ void Camera::updateCam(Window* _window) {
 /** Pobieranie pozycji względem krawędzi okna */
 Vector<float> Camera::getFocusScreenPos() {
 	Body* focus = getFocus();
-
+	
 	return Vector<float>(
 			focus->x + focus->w / 2 - pos.x,
 			focus->y - focus->h / 2 - pos.y - Y_SPACE);

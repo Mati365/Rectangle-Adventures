@@ -5,7 +5,6 @@
  *      Author: mati
  */
 #include <sys/time.h>
-#include <GL/glew.h>
 
 #include "../../Gameplay/Screens/Screens.hpp"
 
@@ -24,8 +23,8 @@ bool Engine::window_opened = true;
 
 /** Flagi pętli gry */
 
-#define FPS 9
-//#define BENCHMARK
+#define FPS 16
+#define BENCHMARK
 //#define FULLSCREEN
 #define VGA_RESOLUTION
 
@@ -57,11 +56,11 @@ Window::Window(const string& _title) :
 			screen_bounds.x,
 			screen_bounds.y,
 			32,
-			SDL_OPENGL | SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER
+			SDL_OPENGL | SDL_GL_DOUBLEBUFFER
 #ifdef FULLSCREEN
 					| SDL_FULLSCREEN
 #endif
-			);
+					);
 	if (!screen) {
 		return;
 	}
@@ -95,10 +94,15 @@ void Window::init() {
 		return;
 	}
 	active_screen = menu;
-	//splash->endTo(menu);
-	//splash->pushTitle("Mati365 presents..", 400, nullptr);
-	//splash->pushTitle("Rect Adventures", 400, nullptr);
-	
+	/**
+	 splash->endTo(menu);
+	 splash->pushTitle("Mati365 presents..", 400, nullptr);
+	 splash->pushTitle(
+	 "Rect Adventures",
+	 400,
+	 readShape("iluzja_trojkat.txt", "iluzja_trojkat.txt", 33.f));
+	 */
+
 	//
 	SDL_Event event;
 	Event key(Event::KEY_PRESSED);
@@ -146,7 +150,7 @@ void Window::init() {
 		translateKeyEvent(keystate, SDLK_d, 'd', key, game);
 		translateKeyEvent(keystate, SDLK_SPACE, '*', key, game);
 		
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 		glLoadIdentity();
 		active_screen->drawObject(this);
 #ifdef BENCHMARK
@@ -167,7 +171,7 @@ void Window::init() {
 		//
 		int frame_time = SDL_GetTicks() - frame_start;
 		if (frame_time >= 1000) {
-			frame_start = SDL_GetTicks();
+			frame_start = SDL_GetTicks() + FPS;
 			//
 			frame_count.setString("FPS: " + Convert::toString<int>(frames), -1);
 			frames = 0;
@@ -199,6 +203,8 @@ bool Window::setupOpenGL() {
 	glewInit();
 	
 	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
+	
 	glDepthMask(GL_FALSE);
 	
 	glEnable(GL_BLEND);
@@ -210,7 +216,7 @@ bool Window::setupOpenGL() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, screen_bounds.x, screen_bounds.y, 0, -1, 1);
-
+	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	

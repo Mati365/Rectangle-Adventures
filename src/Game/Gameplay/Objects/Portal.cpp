@@ -30,7 +30,7 @@ Portal::Portal(float _x, float _y, usint _orientation, usint _flag) :
 /** Linkowanie */
 void Portal::linkTo(Portal* _linked) {
 	linked = _linked;
-
+	
 	// Linkowanie samego siebie
 	linked->linked = this;
 	linked->body_inside.flag =
@@ -42,15 +42,15 @@ void Portal::linkTo(Portal* _linked) {
 Rect<float> Portal::getStencilTexCoord() {
 	Rect<float> pos;
 	Body* _body = body_inside.body;
-
+	
 	if (!_body) {
 		return pos;
 	}
-
+	
 	/** Uaktualnianie wymiarów */
 	pos.w = _body->w;
 	pos.h = _body->h;
-
+	
 	/** Centrowanie obiektu dla poziomych */
 	if (orientation == pEngine::DOWN || orientation == pEngine::UP) {
 		pos.x = x + w / 2 - _body->w / 2;
@@ -69,7 +69,7 @@ Rect<float> Portal::getStencilTexCoord() {
 					/** Obiekt grawitacją wciągany do dołu */
 					pos.h = (1.f - teleport_procent)
 							* body_inside.body_bounds.h;
-
+					
 					/** Uaktualnianie pozycji */
 					pos.y = y - pos.h;
 					_body->y = pos.y;
@@ -80,7 +80,7 @@ Rect<float> Portal::getStencilTexCoord() {
 					pos.y = y;
 				}
 				break;
-
+				
 				/**
 				 * Koniec ciała:
 				 */
@@ -103,7 +103,7 @@ Rect<float> Portal::getStencilTexCoord() {
 				break;
 		};
 	}
-
+	
 	/** Centrowanie obiektu dla Pionowych */
 	if (orientation == pEngine::LEFT || orientation == pEngine::RIGHT) {
 		pos.y = y - h / 2 + _body->h / 2;
@@ -121,7 +121,7 @@ Rect<float> Portal::getStencilTexCoord() {
 				if (orientation == pEngine::RIGHT) {
 					/** Obiekt grawitacją wciągany w lewo */
 					pos.w = body_inside.body_bounds.w;
-
+					
 					/** Uaktualnianie pozycji */
 					pos.x = x;
 					_body->x = pos.x
@@ -134,7 +134,7 @@ Rect<float> Portal::getStencilTexCoord() {
 					_body->x = pos.x;
 				}
 				break;
-
+				
 				/**
 				 * Koniec ciała:
 				 */
@@ -144,14 +144,14 @@ Rect<float> Portal::getStencilTexCoord() {
 					pos.w = body_inside.body_bounds.w
 							- (1.f - teleport_procent)
 									* body_inside.body_bounds.w;
-
+					
 					/** Uaktualnianie pozycji */
 					pos.x = x - teleport_procent * body_inside.body_bounds.w;
 					_body->x = pos.x;
 				} else {
 					/** Obiekt wyciągany w prawo */
 					pos.w = body_inside.body_bounds.w;
-
+					
 					/** Uaktualnianie pozycji */
 					pos.x = x;
 					_body->x = x
@@ -161,7 +161,7 @@ Rect<float> Portal::getStencilTexCoord() {
 				break;
 		};
 	}
-
+	
 	//
 	return pos;
 }
@@ -174,7 +174,7 @@ void Portal::drawObject(Window*) {
 	/** Główny rendering */
 
 	beginStroke(0xF0F0);
-
+	
 	glLineWidth(2.f);
 	if (body_inside.flag == PortalBody::BODY_BEGIN) {
 		glColor3ub(255.f, 255.f, 255.f);
@@ -182,15 +182,15 @@ void Portal::drawObject(Window*) {
 		glColor3ub(155.f, 155.f, 155.f);
 	}
 	glBegin(GL_LINE_STRIP);
-
+	
 	glVertex2f(x, y);
 	glVertex2f(x, linked->y);
 	glVertex2f(linked->x, linked->y);
-
+	
 	glEnd();
-
+	
 	endStroke();
-
+	
 	oglWrapper::drawRect(
 			x,
 			y,
@@ -199,28 +199,28 @@ void Portal::drawObject(Window*) {
 			body_inside.flag == PortalBody::BODY_END ?
 					oglWrapper::RED : oglWrapper::GREEN,
 			2.f);
-
+	
 	/** Rysowanie portalu */
 	Body* _body = body_inside.body;
 	if (!_body) {
 		return;
 	}
-
+	
 	/** Odświęzanie obiektu wewnątrz */
 	updateBodyInside();
-
+	
 	Rect<float> stencil_pos = getStencilTexCoord();
 	
 	/** Stencil buffer */
 	glEnable(GL_STENCIL_TEST);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
+	
 	glStencilFunc(GL_NEVER, 1, 0xFF);
 	glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP);
 	glStencilMask(0xFF); // ustawienie maski tego co ma być malowane
-
+			
 	glClear(GL_STENCIL_BUFFER_BIT); // czyszczenie tablicy
-
+			
 	// Rysowanie szablonu
 	glBegin(GL_QUADS);
 	glVertex2f(stencil_pos.x, stencil_pos.y);
@@ -228,14 +228,14 @@ void Portal::drawObject(Window*) {
 	glVertex2f(stencil_pos.x + stencil_pos.w, stencil_pos.y + stencil_pos.h);
 	glVertex2f(stencil_pos.x, stencil_pos.y + stencil_pos.h);
 	glEnd();
-
+	
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glStencilMask(0x00);
-
+	
 	glStencilFunc(GL_EQUAL, 1, 0xFF);
-
+	
 	_body->drawObject(nullptr);
-
+	
 	glDisable(GL_STENCIL_TEST);
 }
 
@@ -245,24 +245,24 @@ void Portal::exitBody() {
 		return;
 	}
 	Body* _body = body_inside.body;
-
+	
 	if (body_inside.flag == PortalBody::BODY_END) {
 		/** Nowa pozycja */
 		Rect<float> new_pos = getStencilTexCoord();
-
+		
 		_body->x = new_pos.x;
 		_body->y = new_pos.y;
 		_body->velocity.x = _body->velocity.y = 0;
-
+		
 		_body->setState(Body::NONE);
-
+		
 		/** Odpychanie ciała */
-		dodgeBody(_body, invertDir(orientation), 2);
+		dodgeBody(_body, invertDir(orientation), 4.f);
 	}
-
+	
 	body_inside.body = nullptr;
 	teleport_procent = 0;
-
+	
 	if (linked) {
 		linked->exitBody();
 	}
@@ -274,12 +274,12 @@ void Portal::updateBodyInside() {
 		return;
 	}
 	Body* _body = body_inside.body;
-
+	
 	if (teleport_procent < 0) {
 		exitBody();
 	} else if (teleport_procent < 1) {
 		float speed_proc = 0.f;
-
+		
 		/** Wyliacznie procentu z prędkości wpadania */
 		if (isVertical()) {
 			speed_proc = (float) _body->velocity.y / (float) _body->h;
@@ -294,7 +294,7 @@ void Portal::updateBodyInside() {
 	} else {
 		/** Zerowanie */
 		exitBody();
-
+		
 		Camera::getFor().scrollTo(nullptr);
 	}
 	// Synchronizacja
@@ -307,19 +307,19 @@ bool Portal::enter(Body* body, usint _dir) {
 			|| !linked || !body) {
 		return false;
 	}
-
+	
 	// Odwrócenie portalu
 	if ((isVertical() && !isHorizontalDir(_dir))
 			|| (isHorizontal() && isHorizontalDir(_dir))) {
 		orientation = invertDir(_dir);
-
+		
 		body_inside.flag = PortalBody::BODY_BEGIN;
 		linked->body_inside.flag = PortalBody::BODY_END;
 	}
-
+	
 	// Dołączanie obiektów do portali
 	Rect<float> body_bounds(body->x, body->y, body->w, body->h);
-
+	
 	body_inside = {body, PortalBody::BODY_BEGIN, body_bounds};
 	linked->body_inside = {body, PortalBody::BODY_END, body_bounds};
 

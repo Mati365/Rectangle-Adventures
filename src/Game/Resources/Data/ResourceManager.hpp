@@ -8,7 +8,6 @@
 #ifndef RESOURCEMANAGER_HPP_
 #define RESOURCEMANAGER_HPP_
 #include <stdio.h>
-#include <iostream>
 
 #include "../../Tools/Tools.hpp"
 #include "../../Tools/Logger.hpp"

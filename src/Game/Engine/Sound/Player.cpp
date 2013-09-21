@@ -5,6 +5,9 @@
  *      Author: mateusz
  */
 #include "Sounds.hpp"
+#include <iostream>
+
+using namespace std;
 
 using namespace Sound;
 
@@ -24,13 +27,20 @@ Player::Player() :
  */
 Mix_Chunk* Player::loadSound(const char* label) {
 	size_t filesize;
-	char* buffer = NULL;
+	char* buffer = nullptr;
 	//
+#ifdef FILESYSTEM_USAGE
 	main_filesystem.getExternalFile(label, &filesize);
 	buffer = main_filesystem.getExternalFileContent(label);
+#else
+	const char* path = ("mobs/" + (string) label).c_str();
+	
+	buffer = IO::getFileContent(path);
+	filesize = IO::getFileLength(path);
+#endif
 	
 	if (!buffer) {
-		return NULL;
+		return nullptr;
 	}
 	
 	SDL_RWops* rw = SDL_RWFromMem(buffer, filesize);

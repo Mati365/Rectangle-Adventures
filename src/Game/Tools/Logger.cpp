@@ -11,7 +11,7 @@
 using namespace std;
 
 void Logger::logOperation(usint type, const string& log, const string& file,
-		usint row) {
+		const string& function) {
 	string buffer = "";
 	switch (type) {
 		/**
@@ -36,36 +36,38 @@ void Logger::logOperation(usint type, const string& log, const string& file,
 			break;
 	}
 	if (type <= LOG_INFO) {
-#ifndef DEBUG_LOGGER
+#ifdef DEBUG_LOGGER
 		if (!log.empty()) {
-			buffer += file + " in " + Convert::toString<usint>(row) + " line -> " + log;
+			buffer += file + "::" + function + " -> " + log;
 			//
 			cout << buffer << endl;
 		}
 #endif
 	} else {
+#ifndef DEBUG_LOGGER
 		switch (type) {
 			/**
 			 *
 			 */
 			case LOG_PROGRESSBAR_BEGIN:
-				cout << log + " [ ";
-				break;
-				
-				/**
-				 *
-				 */
+			cout << log + " [ ";
+			break;
+
+			/**
+			 *
+			 */
 			case LOG_PROGRESSBAR_PROCENT:
-				cout << "#";
-				break;
-				
-				/**
-				 *
-				 */
+			cout << "#";
+			break;
+
+			/**
+			 *
+			 */
 			case LOG_PROGRESSBAR_END:
-				cout << " ] 100% " << endl;
-				break;
+			cout << " ] 100% " << endl;
+			break;
 		}
+#endif
 	}
 }
 

@@ -60,17 +60,17 @@ void Physics::dodgeBody(Body* _body, usint _dir, float _speed) {
 		case pEngine::RIGHT:
 			_body->velocity.x = -_speed;
 			break;
-
+			
 			//
 		case pEngine::LEFT:
 			_body->velocity.x = _speed;
 			break;
-
+			
 			//
 		case pEngine::UP:
 			_body->velocity.y = _speed;
 			break;
-
+			
 			//
 		case pEngine::DOWN:
 			_body->velocity.y = -_speed;
@@ -152,17 +152,17 @@ void pEngine::pushFromObject(Body* source, usint dir) {
 
 	if (abs(source->velocity.x) > 0 && dir > 0) {
 		Body* collision = source->collisions[dir - 1];
-
+		
 		/** Prawa kolizja */
 		if (collision && isBodyActive(collision)) {
 			float speed = -source->velocity.x * 0.85f;
-
+			
 			switch (dir) {
 				case pEngine::RIGHT:
 					if (abs(collision->velocity.x) < abs(source->velocity.x))
 						collision->velocity.x += speed;
 					break;
-
+					
 				case pEngine::LEFT:
 					if (abs(collision->velocity.x) > abs(source->velocity.x))
 						collision->velocity.x -= speed;
@@ -224,7 +224,7 @@ void pEngine::updateWorld() {
 						object) || IS_SET(object->state, Body::FLYING)) {
 			continue;
 		}
-
+		
 		/** Popychanie obiektów */
 		if (!IS_SET(object->state, Body::STATIC)
 				&& abs(object->velocity.x) > 0) {
@@ -232,13 +232,13 @@ void pEngine::updateWorld() {
 			pushFromObject(object, pEngine::RIGHT);
 			pushFromObject(object, pEngine::LEFT);
 		}
-
+		
 		/** Czy podlega grawitacji? */
 		if (!(IS_SET(object->state, Body::BACKGROUND)
 				&& (object->velocity.x != 0 || object->velocity.y != 0))) {
 			/** Poruszanie się po platformie */
 			Body* down_collision = object->collisions[DOWN - 1];
-
+			
 			if (down_collision && down_collision->velocity.x != 0) {
 				if (!object->collisions[pEngine::LEFT - 1]
 						&& !object->collisions[pEngine::RIGHT - 1]) {

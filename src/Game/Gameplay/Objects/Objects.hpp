@@ -513,7 +513,7 @@ class Portal: public Body {
 		Portal* getLinkedPortal() {
 			return linked;
 		}
-
+		
 	private:
 		/** Odświeżanie obiektu w środku portalu */
 		void updateBodyInside();
@@ -528,7 +528,7 @@ class Portal: public Body {
 		inline bool isVertical() {
 			return orientation == pEngine::UP || orientation == pEngine::DOWN;
 		}
-
+		
 		/** Czy jest horyzontalny? */
 		inline bool isHorizontal() {
 			return !isVertical();

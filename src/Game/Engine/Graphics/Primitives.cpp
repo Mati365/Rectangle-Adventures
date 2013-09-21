@@ -4,7 +4,7 @@
  *  Created on: 23-02-2013
  *      Author: mati
  */
-#include <GL/glut.h>
+//#include <GL/glut.h>
 #include <math.h>
 
 #include "Engine.hpp"
@@ -55,13 +55,14 @@ void oglWrapper::drawFillRect(float x, float y, float w, float h,
  * Linie przerywane itp.
  */
 void oglWrapper::beginStroke(GLushort attrib) {
+	glEnable(GL_LINE_STIPPLE);
 	glPushAttrib(GL_ENABLE_BIT);
 	glLineStipple(1, attrib);
-	glEnable(GL_LINE_STIPPLE);
 }
 
 void oglWrapper::endStroke() {
 	glPopAttrib();
+	glDisable(GL_LINE_STIPPLE);
 }
 
 void oglWrapper::drawCircle(float x, float y, float r, float spacing,

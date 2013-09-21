@@ -16,9 +16,16 @@
 
 PlatformShape* readShape(const string& _path, const char* _resource_label,
 		float _angle) {
-	FILE* _file = main_filesystem.getExternalFile(_path.c_str(), NULL);
+	FILE* _file = nullptr;
+	
+#ifdef FILESYSTEM_USAGE
+	_file = main_filesystem.getExternalFile(_path.c_str(), nullptr);
+#else
+	_file = fopen(("mobs/" + _path).c_str(), "r");
+#endif
+	
 	if (!_file) {
-		return NULL;
+		return nullptr;
 	}
 	PlatformShape* shape = registerShape(_file, _resource_label, _angle);
 	//
@@ -32,7 +39,7 @@ PlatformShape* readShape(const string& _path, const char* _resource_label,
 PlatformShape* registerShape(FILE* _file, const char* _resource_label,
 		float _angle) {
 	if (!_file) {
-		return NULL;
+		return nullptr;
 	}
 	PlatformShape* shape = new PlatformShape(_file, _resource_label, _angle);
 	main_resource_manager.addResource(shape);

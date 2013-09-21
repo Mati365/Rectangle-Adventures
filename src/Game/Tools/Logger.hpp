@@ -15,7 +15,7 @@ typedef unsigned short int usint;
 #define DEBUG_LOGGER
 
 class Logger {
-#define logEvent(type, log) Logger::logOperation(type, log, __FILE__, __LINE__)
+#define logEvent(type, log) Logger::logOperation(type, log, __FILE__, __FUNCTION__)
 		
 		/** Do pasku wczytywania */
 #define BEGIN_LOADING(s) logEvent(Logger::LOG_PROGRESSBAR_BEGIN, s)
@@ -35,7 +35,8 @@ class Logger {
 
 	public:
 		/** Logowanie wiadomości */
-		static void logOperation(usint, const string&, const string&, usint);
+		static void logOperation(usint, const string&, const string&,
+				const string&);
 };
 
 #endif /* LOGGER_HPP_ */

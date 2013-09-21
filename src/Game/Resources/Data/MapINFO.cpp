@@ -17,7 +17,13 @@ bool loadMap(const char* path, MapINFO* map, usint _open_config) {
 	if (!map) {
 		return false;
 	}
-	FILE* __map = main_filesystem.getExternalFile(path, NULL);
+	FILE* __map = nullptr;
+	
+#ifdef FILESYSTEM_USAGE
+	__map = main_filesystem.getExternalFile(path, nullptr);
+#else
+	__map = fopen(("mobs/" + (string) path).c_str(), "r");
+#endif
 	
 	map->open_config = _open_config;
 	if (!map->load(__map)) {
@@ -183,14 +189,9 @@ void MapINFO::readPlatforms(FILE* map) {
 	
 	deque<Body*> objects;
 	
-	cout << endl;
-	for(auto& res : resources) {
-		cout << res.label << endl;
-	}
-
 	// Wczytywanie parametrów graficznych platform..
 	fscanf(map, "%hu\n", &size);
-
+	
 	for (usint i = 0; i < size; ++i) {
 		fscanf(
 				map,
@@ -235,7 +236,7 @@ void MapINFO::readPlatforms(FILE* map) {
 					_resource_id = res.id;
 				}
 			}
-
+			
 			/**
 			 * Platforma niereguralna - kształt
 			 */
@@ -243,17 +244,17 @@ void MapINFO::readPlatforms(FILE* map) {
 			// Bugfix: Stara mapa w pamięci może mieć tą samą teksturę!
 					dynamic_cast<PlatformShape*>(main_resource_manager.getByID(
 							_resource_id)));
-
+			
 			IrregularPlatform* __platform =
 					dynamic_cast<IrregularPlatform*>(platform);
-
+			
 			__platform->fitToWidth(rect.w);
 		} else {
 			/**
 			 * Normalna platforma
 			 */
 			platform = new Platform(rect.x, rect.y, rect.w, rect.h, col, state);
-
+			
 			platform->setBorder(border[0], border[1], border[2], border[3]);
 			platform->setFillType(fill_type);
 		}
@@ -276,7 +277,7 @@ void MapINFO::readPlatforms(FILE* map) {
 	}
 	PROGRESS_LOADING();
 //
-
+	
 	/**
 	 * Wyliczanie wymiarów planszy
 	 */
@@ -292,19 +293,19 @@ void MapINFO::readPlatforms(FILE* map) {
 		}
 	}
 	bounds = max;
-//
+	//
 	PROGRESS_LOADING();
 
 	/**
 	 * Dodawanie elementów
 	 */
 	safe_delete<pEngine>(physics);
-	physics = new pEngine(bounds, 0.2f);
-
+	physics = new pEngine(bounds, 0.6f);
+	
 	for (auto& obj : objects) {
 		physics->insert(obj);
 	}
-//
+	//
 	PROGRESS_LOADING();
 }
 
@@ -316,7 +317,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 	char shape[256];
 	usint size;
 	Rect<float> rect(0, 0, 0, 0);
-
+	
 	/**
 	 * Wczytywanie mobów!
 	 */
@@ -324,7 +325,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 	for (usint i = 0; i < size; ++i) {
 		readMob(map);
 	}
-
+	
 	/**
 	 * Wczytywanie skryptów!
 	 */
@@ -339,7 +340,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 				&rect.w,
 				&rect.h,
 				shape);
-//
+		//
 		ResourceFactory::getInstance(NULL).createObject(
 				ResourceFactory::SCRIPT_BOX,
 				rect.x,
@@ -350,7 +351,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 				shape,
 				pEngine::NONE);
 	}
-//
+	//
 	PROGRESS_LOADING();
 }
 

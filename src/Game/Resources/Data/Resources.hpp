@@ -7,7 +7,7 @@
 
 #ifndef RESOURCES_HPP_
 #define RESOURCES_HPP_
-#include <GL/gl.h>
+//#include <GL/gl.h>
 #include <SDL/SDL_mixer.h>
 
 #include "../../Engine/Graphics/Engine.hpp"

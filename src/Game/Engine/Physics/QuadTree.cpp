@@ -5,7 +5,6 @@
  *      Author: mati
  */
 #include <map>
-#include <iostream>
 
 #include "Physics.hpp"
 
@@ -120,14 +119,14 @@ void QuadTree::drawObject(Window*) {
 	glColor3ub(level * 15, level * 15, level * 15);
 	glLineWidth((MAX_LAYER - level) * 2);
 	glBegin(GL_LINE_LOOP);
-
+	
 	glVertex2f(rect.x, rect.y);
 	glVertex2f(rect.x + rect.w, rect.y);
 	glVertex2f(rect.x + rect.w, rect.y + rect.h);
 	glVertex2f(rect.x, rect.y + rect.h);
-
+	
 	glEnd();
-
+	
 	if (NW) {
 		NW->drawObject(NULL);
 		NE->drawObject(NULL);

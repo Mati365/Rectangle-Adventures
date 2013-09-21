@@ -107,9 +107,9 @@ void Gun::shot() {
 					new Bullet(
 							x + w / 2 - BULLET_WIDTH / 2,
 							y - h * 2,
-							Vector<float>(0, -1),
+							Vector<float>(0, -3),
 							shape,
-							200,
+							100,
 							orientation,
 							bullet_status));
 			break;
@@ -122,7 +122,7 @@ void Gun::shot() {
 					new Bullet(
 							x + w / 2 - BULLET_WIDTH / 2,
 							y + h * 2,
-							Vector<float>(0, 1),
+							Vector<float>(0, 2),
 							shape,
 							100,
 							orientation,
@@ -137,9 +137,9 @@ void Gun::shot() {
 					new Bullet(
 							x - 15,
 							y - h / 2 + BULLET_HEIGHT,
-							Vector<float>(-1, 0),
+							Vector<float>(-2, 0),
 							shape,
-							200,
+							100,
 							orientation,
 							bullet_status));
 			break;
@@ -152,9 +152,9 @@ void Gun::shot() {
 					new Bullet(
 							x + w + 15,
 							y - h / 2 + BULLET_HEIGHT,
-							Vector<float>(1, 0),
+							Vector<float>(2, 0),
 							shape,
-							200,
+							100,
 							orientation,
 							bullet_status));
 			break;
