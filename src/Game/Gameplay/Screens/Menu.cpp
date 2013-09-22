@@ -72,7 +72,7 @@ void Menu::getCallback(Control* const & control) {
 					
 				case 1: {
 					safe_delete<Game>(game);
-					game = new Game("mapa.txt");
+					game = new Game();
 					
 					game->getMapRenderer()->addToParalax(
 							loadMap("parallax_1.txt", MapINFO::WITHOUT_HERO),
@@ -125,7 +125,7 @@ void Menu::drawObject(Window* window) {
 	if (lvl) {
 		lvl->drawObject(window);
 	}
-	//ver.printText(screen_bounds.x / 2 - ver.getScreenLength() / 2, 20);
+	ver.printText(screen_bounds.x / 2 - ver.getScreenLength() / 2, 20);
 }
 
 /**

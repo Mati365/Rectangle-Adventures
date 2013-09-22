@@ -296,7 +296,7 @@ void MapRenderer::drawObject(Window* _window) {
 			/**
 			 * WINDOW_DEATH_SHADER
 			 */
-			shadow_radius += 0.7f;
+			shadow_radius += 3.f;
 			if (shadow_radius >= DEFAULT_SHADOW_RADIUS) {
 				shadow_radius = DEFAULT_SHADOW_RADIUS;
 				if (!hero->isDead()) {
@@ -312,7 +312,7 @@ void MapRenderer::drawObject(Window* _window) {
 			 * WINDOW_SHADOW_SHADER
 			 */
 			if (!IS_SET(hero->getAction(), Character::BLOODING) || buffer_map) {
-				shadow_radius -= 0.7f;
+				shadow_radius -= 3.f;
 				if (shadow_radius <= 50) {
 					if (buffer_map) {
 						swapBufferMap();

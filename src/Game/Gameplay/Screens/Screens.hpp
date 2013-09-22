@@ -63,7 +63,7 @@ namespace GameScreen {
 			MapRenderer* lvl;
 
 		public:
-			Game(const char* = NULL);
+			Game(const char* = nullptr);
 
 			virtual void catchEvent(const Event&);
 			virtual void drawObject(Window*);
@@ -160,6 +160,7 @@ namespace GameScreen {
 				return_to = _return_to;
 			}
 			
+			/** dodawanie tytułu do splasha */
 			void pushTitle(const char* _title, usint _visible_time,
 					PlatformShape* _logo = NULL) {
 				texts.push_front(new SplashInfo(_title, _visible_time, _logo));

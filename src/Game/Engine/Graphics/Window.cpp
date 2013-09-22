@@ -24,7 +24,7 @@ bool Engine::window_opened = true;
 /** Flagi pętli gry */
 
 #define FPS 16
-#define BENCHMARK
+//#define BENCHMARK
 //#define FULLSCREEN
 #define VGA_RESOLUTION
 
@@ -60,7 +60,7 @@ Window::Window(const string& _title) :
 #ifdef FULLSCREEN
 					| SDL_FULLSCREEN
 #endif
-					);
+			);
 	if (!screen) {
 		return;
 	}
@@ -95,14 +95,13 @@ void Window::init() {
 	}
 	active_screen = menu;
 	/**
-	 splash->endTo(menu);
-	 splash->pushTitle("Mati365 presents..", 400, nullptr);
-	 splash->pushTitle(
-	 "Rect Adventures",
-	 400,
-	 readShape("iluzja_trojkat.txt", "iluzja_trojkat.txt", 33.f));
-	 */
-
+	splash->endTo(menu);
+	splash->pushTitle("Mati365 presents..", 400, nullptr);
+	splash->pushTitle(
+			"Rect Adventures",
+			400,
+			readShape("iluzja_trojkat.txt", "iluzja_trojkat.txt", 33.f));
+			*/
 	//
 	SDL_Event event;
 	Event key(Event::KEY_PRESSED);

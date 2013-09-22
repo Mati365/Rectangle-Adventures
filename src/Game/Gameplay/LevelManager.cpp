@@ -6,7 +6,7 @@
  */
 #include "LevelManager.hpp"
 
-string levels[2] { "mapa.txt", "mapa2.txt" };
+string levels[2] { "mapa2.txt", "mapa.txt" };
 
 /**
  * Konstruktor
@@ -60,7 +60,7 @@ MapINFO* LevelManager::reloadMap() {
  * Wczytywanie pierwszej mapy
  */
 MapINFO* LevelManager::getFirstMap() {
-	actual_map = 1;
+	actual_map = 0;
 	//
 	return loadMap(levels[0].c_str());
 }

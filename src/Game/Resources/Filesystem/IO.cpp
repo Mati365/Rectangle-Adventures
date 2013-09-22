@@ -37,7 +37,7 @@ const char* IO::readString(FILE* file) {
 	int len;
 	fread(&len, sizeof(int), 1, file);
 	char* str = new char[len + 1];
-	memset(str, ' ', len);
+	memset(str, ' ', len + 1);
 	fread(str, sizeof(char), len, file);
 	//
 	return str;

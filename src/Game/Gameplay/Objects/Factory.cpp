@@ -79,7 +79,7 @@ ResourceFactory::_TextureConfig ResourceFactory::factory_types[] =
 			// PUNKTY
 			{ SCORE, pEngine::NONE, 0.f, 12, "punkt.txt", "score", true },
 			{ HEALTH, pEngine::NONE, 0.f, 16, "zycie.txt", "health", false },
-			{ GHOST, pEngine::NONE, 0.f, 12, "wrog.txt", "enemy", false },
+			{ GHOST, pEngine::NONE, 0.f, 18, "wrog.txt", "enemy", false },
 			
 			// BRONIE
 			{ GUN, pEngine::RIGHT, 90.f, 12, "bron.txt", "gun_right", false },

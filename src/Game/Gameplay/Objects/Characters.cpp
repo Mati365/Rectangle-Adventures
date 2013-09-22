@@ -364,8 +364,19 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 		case ENEMY:
 			if (dir == pEngine::DOWN || dir == pEngine::UP) {
 				body->destroyed = true;
+
+				generateExplosion(
+						physics,
+						*dynamic_cast<Rect<float>*>(body),
+						6,
+						oglWrapper::WHITE,
+						2,
+						3,
+						Vector<float>(8, 12));
 			} else {
 				status += enemy->status;
+
+				enemy->hitMe();
 				hitMe();
 			}
 			dodge(dir);
@@ -475,6 +486,9 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
  * No to obiekt odświeżamy..
  */
 void Character::updateMe() {
+	if (IS_SET(state, Body::BUFFERED) || IS_SET(state, Body::STATIC)) {
+		return;
+	}
 	switch (type) {
 		/**
 		 *
@@ -556,6 +570,14 @@ void Character::updateMe() {
 				orientation = invertDir(orientation);
 			}
 			
+			// Ucieczka z przpepaści
+			if (!collisions[pEngine::DOWN - 1]) {
+				orientation = invertDir(orientation);
+
+				x -= velocity.x * 2;
+				y -= velocity.y;
+			}
+
 			// Poruszanie się
 			switch (orientation) {
 				case pEngine::LEFT:

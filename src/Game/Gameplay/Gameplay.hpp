@@ -46,6 +46,9 @@ namespace Gameplay {
 			/** Czy scrollowanie do focusa? */
 			bool scrolling;
 
+			/** Timer oglądania obiektu */
+			_Timer look_timer;
+
 		public:
 			/**
 			 * Pozycja kamery to nie pozycja względem krawędzi!!
@@ -57,6 +60,9 @@ namespace Gameplay {
 
 			/** Ustawienie focusa */
 			void setFocus(Body*);
+
+			/** Popatrzenie na */
+			void lookAt(Body*);
 
 			/** Skrollowanie do.. */
 			void scrollTo(Body*);

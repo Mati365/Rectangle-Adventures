@@ -9,10 +9,14 @@
 using namespace Gameplay;
 
 Camera::Camera(Body* _focus) :
-				scrolling(true) {
+				scrolling(true),
+				look_timer(240) {
 	pos.w = screen_bounds.x;
 	pos.h = screen_bounds.y;
+
 	focus.push_back(_focus);
+
+	look_timer.active = false;
 }
 
 /** Odświeżanie pocycji kamery */
@@ -20,17 +24,31 @@ void Camera::updateCam(Window* _window) {
 	if (focus.empty()) {
 		return;
 	}
-	Body* focus = getFocus();
+
+	/** Sprawdzenie kolejki focusów */
+	Body* focus = nullptr;
+
+	look_timer.tick();
+	if (!look_timer.active && this->focus.size() > 1) {
+		this->focus.pop_back();
+		look_timer.reset();
+	}
+	focus = getFocus();
 	
+	/** Kierowanie się do focusa */
 	Vector<float> target_pos(
 			focus->x - pos.w / 2 + focus->w / 2 + focus->velocity.x,
 			focus->y - pos.h / 2 + focus->h / 2 - Y_SPACE + focus->velocity.y);
 	
-	if (scrolling) {
+	/**
+	 * Jeśli włączony look_timer to nie ma
+	 * nagłego przeskoku kamery na nowy focus
+	 */
+	if (scrolling || look_timer.active) {
 		Vector<float> point(target_pos.x - pos.x, target_pos.y - pos.y);
 		float c = sqrt(point.x * point.x + point.y * point.y);
 		float scroll_speed = c * 20.f / ((pos.w + pos.h) / 4);
-		
+
 		if (pos.x < target_pos.x - scroll_speed) {
 			pos.x += scroll_speed;
 		} else if (pos.x > target_pos.x + scroll_speed) {
@@ -54,6 +72,15 @@ Vector<float> Camera::getFocusScreenPos() {
 	return Vector<float>(
 			focus->x + focus->w / 2 - pos.x,
 			focus->y - focus->h / 2 - pos.y - Y_SPACE);
+}
+
+/** Popatz na */
+void Camera::lookAt(Body* _body) {
+	if (!_body) {
+		return;
+	}
+	focus.push_back(_body);
+	look_timer.reset();
 }
 
 /** Skrollowanie do.. */

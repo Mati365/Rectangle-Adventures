@@ -139,7 +139,7 @@ void MessageRenderer::closeCutscene() {
 	IrregularPlatform* platform =
 			dynamic_cast<IrregularPlatform*>(Camera::getFor().getFocus());
 	//
-	if (Camera::getFor().getFocus() == paralax->getHero()) {
+	if (!platform || Camera::getFor().getFocus() == paralax->getHero()) {
 		return;
 	}
 	// Czyszczenie!

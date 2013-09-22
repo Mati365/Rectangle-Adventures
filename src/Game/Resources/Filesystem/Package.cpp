@@ -24,9 +24,9 @@ Package::Package(const char* path, const char* author) :
 				file_path(Convert::getDynamicValue(path)),
 				header(author),
 				last_file_ptr(0) {
-	file = fopen(path, "rb+");
+	file = fopen(path, "rb");
 	if (!file) {
-		file = fopen(path, "wb+");
+		file = fopen(path, "wb");
 		/**
 		 * Tworzenie pustego pliku z szablonu!
 		 */
@@ -48,6 +48,7 @@ bool Package::edit(usint operation, const char* label, FilePackage* object) {
 	if (!file) {
 		return false;
 	}
+
 	switch (operation) {
 		case ARCH_WRITE:
 			writeObject(label, object);
@@ -71,6 +72,7 @@ bool Package::edit(usint operation, const char* label, FilePackage* object) {
 			return false;
 	}
 	length = IO::getFileLength(file); // odświeżanie długości pliku!
+
 	return true;
 }
 
@@ -81,17 +83,20 @@ bool Package::readObject(const char* label, FilePackage* object) {
 	if (!object) {
 		logEvent(
 				Logger::LOG_ERROR,
-				"NULL w object to zuo, napraw to prosze :<");
+				"FixMe!!! Plz");
 		return false;
 	}
+
 	PackagePointer* pointer = pointer_stack.getPointer(label);
 	if (!pointer) {
 		logEvent(Logger::LOG_ERROR, "Nie znaleziono obiektu!");
 		return false;
 	}
+
 	fseek(file, pointer->offset, SEEK_SET);
 	object->read(file);
 	rewind(file);
+
 	return true;
 }
 
@@ -163,6 +168,7 @@ bool Package::deleteObject(const char* label) {
 		return false;
 	}
 	header.data_length -= buffer_length;
+
 	/**
 	 * Wielkość bufora jest taka sama co usuwanego pliku!
 	 */
@@ -200,7 +206,7 @@ bool Package::deleteObject(const char* label) {
 #endif
 	
 	fclose(file);
-	file = fopen(file_path, "rb+");
+	file = fopen(file_path, "rb");
 	//
 	fseek(file, 0, SEEK_END);
 	pointer_stack.write(file);
@@ -220,13 +226,15 @@ FILE* Package::getExternalFile(const char* _label, size_t* _length) {
 	//
 	if (!pointer) {
 		logEvent(Logger::LOG_ERROR, "Nie mogę otworzyć wskazanej paczki!");
-		return NULL;
+		return nullptr;
 	}
+
 	if (_length) {
 		fseek(file, pointer->offset, SEEK_SET);
 		fread(_length, sizeof(size_t), 1, file);
 	}
 	fseek(file, pointer->offset + sizeof(size_t), SEEK_SET);
+
 	return file;
 }
 

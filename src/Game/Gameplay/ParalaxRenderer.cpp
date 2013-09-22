@@ -93,7 +93,7 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	
 	/**  Rysowanie quadtree  */
 	if (IS_SET(config, DRAW_QUAD)) {
-		//physics->getQuadTree()->drawObject(NULL);
+		physics->getQuadTree()->drawObject(NULL);
 	}
 	
 	/** Obiekty poza ekranem wycinamy! */

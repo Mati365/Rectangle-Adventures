@@ -30,7 +30,7 @@ using namespace Sound;
 #define MAX_SCORE 50
 #define DEATH -1
 
-#define DEFAULT_LEVITATION_DURATION 120
+#define DEFAULT_LEVITATION_DURATION 60
 
 /**
  * Platforma, po której porusza się gracz
@@ -702,6 +702,7 @@ class ResourceFactory {
 		void loadMainTexturesPack();
 		void loadMobsTexturesPack(const char*);
 
+		/** Dodawanie wygenerowanego obiektu */
 		void addBody(Body*);
 };
 

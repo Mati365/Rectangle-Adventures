@@ -51,7 +51,7 @@ void SoundManager::loadSoundsPack() {
 	//
 	for (usint i = 0; i < DIE_SOUND + 1; ++i) {
 		_SoundINFO& info = sounds_assets[i];
-		//sounds[info.id] = {Player::getInstance().loadSound(info.path), info.volume};
+		sounds[info.id] = {Player::getInstance().loadSound(info.path), info.volume};
 		//
 		PROGRESS_LOADING();
 	}
@@ -63,8 +63,6 @@ void SoundManager::loadSoundsPack() {
  * Odtwarzanie dźwięku po identyfikatorze
  */
 void SoundManager::playResourceSound(usint _id) {
-	return;
-	
 	if (sounds.empty()) {
 		loadSoundsPack();
 	}

@@ -34,6 +34,7 @@ Func funcs[] = {
 					{ SHOW_SPLASH, "SHOW_SPLASH", 1 },
 					{ NEXT_LEVEL, "NEXT_LEVEL", 0 },
 					{ ADD_CHECKPOINT, "ADD_CHECKPOINT", 1 },
+					{ LOOK_AT, "LOOK_AT", 0 },
 					{ CREATE_OBJECT, "CREATE_OBJECT", 5 } };
 
 //---------------------
@@ -296,6 +297,13 @@ bool Interpreter::interpret(Script* script) {
 				splash->endTo(game);
 				break;
 				
+				/**
+				 * Scrollowanie kamery do celu!
+				 */
+			case LOOK_AT:
+				Camera::getFor().lookAt(selected);
+				break;
+
 				/**
 				 * Tworzenie obiektu!
 				 */
