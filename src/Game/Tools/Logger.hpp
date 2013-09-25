@@ -11,7 +11,7 @@
 
 typedef unsigned short int usint;
 
-/** Logowanie niczego oprócz pasków wczytywania */
+/** Logowanie niczego oprocz paskow wczytywania */
 #define DEBUG_LOGGER
 
 class Logger {
@@ -34,7 +34,7 @@ class Logger {
 		};
 
 	public:
-		/** Logowanie wiadomości */
+		/** Logowanie wiadomosci */
 		static void logOperation(usint, const string&, const string&,
 				const string&);
 };

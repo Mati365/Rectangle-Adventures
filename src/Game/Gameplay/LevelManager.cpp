@@ -6,17 +6,15 @@
  */
 #include "LevelManager.hpp"
 
-string levels[2] { "mapa2.txt", "mapa.txt" };
+string levels[3] { "mapa4.txt", "mapa2.txt", "mapa.txt" };
 
-/**
- * Konstruktor
- */
+/** Konstruktor */
 LevelManager::LevelManager() :
 				actual_map(0) {
 }
 
 /**
- * Wczytywanie następnej planszy
+ * Wczytywanie nastepnej planszy
  * + Kasowanie ostatniej mapy ze ekranu game
  */
 MapINFO* LevelManager::loadNextMap() {
@@ -24,22 +22,20 @@ MapINFO* LevelManager::loadNextMap() {
 		logEvent(
 				Logger::LOG_ERROR,
 				"Nie mogę wczytać nastepnej mapy! Koniec gry.");
-		return NULL;
+		return nullptr;
 	}
 	
-	// Wczytywanie nowej mapy
+	/** Wczytywanie nowej mapy */
 	if (actual_map + 1 < MAP_COUNT) {
 		actual_map++;
 	}
 	MapINFO* buffer = reloadMap();
 	
-	// Obiekt dynamicznie alokowany
+	/** Obiekt dynamicznie alokowany */
 	return buffer;
 }
 
-/**
- * Wczytywanie całej mapy od nowa
- */
+/** Reload calej mapy */
 MapINFO* LevelManager::reloadMap() {
 	if (actual_map > MAP_COUNT) {
 		return nullptr;
@@ -50,15 +46,13 @@ MapINFO* LevelManager::reloadMap() {
 	
 	map_renderer->setBufferMap(buffer);
 	
-	// Gracz musi się zabić ;)
+	/** Gracz popelnia harakiri xD */
 	map_renderer->getHero()->die();
 	
 	return buffer;
 }
 
-/**
- * Wczytywanie pierwszej mapy
- */
+/** Wczytywanie calej planszy */
 MapINFO* LevelManager::getFirstMap() {
 	actual_map = 0;
 	//

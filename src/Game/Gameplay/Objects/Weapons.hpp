@@ -15,22 +15,18 @@
 using namespace Engine;
 using namespace Physics;
 
-/**
- * Kule to tak naprawde przeciwnicy!
- */
+/** Kule to naprawde przeciwnicy */
 class Bullet: public Character {
 #define BULLET_WIDTH 8
 #define BULLET_HEIGHT 12
 		
 	private:
-		/**
-		 * Wysokość lotu
-		 */
+		/** Dystans lotu */
 		float max_flight_distance;
 		float flight_distance;
 
 		Vector<float> direction;
-		Vector<float> start_pos; // pozycja startowa bo grawitacja może znieść
+		Vector<float> start_pos; // pozycja startowa bo grawitacja moze zniesc
 		
 	public:
 		Bullet(float, float, const Vector<float>&, PlatformShape*, usint, usint,
@@ -43,14 +39,12 @@ class Bullet: public Character {
 		}
 };
 
-/**
- * Broń
- */
+/** Bron */
 class Gun: public IrregularPlatform {
 	protected:
 		PlatformShape* bullet_shapes[4];
 
-		/** Odstęp między wystrzałem */
+		/** Odstep miedzy wystrzalem */
 		_Timer shot_delay;
 
 		/** Fizyka */
@@ -74,7 +68,7 @@ class Gun: public IrregularPlatform {
 		}
 		
 	private:
-		/** Wystrzał */
+		/** Wystrzal */
 		void shot();
 };
 

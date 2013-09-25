@@ -9,9 +9,7 @@
 
 #include "../../Tools/Logger.hpp"
 
-/**
- * Generowanie statusĂłw
- */
+/** Generowanie statusow */
 map<usint, ResourceFactory::_FactoryStatus> ResourceFactory::factory_status;
 
 void ResourceFactory::generateChracterStatus(usint _hard_level) {
@@ -23,13 +21,13 @@ void ResourceFactory::generateChracterStatus(usint _hard_level) {
 		CharacterStatus(0, false, 0, 1)
 	};
 
-	// Ĺ»YCIE
+	// ZYCIE
 	factory_status[HEALTH] = {
 		Character::SCORE, Body::BACKGROUND, true,
 		CharacterStatus(1, false, 0, 0)
 	};
 
-	// WRĂ“G
+	// WROG
 	factory_status[GHOST] = {
 		Character::ENEMY, Body::NONE, true,
 		CharacterStatus(-1, false, 0, 0)
@@ -58,12 +56,10 @@ void ResourceFactory::generateChracterStatus(usint _hard_level) {
 	};
 }
 
-/**
- * Podstawowe tekstury fabryki
- */
+/** Podstawowe tekstury w fabryce */
 ResourceFactory::_TextureConfig ResourceFactory::factory_types[] =
 		{
-		// KOLCE
+// KOLCE
 			{
 				SPIKES,
 				pEngine::RIGHT,
@@ -104,9 +100,7 @@ ResourceFactory::_TextureConfig ResourceFactory::factory_types[] =
 			{ BULLET, pEngine::UP, 0.f, 0, "pocisk.txt", "bullet_up", true },
 			{ BULLET, pEngine::DOWN, 180.f, 0, "pocisk.txt", "bullet_down", true } };
 
-/**
- * Konstruktor prywatny!
- */
+/** Konstruktor */
 ResourceFactory::ResourceFactory() :
 				//
 				texture_temperature(NORMAL),
@@ -117,12 +111,12 @@ ResourceFactory::ResourceFactory() :
 /**
  * Mapowanie podstawowych tekstur w grze!
  *
- * UWAGA! KOLEJNE KIERUNKI TEKSTUR SÄ„ FLAGAMI +MAX_ILOĹšÄ† od
+ * UWAGA! KOLEJNE KIERUNKI TEKSTUR SA FLAGAMI +MAX_ILOSC od
  * PIERWOTNEJ!!!
  */
 #define MAX_TEXTURES_COUNT 300
 
-/** Generowanie kolejnych id tekstur dla poszczegĂłlnych orientacji */
+/** Generowanie kolejnych id tekstur dla poszczegolnych orientacji */
 usint ResourceFactory::genTextureID(usint _factory_type, usint _orientation) {
 	return 5 * _factory_type + MAX_TEXTURES_COUNT + _orientation;
 }
@@ -138,11 +132,11 @@ void ResourceFactory::loadMainTexturesPack() {
 	// Moby
 	loadMobsTexturesPack("");
 	
-	logEvent(Logger::LOG_INFO, "PomyĹ›lnie wczytano paczkÄ™ tekstur!");
+	logEvent(Logger::LOG_INFO, "Pomyslnie wczytano paczkae tekstur!");
 }
 
 void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
-	// Tekstury mobĂłw
+	/** Tekstury mobow */
 	usint _total_deleted = 0;
 	bool _first_load = textures.empty();
 	
@@ -154,7 +148,7 @@ void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
 				factory_object.factory_type,
 				factory_object.orientation);
 		
-		// Usuwanie starej tekstury
+		/** Usuwanie starej tekstury */
 		if (!_first_load) {
 			if (!main_resource_manager.deleteResource(
 					factory_object.resource_id)) {
@@ -165,7 +159,7 @@ void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
 			textures.erase(_texture_id);
 		}
 		
-		// Wczytywanie nowych tekstur
+		/** Wczytywanie nowych tekstur */
 		string filename = factory_object.file_name;
 		if (_addition) {
 			filename += _addition;
@@ -176,10 +170,10 @@ void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
 				factory_object.rotation);
 		putTexture(_texture_id, _new_shape);
 		
-		// Bugfix! ResourceID != TextureID
+		/** Bugfix! ResourceID != TextureID */
 		factory_object.resource_id = _new_shape->getResourceID();
 		
-		// Liczenie
+		/** Liczenie skasowanych */
 		_total_deleted++;
 	}
 	logEvent(
@@ -189,8 +183,8 @@ void ResourceFactory::loadMobsTexturesPack(const char* _addition) {
 }
 
 /**
- * Reallokacja tekstur, obiekty posiadajÄ… stare
- * wskaĹşniki do tekstur!
+ * Reallokacja tekstur, obiekty posiadaja… stare
+ * wskazniki do tekstur!
  */
 bool ResourceFactory::texturePackRealloc() {
 	if (created.empty()) {
@@ -201,13 +195,13 @@ bool ResourceFactory::texturePackRealloc() {
 	for (usint i = 0; i < created.size(); ++i) {
 		Body* obj = created[i];
 		
-		// Odbiorca tekstury
+		/** Odbiorca tekstury */
 		if (!obj) {
 			created.erase(created.begin() + i);
 			continue;
 		}
 		
-		// Konfiguracja tekstury
+		/** Konfiguracja tekstury */
 		_TextureConfig* tex_conf = getFactoryTemplate(
 				obj->factory_type,
 				obj->orientation);
@@ -221,7 +215,7 @@ bool ResourceFactory::texturePackRealloc() {
 			continue;
 		}
 		
-		// Nowa tekstura
+		/** Nowa tekstura */
 		PlatformShape* new_shape =
 				dynamic_cast<PlatformShape*>(main_resource_manager.getByID(
 						tex_conf->resource_id));
@@ -236,8 +230,8 @@ bool ResourceFactory::texturePackRealloc() {
 		receiver->fitToWidth(tex_conf->width);
 		
 		/**
-		 * OprĂłcz samej tekstury dziaĹ‚ka
-		 * muszÄ… zostaÄ‡ przeĹ‚adowane tekstury
+		 * Oprucz samej tekstury dzialka
+		 * musza… zostac przeladowane tekstury
 		 * broni na nim
 		 */
 		if (obj->factory_type == GUN) {
@@ -249,7 +243,7 @@ bool ResourceFactory::texturePackRealloc() {
 									textures[genTextureID(BULLET, 4)] });
 		}
 		
-		// Liczenie
+		/** Liczenie */
 		reallocated++;
 	}
 	
@@ -260,27 +254,23 @@ bool ResourceFactory::texturePackRealloc() {
 	return true;
 }
 
-/**
- * Pobieranie tekstur!
- */
+/** Pobieranie tekstur! po id i orientacji */
 PlatformShape* ResourceFactory::getTexture(usint _id, usint _orientation) {
 	return textures[genTextureID(_id, _orientation)];
 }
 
-/**
- * Zmiana temperatur tekstur!
- */
+/** Zmiana temperatur tekstur! */
 void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
 	/**
-	 * Po co wczytywaÄ‡ 2 razy te same obiekty?
-	 * Mniejsze ryzyko wycieku pamiÄ™ci
+	 * Po co wczytywac 2 razy te same obiekty?
+	 * Mniejsze ryzyko wycieku pamieci
 	 */
 	if (_texure_temperature == texture_temperature) {
 		return;
 	}
 	texture_temperature = _texure_temperature;
 	
-	// Dodatek do wczytywanej mapy
+	/** Dodatek do wczytywanej mapy */
 	const char* addition;
 	switch (texture_temperature) {
 		//
@@ -300,14 +290,12 @@ void ResourceFactory::changeTemperatureOfTextures(usint _texure_temperature) {
 			
 	}
 	
-	// Wczytywanie na nowo
+	/** Wczytywanie na nowo */
 	loadMobsTexturesPack(addition);
 	texturePackRealloc();
 }
 
-/**
- * DokĹ‚adanie tekstur!
- */
+/** Dokladanie tekstur */
 void ResourceFactory::putTexture(usint id, PlatformShape* shape) {
 	textures[id] = shape;
 }
@@ -323,9 +311,7 @@ ResourceFactory& ResourceFactory::getInstance(pEngine* _physics) {
 	return factory;
 }
 
-/**
- * Generowanie obiektĂłw wraz ze skryptami
- */
+/** Generowanie obiektow */
 Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		float _h, PlatformShape* _shape, char* _script, usint _orientation,
 		usint _state) {
@@ -334,9 +320,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		return NULL;
 	}
 	
-	/**
-	 * Identyfikator teksturyt obikektu!
-	 */
+	/** Identyfikator tekstury obikektu! */
 	usint _texture_id = genTextureID(_type, _orientation);
 	
 	/**
@@ -374,22 +358,17 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		return trigger;
 	}
 	
-	/**
-	 * Przeszukiwanie bazy obiektĂłw
-	 */
+	/** Przeszukiwanie bazy obiektow */
 	_TextureConfig* _factory_type = getFactoryTemplate(_type, _orientation);
 	usint _width = _factory_type ? _factory_type->width : 0;
 	Platform* _object = NULL;
 	
 	if (_type == KILLZONE) {
-		/**
-		 * STREFA ĹšMIERCI
-		 */
+		/** Strefa smierci */
 		_object = new Platform(_x, _y, _w, _h, oglWrapper::WHITE, Body::HIDDEN);
+		
 	} else if (_type == GUN) {
-		/**
-		 * BROĹ�
-		 */
+		/** Bron */
 		_object = new Gun(
 				physics,
 				_x,
@@ -404,9 +383,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				80);
 		dynamic_cast<Gun*>(_object)->fitToWidth(_width);
 	} else {
-		/**
-		 * INNE OBIEKTY
-		 */
+		/** Inne obiekty */
 		_object = new Character(
 				"",
 				_x,
@@ -415,16 +392,13 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 				Character::NONE);
 		Character* character = dynamic_cast<Character*>(_object);
 		character->fitToWidth(_width);
-		/**
-		 * Generowanie obiektĂłw
-		 */
+		
 		if (_type == OBJECT) {
+			/** Generowanie pustej platformy */
 			character->setType(Character::PLATFORM);
 			character->fitToWidth(_w);
 		} else {
-			/**
-			 * Pobieranie statusu BUG!
-			 */
+			/** Pobieranie statusu */
 			_FactoryStatus _status = factory_status[_type];
 			
 			character->setType(_status.character_type);
@@ -435,7 +409,7 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 		}
 	}
 	
-	// Potrzebne przy realokacji tekstur
+	/** Potrzebne przy realokacji tekstur */
 	_object->orientation = _orientation;
 	_object->factory_type = _type;
 	if (_state != Body::NONE) {
@@ -447,21 +421,17 @@ Body* ResourceFactory::createObject(usint _type, float _x, float _y, float _w,
 	return _object;
 }
 
-/**
- * Resetowanie
- */
+/** Usuwanie resztek i reset */
 void ResourceFactory::unload() {
 	created.clear();
 }
 
-/**
- * Dodawanie obiektu
- */
+/** Rejestrowanie nowego obiektu */
 void ResourceFactory::addBody(Body* _object) {
 	if (_object) {
 		created.push_back(_object);
 		
-		/** SiĹ‚owe dodanie do listy! */
+		/** Silowe dodanie do listy! */
 		physics->insert(_object);
 	}
 }

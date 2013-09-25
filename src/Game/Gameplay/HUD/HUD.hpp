@@ -13,9 +13,9 @@
 
 using namespace GUI;
 
-#define SPACES 5 // Odstępy między ramką a krawędzią okna
+#define SPACES 5 // Odstepy miedzy ramke a krawedzia� okna
 /**
- * Tło intra np. mapa, która musi być
+ * To�o intra np. mapa, ktora musi byc
  * zastopowana!
  */
 class IntroBackground {
@@ -34,9 +34,7 @@ class IntroBackground {
 						state(RESUME) {
 		}
 		
-		/**
-		 * Stan intra
-		 */
+		/** Stan intra */
 		usint getState() const {
 			return state;
 		}
@@ -51,7 +49,7 @@ class IntroBackground {
 };
 
 /**
- * Pomiędzy wiadomościami możliwe jest
+ * Pomiedzy wiadomosciami mozliwe jest
  * wczytywanie cutscenek!
  */
 class MessageRenderer: public Renderer, public EventListener, public Callback {
@@ -83,10 +81,10 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 	private:
 		float height;
 
-		/** Typy powiadomień */
+		/** Typy powiadomien */
 		usint screen;
 
-		/** Kolejka wiadomości */
+		/** Kolejka wiadomosci */
 		deque<Message> msgs;
 
 		glText text;
@@ -96,7 +94,7 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		Color background_color;
 
 		/**
-		 * HUD!
+		 * ########################################### HUD!
 		 */
 
 		/** temperatura */
@@ -121,7 +119,7 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		Button* retry_game;
 		Button* return_to_menu;
 
-		/** Wiadomości w intro od i do.. */
+		/** Wiadomosci w intro od i do.. */
 		IntroBackground* background;
 		Character* hero;
 
@@ -134,13 +132,13 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		virtual void drawObject(Window*);
 		virtual void catchEvent(const Event&);
 
-		/** Callback od przycisków! */
+		/** Callback od przyciskow! */
 		void getCallback(Control* const &);
 
 		bool popMessage();
 		void addMessage(const Message&);
 
-		/** Ekran śmierci */
+		/** Ekran smierci */
 		void setScreen(usint _screen) {
 			screen = _screen;
 		}
@@ -150,7 +148,7 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		}
 		
 		/**
-		 * Jeśli zamknięte - pokazywane jest
+		 * Jesli zamkniete - pokazywane jest
 		 * intro.
 		 */
 		usint getScreen() const {
@@ -172,10 +170,10 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		}
 		
 	private:
-		/** Odświeżanie */
+		/** Odswiezanie */
 		void updateHUDControls();
 
-		/** Otwieranie przerywnika pomiędzy scenami! */
+		/** Otwieranie przerywnika pomiedzy scenami! */
 		void openCutscene(const Message&);
 		void closeCutscene();
 

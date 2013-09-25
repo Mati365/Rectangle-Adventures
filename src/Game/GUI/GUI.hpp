@@ -15,16 +15,12 @@
 
 #include "../Gameplay/Objects/Objects.hpp"
 
-/**
- * Brak obsługi focusa! Ma to być tylko prosty
- * system!!
- */
+/** Brak obslugi focusa! Ma to byc tylko prosty system!! */
 namespace GUI {
 	using namespace Engine;
 	using namespace Physics;
-	/**
-	 * Myszka
-	 */
+	
+	/** Myszka */
 	struct Mouse {
 			Vector<int> pos;
 			usint key;
@@ -32,9 +28,7 @@ namespace GUI {
 	extern Mouse mouse;
 	extern bool isMouseCollision(float, float, float, float);
 	
-	/**
-	 *
-	 */
+	/** Callback */
 	class Control;
 	class Callback {
 		public:
@@ -43,9 +37,8 @@ namespace GUI {
 			virtual ~Callback() {
 			}
 	};
-	/**
-	 *
-	 */
+	
+	/** Kontrolka */
 	class Control: public Body, public EventListener {
 		public:
 			enum Position {
@@ -79,14 +72,10 @@ namespace GUI {
 			virtual void drawObject(Window*) = 0;
 			virtual void catchEvent(const Event&);
 
-			/**
-			 * Nadawanie callbacku!
-			 */
+			/** Nadawanie callbacku! */
 			void putCallback(usint, Callback*);
 
-			/**
-			 * Obwódka wokół kontrolki!
-			 */
+			/** Obwodka wokol kontrolki! */
 			void enableBorder(bool _border_enabled) {
 				border_enabled = _border_enabled;
 			}
@@ -112,9 +101,8 @@ namespace GUI {
 			Control* operator[](usint index) const {
 				return objects[index];
 			}
-			/**
-			 * Dodawanie komponentów!
-			 */
+			
+			/** Dodawanie kontrolek */
 			void addControl(Control* control) {
 				objects.push_back(control);
 			}
@@ -124,23 +112,21 @@ namespace GUI {
 			}
 	};
 	
-	/**
-	 * Pasek postępu
-	 */
+	/** Pasek postepu */
 	class ProgressBar: public Control {
 		protected:
 			Color col;
 			Rect<float> obj;
 
+			/** Wartosci */
 			usint max_value;
 			usint value;
 
 		public:
 			ProgressBar(const Rect<float>&, const Color&, usint, usint);
+
 			virtual void drawObject(Window*);
-			virtual ~ProgressBar() {
-			}
-			
+
 			usint getValue() const {
 				return value;
 			}
@@ -149,6 +135,10 @@ namespace GUI {
 				value = _value;
 			}
 			
+			void setMaxValue(usint _value) {
+				max_value = _value;
+			}
+
 			void setColor(const Color& _col) {
 				col = _col;
 			}
@@ -156,11 +146,12 @@ namespace GUI {
 			Color* getColor() {
 				return &col;
 			}
+			
+			virtual ~ProgressBar() {
+			}
 	};
 	
-	/**
-	 * Przycisk
-	 */
+	/** Guzik */
 	class Button: public Control {
 		protected:
 			/** Tekst */
@@ -170,8 +161,8 @@ namespace GUI {
 			IrregularPlatform* icon;
 
 		public:
-			Button(const Rect<float>&, const char*, PlatformShape* = NULL,
-					bool = true, Callback* = NULL);
+			Button(const Rect<float>&, const char*, PlatformShape* = nullptr,
+					bool = true, Callback* = nullptr);
 
 			virtual void drawObject(Window*);
 
@@ -186,6 +177,40 @@ namespace GUI {
 				if (icon) {
 					delete icon;
 				}
+			}
+	};
+	
+	/** Lista */
+	class SelectList: public Control {
+		protected:
+			/** Elementy listy */
+			deque<glText> elements;
+
+			/** Zaznaczony item */
+			string selected_item;
+
+		public:
+			SelectList(const Rect<float>&, Callback* = nullptr, string* =
+					nullptr);
+
+			virtual void drawObject(Window*);
+
+			/** Event z okna */
+			virtual void catchEvent(const Event&);
+
+			/** Dodawanie do listy */
+			void addListItem(const string& _str) {
+				elements.push_back(
+						glText(
+								oglWrapper::WHITE,
+								_str,
+								GLUT_BITMAP_HELVETICA_18,
+								18));
+			}
+			
+			/** Zaznaczona */
+			string getSelectedItem() const {
+				return selected_item;
 			}
 	};
 }

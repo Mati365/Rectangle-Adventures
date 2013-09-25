@@ -36,6 +36,9 @@ void xor_swap(T* t1, T* t2) {
 	//t1 = t1 ^ t2;
 	//t2 = t1 ^ t2;
 	//t1 = t1 ^ t2;
+	if (!t1 || !t2) {
+		return;
+	}
 	*t1 ^= *t2 ^= *t1 ^= *t2;
 }
 
@@ -54,15 +57,13 @@ void safe_delete(T*& _ptr) {
 	}
 }
 
-/**
- * Prosty timer
- */
+/** Prosty timer */
 struct _Timer {
 		/** Cykle */
 		int max_cycles_count;
 		int cycles_count;
 
-		/** Uśpienie między cyklami */
+		/** Uspienie miedzy cyklami */
 		int sleep_beetwen_cycle;
 		int sleep_time;
 
@@ -86,15 +87,14 @@ struct _Timer {
 						active(max_cycles_count != 0),
 						loop(false) {
 		}
-		/**
-		 * Okrążenie timeru
-		 */
+		
+		/** Okrazenie timeru */
 		void tick() {
 			if (!active) {
 				return;
 			}
 			
-			/** Uśpienie */
+			/** Uspienie */
 			if (sleep_beetwen_cycle != 0) {
 				sleep_time++;
 				if (sleep_beetwen_cycle > sleep_time) {
@@ -117,9 +117,7 @@ struct _Timer {
 			}
 		}
 		
-		/**
-		 * Resetowanie timeru
-		 */
+		/** Reset */
 		void reset() {
 			active = true;
 			cycles_count = 0;
@@ -130,7 +128,7 @@ struct _Timer {
 /**
  * Prosta implementacja scoped_ptr()
  * z biblioteki boost w razie jej
- * niedostępności na innych platformach
+ * niedostepnosci na innych platformach
  */
 template<class T>
 class AllocKiller {
@@ -196,7 +194,7 @@ class AllocKiller {
 
 /**
  * Migawki stanu gry, przywracanie gry do momentu
- * przed np. śmiercią bądź intrem
+ * przed np. smiercia beda intrem
  * WSZYSTKO DEKLAROWANE DYNAMICZNIE!!!
  */
 namespace Memory {

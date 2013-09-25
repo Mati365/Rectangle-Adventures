@@ -12,9 +12,7 @@ FireworksEmitter::FireworksEmitter(const Rect<float>& _pos, usint _delay,
 				physics(_physics) {
 }
 
-/**
- * Rysowanie petard
- */
+/** Rysowanie */
 bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 	
@@ -51,9 +49,7 @@ bool FireworksEmitter::drawParticle(usint _index, Window* _window) {
 	return true;
 }
 
-/**
- * Petardy są różnego koloru
- */
+/** Petardy sa roznego koloru */
 void FireworksEmitter::createNewParticle(Window* _window) {
 	Particle part(
 			Vector<float>(x + getIntRandom<usint>(0, w), y + h),

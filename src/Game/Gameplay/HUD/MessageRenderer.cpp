@@ -17,9 +17,7 @@ using namespace GameScreen;
 using namespace Gameplay;
 using namespace GUI;
 
-/**
- * Konstruktor inicjalizacja kontrolek
- */
+/** Konstruktor inicjalizacja kontrolek */
 MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 		const Color& _contents_color, IntroBackground* _background) :
 				height(_height),
@@ -32,7 +30,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				
 				// HUD
 				hud_temperature(432), // temperatura do ustawienia
-				heart(12, 17, Body::NONE, NULL, HEART_ICON_WIDTH),
+				heart(12, 17, Body::NONE, nullptr, HEART_ICON_WIDTH),
 				health_bar(
 						Rect<float>(
 								SPACES * 3 + HEART_ICON_WIDTH + SPACES * 2,
@@ -45,7 +43,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				
 				heart_anim(3),
 				
-				score(0, 16, Body::NONE, NULL, SCORE_ICON_WIDTH),
+				score(0, 16, Body::NONE, nullptr, SCORE_ICON_WIDTH),
 				score_bar(
 						Rect<float>(
 								health_bar.x + health_bar.w + SPACES * 8,
@@ -53,7 +51,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 								62,
 								16),
 						oglWrapper::GREEN,
-						MAX_SCORE,
+						max_score,
 						Control::VERTICAL),
 				
 				retry_hud(
@@ -63,7 +61,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 								16,
 								score_bar.y + score_bar.h),
 						"Od nowa",
-						NULL,
+						nullptr,
 						false,
 						this),
 				
@@ -75,8 +73,8 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				
 				//
 				background(_background),
-				hero(NULL),
-				cutscene_box(NULL) {
+				hero(nullptr),
+				cutscene_box(nullptr) {
 	retry_game = new Button(
 			Rect<float>(
 					screen_bounds.x / 2 - 10 - 100,
@@ -84,7 +82,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 					100,
 					35),
 			"Od nowa",
-			NULL,
+			nullptr,
 			this);
 	retry_game->putCallback(Event::MOUSE_RELEASED, this);
 	
@@ -97,7 +95,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 			"Do menu");
 	return_to_menu->putCallback(Event::MOUSE_RELEASED, this);
 	
-	/** Długość cyklu animacji serca */
+	/** Dlugosc trawnia bicia serca */
 	heart_anim.sleep_beetwen_cycle = 50;
 	heart_anim.loop = true;
 }
@@ -131,9 +129,7 @@ void MessageRenderer::openCutscene(const Message& msg) {
 	Camera::getFor(cutscene_box);
 }
 
-/**
- * Zamykanie cutsceny
- */
+/** Zamykanie cutsceny */
 void MessageRenderer::closeCutscene() {
 	ParalaxRenderer* paralax = dynamic_cast<ParalaxRenderer*>(background);
 	IrregularPlatform* platform =
@@ -142,6 +138,7 @@ void MessageRenderer::closeCutscene() {
 	if (!platform || Camera::getFor().getFocus() == paralax->getHero()) {
 		return;
 	}
+	
 	// Czyszczenie!
 	main_resource_manager.deleteResource(platform->getShape()->getID());
 	cutscene_box->destroyed = true;
@@ -151,21 +148,15 @@ void MessageRenderer::closeCutscene() {
 	logEvent(Logger::LOG_INFO, "Zwolniono zasoby cutsceny!");
 }
 
-/**
- * Obramowanie box'u!
- */
+/** Obramowanie box'u! */
 void MessageRenderer::addMessage(const Message& msg) {
 	msgs.push_front(msg);
 }
 
-/**
- * Rysowanie obramowania HUDu
- */
+/** Rysowanie obramowania HUDu */
 void MessageRenderer::drawBorder(Window* _window) {
 	if (screen == INTRO_SCREEN) {
-		/**
-		 * Wypełnienie!
-		 */
+		/** Wypelnienie wnetrza hudu */
 		oglWrapper::drawFillRect(
 				SPACES,
 				screen_bounds.y - height + SPACES,
@@ -173,9 +164,7 @@ void MessageRenderer::drawBorder(Window* _window) {
 				height,
 				oglWrapper::BLACK);
 		
-		/**
-		 * Optymalizacja!
-		 */
+		/** Optymalizacja poprzez nie uzycia oglWrapper::drawRect */
 		float x = SPACES, y = screen_bounds.y - height + SPACES, w =
 				screen_bounds.x - SPACES * 2, h = height - SPACES * 2;
 		
@@ -203,23 +192,17 @@ void MessageRenderer::drawBorder(Window* _window) {
 	}
 }
 
-/**
- * DLA intro!
- */
+/** Kolejkowanie nastepnej wiadomosci */
 bool MessageRenderer::popMessage() {
-	/**
-	 * Zamykanie intro!
-	 */
+	/** Zamykanie intro jesli nie ma wiadomosci */
 	closeCutscene();
 	if (msgs.empty()) {
 		background->setState(IntroBackground::RESUME);
 		screen = HUD_SCREEN;
 		return false;
 	}
-	/**
-	 * Jeśli otwarte..
-	 */
-
+	
+	/** A jesli sa.. otwieranie od nowa */
 	Message pop = msgs[msgs.size() - 1];
 	msgs.pop_back();
 	//
@@ -235,9 +218,7 @@ bool MessageRenderer::popMessage() {
 	return true;
 }
 
-/**
- * Eventy klawiszy!
- */
+/** Eventy klawiatury */
 void MessageRenderer::catchEvent(const Event& _event) {
 	switch (screen) {
 		/**
@@ -262,21 +243,17 @@ void MessageRenderer::catchEvent(const Event& _event) {
 	
 }
 
-/**
- * Odświeżanie kontrolek HUDa
- */
+/** Odswiezanie kontrolek HUDa */
 void MessageRenderer::updateHUDControls() {
-	/**
-	 * Sprawdzenie temperatury HUDa
-	 */
+	/** Sprawdzenie temperatury textur i podmiana ewentualnie */
 	usint _actual_temperature =
-			ResourceFactory::getInstance(NULL).getTextureTemperature();
+			ResourceFactory::getInstance(nullptr).getTextureTemperature();
 	if (hud_temperature != _actual_temperature) {
 		hud_temperature = _actual_temperature;
 		
 		// Serce
 		heart.setShape(
-				ResourceFactory::getInstance(NULL).getTexture(
+				ResourceFactory::getInstance(nullptr).getTexture(
 						ResourceFactory::HEALTH,
 						pEngine::NONE));
 		heart.fitToWidth(HEART_ICON_WIDTH);
@@ -285,7 +262,7 @@ void MessageRenderer::updateHUDControls() {
 		
 		// Punkt
 		score.setShape(
-				ResourceFactory::getInstance(NULL).getTexture(
+				ResourceFactory::getInstance(nullptr).getTexture(
 						ResourceFactory::SCORE,
 						pEngine::NONE));
 		
@@ -296,9 +273,7 @@ void MessageRenderer::updateHUDControls() {
 		score_bar.getColor()->a = 208;
 	}
 	
-	/**
-	 * Bicie serca!
-	 */
+	/** Animacja bicia serca */
 	heart_anim.tick();
 	heart.fitToWidth(
 			(float) HEART_ICON_WIDTH * ((float) heart_anim.cycles_count + 1)
@@ -308,10 +283,7 @@ void MessageRenderer::updateHUDControls() {
 		heart_anim.reset();
 	}
 	
-	/**
-	 * Aktualizacja pozycji
-	 */
-	// HUD nad graczem
+	/** Aktualizacja pozycji HUDa nad graczem */
 	Rect<float>* cam_pos = Camera::getFor().getPos();
 	float ratio = 2.f - game->getMapRenderer()->getRatio();
 	
@@ -328,33 +300,33 @@ void MessageRenderer::updateHUDControls() {
 	heart.x = score.x + score.w / 2 - heart.w / 2;
 	heart.y = health_bar.y;
 	
-	// Aktualizacja wartości
+	/** Aktualizacja wartosci na paskach HUDa */
+	score_bar.setMaxValue(max_score);
 	score_bar.setValue(hero->getStatus()->score);
+
 	health_bar.setValue(hero->getStatus()->health);
 }
 
-/**
- * Rysowanie HUDa
- */
+/** Rysowanie HUDa */
 void MessageRenderer::drawPlayerHUD(Window* _window) {
 	if (!hero) {
 		hero = background->getHero();
 	}
 	updateHUDControls();
 	
-	// Rysowanie HUDu
-	score.drawObject(NULL);
-	score_bar.drawObject(NULL);
+	/** Rysowanie glownego HUDu */
+	score.drawObject(nullptr);
+	score_bar.drawObject(nullptr);
 	
-	heart.drawObject(NULL);
-	health_bar.drawObject(NULL);
+	heart.drawObject(nullptr);
+	health_bar.drawObject(nullptr);
 	
 	if (!retry_hud.getIcon()) {
 		retry_hud.setIcon(getShapePointer("retry_shape"));
 	}
-	retry_hud.drawObject(NULL);
+	retry_hud.drawObject(nullptr);
 	
-	// Linia łącząca gracza z HUDem
+	/** Linia laczaca gracza z hudem */
 	oglWrapper::beginStroke(0xA0A0);
 	
 	glLineWidth(2.f);
@@ -371,13 +343,9 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	oglWrapper::endStroke();
 }
 
-/**
- * Intro, prostokąt na dole ekranu wyświetla dialogi!
- */
+/** Rysowanie intro - prostokat na dole ekranu z tekstem */
 void MessageRenderer::drawIntroMessage(Window* _window) {
-	/**
-	 * Kontrola animacji!
-	 */
+	/** Kontrola animacji tytulu i tekstu */
 	if (!title.isAnim() && !text.isAnim()) {
 		if (background->getState() == IntroBackground::PAUSE) {
 			glText t(
@@ -394,28 +362,22 @@ void MessageRenderer::drawIntroMessage(Window* _window) {
 		text.setHidden(false);
 	}
 	
-	/**
-	 * Wyświetlanie INTRO/OUTRO
-	 */
+	/** Rendering */
 	title.printText(SPACES * 2 + 5, screen_bounds.y - height + 12);
 	text.printText(SPACES * 2 + 2, screen_bounds.y - 23 + 10);
 }
 
-/**
- * Ekran śmierci
- */
+/** Ekran smierci - game over */
 void MessageRenderer::drawDeathScreen(Window*) {
 	game_over.printText(
 			screen_bounds.x / 2 - game_over.getScreenLength() / 2,
 			80);
 	//
-	retry_game->drawObject(NULL);
-	return_to_menu->drawObject(NULL);
+	retry_game->drawObject(nullptr);
+	return_to_menu->drawObject(nullptr);
 }
 
-/**
- * Odbieranie callbacku z przycisków w menu!
- */
+/** Interfejs na callbacki z przyciskow */
 void MessageRenderer::getCallback(Control* const & control) {
 	logEvent(Logger::LOG_INFO, "Otrzymano event w ekranie śmierci!");
 	//
@@ -429,9 +391,7 @@ void MessageRenderer::getCallback(Control* const & control) {
 	}
 }
 
-/**
- * Rysowanie HUDu
- */
+/** Renderowanie wszystkiego */
 void MessageRenderer::drawObject(Window* _window) {
 	if (msgs.size() > 0 && screen != INTRO_SCREEN) {
 		popMessage();

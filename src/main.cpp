@@ -33,6 +33,7 @@ using namespace File;
 int main(int argc, char **argv) {
 #ifndef _ARCHIVER_
 	glutInit(&argc, argv);
+	
 	srand(time(NULL));
 	
 	if (isFilesystemFake()) {

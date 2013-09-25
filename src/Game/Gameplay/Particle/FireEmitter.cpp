@@ -11,9 +11,7 @@ FireEmitter::FireEmitter(const Rect<float>& _pos, usint _delay) :
 				ParticleEmitter(_pos, _delay) {
 }
 
-/**
- * Rysowanie pojedynczej cząsteczki..
- */
+/** Rysowanie */
 bool FireEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 	
@@ -44,9 +42,7 @@ bool FireEmitter::drawParticle(usint _index, Window* _window) {
 	return true;
 }
 
-/**
- * Tworzenie cząsteczki..
- */
+/** Tworzenie czastki */
 void FireEmitter::createNewParticle(Window* _window) {
 	for (usint i = 1; i < getIntRandom(6, 30); ++i) {
 		Particle part(

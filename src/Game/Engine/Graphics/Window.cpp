@@ -15,18 +15,19 @@ using namespace Gameplay;
 using namespace GameScreen;
 using namespace GUI;
 
-/** Natywna rozdzielczośc ekranu! */
+/** Rozdzialka ekranu */
 Vector<float> Engine::screen_bounds;
 
 /** Czy okno jest otwarte? */
 bool Engine::window_opened = true;
+bool Engine::resolution_changed = false;
+bool Engine::with_shaders = true;
 
-/** Flagi pętli gry */
+/** Flagi glownej petli gry */
 
 #define FPS 16
 //#define BENCHMARK
-//#define FULLSCREEN
-#define VGA_RESOLUTION
+#define FULLSCREEN
 
 /** Konwersja Uint8 do char */
 void translateKeyEvent(Uint8* keystate, Uint16 key, char translated,
@@ -40,18 +41,22 @@ void translateKeyEvent(Uint8* keystate, Uint16 key, char translated,
 	event.key = ' ';
 }
 
-/**
- * Konstruktor
- */
+Vector<float> native_resolution;
+
+/** Konstruktor */
 Window::Window(const string& _title) :
 				screen(NULL) {
-	// Inicjalizacja SDL
+	/** Inicjalizacja SDL */
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
-	// Wyliczanie rozdzielczości ekranu!
-	screen_bounds = getNativeResolution();
+	/** Wyliczanie rozdzielczosci ekranu */
+	screen_bounds.x = 640;
+	screen_bounds.y = 480;
 	
-	// Tworzenie okna
+	/** Natywna rozdzielczosc */
+	native_resolution = Window::getNativeResolution();
+	
+	/** Tworzenie okna */
 	screen = SDL_SetVideoMode(
 			screen_bounds.x,
 			screen_bounds.y,
@@ -72,43 +77,22 @@ Window::Window(const string& _title) :
 	}
 }
 
-/**
- * Inicjacja okna
- */
+/** Inicjacja okna */
 void Window::init() {
 	if (setupOpenGL()) {
 		logEvent(Logger::LOG_INFO, "Okno skonfigurowane sukcesem!");
 	} else {
 		return;
 	}
-	/**
-	 * Wczytywanie rdzennych elementów gry
-	 */
-	loadShadersPack();
-	loadScreens();
-	//
-	if (!menu) {
-		logEvent(
-				Logger::LOG_INFO,
-				"Nastąpił problem podczas wczytywania menu.");
-		return;
-	}
-	active_screen = menu;
-	/**
-	splash->endTo(menu);
-	splash->pushTitle("Mati365 presents..", 400, nullptr);
-	splash->pushTitle(
-			"Rect Adventures",
-			400,
-			readShape("iluzja_trojkat.txt", "iluzja_trojkat.txt", 33.f));
-			*/
+	
+	/** Wczytywanie rdzennych elementow gry */
+	openConfig();
+	
 	//
 	SDL_Event event;
 	Event key(Event::KEY_PRESSED);
 	
-	/**
-	 * Shadery
-	 */
+	/** Shadery */
 #ifdef BENCHMARK
 	int frame_start = SDL_GetTicks();
 	int frames = 0;
@@ -116,42 +100,72 @@ void Window::init() {
 	glText frame_count(oglWrapper::WHITE, "");
 #endif
 	while (window_opened) {
+		/** Zmiana rozdzielczosci */
+		if (resolution_changed) {
+			SDL_FreeSurface(screen);
+			if (screen_bounds.x == 0 || screen_bounds.y == 0) {
+				screen_bounds = native_resolution;
+			}
+			screen = SDL_SetVideoMode(
+					screen_bounds.x,
+					screen_bounds.y,
+					32,
+					SDL_OPENGL | SDL_GL_DOUBLEBUFFER
+#ifdef FULLSCREEN
+							| SDL_FULLSCREEN
+#endif
+					);
+			setupOpenGL();
+			if (!menu) {
+				loadScreens();
+				if (with_shaders) {
+					loadShadersPack();
+				}
+			}
+			resolution_changed = false;
+		}
 #ifndef BENCHMARK
 		int frame_start = SDL_GetTicks();
 #endif
-		//
 		/**
 		 *
 		 */
 		SDL_GetMouseState(&mouse.pos.x, &mouse.pos.y);
 		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-				case SDL_MOUSEBUTTONUP:
-					active_screen->catchEvent(
-							Event(Event::MOUSE_RELEASED, ' '));
-					break;
-					
-				case SDL_MOUSEBUTTONDOWN:
-					active_screen->catchEvent(Event(Event::MOUSE_PRESSED, ' '));
-					break;
-					
-				case SDL_QUIT:
-					window_opened = false;
-					break;
+			if (active_screen) {
+				switch (event.type) {
+					case SDL_MOUSEBUTTONUP:
+						active_screen->catchEvent(
+								Event(Event::MOUSE_RELEASED, ' '));
+						break;
+						
+					case SDL_MOUSEBUTTONDOWN:
+						active_screen->catchEvent(
+								Event(Event::MOUSE_PRESSED, ' '));
+						break;
+						
+					case SDL_QUIT:
+						window_opened = false;
+						break;
+				}
 			}
 		}
 		Uint8 *keystate = SDL_GetKeyState(NULL);
 		if (keystate[SDLK_ESCAPE]) {
 			window_opened = false;
 		}
-		translateKeyEvent(keystate, SDLK_w, 'w', key, game);
-		translateKeyEvent(keystate, SDLK_a, 'a', key, game);
-		translateKeyEvent(keystate, SDLK_d, 'd', key, game);
-		translateKeyEvent(keystate, SDLK_SPACE, '*', key, game);
+		if (active_screen) {
+			translateKeyEvent(keystate, SDLK_w, 'w', key, game);
+			translateKeyEvent(keystate, SDLK_a, 'a', key, game);
+			translateKeyEvent(keystate, SDLK_d, 'd', key, game);
+			translateKeyEvent(keystate, SDLK_SPACE, '*', key, game);
+		}
 		
 		glClear(GL_COLOR_BUFFER_BIT);
 		glLoadIdentity();
-		active_screen->drawObject(this);
+		if (active_screen) {
+			active_screen->drawObject(this);
+		}
 #ifdef BENCHMARK
 		frame_count.printText(screen_bounds.x - 50, 70);
 #endif
@@ -179,26 +193,21 @@ void Window::init() {
 	}
 	//
 	unloadScreens();
-	unloadShadersPack();
+	if (with_shaders) {
+		unloadShadersPack();
+	}
 }
 
-/**
- * Pobieranie natywnej rozdzielczości
- */
+/** Pobieranie rozdzielczosci ekranu */
 Vector<float> Window::getNativeResolution() {
-#ifndef VGA_RESOLUTION
 	const SDL_VideoInfo* info = SDL_GetVideoInfo();
 	//
 	return Vector<float>(info->current_w, info->current_h);
-#else
-	return Vector<float>(640, 480);
-#endif
 }
 
-/**
- * Instalacja OpenGL
- */
+/** Instalacja OpenGL */
 bool Window::setupOpenGL() {
+	glewExperimental = GL_TRUE;
 	glewInit();
 	
 	glDisable(GL_DEPTH_TEST);
@@ -220,13 +229,15 @@ bool Window::setupOpenGL() {
 	glLoadIdentity();
 	
 	if (!GL_ARB_vertex_shader || !GL_ARB_fragment_shader) {
-		logEvent(Logger::LOG_ERROR, "Brak obsługi shaderów!");
-		return false;
+		logEvent(Logger::LOG_ERROR, "Brak obslugi shaderow!");
+		//
+		with_shaders = false;
 	}
 	
 	return true;
 }
 
+/** Usuwanie i sprzatanie po sobie */
 Window::~Window() {
 	SDL_FreeSurface(screen);
 	SDL_Quit();

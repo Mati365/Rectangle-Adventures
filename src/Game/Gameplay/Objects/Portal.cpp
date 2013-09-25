@@ -17,11 +17,11 @@ Portal::Portal(float _x, float _y, usint _orientation, usint _flag) :
 	body_inside = {nullptr, _flag};
 	orientation = _orientation;
 
-	/** BACKGROUND nie obsługuje callbacków kolizji */
+	/** BACKGROUND nie obsluguje kolizji dlatego FLYING */
 	type = Body::PORTAL;
 	state = Body::FLYING;
 
-	/** Jeśli pionowy to zamiana wartości */
+	/** Obrot wymiarow platformy */
 	if(isHorizontalDir(_orientation)) {
 		xor_swap<int>((int*)&w, (int*)&h);
 	}
@@ -31,7 +31,7 @@ Portal::Portal(float _x, float _y, usint _orientation, usint _flag) :
 void Portal::linkTo(Portal* _linked) {
 	linked = _linked;
 	
-	// Linkowanie samego siebie
+	/** Linkowanie samego siebie */
 	linked->linked = this;
 	linked->body_inside.flag =
 			body_inside.flag == PortalBody::BODY_BEGIN ?
@@ -47,7 +47,7 @@ Rect<float> Portal::getStencilTexCoord() {
 		return pos;
 	}
 	
-	/** Uaktualnianie wymiarów */
+	/** Uaktualnianie wymiarow */
 	pos.w = _body->w;
 	pos.h = _body->h;
 	
@@ -56,17 +56,15 @@ Rect<float> Portal::getStencilTexCoord() {
 		pos.x = x + w / 2 - _body->w / 2;
 		_body->x = pos.x;
 		/**
-		 * Znając procent można obliczyć zagłębienie się
+		 * Znajac procent mozna obliczyc zaglebienie sie
 		 * obiektu i wynurzenie po przeciwnej stronie
 		 * portalu
 		 */
 		switch (body_inside.flag) {
-			/**
-			 * Początek ciała:
-			 */
+			/** Poczatek ciala */
 			case PortalBody::BODY_BEGIN:
 				if (orientation == pEngine::UP) {
-					/** Obiekt grawitacją wciągany do dołu */
+					/** Obiekt grawitacja wciagany w dol */
 					pos.h = (1.f - teleport_procent)
 							* body_inside.body_bounds.h;
 					
@@ -74,26 +72,24 @@ Rect<float> Portal::getStencilTexCoord() {
 					pos.y = y - pos.h;
 					_body->y = pos.y;
 				} else {
-					/** Wciąganie obiektu do góry */
+					/** Wyciaganie obiektu w gore */
 					pos.h = body_inside.body_bounds.h;
 					_body->y = y - teleport_procent * body_inside.body_bounds.h;
 					pos.y = y;
 				}
 				break;
 				
-				/**
-				 * Koniec ciała:
-				 */
+				/** Koniec ciala */
 			case PortalBody::BODY_END:
 				if (orientation == pEngine::DOWN) {
-					/** Wypadanie obiektu z góry */
+					/** Wypadanie obiektu z gory */
 					_body->y = y
 							- body_inside.body_bounds.h
 									* (1.f - teleport_procent);
 					pos.h = body_inside.body_bounds.h;
 					pos.y = y;
 				} else {
-					/** Wysuwanie obiektu z góry */
+					/** Wysuwanie obiektu z gory */
 					pos.h = body_inside.body_bounds.h
 							- (1.f - teleport_procent)
 									* body_inside.body_bounds.h;
@@ -109,17 +105,15 @@ Rect<float> Portal::getStencilTexCoord() {
 		pos.y = y - h / 2 + _body->h / 2;
 		_body->y = pos.y;
 		/**
-		 * Znając procent można obliczyć zagłębienie się
+		 * Znajac procent mozna obliczyc zaglebienie sie
 		 * obiektu i wynurzenie po przeciwnej stronie
 		 * portalu
 		 */
 		switch (body_inside.flag) {
-			/**
-			 * Początek ciała:
-			 */
+			/** Poczatek ciala */
 			case PortalBody::BODY_BEGIN:
 				if (orientation == pEngine::RIGHT) {
-					/** Obiekt grawitacją wciągany w lewo */
+					/** Obiekt grawitacja wciagany w lewo */
 					pos.w = body_inside.body_bounds.w;
 					
 					/** Uaktualnianie pozycji */
@@ -127,7 +121,7 @@ Rect<float> Portal::getStencilTexCoord() {
 					_body->x = pos.x
 							- teleport_procent * body_inside.body_bounds.w;
 				} else {
-					/** Wciąganie w prawą stronę */
+					/** Wciaganie w prawo strone */
 					pos.w = (1.f - teleport_procent)
 							* body_inside.body_bounds.w;
 					pos.x = x - pos.w;
@@ -135,12 +129,10 @@ Rect<float> Portal::getStencilTexCoord() {
 				}
 				break;
 				
-				/**
-				 * Koniec ciała:
-				 */
+				/** Koniec ciala */
 			case PortalBody::BODY_END:
 				if (orientation == pEngine::LEFT) {
-					/** Obiekt grawitacją wciągany w lewo */
+					/** Obiekt grawitacja wciagany w lewo */
 					pos.w = body_inside.body_bounds.w
 							- (1.f - teleport_procent)
 									* body_inside.body_bounds.w;
@@ -149,7 +141,7 @@ Rect<float> Portal::getStencilTexCoord() {
 					pos.x = x - teleport_procent * body_inside.body_bounds.w;
 					_body->x = pos.x;
 				} else {
-					/** Obiekt wyciągany w prawo */
+					/** Obiekt wyciagany w prawo */
 					pos.w = body_inside.body_bounds.w;
 					
 					/** Uaktualnianie pozycji */
@@ -171,8 +163,8 @@ void Portal::drawObject(Window*) {
 	if (!linked) {
 		return;
 	}
-	/** Główny rendering */
-
+	
+	/** Glowny rendering */
 	beginStroke(0xF0F0);
 	
 	glLineWidth(2.f);
@@ -206,7 +198,7 @@ void Portal::drawObject(Window*) {
 		return;
 	}
 	
-	/** Odświęzanie obiektu wewnątrz */
+	/** Odswiezanie obiektu wewnatrz */
 	updateBodyInside();
 	
 	Rect<float> stencil_pos = getStencilTexCoord();
@@ -221,7 +213,7 @@ void Portal::drawObject(Window*) {
 			
 	glClear(GL_STENCIL_BUFFER_BIT); // czyszczenie tablicy
 			
-	// Rysowanie szablonu
+	/** Rysowanie szablonu */
 	glBegin(GL_QUADS);
 	glVertex2f(stencil_pos.x, stencil_pos.y);
 	glVertex2f(stencil_pos.x + stencil_pos.w, stencil_pos.y);
@@ -234,12 +226,13 @@ void Portal::drawObject(Window*) {
 	
 	glStencilFunc(GL_EQUAL, 1, 0xFF);
 	
+	/** Rysowanie ciala */
 	_body->drawObject(nullptr);
 	
 	glDisable(GL_STENCIL_TEST);
 }
 
-/** Reset */
+/** Reset - wychodzenie ciala */
 void Portal::exitBody() {
 	if (!body_inside.body) {
 		return;
@@ -256,7 +249,7 @@ void Portal::exitBody() {
 		
 		_body->setState(Body::NONE);
 		
-		/** Odpychanie ciała */
+		/** Odpychanie ciala */
 		dodgeBody(_body, invertDir(orientation), 4.f);
 	}
 	
@@ -268,7 +261,7 @@ void Portal::exitBody() {
 	}
 }
 
-/** Odświeżanie */
+/** Odsiwezanie ciala wewnatrz */
 void Portal::updateBodyInside() {
 	if (!linked || !body_inside.body) {
 		return;
@@ -280,7 +273,7 @@ void Portal::updateBodyInside() {
 	} else if (teleport_procent < 1) {
 		float speed_proc = 0.f;
 		
-		/** Wyliacznie procentu z prędkości wpadania */
+		/** Wyliacznie procentu z predkosci wpadania */
 		if (isVertical()) {
 			speed_proc = (float) _body->velocity.y / (float) _body->h;
 		} else {
@@ -291,13 +284,14 @@ void Portal::updateBodyInside() {
 		}
 		/** Dodawanie procentu */
 		teleport_procent += abs(speed_proc / 5);
+		
 	} else {
 		/** Zerowanie */
 		exitBody();
 		
 		Camera::getFor().scrollTo(nullptr);
 	}
-	// Synchronizacja
+	/** Synchronizacja */
 	linked->teleport_procent = teleport_procent;
 }
 
@@ -308,7 +302,7 @@ bool Portal::enter(Body* body, usint _dir) {
 		return false;
 	}
 	
-	// Odwrócenie portalu
+	/** Odwrocenie portalu w strone obiektu */
 	if ((isVertical() && !isHorizontalDir(_dir))
 			|| (isHorizontal() && isHorizontalDir(_dir))) {
 		orientation = invertDir(_dir);
@@ -317,13 +311,13 @@ bool Portal::enter(Body* body, usint _dir) {
 		linked->body_inside.flag = PortalBody::BODY_END;
 	}
 	
-	// Dołączanie obiektów do portali
+	/** Dolaczanie obiektu do portali */
 	Rect<float> body_bounds(body->x, body->y, body->w, body->h);
 	
 	body_inside = {body, PortalBody::BODY_BEGIN, body_bounds};
 	linked->body_inside = {body, PortalBody::BODY_END, body_bounds};
 
-	// Wyłączenie renderingu i fyzki!
+	/** Cialo zostaje wylaczone z praw fizyki */
 	body_inside.body->setState(Body::FLYING | Body::HIDDEN);
 	
 	//

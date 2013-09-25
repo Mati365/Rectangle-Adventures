@@ -20,6 +20,8 @@ usint oglWrapper::createShader(usint type, const char* _text) {
 		logEvent(Logger::LOG_ERROR, "Pusty shader!");
 		return 0;
 	}
+	glewInit();
+	
 	GLuint shader_id = glCreateShader(type);
 	GLint len = strlen(_text);
 	
@@ -42,31 +44,32 @@ usint oglWrapper::createShader(usint type, const char* _text) {
 
 //--------------------------
 
-/**
- * Wczytywanie shaderu!
- */
+/** Wczytywanie shaderu */
 Shader::Shader(GLchar* _vertex, GLchar* _fragment, GLchar* _geometry) {
-	program_object = glCreateProgram();
-	//
-	if (_vertex) {
-		vertex_shader = createShader(GL_VERTEX_SHADER, _vertex);
-		delete[] _vertex;
+	/** Intel GMA wywala sie w funkcji glCreateProgram nieraz */
+	try {
+		program_object = glCreateProgram();
+		//
+		if (_vertex) {
+			vertex_shader = createShader(GL_VERTEX_SHADER, _vertex);
+			delete[] _vertex;
+		}
+		if (_fragment) {
+			fragment_shader = createShader(GL_FRAGMENT_SHADER, _fragment);
+			delete[] _fragment;
+		}
+		if (_geometry) {
+			geometry_shader = createShader(GL_GEOMETRY_SHADER, _geometry);
+			delete[] _geometry;
+		}
+		//
+		compiled = linkShader();
+	} catch (exception& e) {
+		compiled = false;
 	}
-	if (_fragment) {
-		fragment_shader = createShader(GL_FRAGMENT_SHADER, _fragment);
-		delete[] _fragment;
-	}
-	if (_geometry) {
-		geometry_shader = createShader(GL_GEOMETRY_SHADER, _geometry);
-		delete[] _geometry;
-	}
-	//
-	linkShader();
 }
 
-/**
- * Używanie shaderu!
- */
+/** Rozpoczynanie shaderu! */
 void Shader::begin() {
 	glUseProgram(program_object);
 }
@@ -75,9 +78,7 @@ void Shader::end() {
 	glUseProgram(0);
 }
 
-/**
- * Ustawienie uniformów!
- */
+/** UNIFORMY!!! */
 void Shader::setUniform1f(const char* name, float value) {
 	GLint loc = glGetUniformLocation(program_object, name);
 	if (loc != -1) {
@@ -110,11 +111,9 @@ void Shader::setUniform2f(const char* name, float arg1, float arg2) {
 	glUniform2f(glGetUniformLocation(program_object, name), arg1, arg2);
 }
 
-/**
- * Linkowanie shaderu!
- */
-void Shader::linkShader() {
-	// Linkowanie!
+/** Linkowanie shaderu! */
+bool Shader::linkShader() {
+	/** Linkowanie! */
 	if (vertex_shader) {
 		glAttachShader(program_object, vertex_shader);
 	}
@@ -126,20 +125,22 @@ void Shader::linkShader() {
 	}
 	glLinkProgram(program_object);
 	
-	// Sprawdzenie linkowania!
+	/** Sprawdzenie linkowania! */
 	GLint linked;
 	glGetProgramiv(program_object, GL_LINK_STATUS, &linked);
 	//
 	if (!linked) {
-		logEvent(Logger::LOG_ERROR, "Nie mogłem zlinkować shaderu!");
+		logEvent(Logger::LOG_ERROR, "Nie moglem zlinkowac shaderu!");
+		return false;
 	}
+	return true;
 }
 
-/**
- * Kasowanie shaderów!
- */
+/** Kasowanie shaderu */
 Shader::~Shader() {
-	glUseProgram(0);
-	glDeleteProgram(program_object);
+	if (compiled) {
+		glUseProgram(0);
+		glDeleteProgram(program_object);
+	}
 }
 

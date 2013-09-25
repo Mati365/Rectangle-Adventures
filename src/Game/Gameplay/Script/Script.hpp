@@ -9,13 +9,13 @@
 #define SCRIPT_HPP_
 #include "../../Tools/Tools.hpp"
 
-#define ARG_COUNT 8 // Maksymalna ilość argumentów!
+#define ARG_COUNT 8 // Maksymalna ilosc agumentow!
 #define SPACE_CHARACTER '%' // Znak spacji w skryptach
 /** Deklaracja funkcji */
 struct Func {
 		usint id; // identyfikator
 		char func_name[40]; // nazwa funkcji
-		usint argc; // ilość argumentów
+		usint argc; // ilosc argumentow
 		char args[ARG_COUNT][255]; //argumenty
 };
 
@@ -80,7 +80,7 @@ class Script {
 		}
 };
 
-/** Singleton, na później.. */
+/** Singleton, na pozniej.. */
 class Interpreter {
 	private:
 		Interpreter() {
@@ -94,8 +94,8 @@ class Interpreter {
 		}
 		/**
 		 * Kompilacja z tekstu!
-		 * Zwracanie dynamicznej wartości!
-		 * Przyjmowanie również dynamiczne!
+		 * Zwracanie dynamicznej wartosci!
+		 * Przyjmowanie rowniez dynamiczne!
 		 */
 		Script* compile(char*);
 

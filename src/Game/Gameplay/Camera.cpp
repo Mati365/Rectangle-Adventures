@@ -13,21 +13,21 @@ Camera::Camera(Body* _focus) :
 				look_timer(240) {
 	pos.w = screen_bounds.x;
 	pos.h = screen_bounds.y;
-
+	
 	focus.push_back(_focus);
-
+	
 	look_timer.active = false;
 }
 
-/** Odświeżanie pocycji kamery */
+/** Odswiezanie pozycji kamery */
 void Camera::updateCam(Window* _window) {
 	if (focus.empty()) {
 		return;
 	}
-
-	/** Sprawdzenie kolejki focusów */
+	
+	/** Sprawdzenie kolejki focusow */
 	Body* focus = nullptr;
-
+	
 	look_timer.tick();
 	if (!look_timer.active && this->focus.size() > 1) {
 		this->focus.pop_back();
@@ -35,20 +35,20 @@ void Camera::updateCam(Window* _window) {
 	}
 	focus = getFocus();
 	
-	/** Kierowanie się do focusa */
+	/** Kierowanie sie do focusa */
 	Vector<float> target_pos(
 			focus->x - pos.w / 2 + focus->w / 2 + focus->velocity.x,
 			focus->y - pos.h / 2 + focus->h / 2 - Y_SPACE + focus->velocity.y);
 	
 	/**
-	 * Jeśli włączony look_timer to nie ma
-	 * nagłego przeskoku kamery na nowy focus
+	 * Jesli wlaczony look_timer to nie ma
+	 * naglego przeskoku kamery na nowy focus
 	 */
 	if (scrolling || look_timer.active) {
 		Vector<float> point(target_pos.x - pos.x, target_pos.y - pos.y);
 		float c = sqrt(point.x * point.x + point.y * point.y);
 		float scroll_speed = c * 20.f / ((pos.w + pos.h) / 4);
-
+		
 		if (pos.x < target_pos.x - scroll_speed) {
 			pos.x += scroll_speed;
 		} else if (pos.x > target_pos.x + scroll_speed) {
@@ -65,7 +65,7 @@ void Camera::updateCam(Window* _window) {
 	}
 }
 
-/** Pobieranie pozycji względem krawędzi okna */
+/** Pobieranie pozycji wzgledem krawedzi okna */
 Vector<float> Camera::getFocusScreenPos() {
 	Body* focus = getFocus();
 	

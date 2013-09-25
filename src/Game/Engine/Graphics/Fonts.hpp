@@ -12,7 +12,6 @@
 
 #include "Engine.hpp"
 
-//#include <GL/gl.h>
 #include <GL/glut.h>
 
 #define NEWLINE_CHARACTER '/'
@@ -82,9 +81,7 @@ class glText {
 			return &col;
 		}
 		
-		/**
-		 * Szerokość w pixelach na monitorze!
-		 */
+		/** Szerokosc tekstu w pixelach na monitorze! */
 		usint getScreenLength();
 		void updateScreenLength() {
 			text_lines = 1;
@@ -98,9 +95,16 @@ class glText {
 			}
 		}
 		
+		/** Odblokowywanie animacji */
 		void setAnim(bool);
+
+		/** Dlugosc renderowania tekstu */
 		void setRenderLength(usint);
+
+		/** Ustawienie stringu */
 		void setString(const string&, int);
+
+		/** Wyswietlanie tekstu */
 		void printText(float, float);
 };
 

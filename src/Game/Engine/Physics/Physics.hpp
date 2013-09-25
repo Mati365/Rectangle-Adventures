@@ -41,21 +41,22 @@ namespace Physics {
 				return Vector<T>(x, y);
 			}
 			
+			/** Konwersja z vectora do xy recta */
 			inline void getFromVec(const Vector<float>& _vec) {
 				//w = h = 0;
 				x = _vec.x;
 				y = _vec.y;
 			}
 			
+			/** Dodawanie po predkosci */
 			inline Rect<T>& operator+=(const Vector<T>& _vec) {
 				x += _vec.x;
 				y += _vec.y;
 				//
 				return *this;
 			}
-			/**
-			 * Czy zawiera obiekt
-			 */
+			
+			/** Czy zawiera obiekt */
 			inline bool contains(const Rect<T>& _child) {
 				return (_child.x >= x && _child.x + _child.w <= x + w
 						&& _child.y >= y && _child.y + _child.h <= y + h);
@@ -68,13 +69,13 @@ namespace Physics {
 			}
 	};
 	
-	/** Odwrócenie kierunku */
+	/** Odwrocenie kierunku */
 	usint invertDir(usint);
 	
 	/** Vertykalny czy Hpryzontalny */
 	bool isHorizontalDir(usint);
 	
-	/** Odepchnięcie ciała */
+	/** Odepchniecie ciala */
 	class Body;
 	void dodgeBody(Body*, usint, float);
 	
@@ -82,7 +83,7 @@ namespace Physics {
 	 * Todo:
 	 * + Przebudowa, sprawdzanie kolizji tylko
 	 * na widocznym skrawku ekranu!
-	 * + Usuwanie poruszających się i dodawanie
+	 * + Usuwanie poruszajacych sie i dodawanie
 	 * ich spowrotem!
 	 * + Dodawanie tylko do jednego quad'u!
 	 */
@@ -93,9 +94,8 @@ namespace Physics {
 			deque<Body*> bodies;
 
 			usint level;
-			/**
-			 * STAŁE
-			 */
+
+			/** Dzieci roota */
 			QuadTree* parent;
 			QuadTree* NW;
 			QuadTree* NE;
@@ -115,6 +115,7 @@ namespace Physics {
 			bool remove(Body*);
 			bool remove(usint);
 
+			/** Pobieranie cial z zakresu */
 			void getBodiesAt(Rect<float>&, deque<Body*>&);
 			void update(Rect<float>&);
 
@@ -126,7 +127,7 @@ namespace Physics {
 			bool insertToSubQuad(Body*, bool);
 	};
 	
-	/** Główny silnik fizyczny */
+	/** Glowny silnik fizyczny */
 	class pEngine {
 		public:
 			/** Zwrot */
@@ -150,7 +151,7 @@ namespace Physics {
 
 			/**
 			 * Fizyka sprawdzana jest tylko i
-			 * wyłącznie na widocznym ekranie!
+			 * wylacznie na widocznym ekranie!
 			 */
 			Rect<float> active_range;
 			deque<Body*> visible_bodies;
@@ -166,7 +167,7 @@ namespace Physics {
 			/** Flagi dla silnika */
 			usint config;
 
-			/** Uśpienie */
+			/** Uspienie */
 			_Timer sleep_timer;
 
 		public:
@@ -194,10 +195,10 @@ namespace Physics {
 			/** Test kolizji */
 			bool collide(const Body*, const Body*) const;
 
-			/** Poruszenie się i test kolizji */
+			/** Poruszenie sie i test kolizji */
 			bool moveAndCheck(float, float, Body*, const Body*);
 
-			/** Odświeżenie świata */
+			/** Odswiezenie swiata */
 			void updateWorld();
 
 			/** Ustawienie lagu */
@@ -235,16 +236,16 @@ namespace Physics {
 			~pEngine();
 
 		private:
-			/** Aktualizacja poruszania się obiektu */
+			/** Aktualizacja poruszania sie obiektu */
 			void updateBodyMovement(Body*);
 
-			/** Czy warto sprawdzać dla niego kolizje */
+			/** Czy warto sprawdzac dla niego kolizje */
 			bool isBodyActive(Body*);
 
-			/** Czy się porusza? */
+			/** Czy sie porusza? */
 			bool isMoving(Body*);
 
-			/** Sprawdzenie kolizji między obiektami z listy */
+			/** Sprawdzenie kolizji miedzy obiektami z listy */
 			void checkCollisions(deque<Body*>&);
 
 			/** Detekcja kolizji */
@@ -255,18 +256,14 @@ namespace Physics {
 			void pushFromObject(Body*, usint);
 	};
 	
-	/**
-	 * Obiekt podlegający fizyce
-	 */
+	/** Obiekt podlegajacy fizyce */
 	class Body: public Rect<float>, public Renderer {
 #define DEFAULT_ROUGHNESS 0.85f
 			
 		public:
 			Body* collisions[4];
 
-			/**
-			 * Flaga obiektu, czym on jest?
-			 */
+			/** Flaga obiektu, czym on jest? */
 			enum Type {
 				HERO,
 				ENEMY,
@@ -278,21 +275,19 @@ namespace Physics {
 				LADDER, // drabina
 				LIANE, // liana
 				PORTAL, // portal
-				KILLZONE // strefa śmierci gracza
+				KILLZONE // strefa smierci gracza
 			};
 
-			/**
-			 * State, stan obiektu: czy podlega fizyce?
-			 */
+			/** State, stan obiektu: czy podlega fizyce? */
 			enum State {
 				NONE = 1 << 0,
 				STATIC = 1 << 1,
 				HIDDEN = 1 << 2,
-				BACKGROUND = 1 << 3, // tło nie oddziaływujące
-				FLYING = 1 << 4, // latający np. poruszające się platformy
+				BACKGROUND = 1 << 3, // tlo nie oddzialywujace
+				FLYING = 1 << 4, // latajacy np. poruszajace sie platformy
 				/**
-				 * Element pomiędzy widocznym ekranem
-				 * a widocznym musi nie podlegać fizyce
+				 * Element pomiedzy widocznym ekranem
+				 * a widocznym musi nie podlegac fizyce
 				 */
 				BUFFERED = 1 << 5
 			};
@@ -302,7 +297,7 @@ namespace Physics {
 
 			Vector<float> velocity;
 
-			/** Chropowatość */
+			/** Chropowatosc */
 			float roughness;
 			float weight;
 
@@ -318,7 +313,7 @@ namespace Physics {
 			/** Orientacja */
 			usint orientation;
 
-			/** Długość życia ciała */
+			/** Dlugosc zycia ciala */
 			_Timer life_timer;
 
 			/** Silnik fizyczny */
@@ -329,11 +324,11 @@ namespace Physics {
 			Body(float, float, float, float, float = DEFAULT_ROUGHNESS, float =
 					1.f, usint = NONE);
 
-			/** Nie wszystko musi mieć callback */
+			/** Nie wszystko musi miec callback */
 			virtual void catchCollision(pEngine*, usint, Body*) {
 			}
 			
-			/** Długość życia do skasowania! */
+			/** Dlugosc zycia do skasowania! */
 			void setMaxLifetime(usint);
 
 			/** Wymiary! */

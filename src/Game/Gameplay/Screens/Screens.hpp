@@ -35,29 +35,29 @@ namespace GameScreen {
 			}
 	};
 	
-	/**
-	 * Aktywne ekrany
-	 */
+	/** Aktywne ekrany  */
 	class Game;
 	class Menu;
 	class Splash;
+	class Configuration;
 	
 	extern Game* game; // okno gameplay
 	extern Menu* menu; // menu gry
 	extern Splash* splash; // splash
+	extern Configuration* config; // Konfiguracja grafy
 	
 	extern Screen* active_screen;
 	
 	/**
-	 * Wczytywanie ekranów musi być
-	 * PO wczytaniu systemu plików!
+	 * Wczytywanie ekranow musi byv
+	 * PO wczytaniu systemu plikow!
 	 */
+	void openConfig();
+	
 	void loadScreens();
 	void unloadScreens();
 	
-	/**
-	 * Ekran gry
-	 */
+	/** Ekran gry */
 	class Game: public Screen {
 		protected:
 			MapRenderer* lvl;
@@ -83,9 +83,8 @@ namespace GameScreen {
 						"Usuwanie obiektów sceny zakończone sukcesem!");
 			}
 	};
-	/**
-	 * Menu gry!
-	 */
+	
+	/** Menu gry! */
 	class Menu: public Game, public Callback {
 		private:
 			/** Podstawowe info o grze */
@@ -97,14 +96,16 @@ namespace GameScreen {
 		public:
 			Menu();
 
-			virtual void catchEvent(const Event&);
 			virtual void drawObject(Window*);
+
+			/** Event z okna */
+			virtual void catchEvent(const Event&);
 
 			MapRenderer* getMapRenderer() {
 				return lvl;
 			}
 			
-			/** Callback od przycisków! */
+			/** Callback od przyciskow! */
 			void getCallback(Control* const &);
 
 			~Menu();
@@ -112,22 +113,18 @@ namespace GameScreen {
 		private:
 			void createMenuEntries();
 	};
-	/**
-	 * Splash - początkowy czarny ekran
-	 * z tekstem o autorze.
-	 */
+	
+	/** Splash - czarny ekran z tekstem */
 	class Splash: public Screen {
 		public:
 			class SplashInfo {
 				public:
 #define LOGO_WIDTH 228
-					/**
-					 * Tytuł
-					 */
+					/** Tytul */
 					char* text;
 					_Timer timer;
 
-					/** Logo podczas pierwszego włącznia */
+					/** Logo podczas pierwszego wlaczenia */
 					IrregularPlatform* logo;
 
 					SplashInfo(const char*, usint, PlatformShape* = NULL);
@@ -139,7 +136,7 @@ namespace GameScreen {
 			deque<SplashInfo*> texts;
 			glText title;
 
-			// Powrót po splashu!
+			/** Powrot po splashu! */
 			Screen* return_to;
 
 		public:
@@ -160,7 +157,7 @@ namespace GameScreen {
 				return_to = _return_to;
 			}
 			
-			/** dodawanie tytułu do splasha */
+			/** Dodawanie tytulu do splasha */
 			void pushTitle(const char* _title, usint _visible_time,
 					PlatformShape* _logo = NULL) {
 				texts.push_front(new SplashInfo(_title, _visible_time, _logo));
@@ -169,8 +166,32 @@ namespace GameScreen {
 			~Splash();
 
 		private:
-			/** Powrót do starego ekranu */
+			/** Powrot do starego ekranu */
 			void returnScreen();
+	};
+	
+	/** Ekran konfiguracji ustawien grafiki */
+	class Configuration: public Screen, public Callback {
+		private:
+			static string supported_resolutions[];
+
+			/** Lista rozdzielczości */
+			SelectList resolution_list;
+			Button enter;
+
+			/** Tekst nad rozdizelczoscami */
+			glText res_list_tooltip;
+
+		public:
+			Configuration();
+
+			virtual void drawObject(Window*);
+
+			/** Event z okna */
+			virtual void catchEvent(const Event&);
+
+			/** Callback od przyciskow! */
+			void getCallback(Control* const &);
 	};
 }
 

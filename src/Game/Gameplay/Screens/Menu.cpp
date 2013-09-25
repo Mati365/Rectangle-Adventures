@@ -28,11 +28,9 @@ Menu::Menu() :
 	createMenuEntries();
 }
 
-/**
- * Tworzenie komponentów menu!
- */
+/** Tworzenie komponentow */
 void Menu::createMenuEntries() {
-	// Dodawanie pojedynczych przycisków do listy obiektów!
+	/** Dodawanie pojedynczych przyciskow do listy obiektow */
 	const char* _entries[] = { "Kontynuuj", "Nowa gra", "Koniec gry" };
 	for (usint i = 0; i < 3; ++i) {
 		entries.push_back(
@@ -41,7 +39,7 @@ void Menu::createMenuEntries() {
 						_entries[i]));
 	}
 	
-	// Dodawanie listy obiektów do świata!
+	/** Dodawanie listy obiektow do swiata */
 	for (auto iter = entries.begin(); iter != entries.end(); ++iter) {
 		(*iter)->putCallback(
 				Event::MOUSE_RELEASED,
@@ -50,9 +48,7 @@ void Menu::createMenuEntries() {
 	}
 }
 
-/**
- * Odbieranie callbacku z przycisków w menu!
- */
+/** Odbieranie callbacku z przyciskow */
 void Menu::getCallback(Control* const & control) {
 	for (usint i = 0; i < entries.size(); ++i) {
 		/**
@@ -104,9 +100,7 @@ void Menu::getCallback(Control* const & control) {
 	logEvent(Logger::LOG_INFO, "Otrzymano event w menu!");
 }
 
-/**
- * Odbieranie eventów z okna!
- */
+/** Event z okna */
 void Menu::catchEvent(const Event& event) {
 	Rect<float>& rect = *Camera::getFor().getPos();
 	mouse.pos += Vector<int>(rect.x, rect.y);
@@ -118,9 +112,7 @@ void Menu::catchEvent(const Event& event) {
 	mouse.pos -= Vector<int>(rect.x, rect.y);
 }
 
-/**
- * Rysowanie menu
- */
+/** Rysowanie */
 void Menu::drawObject(Window* window) {
 	if (lvl) {
 		lvl->drawObject(window);
@@ -128,9 +120,7 @@ void Menu::drawObject(Window* window) {
 	ver.printText(screen_bounds.x / 2 - ver.getScreenLength() / 2, 20);
 }
 
-/**
- * Brak przecieku! 'lvl' usuwany w ~Game!!
- */
+/** Brak przecieku! 'lvl' usuwany w ~Game!! */
 Menu::~Menu() {
 	logEvent(Logger::LOG_INFO, "Usuwanie obiektów menu zakończone sukcesem!");
 }

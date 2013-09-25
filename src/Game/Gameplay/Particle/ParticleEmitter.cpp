@@ -18,16 +18,12 @@ ParticleEmitter::ParticleEmitter(const Rect<float>& _pos, usint _delay) :
 	h = _pos.h;
 }
 
-/**
- * Maksymalna ilość cykli emitowania!
- */
+/** Maksymalna ilosc cykli emitowan */
 void ParticleEmitter::setEmitCount(usint _emit_count) {
 	max_emit_count = _emit_count;
 }
 
-/**
- * Rysowanie wszystkich cząstek!
- */
+/** Rysowanie */
 void ParticleEmitter::drawObject(Window* _window) {
 	if (max_emit_count != 0) {
 		emit_count++;

@@ -22,28 +22,24 @@ using namespace Physics;
 using namespace Filesystem;
 using namespace oglWrapper;
 
-/////////////////////////// Główny system plików gry
+/////////////////////////// Glowny system plikow
 
-/**
- * Ścieżki
- */
+/** Sciezki */
 #define FILESYSTEM_PACKAGE "filesystem.vfs"
 #define FILESYSTEM_AUTHOR  "mateusz"
 
 #define SAVE_FILE_RESPATH "save.bin"
 
-/**
- * Menedżery zasobów
- */
+/** Menedzer zasobow */
 extern Package main_filesystem;
 extern ResourceManager main_resource_manager;
 
-/** Sprawdzenie autentyczności pliku!! */
+/** Sprawdzenie autentycznosci pliku!! */
 bool isFilesystemFake();
 
 /**
- * Efekty w grze muszą być wczytane
- * przed pojawieniem się okna!
+ * Efekty w grze musza byc wczytane
+ * przed pojawieniem sie okna!
  */
 enum Effect {
 	WINDOW_SHADOW_SHADER,
@@ -56,9 +52,9 @@ void loadShadersPack();
 void unloadShadersPack();
 
 /**
- * Klasa przechowująca całą mapę
- * + Zwalnia kształty
- * + Zwalnia fizykę, która kasuje wytworzone
+ * Klasa przechowujaca cala mape
+ * + Zwalnia ksztalty
+ * + Zwalnia fizyka, ktora kasuje wytworzone
  * obiekty
  */
 class Platform;
@@ -82,8 +78,8 @@ class MapINFO: public Resource {
 		pEngine* physics;
 
 		/**
-		 * Platform jest dużo, AllocKiller
-		 * zwolnił by to niemiłosiernie
+		 * Platform jest duzo, AllocKiller
+		 * zwolnil� by to niemilosiernie
 		 */
 		struct MapResource {
 				usint id;
@@ -97,14 +93,11 @@ class MapINFO: public Resource {
 
 		deque<MapResource> resources;
 
-		/**
-		 * Informacje początkowe o graczu
-		 * i obiektach
-		 */
+		/** Informacje poczatkowe o graczu i obiektach  */
 		Rect<float> hero_bounds;
 		Rect<float> bounds;
 
-		/** Kształt gracza */
+		/** Ksztalt gracza */
 		PlatformShape* hero_shape;
 
 		/** Ustawienia mapy */
@@ -117,9 +110,7 @@ class MapINFO: public Resource {
 			return bounds;
 		}
 		
-		/**
-		 * Elementy Resource'a
-		 */
+		/** Elementy Resource'a */
 		virtual bool load(FILE*);
 		virtual void unload();
 
@@ -139,12 +130,12 @@ class MapINFO: public Resource {
 bool loadMap(const char*, MapINFO*, usint = 0);
 MapINFO* loadMap(const char*, usint = 0);
 
-bool readMob(FILE*);
+Body* readMob(FILE*);
 
 /**
- * W następnym projekcie będzie VBO..
- * Kształt platformy, przechowuje pozycje
- * vertex'ów w kształcie
+ * W nastepnym projekcie bedzie VBO..
+ * Ksztalt platformy, przechowuje pozycje
+ * vertex'ow w ksztalcie
  * + Kasuje je
  * + Usuwa liste
  */
@@ -166,10 +157,10 @@ class PlatformShape: public Resource {
 		Point* points;
 		usint count;
 
-		/** Kolor domyślny */
+		/** Kolor domyslny */
 		Color main_col;
 
-		/** Szerokość lini */
+		/** Szerokosc lini */
 		usint line_width;
 
 	public:
@@ -183,7 +174,7 @@ class PlatformShape: public Resource {
 		bool recompile();
 		void rotate(float);
 
-		/** Ustawienie grubości linii */
+		/** Ustawienie grubosci linii */
 		void setLineWidth(usint _line_width) {
 			line_width = _line_width;
 			//
@@ -191,8 +182,8 @@ class PlatformShape: public Resource {
 		}
 		
 		/**
-		 * Przeszukiwanie wierzchołków,
-		 * wyznaczanie skrajnych rogów
+		 * Przeszukiwanie wierzcholkow,
+		 * wyznaczanie skrajnych rogow
 		 */
 		Rect<float>& getBounds() {
 			return bounds;
@@ -209,20 +200,18 @@ class PlatformShape: public Resource {
 		~PlatformShape();
 
 	protected:
-		/** Obliczanie wymiarów */
+		/** Obliczanie wymiarow */
 		void updateBounds();
 };
 
-/** Wczytywanie kształtu! */
+/** Wczytywanie ksztaltu! */
 PlatformShape* readShape(const string&, const char*, float);
 PlatformShape* registerShape(FILE*, const char*, float);
 
 PlatformShape* getShapePointer(const char*);
 PlatformShape* getShapeFromFilesystem(const char*, float);
 
-/**
- * Zapis gry / wczytywane z systemu plików
- */
+/** Zapis gry / wczytywane z systemu plikow */
 class Save: public PackagePointer {
 	public:
 		enum Stats {
@@ -232,7 +221,7 @@ class Save: public PackagePointer {
 			LAST_LEVEL_INDEX
 		};
 
-		usint stats[LAST_LEVEL_INDEX + 1]; // Na którym lvl został
+		usint stats[LAST_LEVEL_INDEX + 1]; // Na ktorym lvl zostal
 		
 		Save() {
 			clear();
@@ -250,10 +239,10 @@ class Save: public PackagePointer {
 };
 
 /**
- * Menedżer zapisów
+ * Menedzer zapisow
  * + Wzorzec singleton
  */
-extern void exportSave(); // zapis save do systemu plików
+extern void exportSave(); // zapis save do systemu plikow
 extern void importSave(); // odczyt save z gry
 
 class SaveManager {
@@ -261,7 +250,7 @@ class SaveManager {
 		Save* save;
 		char* file_name;
 
-		/** Nazwa save musi być */
+		/** Nazwa save musi byc */
 		SaveManager(const char* _file_name) :
 						file_name(Convert::getDynamicValue(_file_name)) {
 			save = new Save;
@@ -274,7 +263,7 @@ class SaveManager {
 			return _save_manager;
 		}
 		
-		/** Zapis save do systemu plików */
+		/** Zapis save do systemu plikow */
 		bool writeToFilesystem(Package*);
 		bool readFromFilesystem(Package*);
 

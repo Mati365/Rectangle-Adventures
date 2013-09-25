@@ -39,9 +39,7 @@ Func funcs[] = {
 
 //---------------------
 
-/**
- * Kompilacja!
- */
+/** Kompilacja! */
 Script* Interpreter::compile(char* str) {
 	size_t len = strlen(str);
 	if (len == 0) {
@@ -83,9 +81,7 @@ Script* Interpreter::compile(char* str) {
 	return script;
 }
 
-/**
- * Interpretacja!
- */
+/** Interpretacja! */
 bool Interpreter::interpret(Script* script) {
 	if (!script || !game) {
 		return false;
@@ -95,9 +91,7 @@ bool Interpreter::interpret(Script* script) {
 	//
 	for (usint i = 0; i < script->length; ++i) {
 		Func func = script->commands[i];
-		/**
-		 * Sprawdzenie zaznaczenia!
-		 */
+		/** Sprawdzenie zaznaczenia! */
 		if (!selected
 				&& (func.id == SET_STATE || func.id == SET_MOVING_DIR
 						|| func.id == DISABLE_MOVING
@@ -107,7 +101,7 @@ bool Interpreter::interpret(Script* script) {
 		}
 		switch (func.id) {
 			/**
-			 * Następny poziom!
+			 * Nastepny poziom!
 			 */
 			case NEXT_LEVEL:
 				LevelManager::getInstance().loadNextMap();
@@ -149,12 +143,10 @@ bool Interpreter::interpret(Script* script) {
 				deque<Body*>* list = map->getPhysics()->getList();
 				int id = Convert::stringTo<int>(func.args[0]);
 				for (auto iter = list->begin(); iter != list->end(); ++iter) {
-					/**
-					 * Sprawdzenie wymiarów platformy, jeśli równe to znaleziono!
-					 */
+					/** Sprawdzenie wymiarow platformy, jesli rowne to znaleziono! */
 					if ((*iter)->script_id == id) {
 						/**
-						 *  Rzutowanie na platforme, jeśli to nie platforma to zwróci
+						 *  Rzutowanie na platforme, jesli to nie platforma to zwroci
 						 *  nulla
 						 */
 						selected = dynamic_cast<Platform*>(*iter);
@@ -172,7 +164,7 @@ bool Interpreter::interpret(Script* script) {
 				break;
 				
 				/**
-				 * Wyłączenie ruchu!
+				 * Wylaczenie ruchu!
 				 */
 			case DISABLE_MOVING:
 				selected->disableMoving();
@@ -276,7 +268,7 @@ bool Interpreter::interpret(Script* script) {
 				break;
 				
 				/**
-				 * Pokazywanie wiadomości intro!
+				 * Pokazywanie wiadomosci intro!
 				 */
 			case SHOW_MESSAGE:
 				map->getMessageRenderer()->addMessage(
@@ -287,7 +279,7 @@ bool Interpreter::interpret(Script* script) {
 				break;
 				
 				/**
-				 * Wyświetlanie splash!
+				 * Wyswietlenie splash!
 				 */
 			case SHOW_SPLASH:
 				active_screen = splash;
@@ -303,7 +295,7 @@ bool Interpreter::interpret(Script* script) {
 			case LOOK_AT:
 				Camera::getFor().lookAt(selected);
 				break;
-
+				
 				/**
 				 * Tworzenie obiektu!
 				 */

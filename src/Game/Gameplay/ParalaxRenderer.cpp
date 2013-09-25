@@ -20,16 +20,12 @@ ParalaxRenderer::ParalaxRenderer(Body* _target, float _ratio, MapINFO* _map) :
 	Camera::getFor(_target);
 }
 
-/**
- * Obiekty nie podlegające fizyce typu particle
- */
+/** Obiekty nie podlegajace fizyce typu particle */
 void ParalaxRenderer::addStaticObject(Body* _renderer) {
 	static_objects.push_back(AllocKiller<Body>(_renderer));
 }
 
-/**
- * Potrząsanie ekranem
- */
+/** Potrzasanie ekranem */
 void ParalaxRenderer::shake() {
 	shake_timer.reset();
 	//
@@ -39,35 +35,42 @@ void ParalaxRenderer::shake() {
 					SoundManager::EARTH_QUAKE_SOUND_2);
 }
 
-/**
- * Rysowanie paralaksy
- */
+/** Rysowanie paralaksy */
 void ParalaxRenderer::drawObject(Window* _window) {
 	if (!map) {
 		return;
 	}
 	Camera& cam = Camera::getFor();
 	
-	/** Odświeżanie fizyki */
+	/** Odswiezanie fizyki */
 	pEngine* physics = map->physics;
 	if (!physics->getList()->empty()) {
-		physics->setActiveRange(
-				Rect<float>(
-						cam.getFocus()->x - DEFAULT_SHADOW_RADIUS
-								+ cam.getFocus()->velocity.x,
-						cam.getFocus()->y - DEFAULT_SHADOW_RADIUS
-								+ cam.getFocus()->velocity.y,
-						DEFAULT_SHADOW_RADIUS * 2
-								+ cam.getFocus()->velocity.x * 2,
-						DEFAULT_SHADOW_RADIUS * 2
-								+ cam.getFocus()->velocity.y * 2));
+		if (with_shaders) {
+			physics->setActiveRange(
+					Rect<float>(
+							cam.getFocus()->x - DEFAULT_SHADOW_RADIUS
+									+ cam.getFocus()->velocity.x,
+							cam.getFocus()->y - DEFAULT_SHADOW_RADIUS
+									+ cam.getFocus()->velocity.y,
+							DEFAULT_SHADOW_RADIUS * 2
+									+ cam.getFocus()->velocity.x * 2,
+							DEFAULT_SHADOW_RADIUS * 2
+									+ cam.getFocus()->velocity.y * 2));
+		} else {
+			physics->setActiveRange(
+					Rect<float>(
+							cam.getPos()->x,
+							cam.getPos()->y,
+							cam.getPos()->w,
+							cam.getPos()->h));
+		}
 		physics->updateWorld();
 	}
 	
-	/** Odświeżanie kamery */
+	/** Odswiezanie kamery */
 	cam.updateCam(_window);
 	
-	/** Lista aktualnie widocznych elementów! */
+	/** Lista aktualnie widocznych elementow! */
 	deque<Body*>* list = physics->getVisibleBodies();
 	
 	glPushMatrix();
@@ -101,7 +104,7 @@ void ParalaxRenderer::drawObject(Window* _window) {
 		obj->drawObject(_window);
 	}
 	
-	/** Renderowanie obiektów podlegających fizyce  */
+	/** Renderowanie obiektow podlegających fizyce  */
 	for (usint i = 0; i < list->size(); ++i) {
 		Body* body = (*list)[i];
 		if (body->type == Body::HERO || IS_SET(body->state, Body::HIDDEN)
@@ -111,7 +114,7 @@ void ParalaxRenderer::drawObject(Window* _window) {
 		body->drawObject(_window);
 	}
 	
-	/** Renderowanie focusa na końcu  */
+	/** Renderowanie focusa na koncu  */
 	if (!IS_SET(config, PARALLAX)
 			&& !IS_SET(cam.getFocus()->state, Body::HIDDEN)) {
 		cam.getFocus()->drawObject(NULL);

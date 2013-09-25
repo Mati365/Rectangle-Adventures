@@ -6,9 +6,7 @@
  */
 #include "SoundManager.hpp"
 
-/**
- * Motyw dźwięku!
- */
+/** Paczka dzwiekow */
 _SoundINFO SoundManager::sounds_assets[DIE_SOUND + 1] {
 														{
 															JUMP_SOUND,
@@ -43,9 +41,7 @@ _SoundINFO SoundManager::sounds_assets[DIE_SOUND + 1] {
 															"smierc.wav",
 															MIX_MAX_VOLUME }, };
 
-/**
- * Wczytywanie paczki dźwięków!
- */
+/** Wczytywanie paczki dzwiekow */
 void SoundManager::loadSoundsPack() {
 	BEGIN_LOADING("SFX extracting:");
 	//
@@ -59,19 +55,17 @@ void SoundManager::loadSoundsPack() {
 	END_LOADING();
 }
 
-/**
- * Odtwarzanie dźwięku po identyfikatorze
- */
+/** Odtwarzanie dzwiekow po identyfikatorze */
 void SoundManager::playResourceSound(usint _id) {
+	return;
+	
 	if (sounds.empty()) {
 		loadSoundsPack();
 	}
 	Player::getInstance().playChunk(sounds[_id].chunk, sounds[_id].volume);
 }
 
-/**
- * Usuwanie dźwięków
- */
+/** Usuwanie dziewkow */
 void SoundManager::unloadSoundsPack() {
 	for (auto& obj : sounds) {
 		if (!obj.second.chunk) {
@@ -81,13 +75,11 @@ void SoundManager::unloadSoundsPack() {
 	}
 }
 
-/**
- * Kasowanie dźwięków
- */
+/** Destrukcja */
 SoundManager::~SoundManager() {
 	/** Zamykanie Playera */
 	Player::getInstance().closeMixAudio();
 	
-	/** Kasowanie dźwięków */
+	/** Kasowanie dzwiekow */
 	unloadSoundsPack();
 }

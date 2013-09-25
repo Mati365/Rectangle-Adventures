@@ -31,7 +31,7 @@ Mix_Chunk* Player::loadSound(const char* label) {
 #ifdef FILESYSTEM_USAGE
 	FILE* fp = main_filesystem.getExternalFile(label, &filesize);
 	buffer = IO::getFileContent(fp, filesize);
-
+	
 #else
 	const char* path = ("mobs/" + (string) label).c_str();
 

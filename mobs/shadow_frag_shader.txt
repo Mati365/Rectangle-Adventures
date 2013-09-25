@@ -1,5 +1,3 @@
-in vec4 gl_FragCoord;
-
 uniform vec2 center; // środek okna
 uniform float radius; // promień
 uniform vec3 active_colors; // aktuwne kolory

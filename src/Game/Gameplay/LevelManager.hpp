@@ -14,16 +14,16 @@
 using namespace GameScreen;
 
 /**
- * Menedżer poziomów, odpowiada za
+ * Menedzer poziomow, odpowiada za
  * usuwanie/wczytywanie listy map.
  * + Wzorzec singleton!
- * + Korzysta ze screenów!
- * + Korzysta z systemu plików
+ * + Korzysta ze screenow!
+ * + Korzysta z systemu plikow
  */
 extern string levels[];
 
 class LevelManager {
-#define MAP_COUNT 2
+#define MAP_COUNT 3
 		
 	private:
 		int actual_map;
@@ -38,15 +38,13 @@ class LevelManager {
 		}
 		
 		/**
-		 * Zwraca NULL'a jeśli koniec,
-		 * jeśli koniec to napisy końcowe
+		 * Zwraca NULL'a jesli koniec,
+		 * jesli koniec to napisy końcowe
 		 * i podsumowanie gry
 		 */
 		MapINFO* loadNextMap();
 
-		/**
-		 * Wczytywanie całej mapy od nowa
-		 */
+		/** Wczytywanie calej mapy od nowa */
 		MapINFO* reloadMap();
 
 		/**

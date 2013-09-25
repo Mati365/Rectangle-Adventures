@@ -18,14 +18,12 @@ ProgressBar::ProgressBar(const Rect<float>& _bounds, const Color& _col,
 }
 
 void ProgressBar::drawObject(Window*) {
-	/**
-	 * Obramowanie
-	 */
+	/** Obramowanie */
 	if (border_enabled) {
 		oglWrapper::drawRect(x, y, w, h, Color(255, 255, 255, col.a), 2);
 	}
 	/**
-	 * Wypełnienie:
+	 * Wypelnienie:
 	 * + Horyzontalne
 	 * + Vertykalne
 	 */

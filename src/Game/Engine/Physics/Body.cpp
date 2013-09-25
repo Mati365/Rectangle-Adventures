@@ -11,9 +11,7 @@
 
 using namespace Physics;
 
-/**
- * Konstruktory
- */
+/** Konstruktory */
 Body::Body() :
 				state(NONE),
 				roughness(DEFAULT_ROUGHNESS),
@@ -49,17 +47,13 @@ Body::Body(float _x, float _y, float _w, float _h, float _roughness,
 	h = _h;
 }
 
-/**
- * Długość życia do skasowania!
- */
+/** Dlugosc zycia obiektu po czym zostanie usuniety */
 void Body::setMaxLifetime(usint _max_lifetime) {
 	life_timer.max_cycles_count = _max_lifetime;
 	life_timer.reset();
 }
 
-/**
- *  Wymiary!
- */
+/** Wymiary obiektu */
 void Body::setBounds(float _x, float _y, float _w, float _h) {
 	x = _x;
 	y = _y;

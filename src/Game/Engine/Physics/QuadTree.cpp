@@ -11,9 +11,7 @@
 using namespace Physics;
 using namespace oglWrapper;
 
-/**
- * Konstruktor
- */
+/** Konstruktor */
 QuadTree::QuadTree(QuadTree* _parent, const Rect<float>& _rect, usint _level) :
 				rect(_rect),
 				level(_level),
@@ -24,9 +22,7 @@ QuadTree::QuadTree(QuadTree* _parent, const Rect<float>& _rect, usint _level) :
 				SE(NULL) {
 }
 
-/**
- * Rozdzielenie!
- */
+/** Rozdzielenie! */
 void QuadTree::subdive() {
 	if (NW) {
 		return;
@@ -53,9 +49,7 @@ void QuadTree::subdive() {
 			level + 1);
 }
 
-/**
- * Kasowanie
- */
+/** Kasowanie */
 bool QuadTree::remove(usint _index) {
 	if (_index >= bodies.size() || !bodies[_index]) {
 		return false;
@@ -69,9 +63,7 @@ bool QuadTree::remove(usint _index) {
 	return true;
 }
 
-/**
- * Odświeżanie
- */
+/** Odswiezenia quad'u - usuwanie poruszajacych sie i martwych obiektow */
 void QuadTree::update(Rect<float>& _bounds) {
 	if (!rect.intersect(_bounds)) {
 		return;
@@ -135,9 +127,7 @@ void QuadTree::drawObject(Window*) {
 	}
 }
 
-/**
- * Dodawanie elementu!
- */
+/** Dodawanie elementu! */
 bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
 	if (!body) {
 		return false;
@@ -150,7 +140,7 @@ bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
 	}
 	
 	/**
-	 * Jeśli 1 lub więcej quadów ma ten sam element to
+	 * Jesli 1 lub wiecej quadow ma ten sam element to
 	 * wrzuca do rodzica!
 	 */
 	if (bodies.size() < 4 || body->w >= rect.w / 2 || body->h >= rect.h / 2) {
@@ -161,9 +151,7 @@ bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
 		subdive();
 	}
 	
-	/**
-	 * Umieszczanie do dzieci
-	 */
+	/** Umieszczanie do dzieci */
 	if (NW->insertToSubQuad(body, false) || NE->insertToSubQuad(body, false)
 			|| SE->insertToSubQuad(body, false)
 			|| SW->insertToSubQuad(body, false)) {
@@ -175,9 +163,7 @@ bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
 	return false;
 }
 
-/**
- * Dodawanie całej grupy obiektów
- */
+/** Dodawanie calej grupy obiektow */
 void QuadTree::insertGroup(deque<Body*>* bodies) {
 	for (auto iter = bodies->begin(); iter != bodies->end();) {
 		if ((*iter)->destroyed) {
@@ -193,16 +179,12 @@ void QuadTree::insertGroup(deque<Body*>* bodies) {
 	}
 }
 
-/**
- * Dodawanie
- */
+/** Dodawanie pojedynczego obiektu */
 void QuadTree::insert(Body* body) {
 	insertToSubQuad(body, false);
 }
 
-/**
- * Usuwanie
- */
+/** Usuwanie obiektu */
 bool QuadTree::remove(Body* body) {
 	for (auto iter = bodies.begin(); iter != bodies.end(); ++iter) {
 		// Porównywanie adresów
@@ -221,9 +203,7 @@ bool QuadTree::remove(Body* body) {
 	return false;
 }
 
-/**
- * Pobieranie elemntów z wycinka!
- */
+/** Pobieranie elementow z wycinka */
 void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 	if (!rect.intersect(_bounds)) {
 		return;
@@ -231,19 +211,20 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 	for (usint i = 0; i < bodies.size(); ++i) {
 		Body* body = bodies[i];
 		
-		/** Jeśli obiekt mieści się w zasięgu widzialnego ekranu */
+		/** Jesli obiekt miesci sie w zasiegu widzialnego ekranu */
 		if (_bounds.intersect(
 				Rect<float>(body->x, body->y, body->w, body->h))) {
 			
-			/** Resetowanie obiektów */
+			/** Resetowanie obiektow */
 			UNFLAG(body->state, Body::BUFFERED);
 			
-			/** A co jeśli obiekt jest przycięty na ekranie? */
+			/** A co jesli obiekt jest przyciety na ekranie? */
 			if (!IS_SET(body->state, Body::STATIC)
 					&& (body->y + body->h >= _bounds.y + _bounds.h
 							|| body->x + body->w >= _bounds.x + _bounds.w
 							|| body->x + body->w <= _bounds.x
 							|| body->y + body->h <= _bounds.y)) {
+				
 				/** Niewidoczne particle wywalane! */
 				if (!body->with_observer && body->life_timer.active) {
 					remove(i);
@@ -267,6 +248,7 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 	}
 }
 
+/** Kasowanie */
 QuadTree::~QuadTree() {
 	for (auto& obj : bodies) {
 		if (obj && !obj->with_observer) {

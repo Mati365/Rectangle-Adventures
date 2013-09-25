@@ -8,9 +8,7 @@
 
 using namespace GUI;
 
-/**
- * for szybsze niż iteratory jest
- */
+/** For szybsze niz iteratory jest */
 void Panel::drawObject(Window*) {
 	for (usint i = 0; i < objects.size(); ++i) {
 		objects[i]->drawObject(NULL);

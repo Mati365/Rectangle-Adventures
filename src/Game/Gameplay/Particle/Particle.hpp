@@ -14,7 +14,7 @@
 using namespace Gameplay;
 
 /**
- * Pojedyncza cząsteczka particle,
+ * Pojedyncza czasteczka particle,
  * deklarowana statycznie bo szybciej!
  */
 class Particle {
@@ -43,7 +43,7 @@ class Particle {
 
 /**
  * Abstrakcyjna klasa emitera!
- * Nie jest obiektem zaś może mieć na
+ * Nie jest obiektem zas moze miec na
  * niego focusa!
  */
 class ParticleEmitter: public Body {
@@ -53,10 +53,10 @@ class ParticleEmitter: public Body {
 		Rect<float>* focus;
 		deque<Particle> particles;
 
-		usint delay; // odstępy między wypuszczeniem cząstki
+		usint delay; // odstepy miedzy wypuszczeniem czastki
 		usint timer;
 
-		usint max_emit_count; // ilość emitowań po czym kasowanie!
+		usint max_emit_count; // ilosc emitowan do usuniecia emitera
 		usint emit_count;
 
 	public:
@@ -64,10 +64,7 @@ class ParticleEmitter: public Body {
 
 		virtual void drawObject(Window*);
 
-		/**
-		 * Pozycja w obiekcie, na którym jest
-		 * focus
-		 */
+		/** Pozycja emitera wzgledem obiektu */
 		void setPosInBody(const Vector<float>& _pos) {
 			pos_in_body = _pos;
 		}
@@ -93,9 +90,7 @@ class ParticleEmitter: public Body {
 
 //--------------------------- EMITERY!
 
-/**
- * Emiter śniegu!
- */
+/** Emitter sniegu */
 class SnowEmitter: public ParticleEmitter {
 	public:
 		SnowEmitter(const Rect<float>&);
@@ -108,9 +103,7 @@ class SnowEmitter: public ParticleEmitter {
 		virtual void createNewParticle(Window*);
 };
 
-/**
- * Emiter ognia!
- */
+/** Emitter ognia */
 class FireEmitter: public ParticleEmitter {
 	public:
 		FireEmitter(const Rect<float>&, usint);
@@ -126,9 +119,7 @@ class FireEmitter: public ParticleEmitter {
 		virtual void createNewParticle(Window*);
 };
 
-/**
- * Emiter strumienia!
- */
+/** Emitter jetu */
 class JetEmitter: public ParticleEmitter {
 	private:
 		Color col;
@@ -144,9 +135,7 @@ class JetEmitter: public ParticleEmitter {
 		virtual void createNewParticle(Window*);
 };
 
-/**
- * Emiter fajerwerków!
- */
+/** Emitter fajerwerkow */
 class FireworksEmitter: public ParticleEmitter {
 	private:
 		pEngine* physics;

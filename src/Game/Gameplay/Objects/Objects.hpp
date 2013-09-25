@@ -27,39 +27,38 @@ using namespace Sound;
 
 /** Konfiguracja gameplay! */
 #define MAX_LIVES 3
-#define MAX_SCORE 50
 #define DEATH -1
+
+extern float max_score;
 
 #define DEFAULT_LEVITATION_DURATION 60
 
-/**
- * Platforma, po której porusza się gracz
- */
+/** Platforma - element budulcowy calej tej gry! */
 class Platform: public Body {
 	public:
 		enum Type {
-			DIAGONAL, // ukośne linie
+			DIAGONAL, // ukosne linie
 			SIMPLE, // proste linie
 			FILLED, // zamalowana
 			ICY, // oblodzona + SIMPLE
-			METAL, // coś a'la donkey kong
+			METAL, // cos a'la donkey kong
 			NONE
 		};
 
 	protected:
 		Color col;
 
-		/** Dla ruchomych elementów..  */
+		/** Dla ruchomych elementow  */
 		Vector<float> distance;
 		Vector<float> max_distance;
 
-		/** Powtarzalność ruchów */
+		/** Powtarzalnosc ruchow */
 		bool repeat_movement;
 
 		/** Typ rysowania platformy */
 		usint fill_type;
 
-		/** Dla przyśpieszenia renderingu! */
+		/** Dla przyspieszenia renderingu kompilacja do list! */
 		usint list;
 
 		/** Obramowanie platformy */
@@ -72,29 +71,23 @@ class Platform: public Body {
 		virtual void catchCollision(pEngine*, usint, Body*) {
 		}
 		
-		/**
-		 * Odblokowanie poruszania się!
-		 */
+		/** Poruszanie sie platformy */
 		void setMovingDir(const Vector<float>&, const Vector<float>&, bool);
 		void disableMoving();
 
-		// Argumenty zgodnie z ruchem wskazówek zegara
+		/** Argumenty zgodnie z ruchem wskazowek zegara */
 		void setBorder(bool, bool, bool, bool);
 		void setFillType(usint);
 
-		/**
-		 * Kompilacja listy dla statycznej!
-		 */
+		/** Kompilacja listy dla statycznej! */
 		void compileList();
 
-		/**
-		 * Typy platformy pod względem
-		 * rysowania!
-		 */
+		/** Ustwaienie orientacji platformy */
 		usint setOrientation() const {
 			return orientation;
 		}
 		
+		/** Wartosci renderingu */
 		usint getFillType() const {
 			return fill_type;
 		}
@@ -107,21 +100,15 @@ class Platform: public Body {
 		}
 		
 	protected:
+		/** Odswiezanie */
 		bool updatePlatform();
-		/**
-		 *  Rysowanie!
-		 */
+
+		/** Rysowanie! */
 		void drawBorder();
 		void drawBody();
 };
 
-//------------------------ Platforma z łamanymi, wolniejsza
-
-/**
- * Brak dziedziczenia od Renderer, to ma
- * być klasa magazynująca!
- */
-
+/** Platforma z lamanymi, wolniejsza */
 class IrregularPlatform: public Platform {
 	protected:
 		PlatformShape* shape;
@@ -132,38 +119,37 @@ class IrregularPlatform: public Platform {
 
 		virtual void drawObject(Window*);
 
-		/** Kształt platformy! */
+		/** Ksztalt platformy! */
 		PlatformShape* getShape() const {
 			return shape;
 		}
 		
 		void setShape(PlatformShape*);
 
-		/**
-		 * Zmiana rozmiaru tylko
-		 * do szerokości!
-		 */
+		/** Przycinanie do szerokosci */
 		void fitToWidth(float);
 
-		/** Skalowanie całego obiektu! */
+		/** Skalowanie calego obiektu! */
 		void setScale(float);
 
 		float getScale() const {
 			return scale;
 		}
 		
+		/**
+		 * Nie kasuje ksztaltu bo moze
+		 * go uzywac kilkanascie innych
+		 * platform
+		 */
 		virtual ~IrregularPlatform() {
-			/**
-			 * Ten sam kształt dla kilku platform!
-			 */
 		}
 };
 
 //------------------------ Przeciwnicy i gracz
 
 /*
- * Klasa magazynująca dane o obiektcie
- *  nie będzie renderowana!
+ * Klasa magazynujaca informacje o obiekcie
+ * nie bedzie renderowana
  */
 struct CharacterStatus: public Resource {
 		int health;
@@ -215,7 +201,7 @@ struct CharacterStatus: public Resource {
 };
 
 /**
- * Każde AI tworzone jest dynamicznie!
+ * Kazde AI tworzone jest dynamicznie!
  * Nie przez AllocKiller bo zwolni!
  */
 class Character;
@@ -229,7 +215,7 @@ class AI {
 		
 		/**
 		 * Sterowanie automatem, botem,
-		 * potrzebny zatem wskaźnik do
+		 * potrzebny zatem wskaznik do
 		 * silnika fizycznego!
 		 */
 		virtual void drive() = 0;
@@ -261,24 +247,22 @@ class Character: public IrregularPlatform {
 			SLEEPING = 1 << 3
 		};
 
-		/**
-		 * Punkt przywrócenia gracza po śmierci
-		 */
+		/** Punkt przywrucenia gracza po smierci */
 		struct _Checkpoint {
 				/**
-				 * Jeśli mapa jest zbyt zmodyfikowana
-				 * musi zostać wczytana 2 raz i gra
-				 * rozpoczyna się od nowa!
+				 * Jesli mapa jest zbyt zmodyfikowana
+				 * musi zostac wczytana 2 raz i gra
+				 * rozpoczyna sie od nowa!
 				 */
 				bool reload_map;
 
-				// Ostatni status gracza
+				/** Ostatni status gracza */
 				CharacterStatus last_status;
 		};
 
 		/**
 		 * Animowany tekst np. po zdobyciu
-		 * punktu unoszący się do góry
+		 * punktu unoszacy sie do gory
 		 */
 #define TOOLTIP_SPEED -1
 		
@@ -306,13 +290,13 @@ class Character: public IrregularPlatform {
 		usint action;
 
 		/**
-		 * Gracz/wrogowie modyfikują ciągle
-		 * swój status, dlatego musi być
+		 * Gracz/wrogowie modyfikuja ciagle
+		 * swoj status, dlatego musi byc
 		 * statyczny!
 		 */
 		CharacterStatus status;
 
-		/** Ilość klatek zaczerwienienia */
+		/** Ilosc klatek zaczerwienienia */
 		_Timer blood_anim;
 
 		/**
@@ -326,14 +310,14 @@ class Character: public IrregularPlatform {
 		bool diastole; // rozkurcz
 		_Timer heart_timer;
 
-		/** Uśpienie */
-		_Timer sleep_timer; // timer uśpienia
+		/** Uspienie */
+		_Timer sleep_timer; // timer uspienia
 		_Timer zzz_delay; // timer emitowania zzz
 		
-		/** Zamiast stosu lepiej dać ostatni */
+		/** Zamiast stosu lepiej dac ostatni */
 		_Checkpoint last_checkpoint;
 
-		/** Chmurki latające */
+		/** Chmurki latajace */
 		deque<_Tooltip> tooltips;
 
 	public:
@@ -348,7 +332,7 @@ class Character: public IrregularPlatform {
 		virtual void catchCollision(pEngine*, usint, Body*);
 
 		/**
-		 * Czy postać aktualnie jest czerwona
+		 * Czy postac aktualnie jest czerwona
 		 * od krwii
 		 */
 		bool isBlooding() const {
@@ -367,17 +351,11 @@ class Character: public IrregularPlatform {
 			return action;
 		}
 		
-		/**
-		 * Dodawanie napisu unoszącego się
-		 * nad graczem
-		 */
+		/** Dodawanie napisu unosacego sie nad graczem */
 		void addTooltip(const char*, const Color&, float = 0, float = 0, usint =
 				0, float = TOOLTIP_SPEED);
 
-		/**
-		 * Przepisywanie informacji do
-		 * checkpointa
-		 */
+		/** Przepisywanie informacji do checkpointa */
 		void addCheckpoint(bool);
 		void recoverFromCheckpoint(MapINFO*);
 
@@ -385,25 +363,22 @@ class Character: public IrregularPlatform {
 			return !last_checkpoint.reload_map;
 		}
 		
-		/**
-		 * Akcje dotyczące poruszania się i
-		 * zachowania gracza
-		 */
-		void die(); // śmierć, rozprucie ;)
-		void hitMe(); // uderz mnie ;_;
+		/** Funkcje zyciowe gracza */
+		void die(); // smierc poprzez rozdarcie
+		void hitMe(); // uderzenie
 		
-		void move(float, float);
-		void jump(float, bool = false);
-
+		void move(float, float); // ruch
+		void jump(float, bool = false); // skok
+				
 		void dodge(usint); // taktyczny unik
 				
-		/** Odświeżanie timeru spania */
+		/** Odswiezenie timeru spania */
 		void updateSleeping();
 
 		/** Resetowanie spania */
 		void resetSleeping();
 
-		/** Odświeżanie gracza */
+		/** Odswiezanie gracza */
 		void updateMe();
 
 		virtual bool recover(Cloneable* _clone) {
@@ -430,14 +405,14 @@ class Character: public IrregularPlatform {
 		/** Kolizje gracza */
 		void catchPlayerCollision(pEngine*, usint, Body*);
 
-		/** Odświeżanie.. */
+		/** Odswiezanie animacji uderzenia */
 		void updateHitAnim();
 
-		/** Rysowanie elementów opcjonalnych.. */
+		/** Rysowanie tooltipow */
 		void drawTooltips();
 };
 
-/** Obiekt generujący skrypt */
+/** Obiekt uruchamiajacy skrypt */
 class Trigger: public Body {
 	private:
 		Script* script;
@@ -471,12 +446,12 @@ class Trigger: public Body {
 };
 
 /**
- * Portal 1 część obiektu wchodzi jedną stroną,
- * druga drugą stroną
+ * Portal 1 czesc obiektu wchodzi
+ * jedna strona druga druga strona
  */
 class Portal: public Body {
 	private:
-		/** Podłączony portal */
+		/** Podlaczony portal */
 		Portal* linked;
 
 		/** Obiekt w portalu */
@@ -499,29 +474,29 @@ class Portal: public Body {
 
 		virtual void drawObject(Window*);
 
-		/** BUG!!! Nie odbiera callbacków! */
+		/** BUG!!! Nie odbiera callbackow! */
 		virtual void catchCollision(pEngine*, usint, Body*) {
 		}
 		
-		/** Wskakitanie do portalu */
+		/** Wskakiwanie do portalu */
 		bool enter(Body*, usint);
 
 		/** Linkowanie */
 		void linkTo(Portal*);
 
-		/** Pobieranie połączonego portalu */
+		/** Pobieranie polaczonego portalu */
 		Portal* getLinkedPortal() {
 			return linked;
 		}
 		
 	private:
-		/** Odświeżanie obiektu w środku portalu */
+		/** Odswiezanie w srodku portalu */
 		void updateBodyInside();
 
 		/** Pobieranie pozycji dla stencil buffer */
 		Rect<float> getStencilTexCoord();
 
-		/** Reset */
+		/** Wychodzenie obiektu */
 		void exitBody();
 
 		/** Czy jest vertykalny? */
@@ -535,16 +510,14 @@ class Portal: public Body {
 		}
 };
 
-/**
- * Wzorzec singleton!
- */
+/** Wzorzec singleton fabryki obiektow! */
 using oglWrapper::Shader;
 
 class ResourceFactory {
 	public:
 		/**
-		 * Kolory tekstur dla różnych leveli
-		 * np. dla zimy będą chłodne
+		 * Kolory tekstur dla roznych leveli
+		 * np. dla zimy beda chlodne
 		 */
 		enum TextureTemperature {
 			ICY,
@@ -553,8 +526,8 @@ class ResourceFactory {
 		};
 
 		/**
-		 * Typy obiektów generowanych
-		 * przez fabryke nie są tym
+		 * Typy obiektow generowanych
+		 * przez fabryke nie sa� tym
 		 * samym co w silniku fizycznym
 		 */
 		enum Types {
@@ -562,63 +535,61 @@ class ResourceFactory {
 			HEALTH,
 			GHOST,
 			OBJECT,
-			GUN, // broń
+			GUN, // bron
 			SCRIPT_BOX, // skrypt
 			SPIKES, // kolce
 			LADDER, // drabina
 			LIANE, // liana
-			PORTAL_BEGIN, // portal początek
+			PORTAL_BEGIN, // portal poczatek
 			PORTAL_END, // poral koniec
+			
 			/**
-			 * Dynamiczne obiekty nie są wczytywane
-			 * dlatego idą na koniec
+			 * Dynamiczne obiekty nie sa wczytywane
+			 * dlatego ida na koniec
 			 */
 			BULLET,
-			/**
-			 * Obiekty niewidoczne
-			 */
+			
+			/** Obiekty niewidoczne */
 			KILLZONE
 		};
 
-		/** Poziom trudności */
+		/** Poziom trudnosci */
 		enum HardLevel {
 			EASY,
 			NORMAL,
 			HARD
 		};
 
-		/** Statusy obiektów */
+		/** Statusy obiektow */
 		struct _FactoryStatus {
-				// Info dla silnika
+				/** Typ obiektu */
 				usint character_type;
 				usint state;
 
-				// Informacje o postaci
+				/** Status obiektu np. gracza */
 				bool is_score;
 				CharacterStatus character_status;
 		};
 
-		/**
-		 * Tekstury obiektów w fabryce
-		 */
+		/** Konfigracja tekstury w obiekcie */
 		struct _TextureConfig {
-				// Podstawowe info
+				/** Podstawowe info */
 				usint factory_type;
 				usint orientation;
 				float rotation;
 				float width;
 
-				// Dla zasobu
+				/** Informacje dla zasobu */
 				const char* file_name;
 				const char* resource_label;
 
 				/**
-				 * Nie wszystkie tekstury muszą
-				 * mieć zmienną temperaturę
+				 * Nie wszystkie tekstury musza
+				 * miec zmienna temperature
 				 */
 				bool temperature_enabled;
 
-				// Identyfikator
+				/** Identyfikator z resource manager*/
 				usint resource_id;
 		};
 
@@ -630,9 +601,8 @@ class ResourceFactory {
 		/** Wyszukiwanie szablonu obiektu */
 		static _TextureConfig* getFactoryTemplate(usint _factory_type,
 				usint _orientation) {
-			/**
-			 * Różne typy są w różnych orientacjach
-			 */
+			
+			/** Rozne typy sa w roznych orienatacjach */
 			for (usint i = 0; i < 18; ++i) {
 				_TextureConfig* obj = &factory_types[i];
 				//

@@ -8,9 +8,7 @@
 
 using namespace GameScreen;
 
-/**
- * Informacje o splashu
- */
+/** Informacje o splashu */
 Splash::SplashInfo::SplashInfo(const char* _text, usint _visible_time,
 		PlatformShape* _logo) :
 				text(Convert::getDynamicValue(_text)),
@@ -34,9 +32,7 @@ Splash::SplashInfo::~SplashInfo() {
 	safe_delete<IrregularPlatform>(logo);
 }
 
-/**
- * Ekran splash na czarnym tle!
- */
+/** Ekran splash na czarnym tle! */
 Splash::Splash() :
 				title(oglWrapper::WHITE, "", GLUT_BITMAP_HELVETICA_18, 18),
 				return_to(NULL) {

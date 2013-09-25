@@ -11,9 +11,7 @@
 Package main_filesystem(FILESYSTEM_PACKAGE, FILESYSTEM_AUTHOR);
 ResourceManager main_resource_manager;
 
-/**
- * Sprawdzenie autentyczności archiwum!
- */
+/** Sprawdzenie autentycznosci archiwum! */
 bool isFilesystemFake() {
 	return (strcmp(main_filesystem.getHeader()->author, FILESYSTEM_AUTHOR) != 0);
 }

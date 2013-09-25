@@ -11,7 +11,7 @@
 
 using namespace Sound;
 
-/** Informacje o dźwięku w grze */
+/** Informacje o dzwieku w grze */
 struct _SoundINFO {
 		usint id;
 		const char* path;
@@ -20,15 +20,15 @@ struct _SoundINFO {
 
 class SoundManager {
 	public:
-		/** Dźwięki w grze */
+		/** Dzwieki w grze */
 		enum Sounds {
 			JUMP_SOUND,
 			GUN_SHOT_SOUND,
 			MENU_CHOOSE_SOUND,
 			SCORE_SOUND,
 			SPIKES_SOUND,
-			EARTH_QUAKE_SOUND_1, // trzęsienie ziemi
-			EARTH_QUAKE_SOUND_2, // trzęsienie ziemi
+			EARTH_QUAKE_SOUND_1, // trzesienie ziemi
+			EARTH_QUAKE_SOUND_2, // trzesienie ziemi
 			DIE_SOUND
 		};
 
@@ -53,8 +53,8 @@ class SoundManager {
 		}
 		
 		/**
-		 * Odtwarzanie dźwięku z ID
-		 * + Wczytywanie paczki dźwięków jeśli
+		 * Odtwarzanie dzwieku z ID
+		 * + Wczytywanie paczki dzwiekow jesli
 		 * sound jest pusty!
 		 */
 		void playResourceSound(usint);

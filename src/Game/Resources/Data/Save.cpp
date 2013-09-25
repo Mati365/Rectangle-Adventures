@@ -13,16 +13,12 @@ void exportSave() {
 	SaveManager::getInstance().writeToFilesystem(&main_filesystem);
 }
 
-/**
- * Odczyt save
- */
+/** Odczyt save */
 void importSave() {
 	SaveManager::getInstance().readFromFilesystem(&main_filesystem);
 }
 
-/**
- * Menedżer sejvów
- */
+/** Menedzer sejvow */
 bool SaveManager::writeToFilesystem(Package* _filesystem) {
 	if (!_filesystem || !save) {
 		return false;

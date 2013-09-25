@@ -12,9 +12,7 @@
 using namespace Filesystem;
 
 namespace File {
-	/**
-	 * Import/export tekstu!
-	 */
+	/** Import/export tekstu! */
 	class Text: public FilePackage {
 		public:
 			char* text;
@@ -57,8 +55,8 @@ namespace File {
 			}
 	};
 	/**
-	 * Eksport/import plików!
-	 * TUTAJ FUNKCJE KOMPRESUJĄCE!
+	 * Eksport/import plikow!
+	 * TUTAJ FUNKCJE KOMPRESUJACE!
 	 */
 	class ExternalFile: public FilePackage {
 #define BUFFER_SIZE 200

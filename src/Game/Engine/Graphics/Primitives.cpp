@@ -9,9 +9,7 @@
 
 #include "Engine.hpp"
 
-/**
- * Podstawowe kolory!
- */
+/** Podstawowe kolory! */
 Color oglWrapper::RED(255, 0, 0);
 Color oglWrapper::DARK_RED(128, 0, 0);
 Color oglWrapper::GREEN(124, 225, 24);
@@ -51,9 +49,7 @@ void oglWrapper::drawFillRect(float x, float y, float w, float h,
 	glEnd();
 }
 
-/**
- * Linie przerywane itp.
- */
+/** Linie przerywane itp. */
 void oglWrapper::beginStroke(GLushort attrib) {
 	glEnable(GL_LINE_STIPPLE);
 	glPushAttrib(GL_ENABLE_BIT);

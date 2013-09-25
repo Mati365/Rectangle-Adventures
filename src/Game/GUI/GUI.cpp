@@ -8,9 +8,7 @@
 
 using namespace GUI;
 
-/**
- * Wielce zaawansowany header ;>
- */
+/** Wielce zaawansowany header ;> */
 Mouse GUI::mouse;
 
 bool GUI::isMouseCollision(float x, float y, float w, float h) {

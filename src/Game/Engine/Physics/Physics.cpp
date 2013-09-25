@@ -15,9 +15,7 @@ using namespace Physics;
 
 //---------------------------
 
-/**
- * Odwrócenie kierunku
- */
+/** Odwrocenie kierunku */
 usint Physics::invertDir(usint _dir) {
 	switch (_dir) {
 		case pEngine::DOWN:
@@ -38,9 +36,7 @@ usint Physics::invertDir(usint _dir) {
 	return pEngine::NONE;
 }
 
-/**
- * Vertykalny czy Hpryzontalny
- */
+/** Sprawdzenie czy kierunek jest pionowy */
 bool Physics::isHorizontalDir(usint _dir) {
 	if (_dir == pEngine::LEFT || _dir == pEngine::RIGHT) {
 		return true;
@@ -48,12 +44,7 @@ bool Physics::isHorizontalDir(usint _dir) {
 	return false;
 }
 
-/**
- * Odepchnięcie ciała
- */
-/**
- * Unik
- */
+/** Unik ciala - odepchniecie w przeciwnym kierunku */
 void Physics::dodgeBody(Body* _body, usint _dir, float _speed) {
 	//
 	switch (_dir) {
@@ -91,15 +82,13 @@ pEngine::pEngine(const Rect<float>& _bounds, float _gravity_speed) :
 	quadtree = new QuadTree(nullptr, _bounds, 0);
 }
 
-/**
- * Dodawanie obiektu
- */
+/** Dodawanie obiektu _force_register - rejestruj z ID sila */
 void pEngine::insert(Body* body, bool _force_register) {
 	if (!body) {
 		return;
 	}
 	body->physics = this;
-
+	
 	/** Obiekty statyczne nie sią usuwane w czasie gry */
 	if (_force_register || IS_SET(body->state, Body::STATIC)) {
 		list.push_back(body);
@@ -107,46 +96,34 @@ void pEngine::insert(Body* body, bool _force_register) {
 	quadtree->insert(body);
 }
 
-/**
- * Usuwanie obiektu
- */
+/** Usuwanie obiektu z quadtree */
 bool pEngine::remove(Body* body) {
 	return quadtree->remove(body);
 }
 
-/**
- * Usypianie silnika!
- */
+/** Usypianie silnika miedzy klatkami 'slow motion' */
 void pEngine::setSleep(usint _sleep_time) {
 	sleep_timer.reset();
 	sleep_timer.max_cycles_count = _sleep_time;
 }
 
-/**
- * Sprawdzenie aktywności obiektu!
- */
+/** Test aktywnosci obiektu */
 bool pEngine::isBodyActive(Body* object) {
 	return object->state == Body::NONE;
 }
 
-/**
- * Czy obiekt się porusza?
- */
+/** Czy obiekt w tej chwili sie porusza? */
 bool pEngine::isMoving(Body* body) {
 	return !(body->velocity.x == 0 && body->velocity.y == 0);
 }
 
-/**
- * Aktualizowanie ruchów ciała
- */
+/** Aktualizacja pedu obiektu */
 void pEngine::updateBodyMovement(Body* object) {
 	object->y += object->velocity.y;
 	object->x += object->velocity.x;
 }
 
-/**
- * Popychanie obiektu!
- */
+/** Popychanie obiektu poziomo */
 void pEngine::pushFromObject(Body* source, usint dir) {
 	/** Popychanie obiektów */
 
@@ -156,7 +133,7 @@ void pEngine::pushFromObject(Body* source, usint dir) {
 		/** Prawa kolizja */
 		if (collision && isBodyActive(collision)) {
 			float speed = -source->velocity.x * 0.85f;
-
+			
 			/** Popychanie obiektu */
 			if (abs(collision->velocity.x) < abs(source->velocity.x)) {
 				collision->velocity.x += speed;
@@ -165,14 +142,12 @@ void pEngine::pushFromObject(Body* source, usint dir) {
 	}
 }
 
-/**
- * Odświeżanie świata!
- */
+/** Odswiezanie swiata fizyki */
 void pEngine::updateWorld() {
 	if (IS_SET(config, Flags::PAUSE)) {
 		return;
 	}
-	/** Uśpienie */
+	/** Uspienie */
 	if (sleep_timer.active) {
 		sleep_timer.tick();
 		if (!sleep_timer.active) {
@@ -181,17 +156,17 @@ void pEngine::updateWorld() {
 		return;
 	}
 	
-	/** Usuwanie wykasowanych obiektów! */
+	/** Usuwanie wykasowanych obiektow! */
 	visible_bodies.clear();
-
+	
 	/**
 	 * Tworzenie quadtree!
 	 * Optymalizacja:
-	 * - Odświeżanie tylko widocznych!
+	 * - Odswiezanie tylko widocznych!
 	 */
 	quadtree->update(active_range);
 	quadtree->getBodiesAt(active_range, visible_bodies);
-
+	
 	/** Sprawdzenie kolizji! */
 	checkCollisions(visible_bodies);
 	
@@ -203,7 +178,7 @@ void pEngine::updateWorld() {
 	for (usint i = 0; i < visible_bodies.size(); ++i) {
 		Body* object = visible_bodies[i];
 		
-		/** Żywotność */
+		/** Zywotnosc */
 		if (object->life_timer.active) {
 			object->life_timer.tick();
 			if (!object->life_timer.active) {
@@ -217,7 +192,7 @@ void pEngine::updateWorld() {
 						object) || IS_SET(object->state, Body::FLYING)) {
 			continue;
 		}
-
+		
 		/** Popychanie obiektów */
 		if (!IS_SET(object->state, Body::STATIC)
 				&& abs(object->velocity.x) > 0) {
@@ -231,20 +206,20 @@ void pEngine::updateWorld() {
 				&& (object->velocity.x != 0 || object->velocity.y != 0))) {
 			/** Poruszanie się po platformie */
 			Body* down_collision = object->collisions[DOWN - 1];
-
+			
 			if (down_collision && down_collision->velocity.x != 0) {
 				if (!object->collisions[pEngine::LEFT - 1]
 						&& !object->collisions[pEngine::RIGHT - 1]) {
 					object->x += down_collision->velocity.x;
 				}
 			}
-
-			/** Siła ciążenia */
+			
+			/** Sila ciazenia */
 			if (object->velocity.y < 20.f) {
 				object->velocity.y += gravity_speed;
 			}
-
-			/** Siła tarcia / w locie też chamuje */
+			
+			/** Sila tarcia / w locie tez chamuje */
 			if (abs(object->velocity.x) > 0) {
 				if (down_collision) {
 					object->velocity.x *= down_collision->roughness;
@@ -253,7 +228,7 @@ void pEngine::updateWorld() {
 				}
 			}
 		}
-
+		
 		/** Poruszenie obiektu */
 		updateBodyMovement(object);
 	}
@@ -262,12 +237,12 @@ void pEngine::updateWorld() {
 void pEngine::checkCollisions(deque<Body*>& _bodies) {
 	for (usint i = 0; i < _bodies.size(); ++i) {
 		Body* source = _bodies[i];
-
+		
 		// Czyszczenie
 		for (auto& coll : source->collisions) {
 			coll = nullptr;
 		}
-
+		
 		// Statyszne obiekty są omijane
 		if (!isBodyActive(source)) {
 			continue;
@@ -280,21 +255,17 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 							&& !IS_SET(target->state, Body::STATIC))) {
 				continue;
 			}
-			/**
-			 * Kolizje Góra/ Dół
-			 */
+			
+			/** Kolizje gora/dol */
 			usint horizont_side = checkHorizontalCollision(source, target);
 			if (horizont_side != NONE) {
 				if (!IS_SET(target->state, (Body::HIDDEN | Body::BACKGROUND))) {
 					if (horizont_side == DOWN) {
-						/**
-						 * Dół
-						 */
+						/** Dol */
 						source->y = target->y - source->h - target->velocity.y
 								+ gravity_speed;
-						/**
-						 *
-						 */
+						
+						/** Unoszenie sie ciala wraz z platforma */
 						if (abs(source->velocity.y) < 0) {
 							source->velocity.y = -target->velocity.y;
 						} else {
@@ -302,19 +273,15 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 									+ target->velocity.y;
 						}
 					} else {
-						/**
-						 * Góra
-						 */
+						/** Gora */
 						source->velocity.y = -source->velocity.y * 0.5f;
 					}
 					source->collisions[horizont_side - 1] = target;
 				}
 				source->catchCollision(this, horizont_side, target);
 			}
-
-			/**
-			 * Kolizje Lewo
-			 */
+			
+			/** Kolizje lewo/prawo */
 			usint vertical_side = checkVerticalCollision(source, target);
 			if (vertical_side != NONE) {
 				if (!IS_SET(target->state, (Body::HIDDEN | Body::BACKGROUND))) {
@@ -327,9 +294,7 @@ void pEngine::checkCollisions(deque<Body*>& _bodies) {
 	}
 }
 
-/**
- * Sprawdzenie kolizji w poziomie!
- */
+/** Sprawdzenie kolizji w poziomie! */
 usint pEngine::checkVerticalCollision(Body* _body, Body* _body2) {
 	if (_body2->x <= _body->x
 			&& moveAndCheck(
@@ -355,9 +320,7 @@ usint pEngine::checkVerticalCollision(Body* _body, Body* _body2) {
 	return NONE;
 }
 
-/**
- * Sprawdzenie kolizji w pionie!
- */
+/** Sprawdzenie kolizji w pionie! */
 usint pEngine::checkHorizontalCollision(Body* _body, Body* _body2) {
 	if (_body->x < _body2->x + _body2->w && _body->x + _body->w > _body2->x) {
 		/**
@@ -381,19 +344,21 @@ usint pEngine::checkHorizontalCollision(Body* _body, Body* _body2) {
 	return NONE;
 }
 
+/** Poruszenie ciala po czym test kolizji oraz powrot */
 bool pEngine::moveAndCheck(float _x, float _y, Body* _body,
 		const Body* _body2) {
 	bool collision;
-
+	
 	_body->x += _x;
 	_body->y += _y;
 	collision = collide(_body, _body2);
 	_body->x -= _x;
 	_body->y -= _y;
-
+	
 	return collision;
 }
 
+/** Test kolizji prostokatow */
 bool pEngine::collide(const Body* _body, const Body* _body2) const {
 	if (_body->x + _body->w >= _body2->x && _body->x <= _body2->x + _body2->w
 			&& _body->y + _body->h > _body2->y
@@ -403,9 +368,7 @@ bool pEngine::collide(const Body* _body, const Body* _body2) const {
 	return false;
 }
 
-/**
- * Czyszczenie!
- */
+/* Czyszczenie! */
 pEngine::~pEngine() {
 	safe_delete<QuadTree>(quadtree);
 }

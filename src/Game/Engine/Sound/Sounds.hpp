@@ -12,13 +12,13 @@
 #include "../../Resources/Data/Resources.hpp"
 
 namespace Sound {
-	/** Klasa dźwięku */
+	/** Klasa dzwieku */
 	struct _Sound {
 			Mix_Chunk* chunk;
 			float volume;
 	};
 	
-	/** Odtwarzacz plików wav */
+	/** Odtwarzacz plikow wav */
 	class Player {
 		private:
 			int audio_rate;
@@ -30,7 +30,7 @@ namespace Sound {
 			Player();
 
 		public:
-			/** Wczytywanie pliku wav z systemu plików */
+			/** Wczytywanie pliku wav z systemu plikow */
 			Mix_Chunk* loadSound(const char*);
 
 			/** Odtwarzanie pliku wav */

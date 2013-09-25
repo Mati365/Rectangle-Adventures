@@ -8,9 +8,7 @@
 
 using namespace File;
 
-/**
- *  Przenoszenie zawartości z pliku do innego pliku!
- */
+/** Przenoszenie zawartosci z pliku do innego pliku! */
 bool File::moveBytes(FILE* source, FILE* destination, size_t buffer_size,
 		size_t source_length, size_t source_start_position) {
 	if (!source || !destination || buffer_size == 0 || source_length == 0) {
@@ -35,9 +33,6 @@ bool File::moveBytes(FILE* source, FILE* destination, size_t buffer_size,
 	delete[] buffer;
 	return true;
 }
-/**
- *
- */
 
 ExternalFile::ExternalFile(const char* _path) :
 				path(_path) {
@@ -47,9 +42,7 @@ ExternalFile::ExternalFile(const char* _path) :
 	}
 }
 
-/**
- * Odczyt z archiwum, wpisywanie do osobnego pliku!
- */
+/** Odczyt z archiwum, wpisywanie do osobnego pliku! */
 bool ExternalFile::read(FILE* _file) {
 	if (file) {
 		CLOSE_FILE(file);
@@ -61,9 +54,7 @@ bool ExternalFile::read(FILE* _file) {
 	return true;
 }
 
-/**
- * Zapis do archiwum!
- */
+/** Zapis do archiwum! */
 size_t ExternalFile::write(FILE* _file) {
 	length = IO::getFileLength(file);
 	//

@@ -7,7 +7,6 @@
 
 #ifndef ENGINE_HPP_
 #define ENGINE_HPP_
-
 #include <GL/glew.h>
 #include <GL/gl.h>
 
@@ -68,9 +67,7 @@ struct Vector {
 						y(_y) {
 		}
 		
-		/**
-		 * Odwrócenie wektora!
-		 */
+		/** Odwrocenie wektora! */
 		inline void invert() {
 			x = -x;
 			y = -y;
@@ -93,15 +90,11 @@ struct Vector {
  * Wrapper na podstawowe funkcje OpenGL
  */
 namespace oglWrapper {
-	/**
-	 * Paleta barw
-	 */
+	/** Paleta barw */
 	extern Color RED, DARK_RED, GREEN, DARK_GREEN, BLUE, DARK_BLUE, BLACK,
 			WHITE, GRAY, YELLOW, ORANGE, PURPLE;
 	
-	/**
-	 * Prymitywy!
-	 */
+	/** Prymitywy! */
 	extern void drawRect(float, float, float, float, const Color&, float);
 	extern void drawFillRect(float, float, float, float, const Color&);
 	
@@ -113,31 +106,35 @@ namespace oglWrapper {
 	
 	extern void drawTriangle(float, float, float, float, const Color&, float);
 	
-	/**
-	 * Shadery!
-	 */
+	/** Shadery! */
 	extern usint createShader(usint, const char*);
 	
 	class Shader {
 		private:
 			GLuint program_object;
-			/**
-			 * 3 typy shaderów!
-			 */
+			/** 3 typy shaderow! */
 			GLuint vertex_shader;
 			GLuint fragment_shader; // dawniej pixel shader
 			GLuint geometry_shader;
+
+			/** Test kompilacji */
+			bool compiled;
 
 		public:
 			Shader() :
 							program_object(0),
 							vertex_shader(0),
 							fragment_shader(0),
-							geometry_shader(0) {
+							geometry_shader(0),
+							compiled(true) {
 			}
 			
 			Shader(char*, char*, char*);
 
+			bool isCompiled() const {
+				return compiled;
+			}
+			
 			GLuint getShaderProgram() const {
 				return program_object;
 			}
@@ -157,15 +154,11 @@ namespace oglWrapper {
 				return last_program;
 			}
 			
-			/**
-			 * Wywołuwanie shaderu!
-			 */
+			/** Wywolywanie shaderu! */
 			void begin();
 			void end();
 
-			/**
-			 * Uniformy!
-			 */
+			/** Uniformy! */
 			void setUniform1f(const char*, float);
 			void setUniform2f(const char*, float, float);
 			void setUniform3f(const char*, float, float, float);
@@ -174,29 +167,27 @@ namespace oglWrapper {
 			~Shader();
 
 		protected:
-			void linkShader();
+			bool linkShader();
 	};
 }
 
-/**
- * Silnik graficzny!
- */
+/** Silnik graficzny! */
 namespace Engine {
-	/** Natywna rozdzielczość ekranu */
+	/** Rozdzielczosc ekranu */
 	extern Vector<float> screen_bounds;
 	
 	class Window;
 	class Renderer {
 		public:
 			/**
-			 * Jeśli obiekt został wyłączony
-			 * to zostaje zdjęty ze sceny,
-			 * kasuje go potem obiekt obserwujący
+			 * Jesli obiekt zostal wylczony
+			 * to zostaje zdjety ze sceny,
+			 * kasuje go potem obiekt obserwujacy
 			 */
 			bool destroyed;
 
 			/**
-			 * Jeśli ma obserwatora to nie jest
+			 * Jesli ma obserwatora to nie jest
 			 * kasowany w silniku fizycznym
 			 */
 			bool with_observer;
@@ -214,10 +205,13 @@ namespace Engine {
 			}
 	};
 	/**
-	 * Główne okno aplikacji obsługujące pętle gry!
+	 * Glowne okno aplikacji onslugujace petle gry!
 	 * + Singleton
 	 */
 	extern bool window_opened;
+	extern bool resolution_changed;
+	extern bool with_shaders;
+	
 	class Window {
 		private:
 			SDL_Surface* screen;
@@ -236,14 +230,14 @@ namespace Engine {
 				return win;
 			}
 			
+			/** Wyliczanie natywnej rozdzielczosci ekranu */
+			static Vector<float> getNativeResolution();
+
 			~Window();
 
 		private:
 			/** Instalacja OpenGL */
 			bool setupOpenGL();
-
-			/** Wyliczanie natywnej rozdzielczości ekranu */
-			Vector<float> getNativeResolution();
 	};
 	
 	/** Opcje myszki */

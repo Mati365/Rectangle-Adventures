@@ -10,10 +10,7 @@
 
 //---------------------------------------
 
-/**
- * Wczytywanie do menedżera zasobów
- */
-
+/** Wczytywanie do menedzera zasobow */
 PlatformShape* readShape(const string& _path, const char* _resource_label,
 		float _angle) {
 	FILE* _file = nullptr;
@@ -33,9 +30,7 @@ PlatformShape* readShape(const string& _path, const char* _resource_label,
 	return shape;
 }
 
-/**
- * Wczytywanie do menedżera zasobów
- */
+/** Wczytywanie do menedzera zasobow */
 PlatformShape* registerShape(FILE* _file, const char* _resource_label,
 		float _angle) {
 	if (!_file) {
@@ -46,16 +41,14 @@ PlatformShape* registerShape(FILE* _file, const char* _resource_label,
 	return shape;
 }
 
-/**
- * Pobieranie wskaźnika z menedżera zasobów
- */
+/** Pobieranie wskaznika z menedzera zasobow */
 PlatformShape* getShapePointer(const char* _label) {
 	return dynamic_cast<PlatformShape*>(main_resource_manager.getByLabel(_label));
 }
 
 /**
- * Pobieranie bezpośrednio z systemu plików bez udziału
- * menedżera zasobów
+ * Pobieranie bezposrednio z systemu plikow bez udzialu
+ * menedzera zasobow
  */
 PlatformShape* getShapeFromFilesystem(const char* _path, float _angle) {
 	FILE* _file = main_filesystem.getExternalFile(_path, NULL);
@@ -86,9 +79,7 @@ PlatformShape::PlatformShape(FILE* _file, const char* _label, float _angle) :
 	load(_file);
 }
 
-/**
- * Odświeżanie wymiarów po np. obrocie
- */
+/** Odswiezanie wymiarow */
 void PlatformShape::updateBounds() {
 	bounds.w = bounds.h = 0;
 	//
@@ -111,9 +102,9 @@ void PlatformShape::updateBounds() {
 }
 
 /**
- * Wczytywanie kształtu!
+ * Wczytywanie ksztaltu!
  *
- * Wzór na obrót:
+ * Wzor na obroty:
  * x' = x * cos(angle) - y * sin(angle)
  * y' = x * sin(angle) + y * cos(angle)
  */
@@ -121,12 +112,9 @@ bool PlatformShape::load(FILE* _file) {
 	if (!_file) {
 		return false;
 	}
-	/**
-	 *
-	 */
 	unload();
 	
-	// Odczyt ilości wierzchołków!
+	/** Ilosc wierzcholkow */
 	usint line = 0;
 	fscanf(_file, "%hu\n", &count);
 	if (count == 0) {
@@ -134,7 +122,7 @@ bool PlatformShape::load(FILE* _file) {
 	}
 	points = new Point[count];
 	
-	// Odczytywanie wielkości obiektu!
+	/** Kalkulacja wymiarow i wczytywanie */
 	while (line != count) {
 		char type = ' ';
 		fscanf(_file, "%c", &type);
@@ -180,22 +168,18 @@ bool PlatformShape::load(FILE* _file) {
 	}
 	updateBounds();
 	rotate(angle);
-	/**
-	 * Rekompilacja listy!
-	 */
+	
+	/** Rekompilacja */
 	return recompile();
 }
 
-/**
- * Kompilacja listy!
- */
+/** Kompilacja listy ! */
 bool PlatformShape::recompile() {
 	if (!points || count == 0) {
 		return false;
 	}
 	glDeleteLists(id, 1);
 	
-	// Kompilacja!
 	glNewList(id, GL_COMPILE);
 	glLineWidth(line_width);
 	glColor4ub(main_col.r, main_col.g, main_col.b, main_col.a);
@@ -217,7 +201,7 @@ bool PlatformShape::recompile() {
 						point->col.g,
 						point->col.b,
 						point->col.a);
-				// Wyliczanie średniego koloru
+				/** Wyliczanie barwy */
 				main_col = point->col;
 				break;
 				
@@ -248,9 +232,7 @@ bool PlatformShape::recompile() {
 	return true;
 }
 
-/**
- * Rotacja wokół punktu
- */
+/** Rotacja wokol punktu */
 void PlatformShape::rotate(float _angle) {
 	angle = _angle;
 	//
@@ -274,9 +256,7 @@ void PlatformShape::rotate(float _angle) {
 		}
 	}
 	
-	/**
-	 * Po rotacji wyrównanie punktu do pozycji
-	 */
+	/** Po rotacji wyrownanie */
 	for (usint i = 0; i < count; ++i) {
 		Vector<float>* pos = &points[i].pos;
 		//
@@ -285,9 +265,7 @@ void PlatformShape::rotate(float _angle) {
 	}
 	updateBounds();
 	
-	/**
-	 * Rekompilacja listy
-	 */
+	/** Rekompilacja listy */
 	recompile();
 }
 

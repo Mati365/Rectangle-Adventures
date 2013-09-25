@@ -4,16 +4,13 @@
  *  Created on: 16-03-2013
  *      Author: mati
  */
-//#include <GL/gl.h>
-//#include <GL/glut.h>
 #include "Gameplay.hpp"
+
 #include "Particle/Particle.hpp"
 
 using namespace Gameplay;
 
-/**
- * Główny renderer mapy
- */
+/** Konstruktor */
 MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 				ParalaxRenderer(_hero, DEFAULT_CAM_RATIO),
 				msg(45, Color(0, 128, 255), Color(255, 255, 255), this),
@@ -30,9 +27,7 @@ MapRenderer::MapRenderer(Body* _hero, MapINFO* _map) :
 	resetColorSaturation();
 }
 
-/**
- * Dodawanie tła gry!
- */
+/** Dodawanie parakalksy */
 ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
 		Body* _body, usint _config) {
 	if (map->physics) {
@@ -49,9 +44,7 @@ ParalaxRenderer* MapRenderer::addToParalax(MapINFO* _paralax, float _ratio,
 	return nullptr;
 }
 
-/**
- * Eventy otrzymywane z okna
- */
+/** Eventy otrzymywane z okna */
 void MapRenderer::catchEvent(const Event& _event) {
 	if (!hero) {
 		return;
@@ -91,7 +84,7 @@ void MapRenderer::catchEvent(const Event& _event) {
 void MapRenderer::addWeather(usint _type) {
 	switch (_type) {
 		/**
-		 * Śnieg
+		 * Snieg
 		 */
 		case SNOWING: {
 			SnowEmitter* snow = new SnowEmitter(
@@ -134,9 +127,7 @@ void MapRenderer::addWeather(usint _type) {
 	}
 }
 
-/**
- * Podmienienie mapy buforowej ze zwykłą
- */
+/** Podmiana bufora mapy */
 void MapRenderer::swapBufferMap() {
 	buffer_swap_required = true;
 }
@@ -147,9 +138,7 @@ void MapRenderer::setMap(MapINFO* _map) {
 	shake_timer.reset();
 	shake_timer.active = false;
 	
-	/**
-	 * Ustawienia
-	 */
+	/** Wczytywanie pogody */
 	addWeather(_map->map_weather);
 	ResourceFactory::getInstance(_map->physics).changeTemperatureOfTextures(
 			_map->map_temperature);
@@ -161,9 +150,7 @@ void MapRenderer::setMap(MapINFO* _map) {
 	resetHero();
 }
 
-/**
- * Resetowanie gracza
- */
+/** Reset gracza */
 void MapRenderer::resetHero() {
 	if (!hero || !map) {
 		return;
@@ -183,88 +170,81 @@ void MapRenderer::resetHero() {
 	
 	hero->with_observer = true;
 	
-	map->physics->remove(hero); // dla pewności
+	map->physics->remove(hero); // dla pewnosci
 	map->physics->insert(hero);
 }
 
-/**
- * Ustawienie focusa kamery i bohatera
- */
+/** Ustawienie bohatera i ustawienie focusa kamery */
 void MapRenderer::setHero(Character* _hero) {
 	// Ustawienie nowego gracza
 	hero = _hero;
 	Camera::getFor(hero);
 }
 
-/**
- * Pokazywanie game over
- */
+/** Pokazywanie game over */
 void MapRenderer::showGameOver() {
 	if (hud_enabled && msg.getScreen() != MessageRenderer::DEATH_SCREEN) {
-		/**
-		 * A co jeśli jest może checkpoint?
-		 */
+		/** Reload do checkpointa */
 		if (hero->isCheckpointAvailable()) {
 			hero->recoverFromCheckpoint(map);
 			//
 			resetColorSaturation();
 			shadow_radius = DEFAULT_SHADOW_RADIUS;
 		} else {
-			/**
-			 * Nie ma checkpointu ;(
-			 */
+			/** Nie ma checkpointu ;( */
 			msg.setScreen(MessageRenderer::DEATH_SCREEN);
 		}
 	}
 }
 
-/**
- * Obliczanie współczynnika przesunięcia
- */
+/** Obliczanie wspolczynnika przesuniecia */
 void MapRenderer::calcCameraRatio() {
 	if (!hero) {
 		return;
 	}
 	
-	/** Aby gracz nie wychodził za ekran! */
+	/** Aby gracz nie wychodzil za ekran! */
 	Vector<float> hero_screen_pos = Camera::getFor().getFocusScreenPos();
 	
-	/** odległość max. ruchów gracza na erkanie */
+	/** Odleglosc max. ruchow gracza na ekranie */
 	float go_distance = .75f;
 	
 	if (hero_screen_pos.x > screen_bounds.x * go_distance
 			|| hero_screen_pos.x < screen_bounds.x * (1 - go_distance)
 			|| hero_screen_pos.y > screen_bounds.y * go_distance
 			|| hero_screen_pos.y < screen_bounds.y * (1 - go_distance)) {
-		ratio = 1.f + (1.f - DEFAULT_CAM_RATIO); // z powrotem na środek ekranu
+		ratio = 1.f + (1.f - DEFAULT_CAM_RATIO); // z powrotem na srodek ekranu
 	} else {
 		ratio = DEFAULT_CAM_RATIO;
 	}
 }
 
-/**
- * Rysowanie
- */
+/** Rysowanie */
 void MapRenderer::drawObject(Window* _window) {
 	if (!hero) {
 		return;
 	}
-	/** Obliczenie współczynnika kamery */
+	/** Obliczenie wspolczynnika kamery */
 	calcCameraRatio();
 	
 	/** Konfiguracja shadera */
-	Vector<float> focus_pos = Camera::getFor().getFocusScreenPos();
+	if (with_shaders) {
+		Vector<float> focus_pos = Camera::getFor().getFocusScreenPos();
+		
+		shaders[main_shader_id]->begin();
+		shaders[main_shader_id]->setUniform2f(
+				"center",
+				focus_pos.x,
+				focus_pos.y);
+		shaders[main_shader_id]->setUniform3f(
+				"active_colors",
+				col_saturation[0],
+				col_saturation[1],
+				col_saturation[2]);
+		shaders[main_shader_id]->setUniform1f("radius", shadow_radius);
+	}
 	
-	shaders[main_shader_id]->begin();
-	shaders[main_shader_id]->setUniform2f("center", focus_pos.x, focus_pos.y);
-	shaders[main_shader_id]->setUniform3f(
-			"active_colors",
-			col_saturation[0],
-			col_saturation[1],
-			col_saturation[2]);
-	shaders[main_shader_id]->setUniform1f("radius", shadow_radius);
-	
-	/** Tło */
+	/** Tlo */
 	oglWrapper::drawFillRect(
 			0,
 			0,
@@ -272,15 +252,14 @@ void MapRenderer::drawObject(Window* _window) {
 			screen_bounds.y,
 			Color(8, 8, 8));
 	
-	/**
-	 * Główny rendering mapy - najpierw paralaksa
-	 */
+	/** Glowny rendering mapy - najpierw paralaksa  */
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}
 	ParalaxRenderer::drawObject(_window);
-	
-	shaders[main_shader_id]->end();
+	if (with_shaders) {
+		shaders[main_shader_id]->end();
+	}
 	
 	/**
 	 * Sprawdzenie stanu gracza oraz dopasowanie do niego
@@ -326,15 +305,13 @@ void MapRenderer::drawObject(Window* _window) {
 	} else {
 		resetColorSaturation();
 	}
-	/**
-	 * Elementy HUDu
-	 */
+	
+	/** Elementy HUDu */
 	if (hud_enabled) {
 		msg.drawObject(_window);
 	}
-	/**
-	 * Podmiana buforu - bezpieczniejsza
-	 */
+	
+	/** Podmiana buforu - bezpieczniejsza */
 	if (buffer_swap_required) {
 		setMap(buffer_map);
 		

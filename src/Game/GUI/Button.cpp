@@ -12,7 +12,7 @@ Button::Button(const Rect<float>& _bounds, const char* _text,
 		PlatformShape* _shape, bool _border_enabled, Callback* _callback) :
 				Control(_bounds),
 				text(oglWrapper::WHITE, _text, GLUT_BITMAP_HELVETICA_18, 18),
-				icon(NULL) {
+				icon(nullptr) {
 	border_enabled = _border_enabled;
 	if (_callback) {
 		putCallback(Event::MOUSE_RELEASED, _callback);
@@ -20,16 +20,14 @@ Button::Button(const Rect<float>& _bounds, const char* _text,
 	setIcon(_shape);
 }
 
-/**
- * Ustawienie ikonki
- */
+/** Ikona na przycisku */
 void Button::setIcon(PlatformShape* _shape) {
 	if (_shape) {
 		if (icon) {
 			delete icon;
 		}
 		icon = new IrregularPlatform(x, y, pEngine::NONE, _shape, w);
-		/** Skalowanie do wysokości */
+		/** Skalowanie do wysokosci */
 		while (icon->h > h - 4) {
 			icon->fitToWidth(icon->w - 1.f);
 		}
@@ -38,13 +36,8 @@ void Button::setIcon(PlatformShape* _shape) {
 	}
 }
 
-/**
- * Rysowanie
- */
+/** Rysowanie */
 void Button::drawObject(Window*) {
-	/**
-	 * Nie wymaga optymalizacji!
-	 */
 	switch (control_state) {
 		case NORMAL:
 			if (border_enabled) {

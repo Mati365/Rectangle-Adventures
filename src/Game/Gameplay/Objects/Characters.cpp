@@ -16,26 +16,23 @@
 
 using namespace Gameplay;
 
-/**
- * todo:
- * + Wczytywanie statusu!
+/** Max. ilosc punktow */
+float max_score = 50;
+
+/** Moze kiedys.. haha.. Dorobie te
+ * wczytywanie statusu, ale mi sie nie chce.. ;)
  */
 bool CharacterStatus::load(FILE* _file) {
 	return false;
 }
 
-/**
- * Generowanie krwii
- */
+/** Generowanie eksplozji czasteczek */
 void generateExplosion(pEngine* physics, const Rect<float>& body, usint count,
 		const Color& col, float min_size, float max_size,
 		const Vector<float>& velocity, float life_time, usint state) {
 	float angle;
 	
-	/**
-	 * Generowanie cząsteczek krwii w postaci eksplozji
-	 * Różny promień
-	 */
+	/** Generowanie czasteczek wokol promienia */
 	for (usint i = 0; i < count; ++i) {
 		angle = TO_RAD(getIntRandom<int>(0.f, 360.f));
 		//
@@ -88,23 +85,21 @@ Character::Character(const string& _nick, float _x, float _y,
 				heart_timer(
 						HEART_SHRINK_DURATION,
 						getIntRandom(0, HEART_SHRINK_DURATION)),
-				// Uśpienie
+				// Uspienie - Zzz nad glowa po dluzszym czasie
 				sleep_timer(300),
 				zzz_delay(30) {
 	type = _type;
 	levitation_timer.loop = true;
 	
-	// Uśpienie
+	/** Timer spania obiektu */
 	blood_anim.sleep_beetwen_cycle = 11;
 	heart_timer.sleep_beetwen_cycle = 8;
 	
-	// Checkpoint
+	/** Checkpoint na poczatku planszy powoduje reload mapy */
 	addCheckpoint(true);
 }
 
-/**
- * Uderzenie - zmniejszenie życia
- */
+/** Uderzenie ciala powoduje eksplozje 'soku pomidorowego' z obiektu */
 void Character::hitMe() {
 	ADD_FLAG(action, BLOODING);
 	//
@@ -121,21 +116,16 @@ void Character::hitMe() {
 	SoundManager::getInstance().playResourceSound(SoundManager::SPIKES_SOUND);
 }
 
-/**
- * Eksplozja
- */
+/** Umieranie i przechodzenie do ekranu game over */
 void Character::die() {
 	if (isDead()) {
 		return;
 	}
-	/**
-	 * TRRUP
-	 */
+	
+	/** Nadawanie statusu trupa */
 	status.health = DEATH;
 	
-	/**
-	 * Generowanie eksplozji
-	 */
+	/** Generowanie rozbryzku soku */
 	generateExplosion(
 			physics,
 			static_cast<Rect<float> >(*this),
@@ -145,28 +135,23 @@ void Character::die() {
 			6,
 			Vector<float>(8, 12));
 	
-	/**
-	 * Zmiana kształtu na trup
-	 */
+	/** Wczytywanie czaszki zamiast gracza */
 	float _last_w = w;
 	
 	setShape(getShapePointer("cranium"));
 	fitToWidth(_last_w * 0.6);
 	
-	/**
-	 * Dźwięk śmierci ;_;
-	 */
+	/** Dzwiek smierci - rozbrygu soku */
 	SoundManager::getInstance().playResourceSound(SoundManager::DIE_SOUND);
 }
 
-/**
- * Odblokowywanie spania
- */
+/** A gdy sie komus przysnie.. To Zzz nad glowa musi byc.. */
 void Character::updateSleeping() {
-	// Upływ czasu nieaktywności
+	/** Badanie czy uplyna czas do zasniecia */
 	sleep_timer.tick();
+	
 	if (!sleep_timer.active) {
-		// Emitowanie Zzz
+		/** Emitowanie Zzz */
 		zzz_delay.tick();
 		if (!zzz_delay.active) {
 			addTooltip(
@@ -182,18 +167,14 @@ void Character::updateSleeping() {
 	ADD_FLAG(action, SLEEPING);
 }
 
-/**
- * Resetowanie spania
- */
+/** Nagla pobudka, koniec spania */
 void Character::resetSleeping() {
 	sleep_timer.reset();
 	//
 	UNFLAG(action, SLEEPING);
 }
 
-/**
- * Napis nad graczem
- */
+/** Tooltip - napis nad glowa gracza np. podczas zbierania punktu */
 void Character::addTooltip(const char* _text, const Color& _col,
 		float _x_correction, float _y_correction, usint _life_time,
 		float _speed) {
@@ -206,11 +187,8 @@ void Character::addTooltip(const char* _text, const Color& _col,
 					_speed));
 }
 
-/**
- * Dodawanie checkpointu
- */
+/** Checkpoint, punkt respawnu */
 void Character::addCheckpoint(bool _reload_map) {
-	// Mobom nie potrzeba checkpointów
 	if (type != HERO) {
 		return;
 	}
@@ -222,9 +200,7 @@ void Character::addCheckpoint(bool _reload_map) {
 	//
 	last_checkpoint.last_status.health = MAX_LIVES;
 	
-	/**
-	 * Tooltip musi być xD
-	 */
+	/** Tooltip */
 	if (_reload_map) {
 		addTooltip("-respawn", oglWrapper::RED);
 	} else {
@@ -232,60 +208,54 @@ void Character::addCheckpoint(bool _reload_map) {
 	}
 }
 
-/**
- * Odzyskanie z ostatniego checkpoint'a
- */
+/** Reinkarnacja z ostatniego wczytanego checkpointa */
 void Character::recoverFromCheckpoint(MapINFO* map) {
 	if (type != HERO) {
 		return;
 	}
 	status = last_checkpoint.last_status;
 	
-	// Resetowanie wyglądu
+	/** Reset wygladu */
 	setShape(map->hero_shape);
 	fitToWidth(map->hero_bounds.w);
 	
-	// Resetowanie pozycji
+	/** Reset pozycji */
 	velocity.x = velocity.y = 0;
 	x = status.start_pos.x;
 	y = status.start_pos.y;
 	
-	// Odjąć trza życia i punktów
+	/** Reset statusu */
 	status.score =
-			status.score - MAX_SCORE * 0.1 > 0 ?
-					status.score - MAX_SCORE * 0.1 : 0;
+			status.score - max_score * 0.1 > 0 ?
+					status.score - max_score * 0.1 : 0;
 	status.health -= 1;
 	
 	hitMe();
 }
 
-/**
- * Kolizja gracza
- */
+/** Kolizja z graczem z elementem gry */
 void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
-	/**
-	 * Tylko gracz akceptuje reszte kolizji!
-	 */
+	/** TYLKO GRACZ AKCEPTUJE TE KOLIZJE */
 	if (type != HERO) {
 		return;
 	}
 	
-	// Portale
+	/** Portale */
 	if (body->type == Body::PORTAL) {
 		dynamic_cast<Portal*>(body)->enter(this, dir);
 		return;
 	}
 	
-	// Skrypty
+	/** Skrypty */
 	if (body->type == Body::TRIGGER) {
 		dynamic_cast<Trigger*>(body)->generate();
 		return;
 	}
 	
-	// Reset flag
+	/** Reset flag */
 	UNFLAG(action, CLIMBING);
 	
-	// Akcje gracza
+	/** Akcje gracza */
 	Character* enemy = dynamic_cast<Character*>(body);
 	if (!enemy) {
 		return;
@@ -293,14 +263,14 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 	
 	switch (enemy->type) {
 		/**
-		 * Strefa śmierci ;_;
+		 * Strefa smierci ;_;
 		 */
 		case KILLZONE:
 			status.health = 0;
 			break;
 			
 			/**
-			 * Na lianie tylo w dół!
+			 * Na lianie tylo w dol!
 			 */
 		case LIANE:
 		case LADDER: {
@@ -326,15 +296,15 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 			break;
 			
 			/**
-			 *
+			 * Punkt
 			 */
 		case SCORE: {
 			status += enemy->status;
 			if (status.health > MAX_LIVES) {
 				status.health = MAX_LIVES;
 			}
-			if (status.score > MAX_SCORE) {
-				status.score = MAX_SCORE;
+			if (status.score > max_score) {
+				status.score = max_score;
 			}
 			Color col =
 					*dynamic_cast<IrregularPlatform*>(body)->getShape()->getMainColor();
@@ -359,12 +329,12 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 			break;
 			
 			/**
-			 *
+			 * Wrog
 			 */
 		case ENEMY:
 			if (dir == pEngine::DOWN || dir == pEngine::UP) {
 				body->destroyed = true;
-
+				
 				generateExplosion(
 						physics,
 						*dynamic_cast<Rect<float>*>(body),
@@ -375,7 +345,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 						Vector<float>(8, 12));
 			} else {
 				status += enemy->status;
-
+				
 				enemy->hitMe();
 				hitMe();
 			}
@@ -383,7 +353,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 			break;
 			
 			/**
-			 *
+			 * Pocisk
 			 */
 		case BULLET:
 			status += enemy->status;
@@ -394,7 +364,7 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 			break;
 			
 			/**
-			 *
+			 * Kolce
 			 */
 		case SPIKES:
 			if (body->orientation != invertDir(dir)) {
@@ -417,26 +387,24 @@ void Character::catchPlayerCollision(pEngine* physics, usint dir, Body* body) {
 	}
 }
 
-/**
- * Kolizje wszystkich obiektów
- */
+/** Kolizje dostepne dla wszystkich elementow */
 void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 	if (!body) {
 		return;
 	}
 	/**
-	 * Callbackowe kolizje dla mobów,
-	 * nie wiadomo kto pierwszy odebrał
+	 * Callbackowe kolizje dla mobow,
+	 * nie wiadomo kto pierwszy odebral�
 	 * kolizje gracz czy mob, dlatego
-	 * lepiej upewnić się że np. gracz ją
-	 * dostał
+	 * lepiej upewnic sie ze np. gracz ja
+	 * dostal
 	 */
 	bool is_hero = type == HERO;
 	
 	if (!is_hero) {
 		switch (type) {
 			/**
-			 *
+			 * Kolce
 			 */
 			case SPIKES:
 				if (dir == pEngine::DOWN && orientation == pEngine::DOWN
@@ -446,7 +414,7 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 				break;
 				
 				/**
-				 *
+				 * Wrog
 				 */
 			case ENEMY:
 				if (body->type == HERO) {
@@ -462,15 +430,15 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 		}
 	}
 	
-	// Test martwości
+	/** Test martwosci obiektu */
 	if (isDead()) {
 		return;
 	}
 	
-	// Ginąć może nie tylko gracz
+	/** Ale ginac moze kazdy, nawet mob! */
 	if (dir == pEngine::DOWN && !IS_SET(body->state, Body::HIDDEN)
 			&& (type == Body::HERO || type == Body::ENEMY)) {
-		// Zryte formatowanie
+		/** Giniecie z upadku z wysokosci */
 		if (velocity.y < -7 && status.health > 0) {
 			die();
 			return;
@@ -478,13 +446,11 @@ void Character::catchCollision(pEngine* physics, usint dir, Body* body) {
 		UNFLAG(action, JUMPING);
 	}
 	
-	// Kolizje gracza
+	/** Kolizje gracza */
 	catchPlayerCollision(physics, dir, body);
 }
 
-/**
- * No to obiekt odświeżamy..
- */
+/** Odswiezanie obiektu */
 void Character::updateMe() {
 	if (IS_SET(state, Body::BUFFERED) || IS_SET(state, Body::STATIC)) {
 		return;
@@ -504,20 +470,20 @@ void Character::updateMe() {
 			levitation_timer.tick();
 			
 			/**
-			 * Lewitacja to 1/3 wysokości obiektu
-			 * Obiekt musi być BACKGROUND
-			 * Sinus być chropowaty
+			 * Lewitacja to 1/3 wysokosci obiektu
+			 * Obiekt musi byc BACKGROUND
+			 * Sinus byl chropowaty
 			 */
 			if (levitation_timer.cycles_count
 					>= levitation_timer.max_cycles_count / 2) {
-				// Opdanie
+				/** Opadanie */
 				y =
 						start_pos.y + h / 1.5f
 								- h
 										* ((float) levitation_timer.cycles_count
 												/ (float) levitation_timer.max_cycles_count);
 			} else {
-				// Wznoszenie się
+				/** Wznoszenie sie */
 				y =
 						start_pos.y + h / 1.5f
 								- h
@@ -526,9 +492,7 @@ void Character::updateMe() {
 														/ (float) levitation_timer.max_cycles_count);
 			}
 			
-			/**
-			 * Kurczenie się serca
-			 */
+			/** Kurczenie sie serca */
 			if (factory_type == ResourceFactory::HEALTH) {
 				static float orginal_width =
 						ResourceFactory::getFactoryTemplate(
@@ -540,14 +504,14 @@ void Character::updateMe() {
 					diastole = !diastole; // rozkurcz
 				}
 				
-				// Wyliczanie nowych rozmiarów
+				/** Wyliczanie nowych rozmiarow */
 				float new_width =
 						diastole ?
 								orginal_width - heart_timer.cycles_count :
 								orginal_width - HEART_SHRINK_DURATION
 										+ heart_timer.cycles_count;
 				
-				// Zmiana rozmiaru i centrowanie
+				/** Zmiana rozmiaru i centrowanie */
 				x = start_pos.x + orginal_width / 2 - new_width / 2;
 				fitToWidth(new_width);
 			}
@@ -558,27 +522,27 @@ void Character::updateMe() {
 			 *
 			 */
 		case ENEMY:
-			// A co jeśli kierunku nie ma?
+			/** Jesli nie ma kierunku to losowany jest */
 			if (orientation == pEngine::NONE) {
 				orientation = getIntRandom(
 						(usint) pEngine::RIGHT,
 						(usint) pEngine::LEFT);
 			}
 			
-			// Kolizja!
+			/** Kolizja odwraca wektor ruchu */
 			if (collisions[orientation - 1]) {
 				orientation = invertDir(orientation);
 			}
 			
-			// Ucieczka z przpepaści
+			/** Ucieczka z przepasci */
 			if (!collisions[pEngine::DOWN - 1]) {
 				orientation = invertDir(orientation);
-
+				
 				x -= velocity.x * 2;
 				y -= velocity.y;
 			}
-
-			// Poruszanie się
+			
+			/** Poruszanie sie */
 			switch (orientation) {
 				case pEngine::LEFT:
 					velocity.x = -2.f;
@@ -598,18 +562,14 @@ void Character::updateMe() {
 	}
 }
 
-/**
- * Unik
- */
+/** Odskok, unik */
 void Character::dodge(usint _dir) {
 	dodgeBody(this, _dir, velocity.y * 0.5f);
 	//
 	addTooltip("Ouch!", oglWrapper::WHITE);
 }
 
-/**
- * Skok z określoną prędkością!
- */
+/** Skok */
 void Character::jump(float _y_speed, bool _force) {
 	resetSleeping();
 	//
@@ -627,9 +587,7 @@ void Character::jump(float _y_speed, bool _force) {
 	}
 }
 
-/**
- * Poruszanie się
- */
+/** Poruszanie sie */
 void Character::move(float x_speed, float y_speed) {
 	resetSleeping();
 	//
@@ -645,10 +603,7 @@ void Character::move(float x_speed, float y_speed) {
 	velocity.y += y_speed;
 }
 
-/**
- * Animacja mrugania postaci po kontakcie
- * z wrogiem
- */
+/** Animacja mrugania postaci po kontakcie z wrogiem */
 void Character::updateHitAnim() {
 	blood_anim.tick();
 	if (!blood_anim.active) {
@@ -656,29 +611,24 @@ void Character::updateHitAnim() {
 	}
 }
 
-/**
- * Rysowanie tooltipów
- */
+/** Rendering wszystkich tooltipow */
 void Character::drawTooltips() {
 	if (tooltips.empty()) {
 		return;
 	}
 	
-	/**
-	 * Wyłączanie starego
-	 * shaderu
-	 */
-	GLint last_program = Shader::getLastShader();
-	glUseProgram(0);
+	/** Wylaczenie starego shaderu */
+	GLint last_program;
+	if (with_shaders) {
+		last_program = Shader::getLastShader();
+		glUseProgram(0);
+	}
 	
-	/**
-	 * Gridy lub interatory zbyt
-	 * zmniejszą prędkość
-	 */
+	/** Rendering, iteratory zmniejszaja zbyt wydajnosc */
 	for (usint i = 0; i < tooltips.size();) {
 		_Tooltip& object = tooltips[i];
 		
-		// I przy okazji to odświeżanie
+		/** Odswiezanie pozycji i koloru */
 		object.pos.y += object.speed;
 		
 		if (object.life_timer.active) {
@@ -694,7 +644,7 @@ void Character::drawTooltips() {
 			continue;
 		}
 		
-		// Rysowanie
+		/** Rysowanie */
 		object.text.printText(
 				object.pos.x - object.text.getScreenLength() / 2,
 				object.pos.y);
@@ -702,40 +652,38 @@ void Character::drawTooltips() {
 		++i;
 	}
 	
-	/**
-	 * Przywracanie starego shaderu
-	 */
-	glUseProgram(last_program);
+	/** Przywracanie starego shaderu */
+	if (with_shaders) {
+		glUseProgram(last_program);
+	}
 }
 
-/**
- * Malowanie całego gracza
- */
+/** Rysowanie obiektu */
 void Character::drawObject(Window*) {
-	// Odświeżanie obiektu
+	/** Odswiezanie obiektu */
 	updateMe();
 	
 	//
 	glLineWidth(1.f);
 	if (IS_SET(action, BLOODING)) {
 		updateHitAnim();
-		//
+		
+		/** Animacja uszkodzenia */
 		if (isBlooding()) {
-			/**
-			 * Pobieranie ostatniego shaderu
-			 */
-			GLint last_program = Shader::getLastShader();
+			/** Pobieranie ostatniego shaderu */
+			GLint last_program;
+			if (with_shaders) {
+				last_program = Shader::getLastShader();
+				shaders[HIT_CHARACTER_SHADER]->begin();
+			}
 			
-			shaders[HIT_CHARACTER_SHADER]->begin();
-			//
 			IrregularPlatform::drawObject(nullptr);
-			//
-			shaders[HIT_CHARACTER_SHADER]->end();
 			
-			/**
-			 * Powrót do ostatniego shaderu
-			 */
-			glUseProgram(last_program);
+			/** Przywracanie starego shadera */
+			if (with_shaders) {
+				shaders[HIT_CHARACTER_SHADER]->end();
+				glUseProgram(last_program);
+			}
 		}
 	} else {
 		IrregularPlatform::drawObject(nullptr);

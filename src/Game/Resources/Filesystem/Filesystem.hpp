@@ -23,8 +23,8 @@ typedef unsigned short int usint;
 
 /**
  * UWAGA!
- * + BRAK KOMPRESJII TYPÓW PODSTAWOWYCH: TYLKO TYP EKSPORT/IMPORT PLIKU!
- * + FUNKCJE KOMPRESUJĄCE NIE SĄ UMIESZCZONE TUTAJ(OSOBNE DLL)
+ * + BRAK KOMPRESJII TYPOW PODSTAWOWYCH: TYLKO TYP EKSPORT/IMPORT PLIKU!
+ * + FUNKCJE KOMPRESUJACE NIE SA UMIESZCZONE TUTAJ(OSOBNE DLL)
  *
  * SZKIELET PLIKU:
  * [ header ] [     dane     ] [ pointery ]
@@ -32,7 +32,7 @@ typedef unsigned short int usint;
 namespace Filesystem {
 	
 	/**
-	 * Interfejs serializacji obiektów!
+	 * Interfejs serializacji obiektOw!
 	 * TO NIE PLIK ARCHIWUM!!
 	 */
 	class FilePackage {
@@ -50,7 +50,7 @@ namespace Filesystem {
 	};
 	
 	/**
-	 * Nagłówek pliku!
+	 * Naglowek pliku!
 	 * Flagi nie potrzebne!
 	 */
 	class Header: public FilePackage {
@@ -81,8 +81,8 @@ namespace Filesystem {
 	};
 	
 	/**
-	 * Sekcja konteneru offsetów!
-	 * Wskaźnik na miejsce w sekcji danych.
+	 * Sekcja konteneru offsetOw!
+	 * Wskaznik na miejsce w sekcji danych.
 	 */
 	class PackagePointer: public FilePackage {
 		public:
@@ -106,9 +106,7 @@ namespace Filesystem {
 			}
 	};
 	
-	/**
-	 * Stos wskaźników w archiwum!
-	 */
+	/** Stos wskaznikow w archiwum! */
 	class PointerStack: public FilePackage {
 		public:
 			deque<PackagePointer> pointers;
@@ -125,9 +123,7 @@ namespace Filesystem {
 			virtual size_t getLength();
 	};
 	
-	/**
-	 *  Zarządzanie plikiem archiwum!
-	 */
+	/** Zarzadzanie plikiem archiwum  */
 	class Package: public FilePackage {
 		public:
 			enum Operation {
@@ -137,14 +133,15 @@ namespace Filesystem {
 			};
 
 		protected:
+			/** Info o pliku */
 			FILE* file;
 			char* file_path;
 			size_t length;
-			/**
-			 *
-			 */
+
+			/** Struktura vfs */
 			Header header;
 			PointerStack pointer_stack;
+
 			/**
 			 * Potrzebne dla funkcji:
 			 * + getExternalFile
@@ -158,7 +155,7 @@ namespace Filesystem {
 			/**
 			 * Skakanie po pliku, w razie odczytywania
 			 * pliku NA RAZ w 2 oddzielnych funkcjach
-			 * trzeba resetować wskaźnik pliku!
+			 * trzeba resetowac wskaznik pliku!
 			 */
 			FILE* getExternalFile(const char*, size_t*);
 			char* getExternalFileContent(const char*);
@@ -203,11 +200,10 @@ namespace Filesystem {
 			}
 			
 		private:
-			// Szkielet archiwum!
+			/** Generowanie pustego szkieletu */
 			bool createSkel();
-			/**
-			 * Operacje wejścia/wyjścia!
-			 */
+
+			/** Operacje wejscia/wyjscia! */
 			bool readObject(const char*, FilePackage*);
 			bool writeObject(const char*, FilePackage*);
 			bool deleteObject(const char*);

@@ -33,10 +33,7 @@ namespace Gameplay {
 	using namespace GUI;
 	
 	class Camera {
-			/**
-			 * Focus będzie bardziej na
-			 * dole ekranu
-			 */
+			/** Focus bedzie bardziej na dole ekranu */
 #define Y_SPACE 100
 			
 		private:
@@ -46,16 +43,14 @@ namespace Gameplay {
 			/** Czy scrollowanie do focusa? */
 			bool scrolling;
 
-			/** Timer oglądania obiektu */
+			/** Timer ogladania obiektu */
 			_Timer look_timer;
 
 		public:
-			/**
-			 * Pozycja kamery to nie pozycja względem krawędzi!!
-			 */
+			/** Pozycja kamery to nie pozycja wzgledem krawedzi!! */
 			Camera(Body*);
 
-			/** Odświeżanie pocycji kamery */
+			/** Odswizanie pocycji kamery */
 			void updateCam(Window*);
 
 			/** Ustawienie focusa */
@@ -70,7 +65,7 @@ namespace Gameplay {
 				scrolling = false;
 			}
 			
-			/** Pobieranie pozycji względem krawędzi okna */
+			/** Pobieranie pozycji wzgledem krawedzi okna */
 			Vector<float> getFocusScreenPos();
 
 			Body* getFocus() {
@@ -92,9 +87,7 @@ namespace Gameplay {
 			}
 	};
 	
-	/**
-	 * Renderer paralaxy
-	 */
+	/** Renderer paralaxy */
 	class ParalaxRenderer: public Renderer, public IntroBackground {
 		public:
 			/** Konfiguracja renderera */
@@ -109,20 +102,20 @@ namespace Gameplay {
 			/** Konfiguracja */
 			usint config;
 
-			/** Mapa do głównego renderowania */
+			/** Mapa do glownego renderowania */
 			MapINFO* map;
 
 			/**
-			 * Statycznych obiektów jest mniej
-			 * AllocKiller nie powinien zmniejszyć
-			 * wydajności
+			 * Statycznych obiektow jest mniej
+			 * AllocKiller nie powinien zmniejszyc
+			 * wydajnosci
 			 */
 			deque<AllocKiller<Body> > static_objects;
 
 			/** Kamera */
 			float ratio;
 
-			/** Timer potrząsania */
+			/** Timer potrzasania */
 			_Timer shake_timer;
 
 		public:
@@ -133,7 +126,7 @@ namespace Gameplay {
 			/** Element statyczny np. element interface'u  */
 			void addStaticObject(Body*);
 
-			/** Potrząsanie ekranem */
+			/** Potrzasanie ekranem */
 			void shake();
 
 			/** Ustawienie konfiguracji */
@@ -166,9 +159,7 @@ namespace Gameplay {
 			}
 	};
 	
-	/**
-	 * Główny renderer mapy!
-	 */
+	/** Glowny renderer mapy */
 	class MapRenderer: public ParalaxRenderer, public EventListener {
 #define DEFAULT_SHADOW_RADIUS 230
 #define DEFAULT_CAM_RATIO .95f
@@ -188,22 +179,22 @@ namespace Gameplay {
 			/** Rzutowanie z paralaxy */
 			Character* hero;
 
-			/** Paralaxy za główną mapą */
+			/** Paralaxy za glowna mapa */
 			deque<ParalaxRenderer*> paralax_background;
 
 			/** Hud w menu jest zablokowany */
 			bool hud_enabled;
 
-			/** Główny shader renderu */
+			/** Glowny shader renderu */
 			usint main_shader_id;
 
-			/** Promień cienia wokół kamery */
+			/** Promien cienia wokol kamery */
 			float shadow_radius;
 
-			/** Nasycenie kolorów w shaderze */
+			/** Nasycenie kolorow w shaderze */
 			float col_saturation[3];
 
-			/** mapa zastępcza podczas ładowania */
+			/** Mapa buforowana podczas ekranu smierci */
 			MapINFO* buffer_map;
 
 			/** Zamiana mapy po narysowaniu klatki */
@@ -218,19 +209,19 @@ namespace Gameplay {
 			/** Dodawanie paralaksy */
 			ParalaxRenderer* addToParalax(MapINFO*, float, Body*, usint = 0);
 
-			/** Włączanie HUDu */
+			/** Wlaczenie HUDu */
 			void enableHUD(bool _hud_enabled) {
 				hud_enabled = _hud_enabled;
 			}
 			
-			/** Ustawienie głównego shaderu */
+			/** Ustawienie glownego shaderu */
 			void setMainShader(usint _main_shader_id) {
 				main_shader_id = _main_shader_id;
 			}
 			
 			/**
 			 * Ustawienie mapy buforowanej do
-			 * wczytywania nowych poziomów
+			 * wczytywania nowych poziomow
 			 */
 			void swapBufferMap();
 
@@ -246,7 +237,7 @@ namespace Gameplay {
 			/** Wczytywanie mapy */
 			void setMap(MapINFO*);
 
-			/** Resetowanie głównego gracza */
+			/** Resetowanie glownego gracza */
 			void resetHero();
 
 			/** Pogoda */
@@ -256,7 +247,7 @@ namespace Gameplay {
 			/** Game over */
 			void showGameOver();
 
-			/** Metoda przesłonięta! */
+			/** Metoda przeslonieta! */
 			virtual Character* getHero() {
 				return hero;
 			}
@@ -274,7 +265,7 @@ namespace Gameplay {
 				col_saturation[1] = col_saturation[2] = 1.f;
 			}
 			
-			/** Obliczanie współczynnika przesunięcia */
+			/** Obliczanie współczynnika przesuniecia */
 			void calcCameraRatio();
 	};
 }

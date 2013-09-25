@@ -14,12 +14,11 @@
 #include "../../Tools/Converter.hpp"
 
 /**
- * TO JEST OSOBNA CZĘŚĆ NIE POWIĄZANA
- * Z SYSTEMEM PLIKÓW!!!
+ * TO JEST OSOBNA CZESC NIE POWIAZANA
+ * Z SYSTEMEM PLIKOW!
  * ------------------------
- * Menedżer zasobów gry. Tutaj
- * będą lądować plansze, 'modele'
- * i skrypty
+ * Menedzer zasobow przechowuje modele itp.
+ * i zarzadza nimi
  */
 class Resource {
 	protected:
@@ -60,9 +59,7 @@ class Resource {
 
 class ResourceManager {
 	private:
-		/**
-		 * 1 argument - group ID
-		 */
+		/** 1 argument - group ID */
 		deque<Resource*> resources;
 		usint counter;
 
@@ -71,9 +68,7 @@ class ResourceManager {
 						counter(1) {
 		}
 		
-		/**
-		 * Zwracanie identyfikatoru
-		 */
+		/** Zwracanie identyfikatoru */
 		usint addResource(Resource* _res) {
 			resources.push_back(_res);
 			_res->setResourceID(counter++);
@@ -81,9 +76,7 @@ class ResourceManager {
 			return counter;
 		}
 		
-		/**
-		 * Zwracanie identyfikatora
-		 */
+		/** Zwracanie identyfikatora */
 		usint getID(const char* _str) {
 			Resource* res = getByLabel(_str);
 			if (res) {
@@ -92,9 +85,7 @@ class ResourceManager {
 			return 0;
 		}
 		
-		/**
-		 * Zwracanie całego obiektu po label'u!
-		 */
+		/** Zwracanie calego obiektu po label'u! */
 		Resource* getByLabel(const char* _str) {
 			for (auto& res : resources) {
 				if (strcmp(res->getLabel(), _str) == 0) {
@@ -104,9 +95,7 @@ class ResourceManager {
 			return nullptr;
 		}
 		
-		/**
-		 * Pobieranie elementów
-		 */
+		/** Pobieranie elementow */
 		Resource* operator[](usint _id) {
 			return getByID(_id);
 		}
@@ -120,9 +109,7 @@ class ResourceManager {
 			return nullptr;
 		}
 		
-		/**
-		 * Kasowanie zasobu - wolne
-		 */
+		/** Kasowanie zasobu - wolne */
 		bool deleteResource(usint _id) {
 			for (usint i = 0; i < resources.size(); ++i) {
 				Resource* res = resources[i];
@@ -135,7 +122,7 @@ class ResourceManager {
 			return false;
 		}
 		
-		/** Kasowanie niedobitków */
+		/** Kasowanie niedobitkow */
 		~ResourceManager() {
 			usint count = 0;
 			for (auto& obj : resources) {

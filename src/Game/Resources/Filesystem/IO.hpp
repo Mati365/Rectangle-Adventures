@@ -12,9 +12,7 @@
 
 class IO {
 	public:
-		/**
-		 * Zapisywanie binarnie!
-		 */
+		/** Zapisywanie binarnie! */
 		template<typename T>
 		static bool write(FILE* file, const T& variable) {
 			if (!file) {
@@ -23,9 +21,7 @@ class IO {
 			fwrite(&variable, sizeof(variable), 1, file);
 			return true;
 		}
-		/**
-		 *
-		 */
+		
 		template<typename T>
 		static bool write(const char* path, const T& variable) {
 			FILE* file = fopen(path, "wb+");
@@ -36,21 +32,16 @@ class IO {
 			fclose(file);
 			return true;
 		}
-		/**
-		 * Zapisywanie string!
-		 */
+		
+		/** Zapisywanie string! */
 		static bool writeString(FILE*, const char*);
 
 		static bool writeString(const char*, const char*);
 
-		/**
-		 * Wielkość string'u zapisywanego do pliku!
-		 */
+		/** Wielkosc string'u zapisywanego do pliku! */
 		static int stringLength(const char*);
 
-		/**
-		 * Odczyt
-		 */
+		/** Odczyt */
 		template<typename T>
 		static T read(FILE* file) {
 			T type;
@@ -73,33 +64,22 @@ class IO {
 			return type;
 		}
 		
-		/**
-		 * Odczytywanie string!
-		 */
+		/** Odczytywanie string! */
 		static const char* readString(FILE*);
 
 		static const char* readString(const char*);
 
-		/**
-		 *
-		 */
+		/** Pobieranie zawartosci pliku */
 		static char* getFileContent(const char*);
 
 		static char* getFileContent(FILE*, size_t);
 
-		/**
-		 *
-		 */
+		/** Czy plik istnieje? */
 		static bool fileExists(const char*);
 
-		/**
-		 *
-		 */
+		/** Pobieranie rozmiaru pliku */
 		static size_t getFileLength(FILE*);
 
-		/**
-		 *
-		 */
 		static size_t getFileLength(const char*);
 };
 

@@ -12,9 +12,7 @@ SnowEmitter::SnowEmitter(const Rect<float>& _pos) :
 				ParticleEmitter(_pos, 50) {
 }
 
-/**
- * Rysowanie pojedynczej cząsteczki..
- */
+/** Rysowanie */
 bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	Particle& particle = particles[_index];
 	
@@ -51,9 +49,7 @@ bool SnowEmitter::drawParticle(usint _index, Window* _window) {
 	return true;
 }
 
-/**
- * Tworzenie cząsteczki..
- */
+/** Tworzenie czasteczki.. */
 void SnowEmitter::createNewParticle(Window* _window) {
 	for (usint i = 0; i < getIntRandom(2, (int) (50 * (50.f / (float) delay)));
 			++i) {

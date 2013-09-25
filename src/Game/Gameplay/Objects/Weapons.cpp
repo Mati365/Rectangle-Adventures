@@ -8,9 +8,7 @@
 
 #include "../../Resources/Data/SoundManager.hpp"
 
-/**
- * Konstruktor pocisku
- */
+/** Konstruktor */
 Bullet::Bullet(float _x, float _y, const Vector<float>& _direction,
 		PlatformShape* _shape, usint _max_flight_distance, usint _orientation,
 		const CharacterStatus& _status) :
@@ -31,13 +29,11 @@ Bullet::Bullet(float _x, float _y, const Vector<float>& _direction,
 	}
 }
 
-/**
- * Rysowanie pocisku
- */
+/** Rysowanie pocisku */
 void Bullet::drawObject(Window*) {
 	velocity = direction;
 	/**
-	 * Pocisk musi lecieć prosto bo fizyka spowoduje
+	 * Pocisk musi leciec prosto bo fizyka spowoduje
 	 * jego opadanie
 	 */
 	if (orientation == pEngine::UP || orientation == pEngine::DOWN) {
@@ -54,9 +50,7 @@ void Bullet::drawObject(Window*) {
 	Character::drawObject(NULL);
 }
 
-/**
- * Event pocisku
- */
+/** Event pocisku  */
 void Bullet::catchCollision(pEngine* _physics, usint _dir, Body* body) {
 	if (IS_SET(body->state, Body::HIDDEN)
 			|| IS_SET(body->state, Body::BACKGROUND)) {
@@ -64,9 +58,9 @@ void Bullet::catchCollision(pEngine* _physics, usint _dir, Body* body) {
 	}
 	/**
 	 * Bugfix!
-	 * + Nieraz przy stykaniu się pocisku
-	 * z graczem pocisk wyparowywał zanim
-	 * dał callback do gracza!
+	 * + Nieraz przy stykaniu sie pocisku
+	 * z graczem pocisk wyparowywal� zanim
+	 * dal callback do gracza!
 	 */
 	destroyed = true;
 	if (body && !body->destroyed) {
@@ -74,10 +68,7 @@ void Bullet::catchCollision(pEngine* _physics, usint _dir, Body* body) {
 	}
 }
 
-/**
- * Emitter pocisków
- */
-
+/** Emitter pociskow */
 Gun::Gun(pEngine* _physics, float _x, float _y, PlatformShape* _gun_shape,
 		initializer_list<PlatformShape*> _bullet_shapes, usint _shot_delay) :
 				IrregularPlatform(_x, _y, Body::NONE, _gun_shape),
@@ -87,16 +78,12 @@ Gun::Gun(pEngine* _physics, float _x, float _y, PlatformShape* _gun_shape,
 	setBulletsShape(_bullet_shapes);
 }
 
-/**
- * Wystrzał następuje ze środka!
- */
+/** Wystrzal pocisku */
 void Gun::shot() {
 	if (!physics) {
 		return;
 	}
-	/**
-	 * Podział ze względu na orientację!
-	 */
+	/** Podzial ze wzgledu na orientacje emitera */
 	PlatformShape* shape = bullet_shapes[orientation - 1];
 	const CharacterStatus& bullet_status =
 			ResourceFactory::factory_status[ResourceFactory::BULLET].character_status;
@@ -163,6 +150,7 @@ void Gun::shot() {
 	SoundManager::getInstance().playResourceSound(SoundManager::GUN_SHOT_SOUND);
 }
 
+/** Rysowanie emittera */
 void Gun::drawObject(Window*) {
 	shot_delay.tick();
 	if (!shot_delay.active) {

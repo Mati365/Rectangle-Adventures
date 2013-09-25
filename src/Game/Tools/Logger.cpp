@@ -40,7 +40,7 @@ void Logger::logOperation(usint type, const string& log, const string& file,
 		if (!log.empty()) {
 			buffer += file + "::" + function + " -> " + log;
 			//
-			cout << buffer << endl;
+			//cout << buffer << endl;
 		}
 #endif
 	} else {

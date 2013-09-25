@@ -6,8 +6,6 @@
  */
 #include "Event.hpp"
 
-/**
- * Zmienne namespace'a
- */
+/** Zmienne namespace'a */
 Vector<usint> mouse;
 

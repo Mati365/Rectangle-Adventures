@@ -11,9 +11,7 @@
 
 #include "../../Tools/Logger.hpp"
 
-/**
- * Konstruktor
- */
+/** Konstruktor */
 Platform::Platform(float _x, float _y, float _w, float _h, const Color& _col,
 		usint _state) :
 				Body(_x, _y, _w, _h),
@@ -29,9 +27,7 @@ Platform::Platform(float _x, float _y, float _w, float _h, const Color& _col,
 	}
 }
 
-/**
- * Odświeżanie ruchu platformy
- */
+/** Odswiezenie ruchu platformy */
 bool Platform::updatePlatform() {
 	if (max_distance.x != 0 || max_distance.y != 0) {
 		{
@@ -58,16 +54,12 @@ bool Platform::updatePlatform() {
 	return false;
 }
 
-/**
- * Wyłączenie poruszania się!
- */
+/** Wylaczenie ruchu */
 void Platform::disableMoving() {
 	max_distance.x = max_distance.y = 0;
 }
 
-/**
- * Ścieżka poruszania się
- */
+/** Wytyczanie ruchu */
 void Platform::setMovingDir(const Vector<float>& _velocity,
 		const Vector<float>& _distance, bool _repeat_movement) {
 	velocity = _velocity;
@@ -77,21 +69,17 @@ void Platform::setMovingDir(const Vector<float>& _velocity,
 	state = Body::FLYING;
 }
 
-/**
- * Typ zamalowania
- */
+/** Typ zamalowania platformy */
 void Platform::setFillType(usint _fill_type) {
 	fill_type = _fill_type;
 	
-	// Tarcie dla lodowej
+	/** Tarcie dla lodowej */
 	if (fill_type == ICY) {
 		roughness = 0.94f;
 	}
 }
 
-/**
- * Ustawienie obramowania!
- */
+/** Typ obramowania platformy */
 void Platform::setBorder(bool top, bool right, bool down, bool left) {
 	border[pEngine::UP - 1] = top;
 	border[pEngine::RIGHT - 1] = right;
@@ -99,12 +87,10 @@ void Platform::setBorder(bool top, bool right, bool down, bool left) {
 	border[pEngine::LEFT - 1] = left;
 }
 
+/** Rysowanie obramowania */
 void Platform::drawBorder() {
 	bool gradient = (fill_type != Type::NONE);
 	
-	/**
-	 * Obramowanie!
-	 */
 	glColor4ub(col.r, col.g, col.b, col.a);
 	glLineWidth(gradient ? 4 : 3);
 	
@@ -155,10 +141,8 @@ void Platform::drawBorder() {
 		
 		glEnd();
 	}
-	/**
-	 * Śnieg pokrywający platformę
-	 * w zależności od jej typu
-	 */
+	
+	/** Sniego pokrywa platforme */
 	if (fill_type == ICY) {
 		glLineWidth(5);
 		glBegin(GL_LINE_STRIP);
@@ -201,9 +185,7 @@ void Platform::drawBody() {
 	
 	glEnd();
 	
-	/**
-	 * Kreski w środku
-	 */
+	/** Kreski w srodku */
 	glLineWidth(line_stroke + 1);
 	switch (fill_type) {
 		
@@ -240,7 +222,7 @@ void Platform::drawBody() {
 			break;
 			
 			/**
-			 *  Ukośne!
+			 *  Ukosne!
 			 */
 		case DIAGONAL:
 			glBegin(GL_LINES);
@@ -299,7 +281,7 @@ void Platform::drawBody() {
 			break;
 			
 			/**
-			 *  Alpha w środku!
+			 *  Alpha w srodku!
 			 */
 		case FILLED:
 			oglWrapper::drawFillRect(x, y, w, h, col);
@@ -307,10 +289,7 @@ void Platform::drawBody() {
 	}
 }
 
-/**
- * Aby zoptymalizować wyświetlanie statycznych
- * obiektów muszą być listy!
- */
+/** Kompilowanie platform w celu optymalizacji */
 void Platform::compileList() {
 	glDeleteLists(list, 1);
 	glNewList(list, GL_COMPILE);
@@ -321,19 +300,13 @@ void Platform::compileList() {
 	glEndList();
 }
 
+/** Rysowanie platformy */
 void Platform::drawObject(Window*) {
-	/**
-	 * oglWrapper nie wykorzystywany!
-	 * Mała wydajność!
-	 *
-	 */
 	if (updatePlatform() || !IS_SET(state, STATIC)) {
 		drawBorder();
 		drawBody();
 	} else {
-		/**
-		 * Szybsze dla statycznych platform!
-		 */
+		/** Szybsze dla statycznych platform! */
 		glCallList(list);
 	}
 }
@@ -364,9 +337,7 @@ void IrregularPlatform::setShape(PlatformShape* _shape) {
 	shape = _shape;
 }
 
-/**
- * Dostosuj proporcje do szerokości!
- */
+/** Dostosuj proporcje do szerokosci! */
 void IrregularPlatform::setScale(float _scale) {
 	if (!shape) {
 		return;
@@ -383,19 +354,12 @@ void IrregularPlatform::fitToWidth(float _w) {
 	setScale(_w / shape->getBounds().w);
 }
 
-/**
- * Narysuj!
- */
+/** Rysowanie krzywej platformy */
 void IrregularPlatform::drawObject(Window*) {
-	/**
-	 * Odświeżanie kształtu - mógła zostać podmieniona
-	 * temperatura!
-	 */
+	/** Odswiezanie platformy */
 	updatePlatform();
 	
-	/**
-	 * Rysowanie
-	 */
+	/** Rendering */
 	glPushMatrix();
 	glTranslatef(x, y, 1);
 	

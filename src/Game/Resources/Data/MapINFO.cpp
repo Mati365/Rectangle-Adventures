@@ -11,6 +11,9 @@
 #include "../../Tools/Converter.hpp"
 #include "../../Tools/Logger.hpp"
 
+#include <iostream>
+using namespace std;
+
 ///////////////////////////////////////
 
 bool loadMap(const char* path, MapINFO* map, usint _open_config) {
@@ -42,10 +45,8 @@ MapINFO* loadMap(const char* path, usint _open_config) {
 	return map;
 }
 
-/**
- * Wczytywanie mob'a
- */
-bool readMob(FILE* file) {
+/** Wczytywanie moba */
+Body* readMob(FILE* file) {
 	usint type;
 	usint orientation;
 	usint script_id;
@@ -63,26 +64,26 @@ bool readMob(FILE* file) {
 			&script_id,
 			&state);
 	//
-	Body* body = ResourceFactory::getInstance(NULL).createObject(
+	Body* body = ResourceFactory::getInstance(nullptr).createObject(
 			type,
 			pos.x,
 			pos.y,
 			0,
 			0,
-			NULL,
-			NULL,
+			nullptr,
+			nullptr,
 			orientation,
 			state);
 	//
 	body->script_id = script_id;
-	return true;
+	return body;
 }
 
 /**
- * Błąd projektowy:
- * + MUSI ISTNIEĆ TYLKO 1 AKTYWNY OBIEKT
- * BO WCZYTYWANE SĄ NOWE KOMPLETY TEKSTUR
- * Może kiedyś się to naprawi ;)
+ * Blad projektowy:
+ * + MUSI ISTNIEC TYLKO 1 AKTYWNY OBIEKT
+ * BO WCZYTYWANE SA NOWE KOMPLETY TEKSTUR
+ * MOZE KIEDYS SIE TO NAPRAWI ;)
  */
 
 MapINFO::MapINFO(const char* _label) :
@@ -104,7 +105,7 @@ MapINFO::MapINFO(const char* _label) :
 void MapINFO::readHeader(FILE* map) {
 	char shape[256];
 	
-	/** Wczytywanie ustawień mapy */
+	/** Wczytywanie ustawien mapy */
 	fscanf(map, "%hu %hu", &map_temperature, &map_weather);
 	
 	/** Przestrzeganie konfiguracji! */
@@ -116,7 +117,7 @@ void MapINFO::readHeader(FILE* map) {
 		map_temperature = ResourceFactory::TextureTemperature::NEUTRAL;
 	}
 	
-	/** Wczytywanie pozycji początkowej gracza */
+	/** Wczytywanie pozycji poczatkowej gracza */
 	fscanf(
 			map,
 			"%f %f %f %s\n",
@@ -138,7 +139,7 @@ void MapINFO::readHeader(FILE* map) {
 }
 
 /**
- * Wczytywanie listy kształtów:
+ * Wczytywanie listy ksztaltow:
  * + Wczytywanie do resources
  * + w funkcji unload wywalane!
  */
@@ -146,14 +147,14 @@ void MapINFO::readShapes(FILE* map) {
 	char path[256];
 	usint size;
 	
-	/** Wczytywanie listy kształtów */
+	/** Wczytywanie listy ksztaltow */
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
 		fscanf(map, "%s\n", path);
 		
-		/** Domyślny kąt to 0* */
+		/** Domyslny kat to 0* */
 		PlatformShape* _shape = readShape(path, path, 0);
-		_shape->setLineWidth(3.f); // lepiej wygląda
+		_shape->setLineWidth(3.f); // lepiej wyglada
 				
 		resources.push_back( { _shape->getResourceID(), path });
 	}
@@ -171,15 +172,12 @@ void MapINFO::readPlatforms(FILE* map) {
 	Color col;
 	usint size = 0, state = 0, layer = 0;
 	
-	/**
-	 * Poruszanie się platformy
-	 */
+	/** Poruszanie sie platformy */
 	Vector<float> max_distance;
 	Vector<float> velocity;
 	usint repeat_movement;
-	/**
-	 * Kształt
-	 */
+	
+	/** Ksztalt */
 	usint fill_type;
 	usint with_shape;
 	usint script_id;
@@ -189,7 +187,7 @@ void MapINFO::readPlatforms(FILE* map) {
 	
 	deque<Body*> objects;
 	
-	// Wczytywanie parametrów graficznych platform..
+	/** Wczytywanie platform */
 	fscanf(map, "%hu\n", &size);
 	
 	for (usint i = 0; i < size; ++i) {
@@ -220,16 +218,11 @@ void MapINFO::readPlatforms(FILE* map) {
 				&with_shape,
 				shape);
 		//
-		Platform* platform = NULL;
+		Platform* platform = nullptr;
 		
-		/**
-		 * Wczytywanie kształtu
-		 */
+		/** Wczytywanie ksztaltu */
 		if (with_shape) {
-			/**
-			 * Wyszukiwanie nie powtarzającego się identyfikatora
-			 * tekstury!
-			 */
+			/** Wyszukiwanie nie powtarzajacego sie identyfikatora textury! */
 			usint _resource_id = 0;
 			for (auto& res : resources) {
 				if (strcmp(res.label, shape) == 0) {
@@ -237,11 +230,9 @@ void MapINFO::readPlatforms(FILE* map) {
 				}
 			}
 			
-			/**
-			 * Platforma niereguralna - kształt
-			 */
+			/** Tworzenie platformy niereguralnej */
 			platform = new IrregularPlatform(rect.x, rect.y, state,
-			// Bugfix: Stara mapa w pamięci może mieć tą samą teksturę!
+			// Bugfix: Stara mapa w pamieci moze miec ta sama teksture!
 					dynamic_cast<PlatformShape*>(main_resource_manager.getByID(
 							_resource_id)));
 			
@@ -250,18 +241,14 @@ void MapINFO::readPlatforms(FILE* map) {
 			
 			__platform->fitToWidth(rect.w);
 		} else {
-			/**
-			 * Normalna platforma
-			 */
+			/** Platforma nrmalna */
 			platform = new Platform(rect.x, rect.y, rect.w, rect.h, col, state);
 			
 			platform->setBorder(border[0], border[1], border[2], border[3]);
 			platform->setFillType(fill_type);
 		}
 		
-		/**
-		 * Warstwa obiektu
-		 */
+		/** Warstwa obiektu */
 		platform->layer = layer;
 		platform->script_id = script_id;
 		
@@ -272,15 +259,11 @@ void MapINFO::readPlatforms(FILE* map) {
 			platform->setMovingDir(velocity, max_distance, repeat_movement);
 		}
 		platform->compileList();
-//
 		objects.push_back(platform);
 	}
 	PROGRESS_LOADING();
-//
-	
-	/**
-	 * Wyliczanie wymiarów planszy
-	 */
+
+	/** Wyliczanie wymiarow planszy */
 	Rect<float> max;
 	for (auto& obj : objects) {
 		float _x = obj->x + obj->w;
@@ -296,9 +279,7 @@ void MapINFO::readPlatforms(FILE* map) {
 	//
 	PROGRESS_LOADING();
 
-	/**
-	 * Dodawanie elementów
-	 */
+	/** Dodawanie elementow */
 	safe_delete<pEngine>(physics);
 	physics = new pEngine(bounds, 0.6f);
 	
@@ -310,25 +291,29 @@ void MapINFO::readPlatforms(FILE* map) {
 }
 
 /**
- * Wczytywanie mobów i skryptów:
- * + Korzystają z fabryki
+ * Wczytywanie mobow i skryptow:
+ * + Korzystaja z fabryki
  */
 void MapINFO::readMobsAndTriggers(FILE* map) {
 	char shape[256];
 	usint size;
 	Rect<float> rect(0, 0, 0, 0);
 	
-	/**
-	 * Wczytywanie mobów!
-	 */
+	/** Wczytywanie mobow! */
+	usint _max_score = 0;
+
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
-		readMob(map);
+		Character* _body = dynamic_cast<Character*>(readMob(map));
+		if (_body && _body->getStatus()->score > 0) {
+			_max_score += _body->getStatus()->score;
+		}
+	}
+	if(_max_score > 1) {
+		max_score = _max_score;
 	}
 	
-	/**
-	 * Wczytywanie skryptów!
-	 */
+	/** Wczytywanie skryptow! */
 	fscanf(map, "%hu\n", &size);
 	for (usint i = 0; i < size; ++i) {
 		memset(shape, 0, 256 * sizeof(char));
@@ -341,13 +326,13 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 				&rect.h,
 				shape);
 		//
-		ResourceFactory::getInstance(NULL).createObject(
+		ResourceFactory::getInstance(nullptr).createObject(
 				ResourceFactory::SCRIPT_BOX,
 				rect.x,
 				rect.y,
 				rect.w,
 				rect.h,
-				NULL,
+				nullptr,
 				shape,
 				pEngine::NONE);
 	}
@@ -357,7 +342,7 @@ void MapINFO::readMobsAndTriggers(FILE* map) {
 
 /**
  *  Opis zapisu platformy:
- *  [obramowanie] [typ zamalowania] [pętla ruchu 0:1] [to_x] [to_y] [speed_x] [speed_y] [flag] [4 kolory] [level] [ksztalt 0:1] [nazwa ksztaltu]
+ *  [obramowanie] [typ zamalowania] [petla ruchu 0:1] [to_x] [to_y] [speed_x] [speed_y] [flag] [4 kolory] [level] [ksztalt 0:1] [nazwa ksztaltu]
  *
  *  Opis zapisu moba:
  *  [typ] [x] [y] [dodatkowy argument np. tekst do intro]
@@ -374,7 +359,7 @@ bool MapINFO::load(FILE* map) {
 	readShapes(map);
 	readPlatforms(map);
 	
-	// Inicjacja fizyki!
+	/** Inicjacja fizyki! */
 	ResourceFactory::getInstance(physics);
 	
 	readMobsAndTriggers(map);
@@ -383,22 +368,20 @@ bool MapINFO::load(FILE* map) {
 	return true;
 }
 
-/**
- * Usuwanie wszystkiego co wczytane!
- */
+/** Usuwanie wszystkiego co wczytane! */
 void MapINFO::unload() {
-	// Usuwanie kształtów! Woolne!
+	/** Usuwanie ksztaltow wolneeee! */
 	for (auto& res_id : resources) {
 		if (!main_resource_manager.deleteResource(res_id.id)) {
 			logEvent(
 					Logger::LOG_WARNING,
-					"BUG! Nie mogę skasować zasobu - możliwy memoryleak!");
+					"BUG! Nie moge skasowac ksztaltu! Mozliwy mem. leak!");
 		}
 	}
 	ResourceFactory::getInstance(NULL).unload();
 	
-	// Kasowanie fizyki razem z obiektami!
+	/** Kasowanie fizyki razem z obiektami! */
 	safe_delete<pEngine>(physics);
 	
-	logEvent(Logger::LOG_INFO, "Pomyślnie usunięto mapę!");
+	logEvent(Logger::LOG_INFO, "Wywalilem mape!");
 }
