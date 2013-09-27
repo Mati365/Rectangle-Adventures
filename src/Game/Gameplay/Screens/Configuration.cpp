@@ -15,60 +15,98 @@ string Configuration::supported_resolutions[] = {
 													"1024 x 768 32bit",
 													"Natywna" };
 
+/** Obssugiwane sterowania */
+string Configuration::supported_controls[] = { "WSAD", "Strzalki" };
+
 Configuration::Configuration() :
+				/** Lista rozdzialek */
 				resolution_list(
 						Rect<float>(
-								screen_bounds.x / 2 - 100,
+								screen_bounds.x / 2 - 205,
 								screen_bounds.y / 2 - 50,
 								200,
 								100),
 						this),
+				res_list_tooltip(
+						oglWrapper::WHITE,
+						"Rozdzielczosc ekranu:",
+						GLUT_BITMAP_HELVETICA_18,
+						18),
+
+				/** Lista kontrolek */
+				controls_list(
+						Rect<float>(
+								screen_bounds.x / 2 + 5,
+								screen_bounds.y / 2 - 5,
+								200,
+								55),
+						this),
+				controls_list_tooltip(
+						oglWrapper::WHITE,
+						"Sterowanie:",
+						GLUT_BITMAP_HELVETICA_18,
+						18),
+
+				/** Zatwierdzenie */
 				enter(
 						Rect<float>(
 								screen_bounds.x / 2 - 50,
 								screen_bounds.y - 150,
 								100,
 								40),
-						"Graj!"),
-				res_list_tooltip(
-						oglWrapper::WHITE,
-						"Rozdzielczosc ekranu:",
-						GLUT_BITMAP_HELVETICA_18,
-						18) {
+						"Graj!") {
 	
 	for (usint i = 0; i < 4; ++i) {
 		resolution_list.addListItem(supported_resolutions[i]);
+		if (i < 2) {
+			controls_list.addListItem(supported_controls[i]);
+		}
 	}
 	enter.putCallback(Event::MOUSE_RELEASED, this);
 }
 
 /** Callback od przyciskow! */
 void Configuration::getCallback(Control* const & obj) {
-	string selected = resolution_list.getSelectedItem();
+	string res_selected = resolution_list.getSelectedItem();
 	
-	if (selected == "Natywna") {
+	/** Zmiana rozdzielczosci */
+	if (res_selected == "Natywna") {
 		screen_bounds.x = screen_bounds.y = 0;
 	} else {
 		sscanf(
-				selected.c_str(),
+				res_selected.c_str(),
 				"%f x %f 32bit",
 				&screen_bounds.x,
 				&screen_bounds.y);
 	}
-	resolution_changed = true;
+	window_config.putConfig(WindowConfig::RESOLUTION_CHANGED, true);
+
+	/** Zmiana sterowania */
+	window_config.putConfig(
+			WindowConfig::WSAD_CONTROLS,
+			controls_list.getSelectedItem() == "WSAD");
 }
 
 /** Event z okna */
 void Configuration::catchEvent(const Event& event) {
 	resolution_list.catchEvent(event);
+	controls_list.catchEvent(event);
+
 	enter.catchEvent(event);
 }
 
+/** Rysowanie z tooltipem */
+void Configuration::drawWithTooltip(SelectList* list, glText* tooltip) {
+	tooltip->printText(
+			list->x + list->w / 2 - tooltip->getScreenLength() / 2,
+			list->y - 20);
+	list->drawObject(nullptr);
+}
+
+/** Rendering */
 void Configuration::drawObject(Window*) {
-	res_list_tooltip.printText(
-			screen_bounds.x / 2 - res_list_tooltip.getScreenLength() / 2,
-			resolution_list.y - 40);
-	resolution_list.drawObject(nullptr);
+	drawWithTooltip(&resolution_list, &res_list_tooltip);
+	drawWithTooltip(&controls_list, &controls_list_tooltip);
 
 	enter.drawObject(nullptr);
 }

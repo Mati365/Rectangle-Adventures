@@ -29,7 +29,8 @@ void loadShadersPack() {
 	for (usint i = 0; i < HIT_CHARACTER_SHADER + 1; ++i) {
 		if (!shaders[i]->isCompiled()) {
 			logEvent(Logger::LOG_INFO, "Shadery nie skompilowane!");
-			with_shaders = false;
+
+			window_config.putConfig(WindowConfig::WITH_SHADERS, false);
 			return;
 		}
 	}

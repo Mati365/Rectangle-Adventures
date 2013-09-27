@@ -228,7 +228,7 @@ void MapRenderer::drawObject(Window* _window) {
 	calcCameraRatio();
 	
 	/** Konfiguracja shadera */
-	if (with_shaders) {
+	if (window_config.flag[WindowConfig::WITH_SHADERS]) {
 		Vector<float> focus_pos = Camera::getFor().getFocusScreenPos();
 		
 		shaders[main_shader_id]->begin();
@@ -250,14 +250,14 @@ void MapRenderer::drawObject(Window* _window) {
 			0,
 			screen_bounds.x,
 			screen_bounds.y,
-			Color(8, 8, 8));
+			Color(3, 3, 3));
 	
 	/** Glowny rendering mapy - najpierw paralaksa  */
 	for (usint i = 0; i < paralax_background.size(); ++i) {
 		paralax_background[i]->drawObject(_window);
 	}
 	ParalaxRenderer::drawObject(_window);
-	if (with_shaders) {
+	if (window_config.flag[WindowConfig::WITH_SHADERS]) {
 		shaders[main_shader_id]->end();
 	}
 	

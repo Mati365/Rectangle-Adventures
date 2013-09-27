@@ -28,7 +28,10 @@ MapINFO* LevelManager::loadNextMap() {
 	/** Wczytywanie nowej mapy */
 	if (actual_map + 1 < MAP_COUNT) {
 		actual_map++;
+	} else {
+		openEnding();
 	}
+
 	MapINFO* buffer = reloadMap();
 	
 	/** Obiekt dynamicznie alokowany */

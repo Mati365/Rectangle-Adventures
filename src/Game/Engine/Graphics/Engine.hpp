@@ -208,9 +208,30 @@ namespace Engine {
 	 * Glowne okno aplikacji onslugujace petle gry!
 	 * + Singleton
 	 */
-	extern bool window_opened;
-	extern bool resolution_changed;
-	extern bool with_shaders;
+	struct WindowConfig {
+			enum {
+				WINDOW_OPENED,
+				RESOLUTION_CHANGED,
+				WITH_SHADERS,
+				WSAD_CONTROLS
+			};
+
+			/** Flagi okna */
+			bool flag[WITH_SHADERS + 1];
+
+			WindowConfig() {
+				for (usint i = 0; i < WITH_SHADERS + 1; ++i) {
+					flag[i] = false;
+				}
+			}
+
+			/** Dodawanie configu */
+			void putConfig(usint type, bool value) {
+				flag[type] = value;
+			}
+	};
+
+	extern WindowConfig window_config;
 	
 	class Window {
 		private:

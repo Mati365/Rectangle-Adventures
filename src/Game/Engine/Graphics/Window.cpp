@@ -19,9 +19,7 @@ using namespace GUI;
 Vector<float> Engine::screen_bounds;
 
 /** Czy okno jest otwarte? */
-bool Engine::window_opened = true;
-bool Engine::resolution_changed = false;
-bool Engine::with_shaders = true;
+WindowConfig Engine::window_config;
 
 /** Flagi glownej petli gry */
 
@@ -50,12 +48,16 @@ Window::Window(const string& _title) :
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
 	/** Wyliczanie rozdzielczosci ekranu */
-	screen_bounds.x = 640;
-	screen_bounds.y = 480;
+	screen_bounds.x = 1024;
+	screen_bounds.y = 768;
 	
 	/** Natywna rozdzielczosc */
 	native_resolution = Window::getNativeResolution();
 	
+	/** Flagi okna */
+	window_config.putConfig(WindowConfig::WINDOW_OPENED, true);
+	window_config.putConfig(WindowConfig::WITH_SHADERS, true);
+
 	/** Tworzenie okna */
 	screen = SDL_SetVideoMode(
 			screen_bounds.x,
@@ -99,9 +101,9 @@ void Window::init() {
 	//
 	glText frame_count(oglWrapper::WHITE, "");
 #endif
-	while (window_opened) {
+	while (window_config.flag[WindowConfig::WINDOW_OPENED]) {
 		/** Zmiana rozdzielczosci */
-		if (resolution_changed) {
+		if (window_config.flag[WindowConfig::RESOLUTION_CHANGED]) {
 			SDL_FreeSurface(screen);
 			if (screen_bounds.x == 0 || screen_bounds.y == 0) {
 				screen_bounds = native_resolution;
@@ -118,11 +120,11 @@ void Window::init() {
 			setupOpenGL();
 			if (!menu) {
 				loadScreens();
-				if (with_shaders) {
+				if (window_config.flag[WindowConfig::WITH_SHADERS]) {
 					loadShadersPack();
 				}
 			}
-			resolution_changed = false;
+			window_config.putConfig(WindowConfig::RESOLUTION_CHANGED, false);
 		}
 #ifndef BENCHMARK
 		int frame_start = SDL_GetTicks();
@@ -145,19 +147,30 @@ void Window::init() {
 						break;
 						
 					case SDL_QUIT:
-						window_opened = false;
+						window_config.putConfig(
+								WindowConfig::WINDOW_OPENED,
+								false);
 						break;
 				}
 			}
 		}
 		Uint8 *keystate = SDL_GetKeyState(NULL);
 		if (keystate[SDLK_ESCAPE]) {
-			window_opened = false;
+			window_config.putConfig(WindowConfig::WINDOW_OPENED, false);
 		}
 		if (active_screen) {
-			translateKeyEvent(keystate, SDLK_w, 'w', key, game);
-			translateKeyEvent(keystate, SDLK_a, 'a', key, game);
-			translateKeyEvent(keystate, SDLK_d, 'd', key, game);
+			if (window_config.flag[WindowConfig::WSAD_CONTROLS]) {
+				/** WSAD */
+				translateKeyEvent(keystate, SDLK_w, 'w', key, game);
+				translateKeyEvent(keystate, SDLK_a, 'a', key, game);
+				translateKeyEvent(keystate, SDLK_d, 'd', key, game);
+			} else {
+				/** Strzalki */
+				translateKeyEvent(keystate, SDLK_UP, 'w', key, game);
+				translateKeyEvent(keystate, SDLK_LEFT, 'a', key, game);
+				translateKeyEvent(keystate, SDLK_RIGHT, 'd', key, game);
+			}
+
 			translateKeyEvent(keystate, SDLK_SPACE, '*', key, game);
 		}
 		
@@ -193,7 +206,7 @@ void Window::init() {
 	}
 	//
 	unloadScreens();
-	if (with_shaders) {
+	if (window_config.flag[WindowConfig::WITH_SHADERS]) {
 		unloadShadersPack();
 	}
 }
@@ -231,7 +244,7 @@ bool Window::setupOpenGL() {
 	if (!GL_ARB_vertex_shader || !GL_ARB_fragment_shader) {
 		logEvent(Logger::LOG_ERROR, "Brak obslugi shaderow!");
 		//
-		with_shaders = false;
+		window_config.putConfig(WindowConfig::WITH_SHADERS, false);
 	}
 	
 	return true;

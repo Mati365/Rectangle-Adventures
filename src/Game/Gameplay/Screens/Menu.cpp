@@ -91,7 +91,7 @@ void Menu::getCallback(Control* const & control) {
 					/**
 					 * Koniec gry
 					 */
-					Engine::window_opened = false;
+					window_config.putConfig(WindowConfig::WINDOW_OPENED, false);
 					break;
 			}
 			break;

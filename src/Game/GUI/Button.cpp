@@ -41,14 +41,33 @@ void Button::drawObject(Window*) {
 	switch (control_state) {
 		case NORMAL:
 			if (border_enabled) {
+				glColor3f(1.f, 1.f, 1.f);
+
+				glLineWidth(3.f);
+				glBegin(GL_LINE_STRIP);
+
+				glVertex2f(x, y);
+				glVertex2f(x + w, y);
+				glVertex2f(x + w, y + h);
+
+				glEnd();
+
 				oglWrapper::beginStroke(0xAAAA);
-				oglWrapper::drawRect(x, y, w, h, oglWrapper::WHITE, 2);
+				glLineWidth(2.f);
+				glBegin(GL_LINE_STRIP);
+
+				glVertex2f(x + w, y + h);
+				glVertex2f(x, y + h);
+				glVertex2f(x, y);
+
+				glEnd();
 				oglWrapper::endStroke();
 			}
 			if (old_state != control_state) {
 				text.setColor(oglWrapper::WHITE);
 			}
 			break;
+
 			/**
 			 *
 			 */

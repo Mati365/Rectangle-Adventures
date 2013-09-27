@@ -57,8 +57,6 @@ void SoundManager::loadSoundsPack() {
 
 /** Odtwarzanie dzwiekow po identyfikatorze */
 void SoundManager::playResourceSound(usint _id) {
-	return;
-	
 	if (sounds.empty()) {
 		loadSoundsPack();
 	}

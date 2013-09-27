@@ -45,7 +45,7 @@ void ParalaxRenderer::drawObject(Window* _window) {
 	/** Odswiezanie fizyki */
 	pEngine* physics = map->physics;
 	if (!physics->getList()->empty()) {
-		if (with_shaders) {
+		if (window_config.flag[WindowConfig::WITH_SHADERS]) {
 			physics->setActiveRange(
 					Rect<float>(
 							cam.getFocus()->x - DEFAULT_SHADOW_RADIUS

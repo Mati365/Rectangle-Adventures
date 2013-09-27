@@ -619,7 +619,7 @@ void Character::drawTooltips() {
 	
 	/** Wylaczenie starego shaderu */
 	GLint last_program;
-	if (with_shaders) {
+	if (window_config.flag[WindowConfig::WITH_SHADERS]) {
 		last_program = Shader::getLastShader();
 		glUseProgram(0);
 	}
@@ -653,7 +653,7 @@ void Character::drawTooltips() {
 	}
 	
 	/** Przywracanie starego shaderu */
-	if (with_shaders) {
+	if (window_config.flag[WindowConfig::WITH_SHADERS]) {
 		glUseProgram(last_program);
 	}
 }
@@ -672,7 +672,7 @@ void Character::drawObject(Window*) {
 		if (isBlooding()) {
 			/** Pobieranie ostatniego shaderu */
 			GLint last_program;
-			if (with_shaders) {
+			if (window_config.flag[WindowConfig::WITH_SHADERS]) {
 				last_program = Shader::getLastShader();
 				shaders[HIT_CHARACTER_SHADER]->begin();
 			}
@@ -680,7 +680,7 @@ void Character::drawObject(Window*) {
 			IrregularPlatform::drawObject(nullptr);
 			
 			/** Przywracanie starego shadera */
-			if (with_shaders) {
+			if (window_config.flag[WindowConfig::WITH_SHADERS]) {
 				shaders[HIT_CHARACTER_SHADER]->end();
 				glUseProgram(last_program);
 			}

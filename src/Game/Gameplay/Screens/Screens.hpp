@@ -35,24 +35,12 @@ namespace GameScreen {
 			}
 	};
 	
-	/** Aktywne ekrany  */
-	class Game;
-	class Menu;
-	class Splash;
-	class Configuration;
-	
-	extern Game* game; // okno gameplay
-	extern Menu* menu; // menu gry
-	extern Splash* splash; // splash
-	extern Configuration* config; // Konfiguracja grafy
-	
-	extern Screen* active_screen;
-	
 	/**
 	 * Wczytywanie ekranow musi byv
 	 * PO wczytaniu systemu plikow!
 	 */
 	void openConfig();
+	void openEnding();
 	
 	void loadScreens();
 	void unloadScreens();
@@ -174,13 +162,22 @@ namespace GameScreen {
 	class Configuration: public Screen, public Callback {
 		private:
 			static string supported_resolutions[];
+			static string supported_controls[];
 
-			/** Lista rozdzielczości */
+			/** Lista rozdzielczosci */
 			SelectList resolution_list;
-			Button enter;
 
 			/** Tekst nad rozdizelczoscami */
 			glText res_list_tooltip;
+
+			/** Lista dostepnych sterowan */
+			SelectList controls_list;
+
+			/** Tekst nad rozdizelczoscami */
+			glText controls_list_tooltip;
+
+			/** Zatwierdzenie konfiguracji */
+			Button enter;
 
 		public:
 			Configuration();
@@ -192,7 +189,49 @@ namespace GameScreen {
 
 			/** Callback od przyciskow! */
 			void getCallback(Control* const &);
+
+		private:
+			/** Rysowanie z tooltipem */
+			void drawWithTooltip(SelectList*, glText*);
 	};
+
+	/** Zakonczenie gry */
+	class Ending: public Screen, public Callback {
+		private:
+			/** Napisy koncowe */
+			static string credits[];
+
+			/** Pojedynczy napis */
+			glText credit_tooltip;
+			glText author_tooltip;
+
+			/** Pozycja w unoszeniu się w górę */
+			int position;
+
+			/** Wyjscie */
+			Button exit;
+
+		public:
+			Ending();
+
+			virtual void drawObject(Window*);
+
+			/** Event z okna */
+			virtual void catchEvent(const Event&);
+
+			/** Callback od przyciskow! */
+			void getCallback(Control* const &);
+
+	};
+
+	/** Aktywne ekrany  */
+	extern Game* game; // okno gameplay
+	extern Menu* menu; // menu gry
+	extern Splash* splash; // splash
+	extern Configuration* config; // Konfiguracja grafy
+	extern Ending* ending; // Zakonczenie
+
+	extern Screen* active_screen;
 }
 
 #endif /* SCREENS_HPP_ */
