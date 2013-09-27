@@ -11,6 +11,8 @@
 #include "../../Resources/Data/ResourceManager.hpp"
 #include "../../Resources/Data/SoundManager.hpp"
 
+#include "../LevelManager.hpp"
+
 using namespace GameScreen;
 
 Menu::Menu() :
@@ -63,13 +65,32 @@ void Menu::getCallback(Control* const & control) {
 					/**
 					 * Kontynuacja gry
 					 */
+					importSave();
+
+					game = new Game();
+					game->getMapRenderer()->addToParalax(
+							loadMap("parallax_1.txt", MapINFO::WITHOUT_HERO),
+							0.45f,
+							game->getMapRenderer()->getHero(),
+							ParalaxRenderer::PARALLAX
+									| ParalaxRenderer::ROTATION
+									| ParalaxRenderer::DRAW_QUAD);
+
+					LevelManager::getInstance().setActualMap(
+							SaveManager::getInstance().getSave()->stats[Save::LAST_LEVEL_INDEX]);
+					/**
+					 * Nowa gra
+					 */
+					active_screen = splash;
+					splash->endTo(game);
+
 					SDL_Delay(200);
 					break;
 					
 				case 1: {
 					safe_delete<Game>(game);
 					game = new Game();
-					
+
 					game->getMapRenderer()->addToParalax(
 							loadMap("parallax_1.txt", MapINFO::WITHOUT_HERO),
 							0.45f,

@@ -11,9 +11,6 @@
 #include "../../Tools/Converter.hpp"
 #include "../../Tools/Logger.hpp"
 
-#include <iostream>
-using namespace std;
-
 ///////////////////////////////////////
 
 bool loadMap(const char* path, MapINFO* map, usint _open_config) {

@@ -28,10 +28,21 @@ MapINFO* LevelManager::loadNextMap() {
 	/** Wczytywanie nowej mapy */
 	if (actual_map + 1 < MAP_COUNT) {
 		actual_map++;
+
+		/** Savey */
+		SaveManager& save = SaveManager::getInstance();
+		Character* hero = game->getMapRenderer()->getHero();
+
+		save.getSave()->stats[Save::POINTS] += hero->getStatus()->score;
+		save.getSave()->stats[Save::LAST_LEVEL_INDEX] = actual_map;
+
+		exportSave();
 	} else {
+		/** Koniec gry */
 		openEnding();
 	}
 
+	/** Reload mapy */
 	MapINFO* buffer = reloadMap();
 	
 	/** Obiekt dynamicznie alokowany */

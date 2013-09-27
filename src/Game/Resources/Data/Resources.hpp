@@ -79,7 +79,7 @@ class MapINFO: public Resource {
 
 		/**
 		 * Platform jest duzo, AllocKiller
-		 * zwolnil� by to niemilosiernie
+		 * zwolnil by to niemilosiernie
 		 */
 		struct MapResource {
 				usint id;

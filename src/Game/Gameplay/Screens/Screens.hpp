@@ -203,7 +203,6 @@ namespace GameScreen {
 
 			/** Pojedynczy napis */
 			glText credit_tooltip;
-			glText author_tooltip;
 
 			/** Pozycja w unoszeniu się w górę */
 			int position;

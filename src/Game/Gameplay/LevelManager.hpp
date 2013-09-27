@@ -37,6 +37,14 @@ class LevelManager {
 			return manager;
 		}
 		
+		/** Ustawienie mapy */
+		void setActualMap(int _actual_map) {
+			actual_map = _actual_map;
+
+			/** Reload mapy */
+			reloadMap();
+		}
+
 		/**
 		 * Zwraca NULL'a jesli koniec,
 		 * jesli koniec to napisy końcowe

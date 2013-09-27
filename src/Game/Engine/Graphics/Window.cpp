@@ -25,7 +25,7 @@ WindowConfig Engine::window_config;
 
 #define FPS 16
 //#define BENCHMARK
-#define FULLSCREEN
+//#define FULLSCREEN
 
 /** Konwersja Uint8 do char */
 void translateKeyEvent(Uint8* keystate, Uint16 key, char translated,

@@ -55,7 +55,7 @@ const char* IO::readString(const char* path) {
 }
 
 char* IO::getFileContent(const char* _path) {
-	FILE* file = fopen(_path, "rb");
+	FILE* file = fopen(_path, "r");
 	//
 	char* content = getFileContent(file, 0);
 	if (content) {

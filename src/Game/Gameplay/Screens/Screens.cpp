@@ -40,7 +40,7 @@ void GameScreen::loadScreens() {
 			400,
 			readShape("iluzja_trojkat.txt", "iluzja_trojkat.txt", 33.f));
 	*/
-	active_screen = splash;
+	active_screen = menu;
 }
 
 /** Koniec gry */

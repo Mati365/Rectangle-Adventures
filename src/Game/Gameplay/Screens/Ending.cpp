@@ -16,17 +16,39 @@ using namespace GameScreen;
 
 /** Napisy koncowe */
 string Ending::credits[] = {
-								"Rect Adventures",
+								"++Rect Adventures++",
+								"",
 								"Udzwiekowanie:",
 								"Mati365",
+								"",
 								"Choreografia:",
 								"Mati365",
+								"",
 								"Kostiumy:",
 								"Mati365",
+								"",
 								"Programowanie:",
 								"Mati365",
+								"",
 								"Koszenie trawy:",
 								"Mati365",
+								"",
+								"Scenariusz:",
+								"Mati365",
+								"",
+								"Oswietlenie:",
+								"Mati365",
+								"",
+								"Grafika:",
+								"Mati365",
+								"",
+								"Skryptowanie:",
+								"Mati365",
+								"",
+								"Tworzenie poziomow:",
+								"Mati365",
+								"",
+								"----------------",
 								"Specjalnie na konkurs interaktywny 2013!" };
 
 Ending::Ending() :
@@ -36,11 +58,6 @@ Ending::Ending() :
 						"",
 						GLUT_BITMAP_HELVETICA_18,
 						18),
-				author_tooltip(
-						oglWrapper::WHITE,
-						"",
-						GLUT_BITMAP_HELVETICA_12,
-						12),
 				position(0),
 
 				/** Wyjscie */
@@ -62,13 +79,13 @@ void Ending::catchEvent(const Event& event) {
 void Ending::drawObject(Window*) {
 	/** Czy napis powinien sie zatrzymac? */
 	float begin_position = screen_bounds.y - position;
-	if (begin_position > 50) {
+	if (begin_position > -16 * 24) {
 		position += 2.f;
 	}
 
 	/** Rendering */
-	for (usint i = 0; i < 12; ++i) {
-		glText* credit = (i % 2) ? &author_tooltip : &credit_tooltip;
+	for (usint i = 0; i < 34; ++i) {
+		glText* credit = &credit_tooltip;
 
 		credit->setString(credits[i], -1);
 		credit->printText(
