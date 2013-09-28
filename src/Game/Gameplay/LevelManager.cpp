@@ -6,6 +6,8 @@
  */
 #include "LevelManager.hpp"
 
+#include "../Resources/Data/SoundManager.hpp"
+
 string levels[3] { "mapa4.txt", "mapa2.txt", "mapa.txt" };
 
 /** Konstruktor */

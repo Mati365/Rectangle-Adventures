@@ -61,7 +61,14 @@ Ending::Ending() :
 				position(0),
 
 				/** Wyjscie */
-				exit(Rect<float>(0, 0, 100, 40), "Wyjdz") {
+				exit(Rect<float>(0, 0, 100, 40), "Wyjdz"),
+
+				/** Ilosc punktow */
+				total_score(
+						oglWrapper::ORANGE,
+						"",
+						GLUT_BITMAP_HELVETICA_18,
+						18) {
 	create();
 }
 
@@ -94,6 +101,17 @@ void Ending::drawObject(Window*) {
 				screen_bounds.x / 2 - credit->getScreenLength() / 2,
 				screen_bounds.y + (i + 1) * 24 - position);
 	}
+
+	total_score.setString(
+			"Zdobyles: "
+					+ Convert::toString<usint>(
+							game->getHero()->getStatus()->score * 10)
+					+ "pkt :)",
+			-1);
+
+	total_score.printText(
+			screen_bounds.x / 2 - total_score.getScreenLength() / 2,
+			screen_bounds.y + 34 * 25 - position);
 
 	/** Wyjscie */
 	exit.y = screen_bounds.y - exit.h - 5;

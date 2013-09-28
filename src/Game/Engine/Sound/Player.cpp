@@ -54,8 +54,8 @@ Mix_Chunk* Player::loadSound(const char* label) {
 /**
  * Odtwarzanie pliku wav
  */
-void Player::playChunk(Mix_Chunk* sound, float volume) {
-	int channel = Mix_PlayChannel(-1, sound, 0);
+void Player::playChunk(Mix_Chunk* sound, float volume, bool loop) {
+	int channel = Mix_PlayChannel(-1, sound, loop ? -1 : 0);
 	if (channel == -1) {
 		fprintf(stderr, "Nie mogę odtworzyć dźwięku: %s\n", Mix_GetError());
 	} else {

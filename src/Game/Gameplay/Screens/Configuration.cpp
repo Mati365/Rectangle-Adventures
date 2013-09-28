@@ -10,10 +10,10 @@ using namespace GameScreen;
 
 /** Obssugiwane rozdzialki */
 string Configuration::supported_resolutions[] = {
-													"640 x 480 32bit",
-													"800 x 600 32bit",
-													"1024 x 768 32bit",
-													"Natywna" };
+													"640 x 480 32bit :>",
+													"800 x 600 32bit :)",
+													"1024 x 768 32bit :|",
+													"Natywna ;(" };
 
 /** Obssugiwane sterowania */
 string Configuration::supported_controls[] = { "WSAD", "Strzalki" };

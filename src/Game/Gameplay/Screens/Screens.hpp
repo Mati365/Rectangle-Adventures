@@ -203,6 +203,9 @@ namespace GameScreen {
 			/** Wyjscie */
 			Button exit;
 
+			/** Zdobyte punkty */
+			glText total_score;
+
 		public:
 			Ending();
 

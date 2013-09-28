@@ -29,7 +29,9 @@ class SoundManager {
 			SPIKES_SOUND,
 			EARTH_QUAKE_SOUND_1, // trzesienie ziemi
 			EARTH_QUAKE_SOUND_2, // trzesienie ziemi
-			DIE_SOUND
+			DIE_SOUND,
+			BACKGROUND_SOUND_1,
+			BACKGROUND_SOUND_2
 		};
 
 		/** Informacje o zasobach */
@@ -57,7 +59,7 @@ class SoundManager {
 		 * + Wczytywanie paczki dzwiekow jesli
 		 * sound jest pusty!
 		 */
-		void playResourceSound(usint);
+		void playResourceSound(usint, bool = false);
 
 		/** Zwalnianie Playera */
 		~SoundManager();

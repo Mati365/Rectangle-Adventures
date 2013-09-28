@@ -7,6 +7,7 @@
 #include <sys/time.h>
 
 #include "../../Gameplay/Screens/Screens.hpp"
+#include "../../Resources/Data/SoundManager.hpp"
 
 #include "../../Tools/Logger.hpp"
 
@@ -128,6 +129,8 @@ void Window::init() {
 				}
 			}
 			window_config.putConfig(WindowConfig::RESOLUTION_CHANGED, false);
+			SoundManager::getInstance().playResourceSound(
+					SoundManager::BACKGROUND_SOUND_1, true);
 		}
 #ifndef BENCHMARK
 		int frame_start = SDL_GetTicks();

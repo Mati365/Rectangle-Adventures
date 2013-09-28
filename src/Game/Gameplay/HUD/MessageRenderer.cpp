@@ -27,7 +27,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 				title(_title_color, "", GLUT_BITMAP_HELVETICA_18, 18),
 				border_color(255, 255, 255),
 				background_color(0, 0, 0),
-				
+
 				// HUD
 				hud_temperature(432), // temperatura do ustawienia
 				heart(12, 17, Body::NONE, nullptr, HEART_ICON_WIDTH),
@@ -40,9 +40,9 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						oglWrapper::RED,
 						MAX_LIVES,
 						Control::VERTICAL),
-				
+
 				heart_anim(3),
-				
+
 				score(0, 16, Body::NONE, nullptr, SCORE_ICON_WIDTH),
 				score_bar(
 						Rect<float>(
@@ -53,7 +53,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						oglWrapper::GREEN,
 						max_score,
 						Control::VERTICAL),
-				
+
 				retry_hud(
 						Rect<float>(
 								screen_bounds.x - 22 - SPACES * 2,
@@ -64,7 +64,7 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						nullptr,
 						false,
 						this),
-				
+
 				game_over(
 						oglWrapper::WHITE,
 						"Game over",
@@ -80,7 +80,29 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						oglWrapper::WHITE,
 						"Sterowanie:",
 						GLUT_BITMAP_HELVETICA_12,
-						12) {
+						12),
+
+				/** Tooltip poziomu przjescia gry */
+				game_progress_tooltip(
+						oglWrapper::WHITE,
+						"Ukonczono w:",
+						GLUT_BITMAP_HELVETICA_12,
+						12),
+
+				game_progress(
+						oglWrapper::YELLOW,
+						"",
+						GLUT_BITMAP_HELVETICA_18,
+						18),
+
+				/** Tooltip ilosc punktow */
+				game_score_tooltip(
+						oglWrapper::WHITE,
+						"Lacznie punktow:",
+						GLUT_BITMAP_HELVETICA_12,
+						12),
+
+				game_score(oglWrapper::GREEN, "", GLUT_BITMAP_HELVETICA_18, 18) {
 
 	create();
 }
@@ -373,7 +395,7 @@ void MessageRenderer::drawPlayerHUD(Window* _window) {
 	if (!retry_hud.getIcon()) {
 		retry_hud.setIcon(getShapePointer("retry_shape"));
 	}
-	retry_hud.drawObject(nullptr);
+	//retry_hud.drawObject(nullptr);
 	
 	/** Linia laczaca gracza z hudem */
 	oglWrapper::beginStroke(0xA0A0);
@@ -440,6 +462,43 @@ void MessageRenderer::getCallback(Control* const & control) {
 	}
 }
 
+/** Rysowanie informacji z gry */
+void MessageRenderer::drawGameInfo(Window*) {
+	/** POZIOM PRZEJSCIA GRY */
+	game_progress_tooltip.printText(
+			screen_bounds.x / 2 - game_progress_tooltip.getScreenLength() / 2,
+			22);
+
+	/** Aktualizacja procentu przejscia */
+	game_progress.setString(
+			Convert::toString<usint>(
+					(float) LevelManager::getInstance().getActualMap()
+							/ MAP_COUNT * 100.f) + "%",
+			-1);
+	game_progress.printText(
+			screen_bounds.x / 2 - game_progress.getScreenLength() / 2,
+			46);
+
+	/** ILOSC PUNKTOW */
+	game_score_tooltip.printText(
+			screen_bounds.x - game_score_tooltip.getScreenLength() - 25,
+			22);
+
+	string score = Convert::toString<usint>(
+			(SaveManager::getInstance().getSave()->stats[Save::POINTS]
+					+ hero->getStatus()->score) * 10) + "$";
+
+	for (usint i = score.length(); i < 10; ++i) {
+		score = "-" + score;
+	}
+
+	game_score.setString(score, -1);
+	game_score.printText(
+			screen_bounds.x - game_score_tooltip.getScreenLength() / 2
+					- game_score.getScreenLength() / 2 - 25,
+			46);
+}
+
 /** Rysowanie klawiszologii */
 void MessageRenderer::drawControls(Window*) {
 	if (arrows_icons.empty()) {
@@ -490,5 +549,8 @@ void MessageRenderer::drawObject(Window* _window) {
 
 	/** Rysowanie klawiszologii */
 	drawControls(nullptr);
+
+	/** Rysowanie info o grze */
+	drawGameInfo(nullptr);
 }
 

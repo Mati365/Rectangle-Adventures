@@ -34,7 +34,7 @@ namespace Sound {
 			Mix_Chunk* loadSound(const char*);
 
 			/** Odtwarzanie pliku wav */
-			void playChunk(Mix_Chunk*, float);
+			void playChunk(Mix_Chunk*, float, bool = false);
 
 			/** Zamykanie pliku */
 			void closeChunk(Mix_Chunk*);

@@ -125,7 +125,7 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		IrregularPlatform* cutscene_box;
 
 		/**
-		 * ########################################### Sterowanie!
+		 * ########################################### Informacje!
 		 */
 
 		/** Klawisze sterowania */
@@ -133,6 +133,14 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 
 		/** Napis sterowania */
 		glText controls_tooltip;
+
+		/** Procent przjescia gry */
+		glText game_progress_tooltip;
+		glText game_progress;
+
+		/** Ilosc punktow */
+		glText game_score_tooltip;
+		glText game_score;
 
 	public:
 		MessageRenderer(float, const Color&, const Color&, IntroBackground*);
@@ -192,6 +200,9 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		void drawPlayerHUD(Window*);
 		void drawIntroMessage(Window*);
 		void drawDeathScreen(Window*);
+
+		/** Informacje */
+		void drawGameInfo(Window*);
 
 		/** Rysowanie klawiszologii */
 		void drawControls(Window*);

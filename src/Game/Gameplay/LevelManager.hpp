@@ -45,6 +45,11 @@ class LevelManager {
 			reloadMap();
 		}
 
+		/** Aktualna mapa */
+		usint getActualMap() const {
+			return actual_map;
+		}
+
 		/**
 		 * Zwraca NULL'a jesli koniec,
 		 * jesli koniec to napisy końcowe
