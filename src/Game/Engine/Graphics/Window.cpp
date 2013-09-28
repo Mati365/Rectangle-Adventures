@@ -25,11 +25,10 @@ WindowConfig Engine::window_config;
 
 #define FPS 16
 //#define BENCHMARK
-//#define FULLSCREEN
 
 /** Konwersja Uint8 do char */
 void translateKeyEvent(Uint8* keystate, Uint16 key, char translated,
-		Event& event, Screen* renderer) {
+		Event& event, Panel* renderer) {
 	if (keystate[key]) {
 		event.key = translated;
 	}
@@ -56,18 +55,13 @@ Window::Window(const string& _title) :
 	
 	/** Flagi okna */
 	window_config.putConfig(WindowConfig::WINDOW_OPENED, true);
-	window_config.putConfig(WindowConfig::WITH_SHADERS, true);
 
 	/** Tworzenie okna */
 	screen = SDL_SetVideoMode(
 			screen_bounds.x,
 			screen_bounds.y,
 			32,
-			SDL_OPENGL | SDL_GL_DOUBLEBUFFER
-#ifdef FULLSCREEN
-					| SDL_FULLSCREEN
-#endif
-			);
+			SDL_OPENGL | SDL_GL_DOUBLEBUFFER | SDL_FULLSCREEN);
 	if (!screen) {
 		return;
 	}
@@ -101,6 +95,10 @@ void Window::init() {
 	//
 	glText frame_count(oglWrapper::WHITE, "");
 #endif
+
+	/** Mysz */
+	bool mouse_button_down = false;
+
 	while (window_config.flag[WindowConfig::WINDOW_OPENED]) {
 		/** Zmiana rozdzielczosci */
 		if (window_config.flag[WindowConfig::RESOLUTION_CHANGED]) {
@@ -108,15 +106,20 @@ void Window::init() {
 			if (screen_bounds.x == 0 || screen_bounds.y == 0) {
 				screen_bounds = native_resolution;
 			}
+
+			/** Flagi okna */
+			Uint32 screen_flags = SDL_OPENGL | SDL_GL_DOUBLEBUFFER;
+			if (window_config.flag[WindowConfig::FULLSCREEN]) {
+				screen_flags |= SDL_FULLSCREEN;
+			}
+
+			/** Okno */
 			screen = SDL_SetVideoMode(
 					screen_bounds.x,
 					screen_bounds.y,
 					32,
-					SDL_OPENGL | SDL_GL_DOUBLEBUFFER
-#ifdef FULLSCREEN
-							| SDL_FULLSCREEN
-#endif
-					);
+					screen_flags);
+
 			setupOpenGL();
 			if (!menu) {
 				loadScreens();
@@ -132,6 +135,8 @@ void Window::init() {
 		/**
 		 *
 		 */
+		bool mouse_button_up = false;
+
 		SDL_GetMouseState(&mouse.pos.x, &mouse.pos.y);
 		while (SDL_PollEvent(&event)) {
 			if (active_screen) {
@@ -139,11 +144,13 @@ void Window::init() {
 					case SDL_MOUSEBUTTONUP:
 						active_screen->catchEvent(
 								Event(Event::MOUSE_RELEASED, ' '));
+						mouse_button_down = true;
 						break;
 						
 					case SDL_MOUSEBUTTONDOWN:
 						active_screen->catchEvent(
 								Event(Event::MOUSE_PRESSED, ' '));
+						mouse_button_up = true;
 						break;
 						
 					case SDL_QUIT:
@@ -154,6 +161,14 @@ void Window::init() {
 				}
 			}
 		}
+		/** Generowanie klikniecia */
+		if (!mouse_button_up && mouse_button_down) {
+			active_screen->catchEvent(Event(Event::MOUSE_CLICKED, ' '));
+
+			mouse_button_down = false;
+		}
+
+		/** Eventy klawiatury */
 		Uint8 *keystate = SDL_GetKeyState(NULL);
 		if (keystate[SDLK_ESCAPE]) {
 			window_config.putConfig(WindowConfig::WINDOW_OPENED, false);

@@ -112,8 +112,6 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		/** reload gry */
 		Button retry_hud;
 
-		/** pozostaly czas */
-		//glText left_time;
 		/** Ekran smierci */
 		glText game_over;
 		Button* retry_game;
@@ -125,6 +123,16 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 
 		/** Miejsce na cutscene */
 		IrregularPlatform* cutscene_box;
+
+		/**
+		 * ########################################### Sterowanie!
+		 */
+
+		/** Klawisze sterowania */
+		map<usint, IrregularPlatform*> arrows_icons;
+
+		/** Napis sterowania */
+		glText controls_tooltip;
 
 	public:
 		MessageRenderer(float, const Color&, const Color&, IntroBackground*);
@@ -170,6 +178,9 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		}
 		
 	private:
+		/** Tworzenie */
+		void create();
+
 		/** Odswiezanie */
 		void updateHUDControls();
 
@@ -177,10 +188,15 @@ class MessageRenderer: public Renderer, public EventListener, public Callback {
 		void openCutscene(const Message&);
 		void closeCutscene();
 
+		/** Rysowanie ekranow */
 		void drawPlayerHUD(Window*);
 		void drawIntroMessage(Window*);
 		void drawDeathScreen(Window*);
 
+		/** Rysowanie klawiszologii */
+		void drawControls(Window*);
+
+		/** Obramowanie */
 		void drawBorder(Window*);
 };
 

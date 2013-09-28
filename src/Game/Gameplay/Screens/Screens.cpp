@@ -9,7 +9,7 @@
 using namespace GameScreen;
 
 /** Aktywny ekran w grze */
-Screen* GameScreen::active_screen;
+Panel* GameScreen::active_screen;
 
 /** Inicjacja po zaladowaniu filesystem */
 Game* GameScreen::game = nullptr;

@@ -56,6 +56,7 @@ namespace GUI {
 			usint old_state;
 			usint position;
 
+			/** Odblokowanie obwodki */
 			bool border_enabled;
 
 			map<usint, Callback*> callbacks;
@@ -95,6 +96,10 @@ namespace GUI {
 							Control(_bounds) {
 			}
 			
+			Panel() :
+							Control(Rect<float>(0, 0, 0, 0)) {
+			}
+
 			virtual void drawObject(Window*);
 			virtual void catchEvent(const Event&);
 
@@ -153,12 +158,27 @@ namespace GUI {
 	
 	/** Guzik */
 	class Button: public Control {
+		public:
+			enum Fillstyle {
+				FILLED,
+				SHARP
+			};
+
 		protected:
 			/** Tekst */
 			glText text;
 
 			/** Ikonka */
 			IrregularPlatform* icon;
+
+			/** Czy tekst widoczny */
+			bool text_visible;
+
+			/** Odwrocona wklesnieta obwodka  */
+			bool invert_border;
+
+			/** Sposob zamalowania */
+			usint fill_type;
 
 		public:
 			Button(const Rect<float>&, const char*, PlatformShape* = nullptr,
@@ -174,12 +194,28 @@ namespace GUI {
 			void setIcon(PlatformShape*);
 
 			~Button() {
-				if (icon) {
-					delete icon;
-				}
+				safe_delete<IrregularPlatform>(icon);
 			}
 	};
 	
+	/** Checkbox */
+	class Checkbox: public Button {
+		public:
+			Checkbox(const Rect<float>&, const char*, PlatformShape* = nullptr,
+					bool = true, Callback* = nullptr);
+
+			void setSelected(bool _selected) {
+				control_state = _selected ? CLICKED : NORMAL;
+			}
+
+			virtual void drawObject(Window*);
+			virtual void catchEvent(const Event&);
+
+			bool isChecked() const {
+				return control_state == Control::CLICKED;
+			}
+	};
+
 	/** Lista */
 	class SelectList: public Control {
 		protected:

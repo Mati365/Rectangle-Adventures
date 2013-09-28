@@ -213,15 +213,19 @@ namespace Engine {
 				WINDOW_OPENED,
 				RESOLUTION_CHANGED,
 				WITH_SHADERS,
-				WSAD_CONTROLS
+				WSAD_CONTROLS,
+				FULLSCREEN
 			};
 
 			/** Flagi okna */
-			bool flag[WITH_SHADERS + 1];
+			bool flag[FULLSCREEN + 1];
 
 			WindowConfig() {
-				for (usint i = 0; i < WITH_SHADERS + 1; ++i) {
+				for (usint i = 0; i < FULLSCREEN + 1; ++i) {
 					flag[i] = false;
+					if (i >= WSAD_CONTROLS) {
+						flag[i] = true;
+					}
 				}
 			}
 

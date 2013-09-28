@@ -62,17 +62,19 @@ Ending::Ending() :
 
 				/** Wyjscie */
 				exit(Rect<float>(0, 0, 100, 40), "Wyjdz") {
+	create();
+}
+
+/** Tworzenie */
+void Ending::create() {
 	exit.putCallback(Event::MOUSE_RELEASED, this);
+
+	addControl(&exit);
 }
 
 /** Callback od przyciskow! */
 void Ending::getCallback(Control* const & obj) {
 	window_config.putConfig(WindowConfig::WINDOW_OPENED, false);
-}
-
-/** Event z okna */
-void Ending::catchEvent(const Event& event) {
-	exit.catchEvent(event);
 }
 
 /** Rendering */

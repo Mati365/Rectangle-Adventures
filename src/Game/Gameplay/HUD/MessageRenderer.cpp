@@ -70,11 +70,24 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 						"Game over",
 						GLUT_BITMAP_HELVETICA_18,
 						18),
-				
 				//
 				background(_background),
 				hero(nullptr),
-				cutscene_box(nullptr) {
+				cutscene_box(nullptr),
+
+				/** Napis nad info sterowania */
+				controls_tooltip(
+						oglWrapper::WHITE,
+						"Sterowanie:",
+						GLUT_BITMAP_HELVETICA_12,
+						12) {
+
+	create();
+}
+
+/** Tworzenie */
+void MessageRenderer::create() {
+	/** Tworzenie przyciskow ekranu smierci */
 	retry_game = new Button(
 			Rect<float>(
 					screen_bounds.x / 2 - 10 - 100,
@@ -98,6 +111,42 @@ MessageRenderer::MessageRenderer(float _height, const Color& _title_color,
 	/** Dlugosc trawnia bicia serca */
 	heart_anim.sleep_beetwen_cycle = 50;
 	heart_anim.loop = true;
+
+	/** Instalacja klawiszologii */
+	bool wsad = window_config.flag[WindowConfig::WSAD_CONTROLS];
+
+	arrows_icons[pEngine::UP] =
+			new IrregularPlatform(
+					28,
+					30,
+					Body::NONE,
+					wsad ? readShape("strzalka_w.txt", "strzalka_gora", 0.f) : readShape(
+									"strzalka_gora.txt",
+									"strzalka_gora",
+									0.f),
+					18);
+
+	arrows_icons[pEngine::LEFT] =
+			new IrregularPlatform(
+					arrows_icons[pEngine::UP]->x - 19,
+					arrows_icons[pEngine::UP]->y + 21,
+					Body::NONE,
+					wsad ? readShape("strzalka_a.txt", "strzalka_lewo", 0.f) : readShape(
+									"strzalka_gora.txt",
+									"strzalka_lewo",
+									-90.f),
+					18);
+
+	arrows_icons[pEngine::RIGHT] =
+			new IrregularPlatform(
+					arrows_icons[pEngine::UP]->x + 19,
+					arrows_icons[pEngine::UP]->y + 21,
+					Body::NONE,
+					wsad ? readShape("strzalka_d.txt", "strzalka_prawo", 0.f) : readShape(
+									"strzalka_gora.txt",
+									"strzalka_prawo",
+									90.f),
+					18);
 }
 
 /**
@@ -391,6 +440,21 @@ void MessageRenderer::getCallback(Control* const & control) {
 	}
 }
 
+/** Rysowanie klawiszologii */
+void MessageRenderer::drawControls(Window*) {
+	if (arrows_icons.empty()) {
+		return;
+	}
+
+	/** Rysowanie strzalek */
+	arrows_icons[pEngine::UP]->drawObject(nullptr);
+	arrows_icons[pEngine::RIGHT]->drawObject(nullptr);
+	arrows_icons[pEngine::LEFT]->drawObject(nullptr);
+
+	/** Rysowanie opisu */
+	controls_tooltip.printText(arrows_icons[pEngine::LEFT]->x - 2, 22);
+}
+
 /** Renderowanie wszystkiego */
 void MessageRenderer::drawObject(Window* _window) {
 	if (msgs.size() > 0 && screen != INTRO_SCREEN) {
@@ -423,5 +487,8 @@ void MessageRenderer::drawObject(Window* _window) {
 			drawDeathScreen(_window);
 			break;
 	}
+
+	/** Rysowanie klawiszologii */
+	drawControls(nullptr);
 }
 

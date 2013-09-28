@@ -16,8 +16,6 @@ bool GUI::isMouseCollision(float x, float y, float w, float h) {
 	return (m_pos.x > x && m_pos.x < x + w && m_pos.y > y && m_pos.y < y + h);
 }
 
-//
-
 void Control::putCallback(usint type, Callback* callback) {
 	callbacks.insert(pair<usint, Callback*>(type, callback));
 }
@@ -31,11 +29,13 @@ void Control::catchEvent(const Event& event) {
 		case Event::MOUSE_PRESSED:
 			control_state = CLICKED;
 			break;
+
 			/**
 			 *
 			 */
-		default:
+		case Event::MOUSE_RELEASED:
 			control_state = NORMAL;
+			break;
 	}
 	if (callbacks.find(event.type) != callbacks.end()
 			&& callbacks[event.type]) {

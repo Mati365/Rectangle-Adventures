@@ -48,6 +48,16 @@ Configuration::Configuration() :
 						18),
 
 				/** Zatwierdzenie */
+				fullscreen(
+						Rect<float>(
+								screen_bounds.x / 2 - 200,
+								screen_bounds.y / 2 + 140),
+						"Caly ekran"),
+				shaders(
+						Rect<float>(
+								screen_bounds.x / 2 - 200,
+								screen_bounds.y / 2 + 80),
+						"Ze shaderami(mozliwy crash przy GPU Intel GMA)"),
 				enter(
 						Rect<float>(
 								screen_bounds.x / 2 - 50,
@@ -55,14 +65,29 @@ Configuration::Configuration() :
 								100,
 								40),
 						"Graj!") {
-	
+	create();
+}
+
+/** Tworzenie */
+void Configuration::create() {
 	for (usint i = 0; i < 4; ++i) {
 		resolution_list.addListItem(supported_resolutions[i]);
 		if (i < 2) {
 			controls_list.addListItem(supported_controls[i]);
 		}
 	}
-	enter.putCallback(Event::MOUSE_RELEASED, this);
+	enter.putCallback(Event::MOUSE_CLICKED, this);
+
+	/** Domyslne wartosci */
+	fullscreen.setSelected(true);
+	shaders.setSelected(true);
+
+	/** Dodawanie */
+	addControl(&fullscreen);
+	addControl(&shaders);
+	addControl(&enter);
+	addControl(&controls_list);
+	addControl(&resolution_list);
 }
 
 /** Callback od przyciskow! */
@@ -85,14 +110,12 @@ void Configuration::getCallback(Control* const & obj) {
 	window_config.putConfig(
 			WindowConfig::WSAD_CONTROLS,
 			controls_list.getSelectedItem() == "WSAD");
-}
 
-/** Event z okna */
-void Configuration::catchEvent(const Event& event) {
-	resolution_list.catchEvent(event);
-	controls_list.catchEvent(event);
+	/** Shadery */
+	window_config.putConfig(WindowConfig::WITH_SHADERS, shaders.isChecked());
 
-	enter.catchEvent(event);
+	/** Fullscreen */
+	window_config.putConfig(WindowConfig::FULLSCREEN, fullscreen.isChecked());
 }
 
 /** Rysowanie z tooltipem */
@@ -108,5 +131,5 @@ void Configuration::drawObject(Window*) {
 	drawWithTooltip(&resolution_list, &res_list_tooltip);
 	drawWithTooltip(&controls_list, &controls_list_tooltip);
 
-	enter.drawObject(nullptr);
+	Panel::drawObject(nullptr);
 }

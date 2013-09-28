@@ -22,20 +22,6 @@ using namespace oglWrapper;
 
 namespace GameScreen {
 	/**
-	 * Ekran gry!
-	 * Wzorzec Singleton!
-	 */
-	class Screen: public Renderer {
-		public:
-			virtual void drawObject(Window*)=0;
-			virtual void catchEvent(const Event&) {
-			}
-			
-			virtual ~Screen() {
-			}
-	};
-	
-	/**
 	 * Wczytywanie ekranow musi byv
 	 * PO wczytaniu systemu plikow!
 	 */
@@ -46,7 +32,7 @@ namespace GameScreen {
 	void unloadScreens();
 	
 	/** Ekran gry */
-	class Game: public Screen {
+	class Game: public Panel {
 		protected:
 			MapRenderer* lvl;
 
@@ -99,11 +85,12 @@ namespace GameScreen {
 			~Menu();
 
 		private:
+			/** Tworzenie */
 			void createMenuEntries();
 	};
 	
 	/** Splash - czarny ekran z tekstem */
-	class Splash: public Screen {
+	class Splash: public Panel {
 		public:
 			class SplashInfo {
 				public:
@@ -125,7 +112,7 @@ namespace GameScreen {
 			glText title;
 
 			/** Powrot po splashu! */
-			Screen* return_to;
+			Panel* return_to;
 
 		public:
 			Splash();
@@ -141,7 +128,7 @@ namespace GameScreen {
 			}
 			
 			/** Przerzucanie po splashu! */
-			void endTo(Screen* _return_to) {
+			void endTo(Panel* _return_to) {
 				return_to = _return_to;
 			}
 			
@@ -159,7 +146,7 @@ namespace GameScreen {
 	};
 	
 	/** Ekran konfiguracji ustawien grafiki */
-	class Configuration: public Screen, public Callback {
+	class Configuration: public Panel, public Callback {
 		private:
 			static string supported_resolutions[];
 			static string supported_controls[];
@@ -176,6 +163,12 @@ namespace GameScreen {
 			/** Tekst nad rozdizelczoscami */
 			glText controls_list_tooltip;
 
+			/** Czy caly ekran? */
+			Checkbox fullscreen;
+
+			/** Czy z shaderami ? */
+			Checkbox shaders;
+
 			/** Zatwierdzenie konfiguracji */
 			Button enter;
 
@@ -184,19 +177,19 @@ namespace GameScreen {
 
 			virtual void drawObject(Window*);
 
-			/** Event z okna */
-			virtual void catchEvent(const Event&);
-
 			/** Callback od przyciskow! */
 			void getCallback(Control* const &);
 
 		private:
+			/** Tworzenie */
+			void create();
+
 			/** Rysowanie z tooltipem */
 			void drawWithTooltip(SelectList*, glText*);
 	};
 
 	/** Zakonczenie gry */
-	class Ending: public Screen, public Callback {
+	class Ending: public Panel, public Callback {
 		private:
 			/** Napisy koncowe */
 			static string credits[];
@@ -215,12 +208,12 @@ namespace GameScreen {
 
 			virtual void drawObject(Window*);
 
-			/** Event z okna */
-			virtual void catchEvent(const Event&);
-
 			/** Callback od przyciskow! */
 			void getCallback(Control* const &);
 
+		private:
+			/** Tworzenie */
+			void create();
 	};
 
 	/** Aktywne ekrany  */
@@ -230,7 +223,7 @@ namespace GameScreen {
 	extern Configuration* config; // Konfiguracja grafy
 	extern Ending* ending; // Zakonczenie
 
-	extern Screen* active_screen;
+	extern Panel* active_screen;
 }
 
 #endif /* SCREENS_HPP_ */
