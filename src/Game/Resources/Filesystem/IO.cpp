@@ -18,7 +18,7 @@ bool IO::writeString(FILE* file, const char* str) {
 }
 
 bool IO::writeString(const char* path, const char* str) {
-	FILE* file = fopen(path, "w");
+	FILE* file = fopen(path, "wb");
 	if (!writeString(file, str)) {
 		return false;
 	}
@@ -44,7 +44,7 @@ const char* IO::readString(FILE* file) {
 }
 
 const char* IO::readString(const char* path) {
-	FILE* file = fopen(path, "r");
+	FILE* file = fopen(path, "r+b");
 	if (!file) {
 		return NULL;
 	}
@@ -55,7 +55,7 @@ const char* IO::readString(const char* path) {
 }
 
 char* IO::getFileContent(const char* _path) {
-	FILE* file = fopen(_path, "r");
+	FILE* file = fopen(_path, "r+b");
 	//
 	char* content = getFileContent(file, 0);
 	if (content) {
@@ -81,7 +81,7 @@ char* IO::getFileContent(FILE* file, size_t len) {
 }
 
 bool IO::fileExists(const char* path) {
-	FILE* file = fopen(path, "r");
+	FILE* file = fopen(path, "r+b");
 	bool exists = file;
 	//
 	fclose(file);
@@ -98,7 +98,7 @@ size_t IO::getFileLength(FILE* file) {
 }
 
 size_t IO::getFileLength(const char* file) {
-	FILE* fp = fopen(file, "r");
+	FILE* fp = fopen(file, "r+b");
 	size_t len = getFileLength(fp);
 	fclose(fp);
 	//

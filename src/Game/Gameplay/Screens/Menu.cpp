@@ -19,9 +19,12 @@ Menu::Menu() :
 				Game("menu.txt"),
 				ver(
 						oglWrapper::GRAY,
-						"Wersja: 0.5 beta | Autor: Mateusz Baginski | email:cziken58@gmail.com",
+						"Wersja: 0.6 | Autor: Mateusz Baginski | email:cziken58@gmail.com",
 						GLUT_BITMAP_HELVETICA_12,
 						12) {
+	choose_sound = SoundManager::getInstance().getResourceSound(
+			SoundManager::MENU_CHOOSE_SOUND);
+
 	lvl->enableHUD(false);
 	
 	Character* hero = getHero();
@@ -52,13 +55,13 @@ void Menu::createMenuEntries() {
 
 /** Odbieranie callbacku z przyciskow */
 void Menu::getCallback(Control* const & control) {
+	choose_sound->Play();
+
 	for (usint i = 0; i < entries.size(); ++i) {
 		/**
 		 * Obsługa menu!
 		 */
 		if (entries[i] == control) {
-			SoundManager::getInstance().playResourceSound(
-					SoundManager::MENU_CHOOSE_SOUND);
 			//
 			switch (i) {
 				case 0:
@@ -103,7 +106,7 @@ void Menu::getCallback(Control* const & control) {
 					 */
 					active_screen = splash;
 					splash->endTo(game);
-					//
+
 					SDL_Delay(200);
 				}
 					break;
@@ -143,5 +146,7 @@ void Menu::drawObject(Window* window) {
 
 /** Brak przecieku! 'lvl' usuwany w ~Game!! */
 Menu::~Menu() {
+	safe_delete<sf::Sound>(choose_sound);
+	//
 	logEvent(Logger::LOG_INFO, "Usuwanie obiektów menu zakończone sukcesem!");
 }

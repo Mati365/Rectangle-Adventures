@@ -95,7 +95,7 @@ void Configuration::getCallback(Control* const & obj) {
 	string res_selected = resolution_list.getSelectedItem();
 	
 	/** Zmiana rozdzielczosci */
-	if (res_selected == "Natywna") {
+	if (res_selected == "Natywna ;(") {
 		screen_bounds.x = screen_bounds.y = 0;
 	} else {
 		sscanf(

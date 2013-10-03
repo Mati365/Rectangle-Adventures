@@ -76,6 +76,10 @@ Gun::Gun(pEngine* _physics, float _x, float _y, PlatformShape* _gun_shape,
 				shot_delay(_shot_delay, getIntRandom<int>(0, _shot_delay)),
 				physics(_physics) {
 	setBulletsShape(_bullet_shapes);
+
+	/** Rejestracja dzwieku */
+	shot_sound = SoundManager::getInstance().getResourceSound(
+			SoundManager::GUN_SHOT_SOUND);
 }
 
 /** Wystrzal pocisku */
@@ -146,8 +150,7 @@ void Gun::shot() {
 							bullet_status));
 			break;
 	}
-	//
-	SoundManager::getInstance().playResourceSound(SoundManager::GUN_SHOT_SOUND);
+	shot_sound->Play();
 }
 
 /** Rysowanie emittera */
@@ -161,3 +164,8 @@ void Gun::drawObject(Window*) {
 	IrregularPlatform::drawObject(NULL);
 }
 
+/** Czyszczenie */
+Gun::~Gun() {
+	shot_sound->Stop();
+	safe_delete<sf::Sound>(shot_sound);
+}

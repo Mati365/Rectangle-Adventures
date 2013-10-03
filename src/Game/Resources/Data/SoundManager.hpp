@@ -59,7 +59,7 @@ class SoundManager {
 		 * + Wczytywanie paczki dzwiekow jesli
 		 * sound jest pusty!
 		 */
-		void playResourceSound(usint, bool = false);
+		sf::Sound* getResourceSound(usint, bool = false);
 
 		/** Zwalnianie Playera */
 		~SoundManager();

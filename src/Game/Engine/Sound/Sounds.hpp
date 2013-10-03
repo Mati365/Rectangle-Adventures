@@ -7,52 +7,36 @@
 
 #ifndef SOUNDS_HPP_
 #define SOUNDS_HPP_
-#include <SDL/SDL_mixer.h>
+#include <SFML/Audio.hpp>
 
 #include "../../Resources/Data/Resources.hpp"
 
 namespace Sound {
 	/** Klasa dzwieku */
 	struct _Sound {
-			Mix_Chunk* chunk;
+			sf::SoundBuffer* buffer;
 			float volume;
 	};
 	
 	/** Odtwarzacz plikow wav */
 	class Player {
 		private:
-			int audio_rate;
-			Uint16 audio_format;
-			int audio_channels;
-			int audio_buffers;
-
 			/** Wzorzec singleton! */
-			Player();
+			Player() {
+			}
 
 		public:
-			/** Wczytywanie pliku wav z systemu plikow */
-			Mix_Chunk* loadSound(const char*);
+			/** Wczytywanie dzwieku */
+			sf::SoundBuffer* loadSound(const char*);
 
-			/** Odtwarzanie pliku wav */
-			void playChunk(Mix_Chunk*, float, bool = false);
-
-			/** Zamykanie pliku */
-			void closeChunk(Mix_Chunk*);
+			/** Odtwarzanie */
+			sf::Sound* generateBuffer(sf::SoundBuffer*, float, bool = false);
 
 			static Player& getInstance() {
 				static Player player;
 				//
 				return player;
 			}
-			
-			/** Zamykanie odtwarzacza */
-			void closeMixAudio() {
-				Mix_CloseAudio();
-			}
-			
-		protected:
-			/** Otwieranie mix */
-			void openMixAudio();
 	};
 }
 

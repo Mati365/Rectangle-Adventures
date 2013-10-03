@@ -31,6 +31,9 @@ namespace GameScreen {
 	void loadScreens();
 	void unloadScreens();
 	
+	/** Dzwiek w tle */
+	extern sf::Sound* background_sound;
+
 	/** Ekran gry */
 	class Game: public Panel {
 		protected:
@@ -66,6 +69,9 @@ namespace GameScreen {
 
 			/** Elementy menu */
 			deque<Control*> entries;
+
+			/** Odglos wyboru */
+			sf::Sound* choose_sound;
 
 		public:
 			Menu();

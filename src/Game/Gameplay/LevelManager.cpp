@@ -8,7 +8,14 @@
 
 #include "../Resources/Data/SoundManager.hpp"
 
-string levels[3] { "mapa4.txt", "mapa2.txt", "mapa.txt" };
+string levels[MAP_COUNT] {
+					"mapa5.txt",
+					"mapa3.txt",
+					"mapa7.txt",
+					"mapa6.txt",
+					"mapa4.txt",
+					"mapa2.txt",
+					"mapa.txt" };
 
 /** Konstruktor */
 LevelManager::LevelManager() :

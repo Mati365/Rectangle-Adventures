@@ -43,16 +43,16 @@ Vector<float> native_resolution;
 
 /** Konstruktor */
 Window::Window(const string& _title) :
-				screen(NULL) {
+				screen(nullptr) {
 	/** Inicjalizacja SDL */
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
+	/** Natywna rozdzielczosc */
+	native_resolution = Window::getNativeResolution();
+
 	/** Wyliczanie rozdzielczosci ekranu */
 	screen_bounds.x = 1024;
 	screen_bounds.y = 768;
-	
-	/** Natywna rozdzielczosc */
-	native_resolution = Window::getNativeResolution();
 	
 	/** Flagi okna */
 	window_config.putConfig(WindowConfig::WINDOW_OPENED, true);
@@ -129,8 +129,6 @@ void Window::init() {
 				}
 			}
 			window_config.putConfig(WindowConfig::RESOLUTION_CHANGED, false);
-			SoundManager::getInstance().playResourceSound(
-					SoundManager::BACKGROUND_SOUND_1, true);
 		}
 #ifndef BENCHMARK
 		int frame_start = SDL_GetTicks();

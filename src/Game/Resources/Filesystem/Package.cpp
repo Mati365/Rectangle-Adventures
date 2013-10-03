@@ -24,9 +24,9 @@ Package::Package(const char* path, const char* author) :
 				file_path(Convert::getDynamicValue(path)),
 				header(author),
 				last_file_ptr(0) {
-	file = fopen(path, "r+");
+	file = fopen(path, "r+b");
 	if (!file) {
-		file = fopen(path, "w");
+		file = fopen(path, "w+b");
 		
 		/** Tworzenie pustego pliku z szablonu! */
 		if (createSkel())
@@ -196,7 +196,7 @@ bool Package::deleteObject(const char* label) {
 #endif
 	
 	fclose(file);
-	file = fopen(file_path, "r+");
+	file = fopen(file_path, "r+b");
 	//
 	fseek(file, 0, SEEK_END);
 	pointer_stack.write(file);

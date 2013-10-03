@@ -23,7 +23,7 @@ using namespace GameScreen;
 extern string levels[];
 
 class LevelManager {
-#define MAP_COUNT 3
+#define MAP_COUNT 7
 		
 	private:
 		int actual_map;

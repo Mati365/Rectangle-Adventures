@@ -115,11 +115,11 @@ void Platform::drawBorder() {
 			glVertex2f(x, y);
 			glVertex2f(x + w, y);
 			
-		} else if (border[pEngine::DOWN - 1]) {
+		}
+		if (border[pEngine::DOWN - 1]) {
 			glVertex2f(x, y + h);
 			glVertex2f(x + w, y + h);
 		}
-		
 		if (border[pEngine::LEFT - 1]) {
 			glColor4ub(col.r, col.g, col.b, col.a);
 			glVertex2f(x, y);

@@ -320,6 +320,9 @@ class Character: public IrregularPlatform {
 		/** Chmurki latajace */
 		deque<_Tooltip> tooltips;
 
+		/** Dzwieki */
+		map<usint, sf::Sound*> sounds;
+
 	public:
 		/**
 		 * Kolor platformy to kolor nicku,
@@ -351,6 +354,10 @@ class Character: public IrregularPlatform {
 			return action;
 		}
 		
+		void resetAction() {
+			action = 0;
+		}
+
 		/** Dodawanie napisu unosacego sie nad graczem */
 		void addTooltip(const char*, const Color&, float = 0, float = 0, usint =
 				0, float = TOOLTIP_SPEED);
@@ -398,8 +405,7 @@ class Character: public IrregularPlatform {
 			return &status;
 		}
 		
-		virtual ~Character() {
-		}
+		virtual ~Character();
 		
 	private:
 		/** Kolizje gracza */
@@ -410,6 +416,9 @@ class Character: public IrregularPlatform {
 
 		/** Rysowanie tooltipow */
 		void drawTooltips();
+
+		/** Rejestrowanie dzwiekow */
+		void registerSound(usint);
 };
 
 /** Obiekt uruchamiajacy skrypt */

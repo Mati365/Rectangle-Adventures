@@ -78,9 +78,7 @@ void Splash::drawObject(Window*) {
 		shape->recompile();
 	}
 	
-	/**
-	 * Timer, efekt zanikania
-	 */
+	/** Timer, efekt zanikania */
 	if (!_text->timer.active) {
 		safe_delete<SplashInfo>(_text);
 		if (texts.empty() || texts.size() == 1) {

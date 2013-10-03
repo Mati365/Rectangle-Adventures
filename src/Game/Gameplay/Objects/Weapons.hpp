@@ -50,6 +50,9 @@ class Gun: public IrregularPlatform {
 		/** Fizyka */
 		pEngine* physics;
 
+		/** Dzwiek wystrzalu */
+		sf::Sound* shot_sound;
+
 	public:
 		Gun(pEngine*, float, float, PlatformShape*,
 				initializer_list<PlatformShape*>, usint);
@@ -64,8 +67,7 @@ class Gun: public IrregularPlatform {
 					bullet_shapes);
 		}
 		
-		virtual ~Gun() {
-		}
+		virtual ~Gun();
 		
 	private:
 		/** Wystrzal */

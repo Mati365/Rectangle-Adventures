@@ -49,7 +49,7 @@ string Ending::credits[] = {
 								"Mati365",
 								"",
 								"----------------",
-								"Specjalnie na konkurs interaktywny 2013!" };
+								"Dziekuje za gre ;)" };
 
 Ending::Ending() :
 				/** Tooltipy endingu */
@@ -105,7 +105,8 @@ void Ending::drawObject(Window*) {
 	total_score.setString(
 			"Zdobyles: "
 					+ Convert::toString<usint>(
-							game->getHero()->getStatus()->score * 10)
+							(SaveManager::getInstance().getSave()->stats[Save::POINTS]
+									+ game->getHero()->getStatus()->score) * 10)
 					+ "pkt :)",
 			-1);
 

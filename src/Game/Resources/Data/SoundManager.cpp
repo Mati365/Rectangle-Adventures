@@ -7,6 +7,8 @@
 #include "SoundManager.hpp"
 
 /** Paczka dzwiekow */
+#define MIX_MAX_VALUE 80
+
 _SoundINFO SoundManager::sounds_assets[BACKGROUND_SOUND_2 + 1] {
 																	{
 																		JUMP_SOUND,
@@ -70,31 +72,27 @@ void SoundManager::loadSoundsPack() {
 }
 
 /** Odtwarzanie dzwiekow po identyfikatorze */
-void SoundManager::playResourceSound(usint _id, bool _loop) {
+sf::Sound* SoundManager::getResourceSound(usint _id, bool _loop) {
 	if (sounds.empty()) {
 		loadSoundsPack();
 	}
-	Player::getInstance().playChunk(
-			sounds[_id].chunk,
+	return Player::getInstance().generateBuffer(
+			sounds[_id].buffer,
 			sounds[_id].volume,
 			_loop);
 }
 
 /** Usuwanie dziewkow */
 void SoundManager::unloadSoundsPack() {
+	/** BUG
 	for (auto& obj : sounds) {
-		if (!obj.second.chunk) {
-			continue;
-		}
-		Player::getInstance().closeChunk(obj.second.chunk);
+		safe_delete<sf::SoundBuffer>(obj.second.buffer);
 	}
+	*/
 }
 
 /** Destrukcja */
 SoundManager::~SoundManager() {
-	/** Zamykanie Playera */
-	Player::getInstance().closeMixAudio();
-	
 	/** Kasowanie dzwiekow */
 	unloadSoundsPack();
 }

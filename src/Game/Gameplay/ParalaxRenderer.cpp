@@ -28,11 +28,12 @@ void ParalaxRenderer::addStaticObject(Body* _renderer) {
 /** Potrzasanie ekranem */
 void ParalaxRenderer::shake() {
 	shake_timer.reset();
-	//
+	/**
 	SoundManager::getInstance().playResourceSound(
 			getIntRandom<int>(0, 2) == 1 ?
 					SoundManager::EARTH_QUAKE_SOUND_1 :
 					SoundManager::EARTH_QUAKE_SOUND_2);
+					*/
 }
 
 /** Rysowanie paralaksy */

@@ -55,7 +55,7 @@ bool QuadTree::remove(usint _index) {
 		return false;
 	}
 	Body* obj = bodies[_index];
-	
+
 	bodies.erase(bodies.begin() + _index);
 	if (obj && obj->destroyed && obj->with_observer) {
 		safe_delete<Body>(obj);
@@ -74,7 +74,7 @@ void QuadTree::update(Rect<float>& _bounds) {
 		//
 		if (!obj || obj->destroyed) {
 			erase = true;
-			
+
 		} else if (!IS_SET(obj->state, Body::STATIC)) {
 			Rect<float> _rect = static_cast<Rect<float> >(*obj);
 			//
@@ -111,14 +111,14 @@ void QuadTree::drawObject(Window*) {
 	glColor3ub(level * 15, level * 15, level * 15);
 	glLineWidth((MAX_LAYER - level) * 2);
 	glBegin(GL_LINE_LOOP);
-	
+
 	glVertex2f(rect.x, rect.y);
 	glVertex2f(rect.x + rect.w, rect.y);
 	glVertex2f(rect.x + rect.w, rect.y + rect.h);
 	glVertex2f(rect.x, rect.y + rect.h);
-	
+
 	glEnd();
-	
+
 	if (NW) {
 		NW->drawObject(NULL);
 		NE->drawObject(NULL);
@@ -138,7 +138,7 @@ bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Jesli 1 lub wiecej quadow ma ten sam element to
 	 * wrzuca do rodzica!
@@ -150,7 +150,7 @@ bool QuadTree::insertToSubQuad(Body* body, bool recursive) {
 	if (!NW) {
 		subdive();
 	}
-	
+
 	/** Umieszczanie do dzieci */
 	if (NW->insertToSubQuad(body, false) || NE->insertToSubQuad(body, false)
 			|| SE->insertToSubQuad(body, false)
@@ -210,21 +210,21 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 	}
 	for (usint i = 0; i < bodies.size(); ++i) {
 		Body* body = bodies[i];
-		
+
 		/** Jesli obiekt miesci sie w zasiegu widzialnego ekranu */
 		if (_bounds.intersect(
 				Rect<float>(body->x, body->y, body->w, body->h))) {
-			
+
 			/** Resetowanie obiektow */
 			UNFLAG(body->state, Body::BUFFERED);
-			
+
 			/** A co jesli obiekt jest przyciety na ekranie? */
 			if (!IS_SET(body->state, Body::STATIC)
 					&& (body->y + body->h >= _bounds.y + _bounds.h
 							|| body->x + body->w >= _bounds.x + _bounds.w
 							|| body->x + body->w <= _bounds.x
 							|| body->y + body->h <= _bounds.y)) {
-				
+
 				/** Niewidoczne particle wywalane! */
 				if (!body->with_observer && body->life_timer.active) {
 					remove(i);
@@ -235,7 +235,7 @@ void QuadTree::getBodiesAt(Rect<float>& _bounds, deque<Body*>& _bodies) {
 				/** A jak obiekt widoczny.. */
 				ADD_FLAG(body->state, Body::BUFFERED);
 			}
-			
+
 			/** Dodawanie obiektu */
 			_bodies.push_back(body);
 		}
