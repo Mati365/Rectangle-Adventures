@@ -190,8 +190,7 @@ bool Package::deleteObject(const char* label) {
 	fflush(file);
 	
 	/** Zmiana rozmiaru */
-#ifdef OS_WINDOWS
-#else
+#ifndef OS_WINDOWS
 	ftruncate(fileno(file), header.getLength() + header.data_length);
 #endif
 	

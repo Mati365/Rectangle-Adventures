@@ -18,7 +18,12 @@ bool IO::writeString(FILE* file, const char* str) {
 }
 
 bool IO::writeString(const char* path, const char* str) {
+#ifdef OS_WINDOWS
 	FILE* file = fopen(path, "wb");
+#else
+	FILE* file = fopen(path, "w");
+#endif
+
 	if (!writeString(file, str)) {
 		return false;
 	}
@@ -32,7 +37,7 @@ int IO::stringLength(const char* str) {
 
 const char* IO::readString(FILE* file) {
 	if (!file) {
-		return NULL;
+		return nullptr;
 	}
 	int len;
 	fread(&len, sizeof(int), 1, file);
@@ -44,12 +49,17 @@ const char* IO::readString(FILE* file) {
 }
 
 const char* IO::readString(const char* path) {
+#ifdef OS_WINDOWS
 	FILE* file = fopen(path, "r+b");
+#else
+	FILE* file = fopen(path, "r");
+#endif
+
 	if (!file) {
 		return NULL;
 	}
 	const char* str = readString(file);
-	fclose(file);
+	fclose (file);
 	//
 	return str;
 }
@@ -98,7 +108,11 @@ size_t IO::getFileLength(FILE* file) {
 }
 
 size_t IO::getFileLength(const char* file) {
+#ifdef OS_WINDOWS
 	FILE* fp = fopen(file, "r+b");
+#else
+	FILE* fp = fopen(file, "r");
+#endif
 	size_t len = getFileLength(fp);
 	fclose(fp);
 	//
