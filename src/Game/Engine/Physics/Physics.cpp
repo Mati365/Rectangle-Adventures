@@ -322,18 +322,19 @@ usint pEngine::checkVerticalCollision(Body* _body, Body* _body2) {
 
 /** Sprawdzenie kolizji w pionie! */
 usint pEngine::checkHorizontalCollision(Body* _body, Body* _body2) {
+	int v = _body->velocity.y > 0 ? 2 : -2;
 	if (_body->x < _body2->x + _body2->w && _body->x + _body->w > _body2->x) {
 		/**
 		 *
 		 */
-		if (_body->y + _body->h + _body->velocity.y <= _body2->y + _body2->h
-				&& _body->y + _body->h + _body->velocity.y >= _body2->y
+		if (_body->y + _body->h + v <= _body2->y + _body2->h
+				&& _body->y + _body->h + v >= _body2->y
 				&& _body->y < _body2->y) {
 			return DOWN;
 			/**
 			 *
 			 */
-		} else if (_body->y + _body->velocity.y <= _body2->y + _body2->h
+		} else if (_body->y + v <= _body2->y + _body2->h
 				&& _body->y >= _body2->y + _body2->h && _body->y > _body2->y) {
 			return UP;
 			/**
